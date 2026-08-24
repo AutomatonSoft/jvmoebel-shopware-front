@@ -1,7 +1,12 @@
 import type { ComponentType } from "react";
 
+import { CmsHero } from "@/components/cms/elements/cms-hero";
+import { CmsNewsletter } from "@/components/cms/elements/cms-newsletter";
+import { CmsProductGrid } from "@/components/cms/elements/cms-product-grid";
+import { CmsRoomGrid } from "@/components/cms/elements/cms-room-grid";
 import { CmsText } from "@/components/cms/elements/cms-text";
 import type { CmsPage } from "@/lib/shopware/cms";
+import { cn } from "@/lib/utils";
 
 type CmsSection = CmsPage["sections"][number];
 type CmsBlock = CmsSection["blocks"][number];
@@ -14,6 +19,10 @@ export type CmsSlotComponentProps = {
 type CmsSlotComponent = ComponentType<CmsSlotComponentProps>;
 
 const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {
+  "jv-hero": CmsHero,
+  "jv-newsletter": CmsNewsletter,
+  "jv-product-grid": CmsProductGrid,
+  "jv-room-grid": CmsRoomGrid,
   text: CmsText,
 };
 
@@ -41,6 +50,12 @@ function CmsBlockRenderer({ block }: { block: CmsBlock }) {
       className={block.cssClass || undefined}
       data-cms-block-id={block.id}
       data-cms-block-type={block.type}
+      style={{
+        marginBottom: block.marginBottom || undefined,
+        marginLeft: block.marginLeft || undefined,
+        marginRight: block.marginRight || undefined,
+        marginTop: block.marginTop || undefined,
+      }}
     >
       {block.slots.map((slot) => (
         <CmsSlotRenderer key={slot.id} slot={slot} />
@@ -56,7 +71,11 @@ function CmsSectionRenderer({ section }: { section: CmsSection }) {
 
   return (
     <section
-      className={section.cssClass || undefined}
+      className={cn(
+        section.sizingMode === "boxed" &&
+          "mx-auto w-full max-w-360 px-4 sm:px-8",
+        section.cssClass,
+      )}
       data-cms-section-id={section.id}
       data-cms-section-sizing={section.sizingMode}
       data-cms-section-type={section.type}
