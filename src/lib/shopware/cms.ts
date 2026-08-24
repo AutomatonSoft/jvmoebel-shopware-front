@@ -18,13 +18,15 @@ export async function getCmsPage({ id, contextToken }: GetCmsPageOptions) {
 
   const client = createShopwareClient({ contextToken });
 
-  return client.invoke("readCms post /cms/{id}", {
+  const response = await client.invoke("readCms post /cms/{id}", {
     pathParams: { id },
     body: {},
     fetchOptions: {
       cache: "no-store",
     },
   });
+
+  return response.data;
 }
 
 export type CmsPage = Awaited<ReturnType<typeof getCmsPage>>;

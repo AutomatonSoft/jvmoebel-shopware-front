@@ -13,11 +13,13 @@ export async function getShopwareContext(
     contextToken: options.contextToken,
   });
 
-  return client.invoke("readContext get /context", {
+  const response = await client.invoke("readContext get /context", {
     fetchOptions: {
       cache: "no-store",
     },
   });
+
+  return response.data;
 }
 
 export type ShopwareContext = Awaited<ReturnType<typeof getShopwareContext>>;
