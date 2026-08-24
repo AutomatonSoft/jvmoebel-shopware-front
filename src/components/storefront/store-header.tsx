@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import type { MainNavigation } from "@/lib/shopware/navigation";
 
 export type StoreHeaderProps = {
@@ -23,20 +25,21 @@ function StoreSearchForm({ className }: { className: string }) {
       role="search"
     >
       <Search className="mr-2 size-4.5 shrink-0 text-muted-foreground transition-colors group-focus-within/search:text-foreground" />
-      <input
+      <Input
         aria-label="Search products"
-        className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+        className="h-auto min-w-0 flex-1 rounded-none border-0 bg-transparent px-0 py-0 text-sm shadow-none focus-visible:border-0 focus-visible:ring-0"
         name="query"
         placeholder="Search furniture"
         type="search"
       />
-      <button
+      <Button
         aria-label="Submit search"
-        className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-[background,transform,box-shadow] hover:bg-destructive motion-safe:hover:translate-x-px motion-safe:active:translate-y-px motion-safe:active:scale-90"
+        className="shrink-0 rounded-full hover:bg-destructive motion-safe:hover:translate-x-px motion-safe:active:scale-90"
+        size="icon-lg"
         type="submit"
       >
         <ArrowRight className="size-4" />
-      </button>
+      </Button>
     </form>
   );
 }

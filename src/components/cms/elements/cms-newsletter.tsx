@@ -1,5 +1,6 @@
 import type { CmsSlotComponentProps } from "@/components/cms/cms-page-renderer";
 import { NewsletterForm } from "@/components/storefront/newsletter-form";
+import { resolveCmsButtonSize } from "@/lib/cms/button-size";
 
 function getRecord(value: unknown): Record<string, unknown> | undefined {
   if (typeof value !== "object" || value === null || Array.isArray(value)) {
@@ -63,6 +64,7 @@ export function CmsNewsletter({ slot }: CmsSlotComponentProps) {
           </p>
           <NewsletterForm
             buttonLabel={buttonLabel}
+            buttonSize={resolveCmsButtonSize(data?.buttonSize)}
             errorMessage={errorMessage}
             invalidEmailMessage={invalidEmailMessage}
             placeholder={placeholder}

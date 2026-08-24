@@ -7,9 +7,19 @@ import {
   subscribeToNewsletter,
   type NewsletterActionState,
 } from "@/app/actions/newsletter";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import type { CmsButtonSize } from "@/lib/cms/button-size";
+
+const buttonSizeMap = {
+  large: "lg",
+  medium: "default",
+  small: "sm",
+} as const;
 
 export type NewsletterFormProps = {
   buttonLabel: string;
+  buttonSize: CmsButtonSize;
   errorMessage: string;
   invalidEmailMessage: string;
   placeholder: string;
@@ -21,6 +31,7 @@ const initialState: NewsletterActionState = { status: "idle" };
 
 export function NewsletterForm({
   buttonLabel,
+  buttonSize,
   errorMessage,
   invalidEmailMessage,
   placeholder,
@@ -44,23 +55,24 @@ export function NewsletterForm({
         action={formAction}
         className="flex max-w-xl flex-col gap-2 sm:flex-row"
       >
-        <input
+        <Input
           aria-label={placeholder}
           autoComplete="email"
-          className="min-h-14 min-w-0 flex-1 rounded-xl border border-foreground/15 bg-background px-5 text-sm outline-none transition-[border-color,box-shadow] placeholder:text-muted-foreground focus:border-foreground/30 focus:ring-3 focus:ring-primary/15"
+          className="h-13 min-w-0 flex-1 rounded-xl border-foreground/15 bg-background px-5 shadow-none focus-visible:border-foreground/30 focus-visible:ring-primary/15"
           name="email"
           placeholder={placeholder}
           required
           type="email"
         />
-        <button
-          className="group flex min-h-14 items-center justify-between gap-6 rounded-xl bg-primary px-6 text-sm font-bold text-primary-foreground transition-[background,opacity,transform] hover:bg-destructive disabled:cursor-wait disabled:opacity-60 motion-safe:active:translate-y-px motion-safe:active:scale-[.985]"
+        <Button
+          className="group w-full justify-between font-bold hover:bg-destructive disabled:cursor-wait motion-safe:active:scale-[.985] sm:w-auto"
           disabled={pending}
+          size={buttonSizeMap[buttonSize]}
           type="submit"
         >
           {buttonLabel}
           <ArrowRight className="size-4 transition-transform motion-safe:group-hover:translate-x-1" />
-        </button>
+        </Button>
       </form>
       <p aria-live="polite" className="mt-3 min-h-5 text-sm text-destructive">
         {state.status === "invalid" && invalidEmailMessage}

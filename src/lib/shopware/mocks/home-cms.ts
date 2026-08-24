@@ -290,6 +290,7 @@ export const homeCmsPageMock = {
               data: {
                 apiAlias: "cms_jv_newsletter",
                 buttonLabel: "Join us",
+                buttonSize: "large",
                 description:
                   "Room guides, material care and first access to new pieces. No daily emails.",
                 errorMessage: "Subscription failed. Please try again.",
