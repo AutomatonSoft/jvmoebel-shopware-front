@@ -3,16 +3,17 @@ import "server-only";
 import { createAPIClient } from "@shopware/api-client";
 import type { operations } from "@shopware/api-client/store-api-types";
 
-import { getShopwareConfig } from "@/lib/shopware/config";
+import { getShopwareConfig, type ShopwareConfig } from "@/lib/shopware/config";
 
-type CreateShopwareClientOptions = {
+export type CreateShopwareClientOptions = {
+  config?: ShopwareConfig;
   contextToken?: string;
 };
 
 export function createShopwareClient(
   options: CreateShopwareClientOptions = {},
 ) {
-  const { endpoint, accessToken } = getShopwareConfig();
+  const { endpoint, accessToken } = options.config ?? getShopwareConfig();
 
   return createAPIClient<operations>({
     baseURL: endpoint,
