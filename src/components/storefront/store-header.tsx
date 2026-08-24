@@ -1,4 +1,12 @@
-import { Heart, Menu, Search, ShoppingBag, UserRound, X } from "lucide-react";
+import {
+  ArrowRight,
+  Heart,
+  Menu,
+  Search,
+  ShoppingBag,
+  UserRound,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 
 import type { MainNavigation } from "@/lib/shopware/navigation";
@@ -7,12 +15,38 @@ export type StoreHeaderProps = {
   navigation: MainNavigation;
 };
 
+function StoreSearchForm({ className }: { className: string }) {
+  return (
+    <form
+      action="/shop"
+      className={`h-11 items-center rounded-full border bg-muted/80 p-1 pl-4 transition-[background,border-color,box-shadow] hover:border-foreground/15 hover:bg-card/70 focus-within:border-foreground/25 focus-within:bg-card focus-within:ring-3 focus-within:ring-primary/15 ${className}`}
+      role="search"
+    >
+      <Search className="mr-2 size-4.5 shrink-0 text-muted-foreground transition-colors group-focus-within/search:text-foreground" />
+      <input
+        aria-label="Search products"
+        className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+        name="query"
+        placeholder="Search furniture"
+        type="search"
+      />
+      <button
+        aria-label="Submit search"
+        className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-[background,transform,box-shadow] hover:bg-destructive motion-safe:hover:translate-x-px motion-safe:active:translate-y-px motion-safe:active:scale-90"
+        type="submit"
+      >
+        <ArrowRight className="size-4" />
+      </button>
+    </form>
+  );
+}
+
 export function StoreHeader({ navigation }: StoreHeaderProps) {
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
       <div className="relative mx-auto flex h-18 max-w-360 items-center gap-6 px-4 sm:px-8">
         {navigation.length > 0 && (
-          <details className="group static lg:hidden">
+          <details className="group static lg:hidden" name="header-panel">
             <summary className="flex size-10 cursor-pointer list-none items-center justify-center rounded-lg transition-colors hover:bg-muted motion-safe:transition-transform motion-safe:active:scale-95 [&::-webkit-details-marker]:hidden">
               <Menu className="size-5 group-open:hidden" />
               <X className="hidden size-5 group-open:block" />
@@ -57,14 +91,18 @@ export function StoreHeader({ navigation }: StoreHeaderProps) {
           </nav>
         )}
 
-        <div className="ml-auto flex items-center gap-1">
-          <a
-            aria-label="Search"
-            className="hidden size-10 items-center justify-center rounded-lg transition-colors hover:bg-muted motion-safe:transition-transform motion-safe:active:scale-90 sm:flex"
-            href="/shop"
-          >
-            <Search className="size-4.5" />
-          </a>
+        <StoreSearchForm className="group/search ml-auto hidden w-full max-w-80 xl:flex" />
+
+        <details className="group static ml-auto xl:hidden" name="header-panel">
+          <summary className="flex size-10 cursor-pointer list-none items-center justify-center rounded-lg transition-colors hover:bg-muted motion-safe:transition-transform motion-safe:active:scale-95 [&::-webkit-details-marker]:hidden">
+            <Search className="size-4.5 group-open:hidden" />
+            <X className="hidden size-4.5 group-open:block" />
+            <span className="sr-only">Toggle search</span>
+          </summary>
+          <StoreSearchForm className="group/search absolute inset-x-3 top-[calc(100%+0.5rem)] z-10 flex h-14 shadow-xl motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-2 motion-safe:duration-200 sm:inset-x-8" />
+        </details>
+
+        <div className="flex items-center gap-1">
           <a
             aria-label="Account"
             className="hidden size-10 items-center justify-center rounded-lg transition-colors hover:bg-muted motion-safe:transition-transform motion-safe:active:scale-90 md:flex"
