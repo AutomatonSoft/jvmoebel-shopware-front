@@ -4,9 +4,14 @@ import type { components } from "@shopware/api-client/store-api-types";
 
 import type { ShopwareClient } from "@/lib/shopware/client";
 import { shouldUseShopwareMocks } from "@/lib/shopware/mocks/config";
-import { mainNavigationMock } from "@/lib/shopware/mocks/navigation";
+import {
+  footerNavigationMock,
+  mainNavigationMock,
+  serviceNavigationMock,
+} from "@/lib/shopware/mocks/navigation";
 
 type ShopwareCategory = components["schemas"]["Category"];
+type NavigationType = components["schemas"]["NavigationType"];
 
 export type StoreNavigationItem = {
   children: StoreNavigationItem[];
@@ -44,9 +49,13 @@ function mapCategory(category: ShopwareCategory): StoreNavigationItem {
   };
 }
 
-export async function getMainNavigation(client: ShopwareClient) {
+async function getNavigation(
+  client: ShopwareClient,
+  navigationType: NavigationType,
+  mock: StoreNavigationItem[],
+) {
   if (shouldUseShopwareMocks()) {
-    return mainNavigationMock;
+    return mock;
   }
 
   const response = await client.invoke(
@@ -56,8 +65,8 @@ export async function getMainNavigation(client: ShopwareClient) {
         "sw-include-seo-urls": true,
       },
       pathParams: {
-        activeId: "main-navigation",
-        rootId: "main-navigation",
+        activeId: navigationType,
+        rootId: navigationType,
       },
       body: {
         depth: 2,
@@ -69,6 +78,18 @@ export async function getMainNavigation(client: ShopwareClient) {
   );
 
   return response.data.map(mapCategory);
+}
+
+export function getMainNavigation(client: ShopwareClient) {
+  return getNavigation(client, "main-navigation", mainNavigationMock);
+}
+
+export function getFooterNavigation(client: ShopwareClient) {
+  return getNavigation(client, "footer-navigation", footerNavigationMock);
+}
+
+export function getServiceNavigation(client: ShopwareClient) {
+  return getNavigation(client, "service-navigation", serviceNavigationMock);
 }
 
 export type MainNavigation = Awaited<ReturnType<typeof getMainNavigation>>;
