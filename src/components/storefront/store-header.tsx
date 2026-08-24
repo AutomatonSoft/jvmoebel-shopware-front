@@ -102,28 +102,39 @@ export function StoreHeader({ navigation }: StoreHeaderProps) {
           <StoreSearchForm className="group/search absolute inset-x-3 top-[calc(100%+0.5rem)] z-10 flex h-14 shadow-xl motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-2 motion-safe:duration-200 sm:inset-x-8" />
         </details>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center justify-end">
           <a
             aria-label="Account"
-            className="hidden size-10 items-center justify-center rounded-lg transition-colors hover:bg-muted motion-safe:transition-transform motion-safe:active:scale-90 md:flex"
+            className="hidden min-h-10 items-center gap-2 rounded-full p-1 pr-3 transition-[background,transform,box-shadow] hover:bg-muted focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-[.975] xl:flex"
             href="/account"
           >
-            <UserRound className="size-4.5" />
+            <span className="flex size-8.5 shrink-0 items-center justify-center rounded-full border border-foreground/15">
+              <UserRound className="size-4" />
+            </span>
+            <span className="flex min-w-12 flex-col leading-none">
+              <span className="mb-1 text-[0.5rem] tracking-[0.09em] text-muted-foreground uppercase">
+                Account
+              </span>
+              <strong className="text-xs font-semibold">Sign in</strong>
+            </span>
           </a>
-          <a
-            aria-label="Wishlist"
-            className="hidden size-10 items-center justify-center rounded-lg transition-colors hover:bg-muted motion-safe:transition-transform motion-safe:active:scale-90 md:flex"
-            href="/shop"
-          >
-            <Heart className="size-4.5" />
-          </a>
-          <a
-            aria-label="Shopping bag"
-            className="flex size-10 items-center justify-center rounded-lg transition-colors hover:bg-muted motion-safe:transition-transform motion-safe:active:scale-90"
-            href="/cart"
-          >
-            <ShoppingBag className="size-4.5" />
-          </a>
+
+          <div className="flex items-center gap-1 sm:ml-2 sm:border-l sm:border-foreground/10 sm:pl-2">
+            <a
+              aria-label="Wishlist"
+              className="hidden size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-90 sm:flex"
+              href="/shop"
+            >
+              <Heart className="size-4.5" />
+            </a>
+            <a
+              aria-label="Shopping bag"
+              className="flex size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-90"
+              href="/cart"
+            >
+              <ShoppingBag className="size-4.5" />
+            </a>
+          </div>
         </div>
       </div>
     </header>
