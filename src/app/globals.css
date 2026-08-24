@@ -46,38 +46,38 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --background: #fbfaf6;
+  --foreground: #151513;
+  --card: #ffffff;
+  --card-foreground: #151513;
+  --popover: #ffffff;
+  --popover-foreground: #151513;
+  --primary: #ff4f22;
+  --primary-foreground: #ffffff;
+  --secondary: #f0efe7;
+  --secondary-foreground: #151513;
+  --muted: #f0efe7;
+  --muted-foreground: #696962;
+  --accent: #e9ff57;
+  --accent-foreground: #151513;
+  --destructive: #e43b11;
+  --border: #deded7;
+  --input: #deded7;
+  --ring: #ff4f22;
+  --chart-1: #ff4f22;
+  --chart-2: #e9ff57;
+  --chart-3: #2d35f0;
+  --chart-4: #696962;
+  --chart-5: #151513;
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: #fbfaf6;
+  --sidebar-foreground: #151513;
+  --sidebar-primary: #ff4f22;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e9ff57;
+  --sidebar-accent-foreground: #151513;
+  --sidebar-border: #deded7;
+  --sidebar-ring: #ff4f22;
 }
 
 @layer base {
@@ -89,5 +89,8 @@
   }
   html {
     @apply font-sans;
+  }
+  ::selection {
+    @apply bg-accent text-accent-foreground;
   }
 }
