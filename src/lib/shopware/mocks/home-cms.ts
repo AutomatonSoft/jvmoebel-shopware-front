@@ -61,10 +61,12 @@ export const homeCmsPageMock = {
                 },
                 primaryLink: {
                   label: "Shop new arrivals",
+                  size: "large",
                   url: "/new-in",
                 },
                 secondaryLink: {
                   label: "Explore the collection",
+                  size: "medium",
                   url: "/living",
                 },
               },

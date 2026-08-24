@@ -1,6 +1,6 @@
-import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 
+import { CmsButton } from "@/components/cms/cms-button";
 import type { CmsSlotComponentProps } from "@/components/cms/cms-page-renderer";
 
 function getRecord(value: unknown): Record<string, unknown> | undefined {
@@ -68,22 +68,19 @@ export function CmsHero({ slot }: CmsSlotComponentProps) {
           {(primaryLabel && primaryUrl) || (secondaryLabel && secondaryUrl) ? (
             <div className="mt-8 flex flex-wrap items-center gap-5">
               {primaryLabel && primaryUrl && (
-                <a
-                  className="group inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-lg shadow-black/15 transition-[background,transform,box-shadow] hover:bg-destructive motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-px motion-safe:active:scale-[.985]"
+                <CmsButton
                   href={primaryUrl}
-                >
-                  {primaryLabel}
-                  <ArrowRight className="size-4 transition-transform duration-200 motion-safe:group-hover:translate-x-1" />
-                </a>
+                  label={primaryLabel}
+                  size={primaryLink?.size}
+                />
               )}
               {secondaryLabel && secondaryUrl && (
-                <a
-                  className="group inline-flex items-center gap-2 text-sm font-semibold underline underline-offset-4 transition-opacity hover:opacity-80"
+                <CmsButton
                   href={secondaryUrl}
-                >
-                  {secondaryLabel}
-                  <ArrowRight className="size-4 transition-transform duration-200 motion-safe:group-hover:translate-x-1" />
-                </a>
+                  label={secondaryLabel}
+                  size={secondaryLink?.size}
+                  variant="link"
+                />
               )}
             </div>
           ) : null}
