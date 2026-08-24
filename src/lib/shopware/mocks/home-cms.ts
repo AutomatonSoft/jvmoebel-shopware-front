@@ -4,6 +4,7 @@ const pageId = "mock-home-page";
 const sectionId = "mock-home-section";
 const heroBlockId = "mock-home-hero-block";
 const roomGridBlockId = "mock-home-room-grid-block";
+const productGridBlockId = "mock-home-product-grid-block";
 
 export const homeCmsPageMock = {
   apiAlias: "cms_page",
@@ -132,6 +133,132 @@ export const homeCmsPageMock = {
                     title: "Beds, bedside & wardrobes",
                     url: "/bedroom",
                   },
+                },
+              },
+            },
+          ],
+        },
+        {
+          apiAlias: "cms_block",
+          id: productGridBlockId,
+          position: 2,
+          sectionId,
+          type: "jv-product-grid",
+          slots: [
+            {
+              apiAlias: "cms_slot",
+              blockId: productGridBlockId,
+              id: "mock-home-product-grid-slot",
+              slot: "content",
+              type: "jv-product-grid",
+              translated: {
+                blockId: productGridBlockId,
+                cmsBlockVersionId: "",
+                slot: "content",
+                type: "jv-product-grid",
+                versionId: "",
+              },
+              data: {
+                apiAlias: "cms_jv_product_grid",
+                currency: "EUR",
+                eyebrow: "Selected for you",
+                locale: "de-DE",
+                products: {
+                  alba: {
+                    badge: "Bestseller",
+                    calculatedPrice: {
+                      listPrice: {
+                        price: 2890,
+                      },
+                      unitPrice: 2490,
+                    },
+                    cover: {
+                      media: {
+                        alt: "Alba modular sofa in a warm living room",
+                        url: "/images/hero-living.webp",
+                      },
+                    },
+                    id: "alba",
+                    position: 0,
+                    ratingAverage: 4.9,
+                    reviewCount: 128,
+                    translated: {
+                      description: "Natural bouclé · 4 seats",
+                      name: "Alba Modular Sofa",
+                    },
+                    url: "/product/alba",
+                  },
+                  noma: {
+                    badge: "New",
+                    calculatedPrice: {
+                      unitPrice: 895,
+                    },
+                    cover: {
+                      media: {
+                        alt: "Noma rust lounge chair",
+                        url: "/images/lounge-chair.webp",
+                      },
+                    },
+                    id: "noma",
+                    position: 1,
+                    ratingAverage: 4.8,
+                    reviewCount: 64,
+                    translated: {
+                      description: "Rust bouclé · Walnut",
+                      name: "Noma Lounge Chair",
+                    },
+                    url: "/product/noma",
+                  },
+                  forma: {
+                    badge: "Low stock",
+                    calculatedPrice: {
+                      unitPrice: 1290,
+                    },
+                    cover: {
+                      media: {
+                        alt: "Forma solid walnut media console",
+                        url: "/images/media-console.webp",
+                      },
+                    },
+                    id: "forma",
+                    position: 2,
+                    ratingAverage: 4.7,
+                    reviewCount: 39,
+                    translated: {
+                      description: "Solid walnut · 180 cm",
+                      name: "Forma Media Console",
+                    },
+                    url: "/product/forma",
+                  },
+                  mira: {
+                    badge: "Sale",
+                    calculatedPrice: {
+                      listPrice: {
+                        price: 1950,
+                      },
+                      unitPrice: 1650,
+                    },
+                    cover: {
+                      media: {
+                        alt: "Mira table in a warm walnut dining room",
+                        url: "/images/dining-room.webp",
+                      },
+                    },
+                    id: "mira",
+                    position: 3,
+                    ratingAverage: 4.9,
+                    reviewCount: 81,
+                    translated: {
+                      description: "Smoked oak · Ø 140 cm",
+                      name: "Mira Dining Table",
+                    },
+                    url: "/product/mira",
+                  },
+                },
+                title: "Featured pieces",
+                viewAll: {
+                  label: "View all products",
+                  url: "/shop",
                 },
               },
             },
