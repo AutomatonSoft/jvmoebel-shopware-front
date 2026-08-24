@@ -5,6 +5,7 @@ const sectionId = "mock-home-section";
 const heroBlockId = "mock-home-hero-block";
 const roomGridBlockId = "mock-home-room-grid-block";
 const productGridBlockId = "mock-home-product-grid-block";
+const newsletterBlockId = "mock-home-newsletter-block";
 
 export const homeCmsPageMock = {
   apiAlias: "cms_page",
@@ -260,6 +261,42 @@ export const homeCmsPageMock = {
                   label: "View all products",
                   url: "/shop",
                 },
+              },
+            },
+          ],
+        },
+        {
+          apiAlias: "cms_block",
+          id: newsletterBlockId,
+          position: 3,
+          sectionId,
+          type: "jv-newsletter",
+          slots: [
+            {
+              apiAlias: "cms_slot",
+              blockId: newsletterBlockId,
+              id: "mock-home-newsletter-slot",
+              slot: "content",
+              type: "jv-newsletter",
+              translated: {
+                blockId: newsletterBlockId,
+                cmsBlockVersionId: "",
+                slot: "content",
+                type: "jv-newsletter",
+                versionId: "",
+              },
+              data: {
+                apiAlias: "cms_jv_newsletter",
+                buttonLabel: "Join us",
+                description:
+                  "Room guides, material care and first access to new pieces. No daily emails.",
+                errorMessage: "Subscription failed. Please try again.",
+                eyebrow: "The good-room letter",
+                invalidEmailMessage: "Enter a valid email address.",
+                placeholder: "Your email address",
+                storefrontUrl: "http://localhost:3000",
+                successMessage: "You're on the list. Welcome home.",
+                title: "Useful ideas, occasionally.",
               },
             },
           ],
