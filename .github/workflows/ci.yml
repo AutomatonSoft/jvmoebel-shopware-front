@@ -47,5 +47,8 @@ jobs:
       - name: TypeScript
         run: bun run typecheck
 
+      - name: Tests
+        run: bun run test
+
       - name: Production Next.js build
         run: bun run build
