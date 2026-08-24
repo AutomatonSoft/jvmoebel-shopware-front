@@ -2,7 +2,7 @@ import type { CmsPage } from "@/lib/shopware/cms";
 
 const pageId = "mock-home-page";
 const sectionId = "mock-home-section";
-const blockId = "mock-home-text-block";
+const blockId = "mock-home-hero-block";
 
 export const homeCmsPageMock = {
   apiAlias: "cms_page",
@@ -23,35 +23,47 @@ export const homeCmsPageMock = {
       id: sectionId,
       pageId,
       position: 0,
-      sizingMode: "boxed",
+      sizingMode: "full_width",
       type: "default",
       blocks: [
         {
           apiAlias: "cms_block",
           id: blockId,
-          marginBottom: "4rem",
-          marginTop: "4rem",
           position: 0,
           sectionId,
-          type: "text",
+          type: "jv-hero",
           slots: [
             {
               apiAlias: "cms_slot",
               blockId,
-              id: "mock-home-text-slot",
+              id: "mock-home-hero-slot",
               slot: "content",
-              type: "text",
+              type: "jv-hero",
               translated: {
                 blockId,
                 cmsBlockVersionId: "",
                 slot: "content",
-                type: "text",
+                type: "jv-hero",
                 versionId: "",
               },
               data: {
-                apiAlias: "cms_text",
-                content:
-                  '<p>The new living collection</p><h1>A home that feels like you.</h1><p>Thoughtful furniture, rich textures and lasting comfort — curated for everyday living.</p><p><a href="/new-in">Shop new arrivals</a></p>',
+                apiAlias: "cms_jv_hero",
+                eyebrow: "The new living collection",
+                title: "A home that feels like you.",
+                description:
+                  "Thoughtful furniture, rich textures and lasting comfort — curated for everyday living.",
+                image: {
+                  alt: "Warm contemporary living room with an ivory sofa",
+                  url: "/images/hero-editorial.webp",
+                },
+                primaryLink: {
+                  label: "Shop new arrivals",
+                  url: "/new-in",
+                },
+                secondaryLink: {
+                  label: "Explore the collection",
+                  url: "/living",
+                },
               },
             },
           ],

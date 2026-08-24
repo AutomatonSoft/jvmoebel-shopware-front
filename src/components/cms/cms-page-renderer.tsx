@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 
+import { CmsHero } from "@/components/cms/elements/cms-hero";
 import { CmsText } from "@/components/cms/elements/cms-text";
 import type { CmsPage } from "@/lib/shopware/cms";
 import { cn } from "@/lib/utils";
@@ -15,6 +16,7 @@ export type CmsSlotComponentProps = {
 type CmsSlotComponent = ComponentType<CmsSlotComponentProps>;
 
 const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {
+  "jv-hero": CmsHero,
   text: CmsText,
 };
 
