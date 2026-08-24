@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 
+import { CmsText } from "@/components/cms/elements/cms-text";
 import type { CmsPage } from "@/lib/shopware/cms";
 
 type CmsSection = CmsPage["sections"][number];
@@ -12,7 +13,9 @@ export type CmsSlotComponentProps = {
 
 type CmsSlotComponent = ComponentType<CmsSlotComponentProps>;
 
-const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {};
+const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {
+  text: CmsText,
+};
 
 function CmsSlotRenderer({ slot }: CmsSlotComponentProps) {
   const SlotComponent = cmsSlotComponents[slot.type];
