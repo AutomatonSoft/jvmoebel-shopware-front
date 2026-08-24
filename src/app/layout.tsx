@@ -3,7 +3,7 @@ import { Montserrat } from "next/font/google";
 
 import { StoreHeader } from "@/components/storefront/store-header";
 import { getMainNavigation } from "@/lib/shopware/navigation";
-import { createShopwareSession } from "@/lib/shopware/session";
+import { getShopwareRequestSession } from "@/lib/shopware/session";
 
 import "./globals.css";
 
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const session = createShopwareSession();
+  const session = getShopwareRequestSession();
   const navigation = await getMainNavigation(session.client);
 
   return (
