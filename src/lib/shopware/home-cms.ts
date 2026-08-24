@@ -1,6 +1,5 @@
 import "server-only";
 
-import { getCmsPage } from "@/lib/shopware/cms";
 import { createShopwareClient } from "@/lib/shopware/client";
 import { getShopwareContext } from "@/lib/shopware/context";
 
@@ -25,16 +24,13 @@ export async function getHomeCmsPage(options: GetHomeCmsPageOptions = {}) {
   );
   const category = categoryResponse.data;
 
-  if (!category.cmsPageId) {
+  if (!category.cmsPage) {
     throw new Error(
       `Shopware navigation category ${navigationCategoryId} has no CMS page assigned.`,
     );
   }
 
-  return getCmsPage({
-    id: category.cmsPageId,
-    contextToken: options.contextToken,
-  });
+  return category.cmsPage;
 }
 
 export type HomeCmsPage = Awaited<ReturnType<typeof getHomeCmsPage>>;
