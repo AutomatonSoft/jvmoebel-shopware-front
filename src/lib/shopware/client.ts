@@ -8,6 +8,7 @@ import { getShopwareConfig, type ShopwareConfig } from "@/lib/shopware/config";
 export type CreateShopwareClientOptions = {
   config?: ShopwareConfig;
   contextToken?: string;
+  onContextChanged?: (contextToken: string) => void;
 };
 
 export function createShopwareClient(
@@ -15,9 +16,17 @@ export function createShopwareClient(
 ) {
   const { endpoint, accessToken } = options.config ?? getShopwareConfig();
 
-  return createAPIClient<operations>({
+  const client = createAPIClient<operations>({
     baseURL: endpoint,
     accessToken,
     contextToken: options.contextToken,
   });
+
+  if (options.onContextChanged) {
+    client.hook("onContextChanged", options.onContextChanged);
+  }
+
+  return client;
 }
+
+export type ShopwareClient = ReturnType<typeof createShopwareClient>;

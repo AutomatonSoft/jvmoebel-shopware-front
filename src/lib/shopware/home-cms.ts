@@ -1,16 +1,15 @@
 import "server-only";
 
-import { createShopwareClient } from "@/lib/shopware/client";
+import type { ShopwareClient } from "@/lib/shopware/client";
 import { getShopwareContext } from "@/lib/shopware/context";
 
 export type GetHomeCmsPageOptions = {
-  contextToken?: string;
+  client: ShopwareClient;
 };
 
-export async function getHomeCmsPage(options: GetHomeCmsPageOptions = {}) {
-  const context = await getShopwareContext(options);
+export async function getHomeCmsPage({ client }: GetHomeCmsPageOptions) {
+  const context = await getShopwareContext(client);
   const navigationCategoryId = context.salesChannel.navigationCategoryId;
-  const client = createShopwareClient(options);
 
   const categoryResponse = await client.invoke(
     "readCategory post /category/{navigationId}",

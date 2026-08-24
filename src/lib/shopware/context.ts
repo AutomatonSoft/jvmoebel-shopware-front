@@ -1,18 +1,8 @@
 import "server-only";
 
-import { createShopwareClient } from "@/lib/shopware/client";
+import type { ShopwareClient } from "@/lib/shopware/client";
 
-export type GetShopwareContextOptions = {
-  contextToken?: string;
-};
-
-export async function getShopwareContext(
-  options: GetShopwareContextOptions = {},
-) {
-  const client = createShopwareClient({
-    contextToken: options.contextToken,
-  });
-
+export async function getShopwareContext(client: ShopwareClient) {
   const response = await client.invoke("readContext get /context", {
     fetchOptions: {
       cache: "no-store",
