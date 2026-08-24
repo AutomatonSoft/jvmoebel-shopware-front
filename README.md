@@ -7,6 +7,10 @@ Bun 1.3.14
 Install:
 bun install
 
+Shopware configuration:
+Copy .env.example to .env.local and replace the placeholder values with the
+Store API endpoint and access key of the Shopware sales channel.
+
 Development:
 bun dev
 
