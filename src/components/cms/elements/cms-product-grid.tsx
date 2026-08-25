@@ -2,91 +2,16 @@ import { ArrowRight, Star } from "lucide-react";
 import Image from "next/image";
 
 import type { CmsSlotComponentProps } from "@/components/cms/cms-page-renderer";
-
-function getRecord(value: unknown): Record<string, unknown> | undefined {
-  if (typeof value !== "object" || value === null || Array.isArray(value)) {
-    return undefined;
-  }
-
-  return value as Record<string, unknown>;
-}
-
-function getString(record: Record<string, unknown> | undefined, key: string) {
-  const value = record?.[key];
-
-  return typeof value === "string" && value.trim() ? value : undefined;
-}
-
-function getNumber(record: Record<string, unknown> | undefined, key: string) {
-  const value = record?.[key];
-
-  return typeof value === "number" && Number.isFinite(value)
-    ? value
-    : undefined;
-}
-
-function getProducts(data: Record<string, unknown> | undefined) {
-  const productsValue = data?.products;
-  const productsRecord = getRecord(productsValue);
-  const productValues = Array.isArray(productsValue)
-    ? productsValue
-    : productsRecord
-      ? Object.values(productsRecord)
-      : [];
-
-  return productValues
-    .flatMap((value, index) => {
-      const product = getRecord(value);
-      const translated = getRecord(product?.translated);
-      const cover = getRecord(product?.cover);
-      const media = getRecord(cover?.media);
-      const calculatedPrice = getRecord(product?.calculatedPrice);
-      const listPrice = getRecord(calculatedPrice?.listPrice);
-      const id = getString(product, "id");
-      const name = getString(translated, "name") || getString(product, "name");
-      const url = getString(product, "url");
-      const imageUrl = getString(media, "url");
-      const unitPrice = getNumber(calculatedPrice, "unitPrice");
-
-      if (!id || !name || !url || !imageUrl || unitPrice === undefined) {
-        return [];
-      }
-
-      const previousPrice = getNumber(listPrice, "price");
-
-      return [
-        {
-          badge: getString(product, "badge"),
-          description:
-            getString(translated, "description") ||
-            getString(product, "description"),
-          id,
-          imageAlt: getString(media, "alt") || name,
-          imageUrl,
-          name,
-          position:
-            typeof product?.position === "number" ? product.position : index,
-          previousPrice,
-          rating: getNumber(product, "ratingAverage"),
-          reviewCount: getNumber(product, "reviewCount"),
-          unitPrice,
-          url,
-        },
-      ];
-    })
-    .sort((first, second) => first.position - second.position);
-}
+import { parseCmsProductGridData } from "@/lib/cms/contracts/product-grid";
 
 export function CmsProductGrid({ slot }: CmsSlotComponentProps) {
-  const data = getRecord(slot.data);
-  const products = getProducts(data);
-  const title = getString(data, "title");
-  const locale = getString(data, "locale");
-  const currency = getString(data, "currency");
+  const data = parseCmsProductGridData(slot.data);
 
-  if (!title || !locale || !currency || products.length === 0) {
+  if (!data) {
     return null;
   }
+
+  const { currency, eyebrow, locale, products, title, viewAll } = data;
 
   let priceFormatter: Intl.NumberFormat;
 
@@ -99,11 +24,6 @@ export function CmsProductGrid({ slot }: CmsSlotComponentProps) {
   } catch {
     return null;
   }
-
-  const eyebrow = getString(data, "eyebrow");
-  const viewAll = getRecord(data?.viewAll);
-  const viewAllLabel = getString(viewAll, "label");
-  const viewAllUrl = getString(viewAll, "url");
 
   return (
     <section
@@ -122,12 +42,12 @@ export function CmsProductGrid({ slot }: CmsSlotComponentProps) {
               {title}
             </h2>
           </div>
-          {viewAllLabel && viewAllUrl && (
+          {viewAll && (
             <a
               className="group hidden items-center gap-2 text-sm font-semibold underline underline-offset-4 transition-colors hover:text-primary sm:inline-flex"
-              href={viewAllUrl}
+              href={viewAll.url}
             >
-              {viewAllLabel}
+              {viewAll.label}
               <ArrowRight className="size-4 transition-transform motion-safe:group-hover:translate-x-1" />
             </a>
           )}
@@ -152,11 +72,11 @@ export function CmsProductGrid({ slot }: CmsSlotComponentProps) {
                   href={product.url}
                 >
                   <Image
-                    alt={product.imageAlt}
+                    alt={product.image.alt}
                     className="object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.035]"
                     fill
                     sizes="(max-width: 1024px) 50vw, 25vw"
-                    src={product.imageUrl}
+                    src={product.image.url}
                   />
                   {product.badge && (
                     <span className="absolute top-3 left-3 rounded-full bg-white/90 px-3 py-1.5 text-[0.625rem] font-semibold tracking-wide text-foreground uppercase backdrop-blur">
@@ -208,12 +128,12 @@ export function CmsProductGrid({ slot }: CmsSlotComponentProps) {
           })}
         </div>
 
-        {viewAllLabel && viewAllUrl && (
+        {viewAll && (
           <a
             className="mt-10 flex h-11 items-center justify-center gap-2 rounded-xl border border-foreground text-sm font-semibold transition-colors hover:bg-foreground hover:text-background sm:hidden"
-            href={viewAllUrl}
+            href={viewAll.url}
           >
-            {viewAllLabel}
+            {viewAll.label}
             <ArrowRight className="size-4" />
           </a>
         )}
