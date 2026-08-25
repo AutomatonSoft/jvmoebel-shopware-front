@@ -11,6 +11,10 @@ Shopware configuration:
 Copy .env.example to .env.local and replace the placeholder values with the
 Store API endpoint and access key of the Shopware sales channel.
 
+CMS integration contract:
+See [docs/cms-contract.md](docs/cms-contract.md) for the supported CMS elements
+and the JSON data expected from the Shopware backend.
+
 Development:
 bun dev
 
