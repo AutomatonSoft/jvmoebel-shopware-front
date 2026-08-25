@@ -24,6 +24,11 @@ See [docs/product-listing-contract.md](docs/product-listing-contract.md) for the
 normalized `/shop` product model, filter and sorting behavior, and Shopware
 Administration responsibility boundary.
 
+Product detail contract:
+See [docs/product-detail-contract.md](docs/product-detail-contract.md) for the
+normalized `/product/[slug]` model, variant and media rules, and Shopware
+Administration responsibility boundary.
+
 Development:
 bun dev
 
