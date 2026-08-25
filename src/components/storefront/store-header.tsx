@@ -7,13 +7,15 @@ import {
   UserRound,
   X,
 } from "lucide-react";
-import Link from "next/link";
 
+import { StoreLogo } from "@/components/storefront/store-logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import type { StorefrontBranding } from "@/lib/shopware/storefront-branding";
 import type { MainNavigation } from "@/lib/shopware/navigation";
 
 export type StoreHeaderProps = {
+  branding: StorefrontBranding;
   navigation: MainNavigation;
 };
 
@@ -44,7 +46,7 @@ function StoreSearchForm({ className }: { className: string }) {
   );
 }
 
-export function StoreHeader({ navigation }: StoreHeaderProps) {
+export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
       <div className="relative mx-auto flex h-18 max-w-360 items-center gap-6 px-4 sm:px-8">
@@ -69,16 +71,11 @@ export function StoreHeader({ navigation }: StoreHeaderProps) {
           </details>
         )}
 
-        <Link
-          aria-label="JVMöbel home"
+        <StoreLogo
+          branding={branding}
           className="absolute left-1/2 flex -translate-x-1/2 items-center gap-2 lg:static lg:translate-x-0"
-          href="/"
-        >
-          <span className="flex size-9 items-center justify-center rounded-full bg-foreground text-xs font-bold tracking-tight text-background">
-            JV
-          </span>
-          <span className="text-sm font-bold tracking-[0.16em]">MOEBEL</span>
-        </Link>
+          variant="header"
+        />
 
         {navigation.length > 0 && (
           <nav className="hidden items-center gap-6 lg:flex">
