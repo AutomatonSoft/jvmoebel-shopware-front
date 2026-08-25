@@ -45,7 +45,7 @@ function mapCategory(category: ShopwareCategory): StoreNavigationItem {
     id: category.id,
     label: category.translated.name || category.name,
     href: getCategoryHref(category),
-    children: category.children.map(mapCategory),
+    children: (category.children ?? []).map(mapCategory),
   };
 }
 
