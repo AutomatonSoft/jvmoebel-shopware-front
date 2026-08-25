@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { ProductBuyBox } from "@/components/storefront/product-detail/product-buy-box";
 import { ProductGallery } from "@/components/storefront/product-detail/product-gallery";
 import { getShopProductDetailMock } from "@/lib/shopware/mocks/product-detail";
 
@@ -61,17 +62,11 @@ export default async function ProductPage({
             key={page.product.id}
           />
 
-          <div className="lg:sticky lg:top-28 lg:py-6">
-            <p className="text-xs font-semibold tracking-[0.14em] text-primary uppercase">
-              {page.product.company}
-            </p>
-            <h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em] sm:text-5xl">
-              {page.product.name}
-            </h1>
-            <p className="mt-6 max-w-2xl text-sm leading-7 text-muted-foreground">
-              {page.product.longDescription}
-            </p>
-          </div>
+          <ProductBuyBox
+            currency={page.currency}
+            locale={page.locale}
+            product={page.product}
+          />
         </section>
       </div>
     </main>
