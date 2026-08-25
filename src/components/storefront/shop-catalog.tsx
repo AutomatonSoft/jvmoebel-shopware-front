@@ -216,10 +216,6 @@ export function ShopCatalog({ isLoading = false, listing }: ShopCatalogProps) {
               </Dialog.Portal>
             </Dialog.Root>
 
-            <p className="hidden text-xs text-muted-foreground sm:block">
-              Showing {products.length} of {listing.products.length}
-            </p>
-
             <div className="ml-auto flex items-center gap-2 text-xs">
               <span className="hidden text-muted-foreground sm:inline">
                 Sort by
