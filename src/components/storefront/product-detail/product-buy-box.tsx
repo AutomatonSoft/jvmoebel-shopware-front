@@ -1,6 +1,7 @@
 import { RotateCcw, ShieldCheck, ShoppingBag, Star, Truck } from "lucide-react";
 
 import { ProductOptions } from "@/components/storefront/product-detail/product-options";
+import { ProductInquiryDialog } from "@/components/storefront/product-detail/product-inquiry-dialog";
 import { Button } from "@/components/ui/button";
 import type {
   ShopProductDetail,
@@ -108,9 +109,7 @@ export function ProductBuyBox({
           Add to bag
           <ShoppingBag className="size-4" />
         </Button>
-        <Button className="w-full" size="lg" type="button" variant="outline">
-          Ask about this product
-        </Button>
+        <ProductInquiryDialog productName={product.name} />
       </div>
     </aside>
   );
