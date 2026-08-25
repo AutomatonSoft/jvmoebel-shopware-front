@@ -3,13 +3,20 @@
 import { Dialog } from "@base-ui/react/dialog";
 import {
   ChevronDown,
+  LoaderCircle,
   Search,
   SlidersHorizontal,
   Sparkles,
   X,
 } from "lucide-react";
 import Link from "next/link";
-import { useState, type Dispatch, type SetStateAction } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 
 import { ShopProductCard } from "@/components/storefront/shop-product-card";
 import { Button } from "@/components/ui/button";
@@ -71,6 +78,7 @@ const shopProductSizes = [
 ] as const satisfies readonly Omit<FilterOption<ShopProductSize>, "count">[];
 
 const filterPreviewLimit = 8;
+const resultScrollReleaseDelay = 700;
 
 function getCategoryOptions(products: readonly ShopProduct[]) {
   const options = new Map<string, FilterOption>();
@@ -448,10 +456,11 @@ function ProductFilterPanel({
 }
 
 export type ShopCatalogProps = {
+  isLoading?: boolean;
   listing: ShopProductListing;
 };
 
-export function ShopCatalog({ listing }: ShopCatalogProps) {
+export function ShopCatalog({ isLoading = false, listing }: ShopCatalogProps) {
   const prices = listing.products.map((product) => product.unitPrice);
   const minimumPriceBound = Math.floor(Math.min(...prices) / 10) * 10;
   const maximumPriceBound = Math.ceil(Math.max(...prices) / 10) * 10;
@@ -468,6 +477,9 @@ export function ShopCatalog({ listing }: ShopCatalogProps) {
   const [minimumPrice, setMinimumPrice] = useState(minimumPriceBound);
   const [maximumPrice, setMaximumPrice] = useState(maximumPriceBound);
   const [sort, setSort] = useState<ShopProductSort>("featured");
+  const previousLoadingRef = useRef(isLoading);
+  const productResultsRef = useRef<HTMLDivElement>(null);
+  const resultHeightReleaseTimerRef = useRef<number>(null);
   const activeFilterCount =
     selectedCategories.length +
     selectedColors.length +
@@ -489,6 +501,46 @@ export function ShopCatalog({ listing }: ShopCatalogProps) {
       sizes: selectedSizes,
     },
     sort,
+  );
+
+  useEffect(() => {
+    const productResults = productResultsRef.current;
+    const wasLoading = previousLoadingRef.current;
+    previousLoadingRef.current = isLoading;
+
+    if (!productResults) {
+      return;
+    }
+
+    if (resultHeightReleaseTimerRef.current !== null) {
+      window.clearTimeout(resultHeightReleaseTimerRef.current);
+    }
+
+    if (isLoading) {
+      productResults.style.minHeight = `${Math.ceil(productResults.getBoundingClientRect().height)}px`;
+      return;
+    }
+
+    if (!wasLoading) {
+      return;
+    }
+
+    window.requestAnimationFrame(() => {
+      productResults.scrollIntoView({ behavior: "smooth", block: "start" });
+
+      resultHeightReleaseTimerRef.current = window.setTimeout(() => {
+        productResults.style.removeProperty("min-height");
+      }, resultScrollReleaseDelay);
+    });
+  }, [isLoading]);
+
+  useEffect(
+    () => () => {
+      if (resultHeightReleaseTimerRef.current !== null) {
+        window.clearTimeout(resultHeightReleaseTimerRef.current);
+      }
+    },
+    [],
   );
 
   function clearFilters() {
@@ -569,7 +621,11 @@ export function ShopCatalog({ listing }: ShopCatalogProps) {
           <ProductFilterPanel {...filterPanelProps} />
         </aside>
 
-        <section aria-label="Product results" className="min-w-0">
+        <section
+          aria-busy={isLoading}
+          aria-label="Product results"
+          className="min-w-0"
+        >
           <div className="mb-6 flex items-center justify-between gap-3">
             <Dialog.Root>
               <Dialog.Trigger
@@ -686,32 +742,55 @@ export function ShopCatalog({ listing }: ShopCatalogProps) {
             </div>
           </div>
 
-          {products.length > 0 ? (
-            <div className="grid grid-cols-2 gap-x-3 gap-y-9 md:grid-cols-3 md:gap-x-4 xl:grid-cols-4">
-              {products.map((product, index) => (
-                <ShopProductCard
-                  currency={listing.currency}
-                  eagerImage={index < 4}
-                  key={product.id}
-                  locale={listing.locale}
-                  product={product}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="flex min-h-96 flex-col items-center justify-center rounded-2xl border border-dashed bg-card/40 px-6 text-center">
-              <span className="mb-4 flex size-12 items-center justify-center rounded-full bg-muted">
-                <Sparkles className="size-5 text-primary" />
-              </span>
-              <h2 className="text-lg font-semibold">No matching products</h2>
-              <p className="mt-2 max-w-sm text-sm leading-6 text-muted-foreground">
-                Try removing one or more filters to see more furniture.
-              </p>
-              <Button className="mt-5" onClick={clearFilters} variant="outline">
-                Clear filters
-              </Button>
-            </div>
-          )}
+          <div className="relative scroll-mt-28" ref={productResultsRef}>
+            {products.length > 0 ? (
+              <div
+                className={`grid grid-cols-2 gap-x-3 gap-y-9 transition-[opacity,filter] duration-200 md:grid-cols-3 md:gap-x-4 xl:grid-cols-4 ${isLoading ? "pointer-events-none opacity-35 saturate-50" : ""}`}
+              >
+                {products.map((product, index) => (
+                  <ShopProductCard
+                    currency={listing.currency}
+                    eagerImage={index < 4}
+                    key={product.id}
+                    locale={listing.locale}
+                    product={product}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div
+                className={`flex min-h-96 flex-col items-center justify-center rounded-2xl border border-dashed bg-card/40 px-6 text-center transition-opacity duration-200 ${isLoading ? "pointer-events-none opacity-35" : ""}`}
+              >
+                <span className="mb-4 flex size-12 items-center justify-center rounded-full bg-muted">
+                  <Sparkles className="size-5 text-primary" />
+                </span>
+                <h2 className="text-lg font-semibold">No matching products</h2>
+                <p className="mt-2 max-w-sm text-sm leading-6 text-muted-foreground">
+                  Try removing one or more filters to see more furniture.
+                </p>
+                <Button
+                  className="mt-5"
+                  onClick={clearFilters}
+                  variant="outline"
+                >
+                  Clear filters
+                </Button>
+              </div>
+            )}
+
+            {isLoading && (
+              <div
+                aria-live="polite"
+                className="absolute inset-0 z-10 cursor-wait bg-background/45 backdrop-blur-[1px]"
+                role="status"
+              >
+                <div className="sticky top-[45dvh] mx-auto flex w-fit items-center gap-3 rounded-full border bg-card px-5 py-3 text-sm font-semibold shadow-xl">
+                  <LoaderCircle className="size-5 animate-spin text-primary" />
+                  Updating products...
+                </div>
+              </div>
+            )}
+          </div>
         </section>
       </div>
     </div>

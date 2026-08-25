@@ -139,6 +139,18 @@ The initial price bounds are calculated from the lowest and highest
 their values to the available range and to each other; there is no price
 slider.
 
+### Request loading state
+
+- `ShopCatalog.isLoading` must reflect the real pending state of the product
+  request. The frontend does not add an artificial loading delay.
+- While a request is pending, only the product results area is dimmed and
+  covered by its local loading indicator. Filters and the rest of the page
+  remain available.
+- When `isLoading` changes from `true` to `false`, the frontend smoothly scrolls
+  to the beginning of the updated product grid.
+- Local mock filtering is synchronous, so the mock route keeps `isLoading`
+  disabled.
+
 ### Long option lists
 
 - Colour, company, size, category, and material initially show at most eight
