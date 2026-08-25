@@ -16,6 +16,13 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   filterAndSortShopProducts,
   type ShopProduct,
   type ShopProductColor,
@@ -625,28 +632,58 @@ export function ShopCatalog({ listing }: ShopCatalogProps) {
               Showing {products.length} of {listing.products.length}
             </p>
 
-            <label className="ml-auto flex items-center gap-2 text-xs">
+            <div className="ml-auto flex items-center gap-2 text-xs">
               <span className="hidden text-muted-foreground sm:inline">
                 Sort by
               </span>
-              <span className="relative">
-                <select
+              <Select
+                onValueChange={(value) => setSort(value as ShopProductSort)}
+                value={sort}
+              >
+                <SelectTrigger
                   aria-label="Sort products"
-                  className="h-10 min-w-40 cursor-pointer appearance-none rounded-lg border bg-card py-0 pr-9 pl-3 text-xs outline-none transition-[border-color,box-shadow] focus:border-primary focus:ring-3 focus:ring-primary/15"
-                  onChange={(event) =>
-                    setSort(event.target.value as ShopProductSort)
-                  }
-                  value={sort}
+                  className="h-10 min-w-40 cursor-pointer bg-card px-3 text-xs shadow-xs transition-[border-color,box-shadow,background-color] hover:border-primary/60 hover:bg-accent/30 data-popup-open:border-primary data-popup-open:ring-3 data-popup-open:ring-primary/15"
                 >
-                  <option value="featured">Featured</option>
-                  <option value="newest">Newest</option>
-                  <option value="price-ascending">Price: low to high</option>
-                  <option value="price-descending">Price: high to low</option>
-                  <option value="rating">Best rated</option>
-                </select>
-                <ChevronDown className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground" />
-              </span>
-            </label>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent
+                  align="end"
+                  alignItemWithTrigger={false}
+                  className="min-w-52 p-1.5"
+                >
+                  <SelectItem
+                    className="cursor-pointer py-2 text-xs"
+                    value="featured"
+                  >
+                    Featured
+                  </SelectItem>
+                  <SelectItem
+                    className="cursor-pointer py-2 text-xs"
+                    value="newest"
+                  >
+                    Newest
+                  </SelectItem>
+                  <SelectItem
+                    className="cursor-pointer py-2 text-xs"
+                    value="price-ascending"
+                  >
+                    Price: low to high
+                  </SelectItem>
+                  <SelectItem
+                    className="cursor-pointer py-2 text-xs"
+                    value="price-descending"
+                  >
+                    Price: high to low
+                  </SelectItem>
+                  <SelectItem
+                    className="cursor-pointer py-2 text-xs"
+                    value="rating"
+                  >
+                    Best rated
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           {products.length > 0 ? (
