@@ -2,39 +2,17 @@ import Image from "next/image";
 
 import { CmsButton } from "@/components/cms/cms-button";
 import type { CmsSlotComponentProps } from "@/components/cms/cms-page-renderer";
-
-function getRecord(value: unknown): Record<string, unknown> | undefined {
-  if (typeof value !== "object" || value === null || Array.isArray(value)) {
-    return undefined;
-  }
-
-  return value as Record<string, unknown>;
-}
-
-function getString(record: Record<string, unknown> | undefined, key: string) {
-  const value = record?.[key];
-
-  return typeof value === "string" && value.trim() ? value : undefined;
-}
+import { parseCmsHeroData } from "@/lib/cms/contracts/hero";
 
 export function CmsHero({ slot }: CmsSlotComponentProps) {
-  const data = getRecord(slot.data);
-  const image = getRecord(data?.image);
-  const primaryLink = getRecord(data?.primaryLink);
-  const secondaryLink = getRecord(data?.secondaryLink);
-  const title = getString(data, "title");
-  const imageUrl = getString(image, "url");
+  const data = parseCmsHeroData(slot.data);
 
-  if (!title || !imageUrl) {
+  if (!data) {
     return null;
   }
 
-  const eyebrow = getString(data, "eyebrow");
-  const description = getString(data, "description");
-  const primaryLabel = getString(primaryLink, "label");
-  const primaryUrl = getString(primaryLink, "url");
-  const secondaryLabel = getString(secondaryLink, "label");
-  const secondaryUrl = getString(secondaryLink, "url");
+  const { description, eyebrow, image, primaryLink, secondaryLink, title } =
+    data;
 
   return (
     <section
@@ -42,12 +20,12 @@ export function CmsHero({ slot }: CmsSlotComponentProps) {
       data-cms-element="jv-hero"
     >
       <Image
-        alt={getString(image, "alt") || ""}
+        alt={image.alt}
         className="scale-[1.005] object-cover"
         fill
         loading="eager"
         sizes="100vw"
-        src={imageUrl}
+        src={image.url}
       />
       <div className="absolute inset-0 bg-linear-to-r from-black/75 via-black/35 to-black/5" />
       <div className="relative mx-auto flex min-h-136 max-w-360 items-end px-6 py-14 sm:min-h-168 sm:items-center sm:px-12 lg:px-20">
@@ -65,20 +43,20 @@ export function CmsHero({ slot }: CmsSlotComponentProps) {
               {description}
             </p>
           )}
-          {(primaryLabel && primaryUrl) || (secondaryLabel && secondaryUrl) ? (
+          {primaryLink || secondaryLink ? (
             <div className="mt-8 flex flex-wrap items-center gap-5">
-              {primaryLabel && primaryUrl && (
+              {primaryLink && (
                 <CmsButton
-                  href={primaryUrl}
-                  label={primaryLabel}
-                  size={primaryLink?.size}
+                  href={primaryLink.url}
+                  label={primaryLink.label}
+                  size={primaryLink.size}
                 />
               )}
-              {secondaryLabel && secondaryUrl && (
+              {secondaryLink && (
                 <CmsButton
-                  href={secondaryUrl}
-                  label={secondaryLabel}
-                  size={secondaryLink?.size}
+                  href={secondaryLink.url}
+                  label={secondaryLink.label}
+                  size={secondaryLink.size}
                   variant="link"
                 />
               )}
