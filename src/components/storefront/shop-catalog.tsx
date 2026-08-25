@@ -1,7 +1,13 @@
 "use client";
 
 import { Dialog } from "@base-ui/react/dialog";
-import { ChevronDown, SlidersHorizontal, Sparkles, X } from "lucide-react";
+import {
+  ChevronDown,
+  Search,
+  SlidersHorizontal,
+  Sparkles,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { useState, type Dispatch, type SetStateAction } from "react";
 
@@ -55,6 +61,8 @@ const shopProductSizes = [
   { label: "Large", value: "large" },
   { label: "Extra large", value: "extra-large" },
 ] as const satisfies readonly Omit<FilterOption<ShopProductSize>, "count">[];
+
+const filterPreviewLimit = 8;
 
 function getCategoryOptions(products: readonly ShopProduct[]) {
   const options = new Map<string, FilterOption>();
@@ -179,6 +187,87 @@ function CheckboxOption({
   );
 }
 
+function ExpandableFilterOptions<TOption>({
+  getKey,
+  getSearchText,
+  layoutClassName,
+  options,
+  renderOption,
+  searchPlaceholder,
+}: {
+  getKey: (option: TOption) => string;
+  getSearchText?: (option: TOption) => string;
+  layoutClassName: string;
+  options: readonly TOption[];
+  renderOption: (option: TOption) => React.ReactNode;
+  searchPlaceholder?: string;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const [query, setQuery] = useState("");
+  const normalizedQuery = query.trim().toLocaleLowerCase();
+  const filteredOptions =
+    expanded && getSearchText
+      ? options.filter((option) =>
+          getSearchText(option).toLocaleLowerCase().includes(normalizedQuery),
+        )
+      : options;
+  const visibleOptions = expanded
+    ? filteredOptions
+    : filteredOptions.slice(0, filterPreviewLimit);
+
+  function toggleExpanded() {
+    if (expanded) {
+      setQuery("");
+    }
+
+    setExpanded(!expanded);
+  }
+
+  return (
+    <>
+      {expanded && getSearchText && (
+        <label className="relative block">
+          <span className="sr-only">
+            {searchPlaceholder ?? "Search options"}
+          </span>
+          <Search className="pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            className="h-9 bg-background pr-3 pl-9 text-xs"
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder={searchPlaceholder ?? "Search options"}
+            type="search"
+            value={query}
+          />
+        </label>
+      )}
+
+      <div
+        className={`${layoutClassName} ${expanded ? "max-h-60 overflow-y-auto pr-2" : ""}`}
+      >
+        {visibleOptions.map((option) => (
+          <div key={getKey(option)}>{renderOption(option)}</div>
+        ))}
+        {visibleOptions.length === 0 && (
+          <p className="py-2 text-xs text-muted-foreground">
+            No options found.
+          </p>
+        )}
+      </div>
+
+      {options.length > filterPreviewLimit && (
+        <button
+          aria-expanded={expanded}
+          className="cursor-pointer text-xs font-semibold text-primary underline underline-offset-4 transition-colors hover:text-destructive"
+          onClick={toggleExpanded}
+          type="button"
+        >
+          {expanded ? "Show less" : `Show all (${options.length})`}
+        </button>
+      )}
+    </>
+  );
+}
+
 function ProductFilterPanel({
   activeFilterCount,
   categories,
@@ -219,8 +308,11 @@ function ProductFilterPanel({
       </div>
 
       <FilterGroup title="Colour">
-        <div className="flex flex-wrap gap-3">
-          {colors.map((color) => {
+        <ExpandableFilterOptions
+          getKey={(color) => color.value}
+          layoutClassName="flex flex-wrap gap-3"
+          options={colors}
+          renderOption={(color) => {
             const selected = selectedColors.includes(color.value);
 
             return (
@@ -228,15 +320,14 @@ function ProductFilterPanel({
                 aria-label={`${color.label}, ${color.count} products`}
                 aria-pressed={selected}
                 className={`size-9 cursor-pointer rounded-full border-2 border-background shadow-[0_0_0_1px_var(--color-border)] transition-[box-shadow,transform] hover:scale-105 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${selected ? "shadow-[0_0_0_2px_var(--color-foreground)]" : ""}`}
-                key={color.value}
                 onClick={() => onToggleColor(color.value)}
                 style={{ backgroundColor: color.hex }}
                 title={color.label}
                 type="button"
               />
             );
-          })}
-        </div>
+          }}
+        />
       </FilterGroup>
 
       <FilterGroup title="Price">
@@ -279,51 +370,69 @@ function ProductFilterPanel({
       </FilterGroup>
 
       <FilterGroup title="Company">
-        {companies.map((option) => (
-          <CheckboxOption
-            checked={selectedCompanies.includes(option.value)}
-            count={option.count}
-            key={option.value}
-            label={option.label}
-            onChange={() => onToggleCompany(option.value)}
-          />
-        ))}
+        <ExpandableFilterOptions
+          getKey={(option) => option.value}
+          getSearchText={(option) => option.label}
+          layoutClassName="space-y-3"
+          options={companies}
+          renderOption={(option) => (
+            <CheckboxOption
+              checked={selectedCompanies.includes(option.value)}
+              count={option.count}
+              label={option.label}
+              onChange={() => onToggleCompany(option.value)}
+            />
+          )}
+          searchPlaceholder="Search companies"
+        />
       </FilterGroup>
 
       <FilterGroup title="Size">
-        {sizes.map((option) => (
-          <CheckboxOption
-            checked={selectedSizes.includes(option.value)}
-            count={option.count}
-            key={option.value}
-            label={option.label}
-            onChange={() => onToggleSize(option.value)}
-          />
-        ))}
+        <ExpandableFilterOptions
+          getKey={(option) => option.value}
+          layoutClassName="space-y-3"
+          options={sizes}
+          renderOption={(option) => (
+            <CheckboxOption
+              checked={selectedSizes.includes(option.value)}
+              count={option.count}
+              label={option.label}
+              onChange={() => onToggleSize(option.value)}
+            />
+          )}
+        />
       </FilterGroup>
 
       <FilterGroup title="Category">
-        {categories.map((option) => (
-          <CheckboxOption
-            checked={selectedCategories.includes(option.value)}
-            count={option.count}
-            key={option.value}
-            label={option.label}
-            onChange={() => onToggleCategory(option.value)}
-          />
-        ))}
+        <ExpandableFilterOptions
+          getKey={(option) => option.value}
+          layoutClassName="space-y-3"
+          options={categories}
+          renderOption={(option) => (
+            <CheckboxOption
+              checked={selectedCategories.includes(option.value)}
+              count={option.count}
+              label={option.label}
+              onChange={() => onToggleCategory(option.value)}
+            />
+          )}
+        />
       </FilterGroup>
 
       <FilterGroup title="Material">
-        {materials.map((option) => (
-          <CheckboxOption
-            checked={selectedMaterials.includes(option.value)}
-            count={option.count}
-            key={option.value}
-            label={option.label}
-            onChange={() => onToggleMaterial(option.value)}
-          />
-        ))}
+        <ExpandableFilterOptions
+          getKey={(option) => option.value}
+          layoutClassName="space-y-3"
+          options={materials}
+          renderOption={(option) => (
+            <CheckboxOption
+              checked={selectedMaterials.includes(option.value)}
+              count={option.count}
+              label={option.label}
+              onChange={() => onToggleMaterial(option.value)}
+            />
+          )}
+        />
       </FilterGroup>
     </div>
   );
