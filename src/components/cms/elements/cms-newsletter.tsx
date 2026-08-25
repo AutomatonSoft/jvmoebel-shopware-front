@@ -1,46 +1,26 @@
 import type { CmsSlotComponentProps } from "@/components/cms/cms-page-renderer";
 import { NewsletterForm } from "@/components/storefront/newsletter-form";
-import { resolveCmsButtonSize } from "@/lib/cms/button-size";
-
-function getRecord(value: unknown): Record<string, unknown> | undefined {
-  if (typeof value !== "object" || value === null || Array.isArray(value)) {
-    return undefined;
-  }
-
-  return value as Record<string, unknown>;
-}
-
-function getString(record: Record<string, unknown> | undefined, key: string) {
-  const value = record?.[key];
-
-  return typeof value === "string" && value.trim() ? value : undefined;
-}
+import { parseCmsNewsletterData } from "@/lib/cms/contracts/newsletter";
 
 export function CmsNewsletter({ slot }: CmsSlotComponentProps) {
-  const data = getRecord(slot.data);
-  const title = getString(data, "title");
-  const description = getString(data, "description");
-  const buttonLabel = getString(data, "buttonLabel");
-  const errorMessage = getString(data, "errorMessage");
-  const invalidEmailMessage = getString(data, "invalidEmailMessage");
-  const placeholder = getString(data, "placeholder");
-  const storefrontUrl = getString(data, "storefrontUrl");
-  const successMessage = getString(data, "successMessage");
+  const data = parseCmsNewsletterData(slot.data);
 
-  if (
-    !title ||
-    !description ||
-    !buttonLabel ||
-    !errorMessage ||
-    !invalidEmailMessage ||
-    !placeholder ||
-    !storefrontUrl ||
-    !successMessage
-  ) {
+  if (!data) {
     return null;
   }
 
-  const eyebrow = getString(data, "eyebrow");
+  const {
+    buttonLabel,
+    buttonSize,
+    description,
+    errorMessage,
+    eyebrow,
+    invalidEmailMessage,
+    placeholder,
+    storefrontUrl,
+    successMessage,
+    title,
+  } = data;
 
   return (
     <section
@@ -64,7 +44,7 @@ export function CmsNewsletter({ slot }: CmsSlotComponentProps) {
           </p>
           <NewsletterForm
             buttonLabel={buttonLabel}
-            buttonSize={resolveCmsButtonSize(data?.buttonSize)}
+            buttonSize={buttonSize}
             errorMessage={errorMessage}
             invalidEmailMessage={invalidEmailMessage}
             placeholder={placeholder}
