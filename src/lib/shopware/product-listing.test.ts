@@ -11,6 +11,7 @@ const products = [
     category: "sofas",
     categoryLabel: "Sofas",
     colors: [{ hex: "#ffffff", label: "Cream", value: "cream" }],
+    company: "JV Studio",
     createdAt: "2026-01-01",
     description: "Sofa",
     featuredRank: 1,
@@ -19,6 +20,7 @@ const products = [
     material: "Linen",
     name: "Sofa",
     rating: 4.5,
+    sizes: ["large", "extra-large"],
     unitPrice: 2000,
     url: "/product/sofa",
   },
@@ -26,6 +28,7 @@ const products = [
     category: "chairs",
     categoryLabel: "Chairs",
     colors: [{ hex: "#000000", label: "Black", value: "black" }],
+    company: "Nordic Form",
     createdAt: "2026-02-01",
     description: "Chair",
     featuredRank: 0,
@@ -34,6 +37,7 @@ const products = [
     material: "Velvet",
     name: "Chair",
     rating: 4.9,
+    sizes: ["small", "medium"],
     unitPrice: 900,
     url: "/product/chair",
   },
@@ -55,12 +59,30 @@ describe("shop product listing", () => {
         ...allProductsFilters,
         categories: ["sofas"],
         colors: ["cream"],
+        companies: ["JV Studio"],
         materials: ["Linen"],
+        sizes: ["large"],
       },
       "featured",
     );
 
     expect(filteredProducts.map((product) => product.id)).toEqual(["sofa"]);
+  });
+
+  test("matches any selected size within the size group", () => {
+    const filteredProducts = filterAndSortShopProducts(
+      products,
+      {
+        ...allProductsFilters,
+        sizes: ["medium", "extra-large"],
+      },
+      "featured",
+    );
+
+    expect(filteredProducts.map((product) => product.id)).toEqual([
+      "chair",
+      "sofa",
+    ]);
   });
 
   test("applies an inclusive price range", () => {

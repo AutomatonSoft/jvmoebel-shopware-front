@@ -4,11 +4,14 @@ export type ShopProductColor = Readonly<{
   value: string;
 }>;
 
+export type ShopProductSize = "small" | "medium" | "large" | "extra-large";
+
 export type ShopProduct = Readonly<{
   badge?: string;
   category: string;
   categoryLabel: string;
   colors: readonly ShopProductColor[];
+  company: string;
   createdAt: string;
   description: string;
   featuredRank: number;
@@ -22,6 +25,7 @@ export type ShopProduct = Readonly<{
   previousPrice?: number;
   rating?: number;
   reviewCount?: number;
+  sizes: readonly ShopProductSize[];
   unitPrice: number;
   url: string;
 }>;
@@ -38,9 +42,11 @@ export type ShopProductListing = Readonly<{
 export type ShopProductFilters = Readonly<{
   categories: readonly string[];
   colors: readonly string[];
+  companies?: readonly string[];
   materials: readonly string[];
   maximumPrice: number;
   minimumPrice: number;
+  sizes?: readonly ShopProductSize[];
 }>;
 
 export type ShopProductSort =
@@ -58,14 +64,26 @@ export function filterAndSortShopProducts(
     const matchesColor =
       filters.colors.length === 0 ||
       product.colors.some((color) => filters.colors.includes(color.value));
+    const matchesCompany =
+      !filters.companies?.length || filters.companies.includes(product.company);
     const matchesMaterial =
       filters.materials.length === 0 ||
       filters.materials.includes(product.material);
     const matchesPrice =
       product.unitPrice >= filters.minimumPrice &&
       product.unitPrice <= filters.maximumPrice;
+    const matchesSize =
+      !filters.sizes?.length ||
+      product.sizes.some((size) => filters.sizes?.includes(size));
 
-    return matchesCategory && matchesColor && matchesMaterial && matchesPrice;
+    return (
+      matchesCategory &&
+      matchesColor &&
+      matchesCompany &&
+      matchesMaterial &&
+      matchesPrice &&
+      matchesSize
+    );
   });
 
   return filteredProducts.toSorted((first, second) => {
