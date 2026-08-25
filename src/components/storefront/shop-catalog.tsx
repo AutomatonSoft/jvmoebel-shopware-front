@@ -19,6 +19,11 @@ import {
 } from "react";
 
 import { ShopProductCard } from "@/components/storefront/shop-product-card";
+import {
+  buildShopProductFilterOptions,
+  type ProductColorFilterOption,
+  type ProductFilterOption,
+} from "@/components/storefront/shop-catalog/filter-options";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -31,25 +36,17 @@ import {
 } from "@/components/ui/select";
 import {
   filterAndSortShopProducts,
-  type ShopProduct,
-  type ShopProductColor,
   type ShopProductListing,
   type ShopProductSize,
   type ShopProductSort,
 } from "@/lib/shopware/product-listing";
 
-type FilterOption<TValue extends string = string> = {
-  count: number;
-  label: string;
-  value: TValue;
-};
-
 type ProductFilterPanelProps = {
   activeFilterCount: number;
-  categories: FilterOption[];
-  colors: (ShopProductColor & { count: number })[];
-  companies: FilterOption[];
-  materials: FilterOption[];
+  categories: ProductFilterOption[];
+  colors: ProductColorFilterOption[];
+  companies: ProductFilterOption[];
+  materials: ProductFilterOption[];
   maximumPrice: number;
   maximumPriceBound: number;
   minimumPrice: number;
@@ -67,87 +64,11 @@ type ProductFilterPanelProps = {
   selectedCompanies: string[];
   selectedMaterials: string[];
   selectedSizes: ShopProductSize[];
-  sizes: FilterOption<ShopProductSize>[];
+  sizes: ProductFilterOption<ShopProductSize>[];
 };
-
-const shopProductSizes = [
-  { label: "Small", value: "small" },
-  { label: "Medium", value: "medium" },
-  { label: "Large", value: "large" },
-  { label: "Extra large", value: "extra-large" },
-] as const satisfies readonly Omit<FilterOption<ShopProductSize>, "count">[];
 
 const filterPreviewLimit = 8;
 const resultScrollReleaseDelay = 700;
-
-function getCategoryOptions(products: readonly ShopProduct[]) {
-  const options = new Map<string, FilterOption>();
-
-  for (const product of products) {
-    const option = options.get(product.category);
-    options.set(product.category, {
-      count: (option?.count ?? 0) + 1,
-      label: product.categoryLabel,
-      value: product.category,
-    });
-  }
-
-  return Array.from(options.values());
-}
-
-function getColorOptions(products: readonly ShopProduct[]) {
-  const options = new Map<string, ShopProductColor & { count: number }>();
-
-  for (const product of products) {
-    for (const color of product.colors) {
-      const option = options.get(color.value);
-      options.set(color.value, {
-        ...color,
-        count: (option?.count ?? 0) + 1,
-      });
-    }
-  }
-
-  return Array.from(options.values());
-}
-
-function getCompanyOptions(products: readonly ShopProduct[]) {
-  const options = new Map<string, FilterOption>();
-
-  for (const product of products) {
-    const option = options.get(product.company);
-    options.set(product.company, {
-      count: (option?.count ?? 0) + 1,
-      label: product.company,
-      value: product.company,
-    });
-  }
-
-  return Array.from(options.values());
-}
-
-function getMaterialOptions(products: readonly ShopProduct[]) {
-  const options = new Map<string, FilterOption>();
-
-  for (const product of products) {
-    const option = options.get(product.material);
-    options.set(product.material, {
-      count: (option?.count ?? 0) + 1,
-      label: product.material,
-      value: product.material,
-    });
-  }
-
-  return Array.from(options.values());
-}
-
-function getSizeOptions(products: readonly ShopProduct[]) {
-  return shopProductSizes.map((size) => ({
-    ...size,
-    count: products.filter((product) => product.sizes.includes(size.value))
-      .length,
-  }));
-}
 
 function toggleValue<TValue extends string>(
   value: TValue,
@@ -464,11 +385,8 @@ export function ShopCatalog({ isLoading = false, listing }: ShopCatalogProps) {
   const prices = listing.products.map((product) => product.unitPrice);
   const minimumPriceBound = Math.floor(Math.min(...prices) / 10) * 10;
   const maximumPriceBound = Math.ceil(Math.max(...prices) / 10) * 10;
-  const categories = getCategoryOptions(listing.products);
-  const colors = getColorOptions(listing.products);
-  const companies = getCompanyOptions(listing.products);
-  const materials = getMaterialOptions(listing.products);
-  const sizes = getSizeOptions(listing.products);
+  const { categories, colors, companies, materials, sizes } =
+    buildShopProductFilterOptions(listing.products);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
