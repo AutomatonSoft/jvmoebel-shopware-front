@@ -46,6 +46,16 @@ describe("shop product detail mock", () => {
     ).toBe(false);
   });
 
+  test("prioritizes products from the same category", () => {
+    const page = getShopProductDetailMock("alba");
+
+    expect(
+      page?.recommendations
+        .slice(0, 2)
+        .every((recommendation) => recommendation.category === "sofas"),
+    ).toBe(true);
+  });
+
   test("returns undefined for an unknown slug", () => {
     expect(getShopProductDetailMock("missing-product")).toBeUndefined();
   });

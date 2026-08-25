@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { ProductBuyBox } from "@/components/storefront/product-detail/product-buy-box";
 import { ProductGallery } from "@/components/storefront/product-detail/product-gallery";
+import { ProductRecommendations } from "@/components/storefront/product-detail/product-recommendations";
 import { ProductSpecifications } from "@/components/storefront/product-detail/product-specifications";
 import { getShopProductDetailMock } from "@/lib/shopware/mocks/product-detail";
 
@@ -74,6 +75,12 @@ export default async function ProductPage({
           description={page.product.longDescription}
           dimensions={page.product.dimensions}
           specifications={page.product.specifications}
+        />
+
+        <ProductRecommendations
+          currency={page.currency}
+          locale={page.locale}
+          products={page.recommendations}
         />
       </div>
     </main>

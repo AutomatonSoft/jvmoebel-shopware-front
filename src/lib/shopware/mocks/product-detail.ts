@@ -178,6 +178,25 @@ function buildProductDetail(product: ShopProduct): ShopProductDetail {
   };
 }
 
+function getRecommendationScore(
+  product: ShopProduct,
+  recommendation: ShopProduct,
+) {
+  const sharedColors = recommendation.colors.filter((color) =>
+    product.colors.some((productColor) => productColor.value === color.value),
+  ).length;
+  const sharedSizes = recommendation.sizes.filter((size) =>
+    product.sizes.includes(size),
+  ).length;
+
+  return (
+    (recommendation.category === product.category ? 4 : 0) +
+    (recommendation.material === product.material ? 2 : 0) +
+    sharedColors +
+    sharedSizes
+  );
+}
+
 export const shopProductDetailsMock =
   shopProductListingMock.products.map(buildProductDetail);
 
@@ -196,6 +215,11 @@ export function getShopProductDetailMock(
     product,
     recommendations: shopProductListingMock.products
       .filter((recommendation) => recommendation.id !== product.id)
+      .toSorted(
+        (first, second) =>
+          getRecommendationScore(product, second) -
+          getRecommendationScore(product, first),
+      )
       .slice(0, 3),
   };
 }
