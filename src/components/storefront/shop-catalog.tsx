@@ -13,19 +13,21 @@ import {
   type ShopProduct,
   type ShopProductColor,
   type ShopProductListing,
+  type ShopProductSize,
   type ShopProductSort,
 } from "@/lib/shopware/product-listing";
 
-type FilterOption = {
+type FilterOption<TValue extends string = string> = {
   count: number;
   label: string;
-  value: string;
+  value: TValue;
 };
 
 type ProductFilterPanelProps = {
   activeFilterCount: number;
   categories: FilterOption[];
   colors: (ShopProductColor & { count: number })[];
+  companies: FilterOption[];
   materials: FilterOption[];
   maximumPrice: number;
   maximumPriceBound: number;
@@ -36,11 +38,23 @@ type ProductFilterPanelProps = {
   onMinimumPriceChange: (value: number) => void;
   onToggleCategory: (value: string) => void;
   onToggleColor: (value: string) => void;
+  onToggleCompany: (value: string) => void;
   onToggleMaterial: (value: string) => void;
+  onToggleSize: (value: ShopProductSize) => void;
   selectedCategories: string[];
   selectedColors: string[];
+  selectedCompanies: string[];
   selectedMaterials: string[];
+  selectedSizes: ShopProductSize[];
+  sizes: FilterOption<ShopProductSize>[];
 };
+
+const shopProductSizes = [
+  { label: "Small", value: "small" },
+  { label: "Medium", value: "medium" },
+  { label: "Large", value: "large" },
+  { label: "Extra large", value: "extra-large" },
+] as const satisfies readonly Omit<FilterOption<ShopProductSize>, "count">[];
 
 function getCategoryOptions(products: readonly ShopProduct[]) {
   const options = new Map<string, FilterOption>();
@@ -73,6 +87,21 @@ function getColorOptions(products: readonly ShopProduct[]) {
   return Array.from(options.values());
 }
 
+function getCompanyOptions(products: readonly ShopProduct[]) {
+  const options = new Map<string, FilterOption>();
+
+  for (const product of products) {
+    const option = options.get(product.company);
+    options.set(product.company, {
+      count: (option?.count ?? 0) + 1,
+      label: product.company,
+      value: product.company,
+    });
+  }
+
+  return Array.from(options.values());
+}
+
 function getMaterialOptions(products: readonly ShopProduct[]) {
   const options = new Map<string, FilterOption>();
 
@@ -88,9 +117,17 @@ function getMaterialOptions(products: readonly ShopProduct[]) {
   return Array.from(options.values());
 }
 
-function toggleValue(
-  value: string,
-  setValues: Dispatch<SetStateAction<string[]>>,
+function getSizeOptions(products: readonly ShopProduct[]) {
+  return shopProductSizes.map((size) => ({
+    ...size,
+    count: products.filter((product) => product.sizes.includes(size.value))
+      .length,
+  }));
+}
+
+function toggleValue<TValue extends string>(
+  value: TValue,
+  setValues: Dispatch<SetStateAction<TValue[]>>,
 ) {
   setValues((values) =>
     values.includes(value)
@@ -146,6 +183,7 @@ function ProductFilterPanel({
   activeFilterCount,
   categories,
   colors,
+  companies,
   materials,
   maximumPrice,
   maximumPriceBound,
@@ -156,10 +194,15 @@ function ProductFilterPanel({
   onMinimumPriceChange,
   onToggleCategory,
   onToggleColor,
+  onToggleCompany,
   onToggleMaterial,
+  onToggleSize,
   selectedCategories,
   selectedColors,
+  selectedCompanies,
   selectedMaterials,
+  selectedSizes,
+  sizes,
 }: ProductFilterPanelProps) {
   return (
     <div>
@@ -174,18 +217,6 @@ function ProductFilterPanel({
           Clear all
         </button>
       </div>
-
-      <FilterGroup title="Category">
-        {categories.map((option) => (
-          <CheckboxOption
-            checked={selectedCategories.includes(option.value)}
-            count={option.count}
-            key={option.value}
-            label={option.label}
-            onChange={() => onToggleCategory(option.value)}
-          />
-        ))}
-      </FilterGroup>
 
       <FilterGroup title="Colour">
         <div className="flex flex-wrap gap-3">
@@ -208,22 +239,12 @@ function ProductFilterPanel({
         </div>
       </FilterGroup>
 
-      <FilterGroup title="Material">
-        {materials.map((option) => (
-          <CheckboxOption
-            checked={selectedMaterials.includes(option.value)}
-            count={option.count}
-            key={option.value}
-            label={option.label}
-            onChange={() => onToggleMaterial(option.value)}
-          />
-        ))}
-      </FilterGroup>
-
       <FilterGroup title="Price">
-        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+        <div className="grid grid-cols-2 gap-3">
           <label>
-            <span className="sr-only">Minimum price</span>
+            <span className="mb-2 block text-xs text-muted-foreground">
+              From
+            </span>
             <Input
               className="h-10 bg-background text-sm"
               max={maximumPrice}
@@ -238,9 +259,8 @@ function ProductFilterPanel({
               value={minimumPrice}
             />
           </label>
-          <span className="text-muted-foreground">—</span>
           <label>
-            <span className="sr-only">Maximum price</span>
+            <span className="mb-2 block text-xs text-muted-foreground">To</span>
             <Input
               className="h-10 bg-background text-sm"
               max={maximumPriceBound}
@@ -256,10 +276,54 @@ function ProductFilterPanel({
             />
           </label>
         </div>
-        <div className="relative mx-1 mt-2 h-0.5 bg-foreground">
-          <span className="absolute top-1/2 left-0 size-3 -translate-y-1/2 rounded-full border-2 border-foreground bg-background" />
-          <span className="absolute top-1/2 right-0 size-3 -translate-y-1/2 rounded-full border-2 border-foreground bg-background" />
-        </div>
+      </FilterGroup>
+
+      <FilterGroup title="Company">
+        {companies.map((option) => (
+          <CheckboxOption
+            checked={selectedCompanies.includes(option.value)}
+            count={option.count}
+            key={option.value}
+            label={option.label}
+            onChange={() => onToggleCompany(option.value)}
+          />
+        ))}
+      </FilterGroup>
+
+      <FilterGroup title="Size">
+        {sizes.map((option) => (
+          <CheckboxOption
+            checked={selectedSizes.includes(option.value)}
+            count={option.count}
+            key={option.value}
+            label={option.label}
+            onChange={() => onToggleSize(option.value)}
+          />
+        ))}
+      </FilterGroup>
+
+      <FilterGroup title="Category">
+        {categories.map((option) => (
+          <CheckboxOption
+            checked={selectedCategories.includes(option.value)}
+            count={option.count}
+            key={option.value}
+            label={option.label}
+            onChange={() => onToggleCategory(option.value)}
+          />
+        ))}
+      </FilterGroup>
+
+      <FilterGroup title="Material">
+        {materials.map((option) => (
+          <CheckboxOption
+            checked={selectedMaterials.includes(option.value)}
+            count={option.count}
+            key={option.value}
+            label={option.label}
+            onChange={() => onToggleMaterial(option.value)}
+          />
+        ))}
       </FilterGroup>
     </div>
   );
@@ -275,17 +339,23 @@ export function ShopCatalog({ listing }: ShopCatalogProps) {
   const maximumPriceBound = Math.ceil(Math.max(...prices) / 10) * 10;
   const categories = getCategoryOptions(listing.products);
   const colors = getColorOptions(listing.products);
+  const companies = getCompanyOptions(listing.products);
   const materials = getMaterialOptions(listing.products);
+  const sizes = getSizeOptions(listing.products);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
+  const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
   const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);
+  const [selectedSizes, setSelectedSizes] = useState<ShopProductSize[]>([]);
   const [minimumPrice, setMinimumPrice] = useState(minimumPriceBound);
   const [maximumPrice, setMaximumPrice] = useState(maximumPriceBound);
   const [sort, setSort] = useState<ShopProductSort>("featured");
   const activeFilterCount =
     selectedCategories.length +
     selectedColors.length +
+    selectedCompanies.length +
     selectedMaterials.length +
+    selectedSizes.length +
     (minimumPrice !== minimumPriceBound || maximumPrice !== maximumPriceBound
       ? 1
       : 0);
@@ -294,9 +364,11 @@ export function ShopCatalog({ listing }: ShopCatalogProps) {
     {
       categories: selectedCategories,
       colors: selectedColors,
+      companies: selectedCompanies,
       materials: selectedMaterials,
       maximumPrice,
       minimumPrice,
+      sizes: selectedSizes,
     },
     sort,
   );
@@ -304,7 +376,9 @@ export function ShopCatalog({ listing }: ShopCatalogProps) {
   function clearFilters() {
     setSelectedCategories([]);
     setSelectedColors([]);
+    setSelectedCompanies([]);
     setSelectedMaterials([]);
+    setSelectedSizes([]);
     setMinimumPrice(minimumPriceBound);
     setMaximumPrice(maximumPriceBound);
   }
@@ -313,6 +387,7 @@ export function ShopCatalog({ listing }: ShopCatalogProps) {
     activeFilterCount,
     categories,
     colors,
+    companies,
     materials,
     maximumPrice,
     maximumPriceBound,
@@ -330,11 +405,18 @@ export function ShopCatalog({ listing }: ShopCatalogProps) {
     onToggleCategory: (value: string) =>
       toggleValue(value, setSelectedCategories),
     onToggleColor: (value: string) => toggleValue(value, setSelectedColors),
+    onToggleCompany: (value: string) =>
+      toggleValue(value, setSelectedCompanies),
     onToggleMaterial: (value: string) =>
       toggleValue(value, setSelectedMaterials),
+    onToggleSize: (value: ShopProductSize) =>
+      toggleValue(value, setSelectedSizes),
     selectedCategories,
     selectedColors,
+    selectedCompanies,
     selectedMaterials,
+    selectedSizes,
+    sizes,
   } satisfies ProductFilterPanelProps;
 
   return (
