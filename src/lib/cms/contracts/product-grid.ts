@@ -1,3 +1,9 @@
+import {
+  getCmsNumber,
+  getCmsRecord,
+  getCmsString,
+} from "@/lib/cms/contracts/parsing";
+
 export type CmsProductGridImage = Readonly<{
   alt: string;
   url: string;
@@ -31,30 +37,8 @@ export type CmsProductGridData = Readonly<{
   viewAll?: CmsProductGridLink;
 }>;
 
-function getRecord(value: unknown): Record<string, unknown> | undefined {
-  if (typeof value !== "object" || value === null || Array.isArray(value)) {
-    return undefined;
-  }
-
-  return value as Record<string, unknown>;
-}
-
-function getString(record: Record<string, unknown> | undefined, key: string) {
-  const value = record?.[key];
-
-  return typeof value === "string" && value.trim() ? value : undefined;
-}
-
-function getNumber(record: Record<string, unknown> | undefined, key: string) {
-  const value = record?.[key];
-
-  return typeof value === "number" && Number.isFinite(value)
-    ? value
-    : undefined;
-}
-
 function parseProducts(value: unknown): CmsProductGridProduct[] {
-  const productsRecord = getRecord(value);
+  const productsRecord = getCmsRecord(value);
   const productValues = Array.isArray(value)
     ? value
     : productsRecord
@@ -63,17 +47,18 @@ function parseProducts(value: unknown): CmsProductGridProduct[] {
 
   return productValues
     .flatMap((productValue, index) => {
-      const product = getRecord(productValue);
-      const translated = getRecord(product?.translated);
-      const cover = getRecord(product?.cover);
-      const media = getRecord(cover?.media);
-      const calculatedPrice = getRecord(product?.calculatedPrice);
-      const listPrice = getRecord(calculatedPrice?.listPrice);
-      const id = getString(product, "id");
-      const imageUrl = getString(media, "url");
-      const name = getString(translated, "name") || getString(product, "name");
-      const unitPrice = getNumber(calculatedPrice, "unitPrice");
-      const url = getString(product, "url");
+      const product = getCmsRecord(productValue);
+      const translated = getCmsRecord(product?.translated);
+      const cover = getCmsRecord(product?.cover);
+      const media = getCmsRecord(cover?.media);
+      const calculatedPrice = getCmsRecord(product?.calculatedPrice);
+      const listPrice = getCmsRecord(calculatedPrice?.listPrice);
+      const id = getCmsString(product, "id");
+      const imageUrl = getCmsString(media, "url");
+      const name =
+        getCmsString(translated, "name") || getCmsString(product, "name");
+      const unitPrice = getCmsNumber(calculatedPrice, "unitPrice");
+      const url = getCmsString(product, "url");
 
       if (!id || !imageUrl || !name || unitPrice === undefined || !url) {
         return [];
@@ -83,13 +68,13 @@ function parseProducts(value: unknown): CmsProductGridProduct[] {
 
       return [
         {
-          badge: getString(product, "badge"),
+          badge: getCmsString(product, "badge"),
           description:
-            getString(translated, "description") ||
-            getString(product, "description"),
+            getCmsString(translated, "description") ||
+            getCmsString(product, "description"),
           id,
           image: {
-            alt: getString(media, "alt") || name,
+            alt: getCmsString(media, "alt") || name,
             url: imageUrl,
           },
           name,
@@ -97,9 +82,9 @@ function parseProducts(value: unknown): CmsProductGridProduct[] {
             typeof position === "number" && Number.isFinite(position)
               ? position
               : index,
-          previousPrice: getNumber(listPrice, "price"),
-          rating: getNumber(product, "ratingAverage"),
-          reviewCount: getNumber(product, "reviewCount"),
+          previousPrice: getCmsNumber(listPrice, "price"),
+          rating: getCmsNumber(product, "ratingAverage"),
+          reviewCount: getCmsNumber(product, "reviewCount"),
           unitPrice,
           url,
         },
@@ -109,9 +94,9 @@ function parseProducts(value: unknown): CmsProductGridProduct[] {
 }
 
 function parseLink(value: unknown): CmsProductGridLink | undefined {
-  const link = getRecord(value);
-  const label = getString(link, "label");
-  const url = getString(link, "url");
+  const link = getCmsRecord(value);
+  const label = getCmsString(link, "label");
+  const url = getCmsString(link, "url");
 
   return label && url ? { label, url } : undefined;
 }
@@ -119,11 +104,11 @@ function parseLink(value: unknown): CmsProductGridLink | undefined {
 export function parseCmsProductGridData(
   value: unknown,
 ): CmsProductGridData | null {
-  const data = getRecord(value);
-  const currency = getString(data, "currency");
-  const locale = getString(data, "locale");
+  const data = getCmsRecord(value);
+  const currency = getCmsString(data, "currency");
+  const locale = getCmsString(data, "locale");
   const products = parseProducts(data?.products);
-  const title = getString(data, "title");
+  const title = getCmsString(data, "title");
 
   if (!currency || !locale || products.length === 0 || !title) {
     return null;
@@ -131,7 +116,7 @@ export function parseCmsProductGridData(
 
   return {
     currency,
-    eyebrow: getString(data, "eyebrow"),
+    eyebrow: getCmsString(data, "eyebrow"),
     locale,
     products,
     title,

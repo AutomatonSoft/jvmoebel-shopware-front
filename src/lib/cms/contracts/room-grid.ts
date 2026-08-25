@@ -1,3 +1,5 @@
+import { getCmsRecord, getCmsString } from "@/lib/cms/contracts/parsing";
+
 export type CmsRoomGridImage = Readonly<{
   alt: string;
   url: string;
@@ -20,22 +22,8 @@ export type CmsRoomGridData = Readonly<{
   title: string;
 }>;
 
-function getRecord(value: unknown): Record<string, unknown> | undefined {
-  if (typeof value !== "object" || value === null || Array.isArray(value)) {
-    return undefined;
-  }
-
-  return value as Record<string, unknown>;
-}
-
-function getString(record: Record<string, unknown> | undefined, key: string) {
-  const value = record?.[key];
-
-  return typeof value === "string" && value.trim() ? value : undefined;
-}
-
 function parseRooms(value: unknown): CmsRoomGridItem[] {
-  const roomsRecord = getRecord(value);
+  const roomsRecord = getCmsRecord(value);
   const roomValues = Array.isArray(value)
     ? value
     : roomsRecord
@@ -44,12 +32,12 @@ function parseRooms(value: unknown): CmsRoomGridItem[] {
 
   return roomValues
     .flatMap((roomValue, index) => {
-      const room = getRecord(roomValue);
-      const image = getRecord(room?.image);
-      const imageUrl = getString(image, "url");
-      const label = getString(room, "label");
-      const title = getString(room, "title");
-      const url = getString(room, "url");
+      const room = getCmsRecord(roomValue);
+      const image = getCmsRecord(room?.image);
+      const imageUrl = getCmsString(image, "url");
+      const label = getCmsString(room, "label");
+      const title = getCmsString(room, "title");
+      const url = getCmsString(room, "url");
 
       if (!imageUrl || !label || !title || !url) {
         return [];
@@ -60,9 +48,9 @@ function parseRooms(value: unknown): CmsRoomGridItem[] {
       return [
         {
           featured: room?.featured === true || room?.featured === 1,
-          id: getString(room, "id") || `${label}-${index}`,
+          id: getCmsString(room, "id") || `${label}-${index}`,
           image: {
-            alt: getString(image, "alt") || "",
+            alt: getCmsString(image, "alt") || "",
             url: imageUrl,
           },
           label,
@@ -79,17 +67,17 @@ function parseRooms(value: unknown): CmsRoomGridItem[] {
 }
 
 export function parseCmsRoomGridData(value: unknown): CmsRoomGridData | null {
-  const data = getRecord(value);
+  const data = getCmsRecord(value);
   const rooms = parseRooms(data?.rooms);
-  const title = getString(data, "title");
+  const title = getCmsString(data, "title");
 
   if (!title || rooms.length === 0) {
     return null;
   }
 
   return {
-    description: getString(data, "description"),
-    eyebrow: getString(data, "eyebrow"),
+    description: getCmsString(data, "description"),
+    eyebrow: getCmsString(data, "eyebrow"),
     rooms,
     title,
   };

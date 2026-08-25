@@ -2,6 +2,7 @@ import {
   resolveCmsButtonSize,
   type CmsButtonSize,
 } from "@/lib/cms/button-size";
+import { getCmsRecord, getCmsString } from "@/lib/cms/contracts/parsing";
 
 export type CmsHeroImage = Readonly<{
   alt: string;
@@ -23,24 +24,10 @@ export type CmsHeroData = Readonly<{
   title: string;
 }>;
 
-function getRecord(value: unknown): Record<string, unknown> | undefined {
-  if (typeof value !== "object" || value === null || Array.isArray(value)) {
-    return undefined;
-  }
-
-  return value as Record<string, unknown>;
-}
-
-function getString(record: Record<string, unknown> | undefined, key: string) {
-  const value = record?.[key];
-
-  return typeof value === "string" && value.trim() ? value : undefined;
-}
-
 function parseLink(value: unknown): CmsHeroLink | undefined {
-  const link = getRecord(value);
-  const label = getString(link, "label");
-  const url = getString(link, "url");
+  const link = getCmsRecord(value);
+  const label = getCmsString(link, "label");
+  const url = getCmsString(link, "url");
 
   if (!label || !url) {
     return undefined;
@@ -54,20 +41,20 @@ function parseLink(value: unknown): CmsHeroLink | undefined {
 }
 
 export function parseCmsHeroData(value: unknown): CmsHeroData | null {
-  const data = getRecord(value);
-  const image = getRecord(data?.image);
-  const title = getString(data, "title");
-  const imageUrl = getString(image, "url");
+  const data = getCmsRecord(value);
+  const image = getCmsRecord(data?.image);
+  const title = getCmsString(data, "title");
+  const imageUrl = getCmsString(image, "url");
 
   if (!title || !imageUrl) {
     return null;
   }
 
   return {
-    description: getString(data, "description"),
-    eyebrow: getString(data, "eyebrow"),
+    description: getCmsString(data, "description"),
+    eyebrow: getCmsString(data, "eyebrow"),
     image: {
-      alt: getString(image, "alt") || "",
+      alt: getCmsString(image, "alt") || "",
       url: imageUrl,
     },
     primaryLink: parseLink(data?.primaryLink),
