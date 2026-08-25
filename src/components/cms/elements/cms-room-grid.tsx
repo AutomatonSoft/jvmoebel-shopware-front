@@ -2,74 +2,16 @@ import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 
 import type { CmsSlotComponentProps } from "@/components/cms/cms-page-renderer";
-
-function getRecord(value: unknown): Record<string, unknown> | undefined {
-  if (typeof value !== "object" || value === null || Array.isArray(value)) {
-    return undefined;
-  }
-
-  return value as Record<string, unknown>;
-}
-
-function getString(record: Record<string, unknown> | undefined, key: string) {
-  const value = record?.[key];
-
-  return typeof value === "string" && value.trim() ? value : undefined;
-}
-
-function getRooms(data: Record<string, unknown> | undefined) {
-  const roomsValue = data?.rooms;
-  const roomsRecord = getRecord(roomsValue);
-  const roomValues = Array.isArray(roomsValue)
-    ? roomsValue
-    : roomsRecord
-      ? Object.values(roomsRecord)
-      : [];
-
-  if (roomValues.length === 0) {
-    return [];
-  }
-
-  return roomValues
-    .flatMap((value, index) => {
-      const room = getRecord(value);
-      const image = getRecord(room?.image);
-      const label = getString(room, "label");
-      const title = getString(room, "title");
-      const url = getString(room, "url");
-      const imageUrl = getString(image, "url");
-
-      if (!label || !title || !url || !imageUrl) {
-        return [];
-      }
-
-      return [
-        {
-          featured: room?.featured === true || room?.featured === 1,
-          id: getString(room, "id") || `${label}-${index}`,
-          imageAlt: getString(image, "alt") || "",
-          imageUrl,
-          label,
-          position: typeof room?.position === "number" ? room.position : index,
-          title,
-          url,
-        },
-      ];
-    })
-    .sort((first, second) => first.position - second.position);
-}
+import { parseCmsRoomGridData } from "@/lib/cms/contracts/room-grid";
 
 export function CmsRoomGrid({ slot }: CmsSlotComponentProps) {
-  const data = getRecord(slot.data);
-  const rooms = getRooms(data);
-  const title = getString(data, "title");
+  const data = parseCmsRoomGridData(slot.data);
 
-  if (!title || rooms.length === 0) {
+  if (!data) {
     return null;
   }
 
-  const eyebrow = getString(data, "eyebrow");
-  const description = getString(data, "description");
+  const { description, eyebrow, rooms, title } = data;
 
   return (
     <section
@@ -102,7 +44,7 @@ export function CmsRoomGrid({ slot }: CmsSlotComponentProps) {
             key={room.id}
           >
             <Image
-              alt={room.imageAlt}
+              alt={room.image.alt}
               className="object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.035]"
               fill
               sizes={
@@ -110,7 +52,7 @@ export function CmsRoomGrid({ slot }: CmsSlotComponentProps) {
                   ? "(max-width: 768px) 100vw, 58vw"
                   : "(max-width: 768px) 100vw, 40vw"
               }
-              src={room.imageUrl}
+              src={room.image.url}
             />
             <span className="absolute inset-0 bg-linear-to-t from-black/70 via-black/10 to-transparent" />
             <span className="absolute inset-x-0 bottom-0 grid grid-cols-[1fr_auto] items-end gap-2 p-5 sm:p-7">
