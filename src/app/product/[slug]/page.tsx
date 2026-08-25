@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { ProductBuyBox } from "@/components/storefront/product-detail/product-buy-box";
 import { ProductGallery } from "@/components/storefront/product-detail/product-gallery";
+import { ProductSpecifications } from "@/components/storefront/product-detail/product-specifications";
 import { getShopProductDetailMock } from "@/lib/shopware/mocks/product-detail";
 
 export async function generateMetadata({
@@ -68,6 +69,12 @@ export default async function ProductPage({
             product={page.product}
           />
         </section>
+
+        <ProductSpecifications
+          description={page.product.longDescription}
+          dimensions={page.product.dimensions}
+          specifications={page.product.specifications}
+        />
       </div>
     </main>
   );

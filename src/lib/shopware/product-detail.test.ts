@@ -23,6 +23,17 @@ describe("shop product detail mock", () => {
       "fabric",
       "configuration",
     ]);
+    expect(page?.product.specifications).toContainEqual({
+      id: "material",
+      label: "Material",
+      value: "Bouclé",
+    });
+    expect(page?.product.dimensions).toEqual({
+      height: 82,
+      length: 178,
+      unit: "cm",
+      width: 286,
+    });
   });
 
   test("does not recommend the active product", () => {

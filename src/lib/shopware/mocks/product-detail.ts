@@ -1,6 +1,7 @@
 import {
   findShopProductDetailBySlug,
   type ShopProductDetail,
+  type ShopProductDimensions,
   type ShopProductDetailMedia,
   type ShopProductDetailOptionGroup,
   type ShopProductDetailPage,
@@ -17,6 +18,25 @@ const sizeLabels = {
   medium: "Medium",
   small: "Small",
 } satisfies Record<ShopProductSize, string>;
+
+const productDimensions: Record<string, ShopProductDimensions> = {
+  alba: { height: 82, length: 178, unit: "cm", width: 286 },
+  aura: { height: 80, length: 102, unit: "cm", width: 228 },
+  forma: { height: 62, length: 45, unit: "cm", width: 180 },
+  koto: { height: 83, length: 210, unit: "cm", width: 305 },
+  linea: { height: 58, length: 42, unit: "cm", width: 160 },
+  luma: { height: 82, length: 80, unit: "cm", width: 76 },
+  mira: { height: 76, length: 140, unit: "cm", width: 140 },
+  nara: { height: 79, length: 77, unit: "cm", width: 74 },
+  noma: { height: 84, length: 82, unit: "cm", width: 78 },
+};
+
+const fallbackDimensions = {
+  height: 0,
+  length: 0,
+  unit: "cm",
+  width: 0,
+} satisfies ShopProductDimensions;
 
 function buildGallery(product: ShopProduct) {
   const mediaByUrl = new Map<string, ShopProductDetailMedia>();
@@ -96,12 +116,15 @@ function buildOptionGroups(product: ShopProduct) {
 }
 
 function buildProductDetail(product: ShopProduct): ShopProductDetail {
+  const productNumber = `JV-${product.id.toUpperCase()}`;
+
   return {
     ...product,
+    dimensions: productDimensions[product.id] ?? fallbackDimensions,
     gallery: buildGallery(product),
     longDescription: `${product.name} combines considered proportions, durable materials and everyday comfort for contemporary interiors.`,
     optionGroups: buildOptionGroups(product),
-    productNumber: `JV-${product.id.toUpperCase()}`,
+    productNumber,
     purchaseNotes: [
       {
         id: "delivery",
@@ -120,6 +143,38 @@ function buildProductDetail(product: ShopProduct): ShopProductDetail {
       },
     ],
     slug: product.id,
+    specifications: [
+      {
+        id: "product-number",
+        label: "Product number",
+        value: productNumber,
+      },
+      {
+        id: "category",
+        label: "Category",
+        value: product.categoryLabel,
+      },
+      {
+        id: "manufacturer",
+        label: "Manufacturer",
+        value: product.company,
+      },
+      {
+        id: "material",
+        label: "Material",
+        value: product.material,
+      },
+      {
+        id: "colours",
+        label: "Available colours",
+        value: product.colors.map((color) => color.label).join(", "),
+      },
+      {
+        id: "configurations",
+        label: "Available configurations",
+        value: product.sizes.map((size) => sizeLabels[size]).join(", "),
+      },
+    ],
   };
 }
 

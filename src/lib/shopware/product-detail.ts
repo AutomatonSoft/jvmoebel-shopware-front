@@ -21,20 +21,35 @@ export type ShopProductDetailOptionGroup = Readonly<{
   selectedOptionId: string;
 }>;
 
+export type ShopProductDimensions = Readonly<{
+  height: number;
+  length: number;
+  unit: string;
+  width: number;
+}>;
+
 export type ShopProductPurchaseNote = Readonly<{
   id: string;
   kind: "delivery" | "returns" | "warranty";
   text: string;
 }>;
 
+export type ShopProductSpecification = Readonly<{
+  id: string;
+  label: string;
+  value: string;
+}>;
+
 export type ShopProductDetail = ShopProduct &
   Readonly<{
+    dimensions: ShopProductDimensions;
     gallery: readonly [ShopProductDetailMedia, ...ShopProductDetailMedia[]];
     longDescription: string;
     optionGroups: readonly ShopProductDetailOptionGroup[];
     productNumber: string;
     purchaseNotes: readonly ShopProductPurchaseNote[];
     slug: string;
+    specifications: readonly ShopProductSpecification[];
   }>;
 
 export type ShopProductDetailPage = Readonly<{
