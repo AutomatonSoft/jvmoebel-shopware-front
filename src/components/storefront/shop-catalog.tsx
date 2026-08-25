@@ -13,6 +13,7 @@ import { useState, type Dispatch, type SetStateAction } from "react";
 
 import { ShopProductCard } from "@/components/storefront/shop-product-card";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
   filterAndSortShopProducts,
@@ -174,14 +175,15 @@ function CheckboxOption({
   onChange: () => void;
 }) {
   return (
-    <label className="grid cursor-pointer grid-cols-[1.125rem_1fr_auto] items-center gap-2.5 text-sm">
-      <input
+    <label className="group/option -mx-1 grid cursor-pointer grid-cols-[1.125rem_1fr_auto] items-center gap-2.5 rounded-md px-1 py-0.5 text-sm transition-colors hover:bg-muted/60">
+      <Checkbox
         checked={checked}
-        className="size-4.5 accent-primary"
-        onChange={onChange}
-        type="checkbox"
+        className="size-4.5 rounded-[5px] border-muted-foreground/40 bg-background shadow-xs group-hover/option:border-primary/70"
+        onCheckedChange={onChange}
       />
-      <span>{label}</span>
+      <span className="transition-colors group-hover/option:text-foreground">
+        {label}
+      </span>
       <small className="text-xs text-muted-foreground">{count}</small>
     </label>
   );
