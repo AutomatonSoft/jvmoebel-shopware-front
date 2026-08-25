@@ -9,6 +9,7 @@ import {
   getServiceNavigation,
 } from "@/lib/shopware/navigation";
 import { getShopwareRequestSession } from "@/lib/shopware/session";
+import { getStorefrontBranding } from "@/lib/shopware/storefront-branding";
 
 import "./globals.css";
 
@@ -26,18 +27,21 @@ export const dynamic = "force-dynamic";
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const session = getShopwareRequestSession();
-  const [navigation, footerNavigation, serviceNavigation] = await Promise.all([
-    getMainNavigation(session.client),
-    getFooterNavigation(session.client),
-    getServiceNavigation(session.client),
-  ]);
+  const [branding, navigation, footerNavigation, serviceNavigation] =
+    await Promise.all([
+      getStorefrontBranding(session.client),
+      getMainNavigation(session.client),
+      getFooterNavigation(session.client),
+      getServiceNavigation(session.client),
+    ]);
 
   return (
     <html lang="en" className={`${montserrat.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
-        <StoreHeader navigation={navigation} />
+        <StoreHeader branding={branding} navigation={navigation} />
         {children}
         <StoreFooter
+          branding={branding}
           footerNavigation={footerNavigation}
           serviceNavigation={serviceNavigation}
         />

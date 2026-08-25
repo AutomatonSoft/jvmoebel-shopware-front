@@ -15,6 +15,10 @@ CMS integration contract:
 See [docs/cms-contract.md](docs/cms-contract.md) for the supported CMS elements
 and the JSON data expected from the Shopware backend.
 
+Storefront branding contract:
+See [docs/storefront-branding-contract.md](docs/storefront-branding-contract.md)
+for the sales channel logo configuration expected from the backend.
+
 Development:
 bun dev
 

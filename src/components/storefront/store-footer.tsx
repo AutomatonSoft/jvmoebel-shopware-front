@@ -1,8 +1,9 @@
-import Link from "next/link";
-
+import { StoreLogo } from "@/components/storefront/store-logo";
+import type { StorefrontBranding } from "@/lib/shopware/storefront-branding";
 import type { StoreNavigationItem } from "@/lib/shopware/navigation";
 
 export type StoreFooterProps = {
+  branding: StorefrontBranding;
   footerNavigation: StoreNavigationItem[];
   serviceNavigation: StoreNavigationItem[];
 };
@@ -12,6 +13,7 @@ function getNavigationLinks(item: StoreNavigationItem) {
 }
 
 export function StoreFooter({
+  branding,
   footerNavigation,
   serviceNavigation,
 }: StoreFooterProps) {
@@ -21,16 +23,7 @@ export function StoreFooter({
     <footer className="mt-auto bg-background">
       <div className="mx-auto grid w-full max-w-360 grid-cols-2 gap-x-5 gap-y-10 px-6 py-16 sm:px-8 lg:grid-cols-4 lg:gap-14 lg:py-20">
         <div className="col-span-2 lg:col-span-1">
-          <Link
-            aria-label="JVMöbel home"
-            className="inline-flex items-center gap-2"
-            href="/"
-          >
-            <span className="flex size-9 items-center justify-center rounded-full bg-primary text-xs font-bold tracking-tight text-primary-foreground">
-              JV
-            </span>
-            <span className="text-sm font-bold tracking-[0.16em]">MOEBEL</span>
-          </Link>
+          <StoreLogo branding={branding} variant="footer" />
           <p className="mt-6 max-w-xs text-sm leading-7 text-muted-foreground">
             Furniture with character, crafted for real homes and everyday life.
           </p>
