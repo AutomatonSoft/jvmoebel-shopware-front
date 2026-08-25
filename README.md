@@ -19,6 +19,11 @@ Storefront branding contract:
 See [docs/storefront-branding-contract.md](docs/storefront-branding-contract.md)
 for the sales channel logo configuration expected from the backend.
 
+Product listing contract:
+See [docs/product-listing-contract.md](docs/product-listing-contract.md) for the
+normalized `/shop` product model, filter and sorting behavior, and Shopware
+Administration responsibility boundary.
+
 Development:
 bun dev
 
