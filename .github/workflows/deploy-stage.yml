@@ -3,7 +3,16 @@ name: Deploy stage
 on:
   pull_request:
     branches: [develop]
-    paths: [.github/workflows/deploy-stage.yml, Dockerfile, compose.deploy.yml, next.config.ts, src/**, package.json, bun.lock]
+    paths:
+      [
+        .github/workflows/deploy-stage.yml,
+        Dockerfile,
+        compose.deploy.yml,
+        next.config.ts,
+        src/**,
+        package.json,
+        bun.lock,
+      ]
   push:
     branches: [stage]
 
