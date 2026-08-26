@@ -6,13 +6,16 @@ COPY package.json bun.lock ./
 
 RUN bun install --frozen-lockfile
 
-FROM dependencies AS build
+FROM node:24.13.0-bookworm-slim AS build
 
+WORKDIR /app
+
+COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
 
 ENV NODE_ENV=production
 
-RUN bun run build
+RUN node ./node_modules/next/dist/bin/next build
 
 FROM node:24.13.0-bookworm-slim AS runtime
 
