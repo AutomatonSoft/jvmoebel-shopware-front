@@ -4,10 +4,7 @@ on:
   pull_request:
     branches:
       - develop
-      - main
-  push:
-    branches:
-      - develop
+      - stage
       - main
 
 permissions:
@@ -21,6 +18,7 @@ jobs:
   frontend-quality:
     name: frontend quality
     runs-on: ubuntu-24.04
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
