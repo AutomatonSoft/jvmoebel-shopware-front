@@ -6,7 +6,7 @@ COPY package.json bun.lock ./
 
 RUN bun install --frozen-lockfile
 
-FROM node:24.13.0-bookworm-slim AS build
+FROM node:24.19.0-bookworm-slim AS build
 
 WORKDIR /app
 
@@ -17,7 +17,7 @@ ENV NODE_ENV=production
 
 RUN node ./node_modules/next/dist/bin/next build
 
-FROM node:24.13.0-bookworm-slim AS runtime
+FROM node:24.19.0-bookworm-slim AS runtime
 
 WORKDIR /app
 
