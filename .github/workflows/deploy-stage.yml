@@ -45,6 +45,15 @@ jobs:
           tar -tzf "$RUNNER_TEMP/front.tar.gz" | grep -Fx './bun.lock'
           tar -tzf "$RUNNER_TEMP/front.tar.gz" | grep -Fx './next.config.ts'
           tar -tzf "$RUNNER_TEMP/front.tar.gz" | grep -Fx './src/app/api/health/route.ts'
+      - name: Build and smoke-test production image
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          docker build -t jvmoebel-front-stage-validation -f Dockerfile .
+          docker run -d --rm --name jvmoebel-front-stage-validation -p 127.0.0.1:3000:3000 -e SHOPWARE_ENDPOINT=https://example.invalid -e SHOPWARE_ACCESS_TOKEN=validation-token jvmoebel-front-stage-validation
+          trap 'docker rm -f jvmoebel-front-stage-validation >/dev/null 2>&1 || true' EXIT
+          for _ in {1..30}; do curl --fail --silent --show-error http://127.0.0.1:3000/api/health && exit 0; sleep 1; done
+          exit 1
 
   deploy:
     name: deploy frontend to stage
@@ -149,7 +158,7 @@ jobs:
           set -Eeuo pipefail
           [[ -n "${ARCHIVE_NAME:-}" && -f "${SSH_KEY_FILE:-}" && -f "${KNOWN_HOSTS_FILE:-}" ]] || exit 0
           suffix="${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}.uploading"
-          ssh_opts=(-p "$DEPLOY_PORT" -i "$SSH_KEY_FILE" -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o "UserKnownHostsFile=$KNOWN_HOSTS_FILE" -o ConnectTimeout=10 -o ForwardAgent=no -o ClearAllForwardings=yes)
+          ssh_opts=(-p "$DEPLOY_PORT" -i "$SSH_KEY_FILE" -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o "UserKnownHostsFile=$KNOWN_HOSTS_FILE" -o ConnectTimeout=10 -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -o ForwardAgent=no -o ClearAllForwardings=yes)
           ssh "${ssh_opts[@]}" "$DEPLOY_USER@$DEPLOY_HOST" "rm -f -- '$DEPLOY_PATH/$ARCHIVE_NAME' '$DEPLOY_PATH/$MANIFEST_NAME' '$DEPLOY_PATH/$SIGNATURE_NAME' '$DEPLOY_PATH/.$ARCHIVE_NAME.$suffix' '$DEPLOY_PATH/.$MANIFEST_NAME.$suffix' '$DEPLOY_PATH/.$SIGNATURE_NAME.$suffix'"      - name: Remove runner material
         if: always()
         run: rm -f -- "$SSH_KEY_FILE" "$KNOWN_HOSTS_FILE" "$SIGNING_KEY_FILE" "$SIGNING_PUBLIC_KEY_FILE" "$ALLOWED_SIGNERS_FILE" "$RUNNER_TEMP/deploy.pub"
