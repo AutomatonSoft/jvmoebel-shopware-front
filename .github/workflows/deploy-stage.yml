@@ -159,6 +159,7 @@ jobs:
           [[ -n "${ARCHIVE_NAME:-}" && -f "${SSH_KEY_FILE:-}" && -f "${KNOWN_HOSTS_FILE:-}" ]] || exit 0
           suffix="${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}.uploading"
           ssh_opts=(-p "$DEPLOY_PORT" -i "$SSH_KEY_FILE" -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o "UserKnownHostsFile=$KNOWN_HOSTS_FILE" -o ConnectTimeout=10 -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -o ForwardAgent=no -o ClearAllForwardings=yes)
-          ssh "${ssh_opts[@]}" "$DEPLOY_USER@$DEPLOY_HOST" "rm -f -- '$DEPLOY_PATH/$ARCHIVE_NAME' '$DEPLOY_PATH/$MANIFEST_NAME' '$DEPLOY_PATH/$SIGNATURE_NAME' '$DEPLOY_PATH/.$ARCHIVE_NAME.$suffix' '$DEPLOY_PATH/.$MANIFEST_NAME.$suffix' '$DEPLOY_PATH/.$SIGNATURE_NAME.$suffix'"      - name: Remove runner material
+          ssh "${ssh_opts[@]}" "$DEPLOY_USER@$DEPLOY_HOST" "rm -f -- '$DEPLOY_PATH/$ARCHIVE_NAME' '$DEPLOY_PATH/$MANIFEST_NAME' '$DEPLOY_PATH/$SIGNATURE_NAME' '$DEPLOY_PATH/.$ARCHIVE_NAME.$suffix' '$DEPLOY_PATH/.$MANIFEST_NAME.$suffix' '$DEPLOY_PATH/.$SIGNATURE_NAME.$suffix'"
+      - name: Remove runner material
         if: always()
         run: rm -f -- "$SSH_KEY_FILE" "$KNOWN_HOSTS_FILE" "$SIGNING_KEY_FILE" "$SIGNING_PUBLIC_KEY_FILE" "$ALLOWED_SIGNERS_FILE" "$RUNNER_TEMP/deploy.pub"
