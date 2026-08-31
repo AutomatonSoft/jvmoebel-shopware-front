@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import type {
   MainNavigation,
   StoreNavigationItem,
-} from "@/lib/shopware/navigation";
+} from "@/features/storefront-shell/model/navigation";
 
 export type CategoryMenuProps = {
   navigation: MainNavigation;

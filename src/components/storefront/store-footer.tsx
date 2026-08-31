@@ -1,6 +1,6 @@
 import { StoreLogo } from "@/components/storefront/store-logo";
+import type { StoreNavigationItem } from "@/features/storefront-shell/model/navigation";
 import type { StorefrontBranding } from "@/lib/shopware/storefront-branding";
-import type { StoreNavigationItem } from "@/lib/shopware/navigation";
 
 export type StoreFooterProps = {
   branding: StorefrontBranding;

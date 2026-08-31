@@ -1,4 +1,4 @@
-import type { StoreNavigationItem } from "@/lib/shopware/navigation";
+import type { StoreNavigationItem } from "@/features/storefront-shell/model/navigation";
 
 export const mainNavigationMock = [
   {

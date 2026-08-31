@@ -11,8 +11,8 @@ import { CategoryMenu } from "@/components/storefront/category-menu";
 import { StoreLogo } from "@/components/storefront/store-logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import type { MainNavigation } from "@/features/storefront-shell/model/navigation";
 import type { StorefrontBranding } from "@/lib/shopware/storefront-branding";
-import type { MainNavigation } from "@/lib/shopware/navigation";
 
 export type StoreHeaderProps = {
   branding: StorefrontBranding;

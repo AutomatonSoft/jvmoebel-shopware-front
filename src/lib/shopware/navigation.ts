@@ -2,6 +2,7 @@ import "server-only";
 
 import type { components } from "@shopware/api-client/store-api-types";
 
+import type { StoreNavigationItem } from "@/features/storefront-shell/model/navigation";
 import type { ShopwareClient } from "@/lib/shopware/client";
 import { shouldUseShopwareMocks } from "@/lib/shopware/mocks/config";
 import {
@@ -12,13 +13,6 @@ import {
 
 type ShopwareCategory = components["schemas"]["Category"];
 type NavigationType = components["schemas"]["NavigationType"];
-
-export type StoreNavigationItem = {
-  children: StoreNavigationItem[];
-  href: string;
-  id: string;
-  label: string;
-};
 
 function getCategoryHref(category: ShopwareCategory) {
   const externalLink =
@@ -91,5 +85,3 @@ export function getFooterNavigation(client: ShopwareClient) {
 export function getServiceNavigation(client: ShopwareClient) {
   return getNavigation(client, "service-navigation", serviceNavigationMock);
 }
-
-export type MainNavigation = Awaited<ReturnType<typeof getMainNavigation>>;
