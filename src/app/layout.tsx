@@ -7,7 +7,7 @@ import {
   getFooterNavigation,
   getMainNavigation,
   getServiceNavigation,
-} from "@/integrations/shopware/navigation";
+} from "@/features/storefront-shell/server/navigation";
 import { getShopwareRequestSession } from "@/lib/shopware/session";
 import { getStorefrontBranding } from "@/lib/shopware/storefront-branding";
 
