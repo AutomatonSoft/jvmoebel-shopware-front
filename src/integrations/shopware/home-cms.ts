@@ -6,7 +6,7 @@ import { mapShopwareCmsPage } from "@/integrations/shopware/mappers/cms-page";
 
 export async function getShopwareHomeCmsPage(
   client: ShopwareClient,
-): Promise<CmsPage> {
+): Promise<CmsPage | null> {
   const categoryResponse = await client.invoke(
     "readCategory post /category/{navigationId}",
     {
@@ -20,7 +20,7 @@ export async function getShopwareHomeCmsPage(
   const category = categoryResponse.data;
 
   if (!category.cmsPage) {
-    throw new Error("Shopware home category has no CMS page assigned.");
+    return null;
   }
 
   return mapShopwareCmsPage(category.cmsPage);

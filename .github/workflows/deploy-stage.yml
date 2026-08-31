@@ -138,7 +138,7 @@ jobs:
           ssh_opts=(-p "$DEPLOY_PORT" -i "$SSH_KEY_FILE" -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o "UserKnownHostsFile=$KNOWN_HOSTS_FILE" -o ConnectTimeout=10 -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -o ForwardAgent=no -o ClearAllForwardings=yes)
           scp_opts=(-P "$DEPLOY_PORT" -i "$SSH_KEY_FILE" -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o "UserKnownHostsFile=$KNOWN_HOSTS_FILE" -o ConnectTimeout=10 -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -o ForwardAgent=no -o ClearAllForwardings=yes)
           ssh "${ssh_opts[@]}" "$DEPLOY_USER@$DEPLOY_HOST" "test -d '$DEPLOY_PATH' && test ! -L '$DEPLOY_PATH' && test -w '$DEPLOY_PATH'"
-          test "$(ssh "${ssh_opts[@]}" "$DEPLOY_USER@$DEPLOY_HOST" "sha256sum /usr/local/sbin/deploy-jvmoebel-stage-front | awk '{print \\$1}'")" = "$EXPECTED_HELPER_SHA256"
+          test "$(ssh "${ssh_opts[@]}" "$DEPLOY_USER@$DEPLOY_HOST" "sha256sum /usr/local/sbin/deploy-jvmoebel-stage-front | awk '{print \$1}'")" = "$EXPECTED_HELPER_SHA256"
           ssh "${ssh_opts[@]}" "$DEPLOY_USER@$DEPLOY_HOST" "sha256sum -c /usr/local/lib/jvmoebel/front/artifact-signing.allowed_signers.sha256 >/dev/null"
           test "$(ssh "${ssh_opts[@]}" "$DEPLOY_USER@$DEPLOY_HOST" "awk '{print \$3, \$4}' /usr/local/lib/jvmoebel/front/artifact-signing.allowed_signers | ssh-keygen -lf - -E sha256 | awk '{print \$2}'")" = "$EXPECTED_SIGNING_KEY_FINGERPRINT"
           suffix="$GITHUB_RUN_ID.$GITHUB_RUN_ATTEMPT.uploading"
@@ -147,7 +147,7 @@ jobs:
           scp "${scp_opts[@]}" "$MANIFEST_PATH" "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/.$MANIFEST_NAME.$suffix"
           scp "${scp_opts[@]}" "$SIGNATURE_PATH" "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/.$SIGNATURE_NAME.$suffix"
           ssh "${ssh_opts[@]}" "$DEPLOY_USER@$DEPLOY_HOST" "chmod 0640 -- '$DEPLOY_PATH/.$ARCHIVE_NAME.$suffix' '$DEPLOY_PATH/.$MANIFEST_NAME.$suffix' '$DEPLOY_PATH/.$SIGNATURE_NAME.$suffix' && mv -f -- '$DEPLOY_PATH/.$ARCHIVE_NAME.$suffix' '$DEPLOY_PATH/$ARCHIVE_NAME' && mv -f -- '$DEPLOY_PATH/.$MANIFEST_NAME.$suffix' '$DEPLOY_PATH/$MANIFEST_NAME' && mv -f -- '$DEPLOY_PATH/.$SIGNATURE_NAME.$suffix' '$DEPLOY_PATH/$SIGNATURE_NAME'"
-          test "$(ssh "${ssh_opts[@]}" "$DEPLOY_USER@$DEPLOY_HOST" "sha256sum '$DEPLOY_PATH/$ARCHIVE_NAME' | awk '{print \\$1}'")" = "$ARCHIVE_SHA256"
+          test "$(ssh "${ssh_opts[@]}" "$DEPLOY_USER@$DEPLOY_HOST" "sha256sum '$DEPLOY_PATH/$ARCHIVE_NAME' | awk '{print \$1}'")" = "$ARCHIVE_SHA256"
           ssh "${ssh_opts[@]}" "$DEPLOY_USER@$DEPLOY_HOST" "sudo -n /usr/local/sbin/deploy-jvmoebel-stage-front '$GITHUB_SHA'"
           ssh "${ssh_opts[@]}" "$DEPLOY_USER@$DEPLOY_HOST" "test ! -e '$DEPLOY_PATH/$ARCHIVE_NAME' && test ! -e '$DEPLOY_PATH/$MANIFEST_NAME' && test ! -e '$DEPLOY_PATH/$SIGNATURE_NAME'"
       - name: Clean failed remote upload

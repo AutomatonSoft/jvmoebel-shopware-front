@@ -12,7 +12,7 @@ export type GetHomeCmsPageOptions = {
 
 export async function getHomeCmsPage({
   client,
-}: GetHomeCmsPageOptions): Promise<CmsPage> {
+}: GetHomeCmsPageOptions): Promise<CmsPage | null> {
   if (shouldUseShopwareMocks()) {
     return homeCmsPageMock;
   }

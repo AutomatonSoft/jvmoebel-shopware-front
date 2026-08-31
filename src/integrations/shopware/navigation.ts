@@ -30,7 +30,7 @@ async function getNavigation(
     },
   );
 
-  return response.data.map(mapShopwareCategory);
+  return (response.data ?? []).map(mapShopwareCategory);
 }
 
 export function getShopwareMainNavigation(client: ShopwareClient) {
