@@ -3,7 +3,10 @@ import "server-only";
 import { createAPIClient } from "@shopware/api-client";
 import type { operations } from "@shopware/api-client/store-api-types";
 
-import { getShopwareConfig, type ShopwareConfig } from "@/lib/shopware/config";
+import {
+  getShopwareConfig,
+  type ShopwareConfig,
+} from "@/integrations/shopware/config";
 
 export type CreateShopwareClientOptions = {
   config?: ShopwareConfig;

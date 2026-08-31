@@ -1,6 +1,6 @@
 import { afterAll, describe, expect, test } from "bun:test";
 
-import { getShopwareConfig } from "@/lib/shopware/config";
+import { getShopwareConfig } from "@/integrations/shopware/config";
 
 const originalEndpoint = process.env.SHOPWARE_ENDPOINT;
 const originalAccessToken = process.env.SHOPWARE_ACCESS_TOKEN;
