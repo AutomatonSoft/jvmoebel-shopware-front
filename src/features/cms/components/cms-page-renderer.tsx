@@ -11,6 +11,7 @@ import type {
   CmsSection,
   CmsSlot,
 } from "@/features/cms/model/page";
+import { reportCmsRenderingIssue } from "@/features/cms/server/report-rendering-issue";
 import { cn } from "@/lib/utils";
 
 export type CmsSlotComponentProps = {
@@ -33,6 +34,12 @@ function CmsSlotRenderer({ slot }: CmsSlotComponentProps) {
   if (SlotComponent) {
     return <SlotComponent slot={slot} />;
   }
+
+  reportCmsRenderingIssue({
+    code: "unsupported-element",
+    message: "No renderer is registered for this CMS element type.",
+    slot,
+  });
 
   if (process.env.NODE_ENV === "development") {
     return (
