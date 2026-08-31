@@ -3,12 +3,8 @@
 import { Dialog } from "@base-ui/react/dialog";
 import { SlidersHorizontal, X } from "lucide-react";
 import Link from "next/link";
-import { useState, type Dispatch, type SetStateAction } from "react";
 
-import {
-  ProductFilterPanel,
-  type ProductFilterPanelProps,
-} from "@/features/catalog/components/product-filter-panel";
+import { ProductFilterPanel } from "@/features/catalog/components/product-filter-panel";
 import { ShopProductResults } from "@/features/catalog/components/product-results";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,26 +14,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { buildShopProductFilterOptions } from "@/features/catalog/model/filter-options";
-import {
-  filterAndSortShopProducts,
-  type ShopProductSort,
-} from "@/features/catalog/model/filter-products";
-import type {
-  ShopProductListing,
-  ShopProductSize,
-} from "@/features/catalog/model/product-listing";
-
-function toggleValue<TValue extends string>(
-  value: TValue,
-  setValues: Dispatch<SetStateAction<TValue[]>>,
-) {
-  setValues((values) =>
-    values.includes(value)
-      ? values.filter((selectedValue) => selectedValue !== value)
-      : [...values, value],
-  );
-}
+import { useCatalogState } from "@/features/catalog/hooks/use-catalog-state";
+import type { ShopProductSort } from "@/features/catalog/model/filter-products";
+import type { ShopProductListing } from "@/features/catalog/model/product-listing";
 
 export type ShopCatalogProps = {
   isLoading?: boolean;
@@ -45,87 +24,9 @@ export type ShopCatalogProps = {
 };
 
 export function ShopCatalog({ isLoading = false, listing }: ShopCatalogProps) {
-  const prices = listing.products.map((product) => product.unitPrice);
-  const minimumPriceBound = Math.floor(Math.min(...prices) / 10) * 10;
-  const maximumPriceBound = Math.ceil(Math.max(...prices) / 10) * 10;
-  const { categories, colors, companies, materials, sizes } =
-    buildShopProductFilterOptions(listing.products);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedColors, setSelectedColors] = useState<string[]>([]);
-  const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
-  const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);
-  const [selectedSizes, setSelectedSizes] = useState<ShopProductSize[]>([]);
-  const [minimumPrice, setMinimumPrice] = useState(minimumPriceBound);
-  const [maximumPrice, setMaximumPrice] = useState(maximumPriceBound);
-  const [sort, setSort] = useState<ShopProductSort>("featured");
-  const activeFilterCount =
-    selectedCategories.length +
-    selectedColors.length +
-    selectedCompanies.length +
-    selectedMaterials.length +
-    selectedSizes.length +
-    (minimumPrice !== minimumPriceBound || maximumPrice !== maximumPriceBound
-      ? 1
-      : 0);
-  const products = filterAndSortShopProducts(
-    listing.products,
-    {
-      categories: selectedCategories,
-      colors: selectedColors,
-      companies: selectedCompanies,
-      materials: selectedMaterials,
-      maximumPrice,
-      minimumPrice,
-      sizes: selectedSizes,
-    },
-    sort,
-  );
-
-  function clearFilters() {
-    setSelectedCategories([]);
-    setSelectedColors([]);
-    setSelectedCompanies([]);
-    setSelectedMaterials([]);
-    setSelectedSizes([]);
-    setMinimumPrice(minimumPriceBound);
-    setMaximumPrice(maximumPriceBound);
-  }
-
-  const filterPanelProps = {
-    activeFilterCount,
-    categories,
-    colors,
-    companies,
-    materials,
-    maximumPrice,
-    maximumPriceBound,
-    minimumPrice,
-    minimumPriceBound,
-    onClear: clearFilters,
-    onMaximumPriceChange: (value: number) =>
-      setMaximumPrice(
-        Math.max(minimumPrice, Math.min(value, maximumPriceBound)),
-      ),
-    onMinimumPriceChange: (value: number) =>
-      setMinimumPrice(
-        Math.min(maximumPrice, Math.max(value, minimumPriceBound)),
-      ),
-    onToggleCategory: (value: string) =>
-      toggleValue(value, setSelectedCategories),
-    onToggleColor: (value: string) => toggleValue(value, setSelectedColors),
-    onToggleCompany: (value: string) =>
-      toggleValue(value, setSelectedCompanies),
-    onToggleMaterial: (value: string) =>
-      toggleValue(value, setSelectedMaterials),
-    onToggleSize: (value: ShopProductSize) =>
-      toggleValue(value, setSelectedSizes),
-    selectedCategories,
-    selectedColors,
-    selectedCompanies,
-    selectedMaterials,
-    selectedSizes,
-    sizes,
-  } satisfies ProductFilterPanelProps;
+  const { clearFilters, filterPanelProps, products, setSort, sort } =
+    useCatalogState(listing.products);
+  const { activeFilterCount } = filterPanelProps;
 
   return (
     <div className="mx-auto w-full max-w-360 px-4 pb-20 sm:px-8 sm:pb-28">
