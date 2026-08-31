@@ -3,8 +3,8 @@
 import { LoaderCircle, Sparkles } from "lucide-react";
 import { useEffect, useRef } from "react";
 
-import { ShopProductCard } from "@/components/storefront/shop-product-card";
 import { Button } from "@/components/ui/button";
+import { ShopProductCard } from "@/features/catalog/components/shop-product-card";
 import type { ShopProduct } from "@/features/catalog/model/product-listing";
 
 const resultScrollReleaseDelay = 700;

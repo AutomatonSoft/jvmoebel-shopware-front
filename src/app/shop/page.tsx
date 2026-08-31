@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { ShopCatalog } from "@/components/storefront/shop-catalog";
+import { ShopCatalog } from "@/features/catalog/components/shop-catalog";
 import { shopProductListingMock } from "@/lib/shopware/mocks/product-listing";
 
 export const metadata: Metadata = {

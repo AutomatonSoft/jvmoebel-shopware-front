@@ -8,8 +8,8 @@ import { useState, type Dispatch, type SetStateAction } from "react";
 import {
   ProductFilterPanel,
   type ProductFilterPanelProps,
-} from "@/components/storefront/shop-catalog/product-filter-panel";
-import { ShopProductResults } from "@/components/storefront/shop-catalog/product-results";
+} from "@/features/catalog/components/product-filter-panel";
+import { ShopProductResults } from "@/features/catalog/components/product-results";
 import { Button } from "@/components/ui/button";
 import {
   Select,
