@@ -21,9 +21,11 @@ import {
 } from "@/components/ui/select";
 import {
   filterAndSortShopProducts,
-  type ShopProductListing,
-  type ShopProductSize,
   type ShopProductSort,
+} from "@/features/catalog/model/filter-products";
+import type {
+  ShopProductListing,
+  ShopProductSize,
 } from "@/features/catalog/model/product-listing";
 
 function toggleValue<TValue extends string>(

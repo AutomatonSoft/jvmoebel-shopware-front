@@ -2,9 +2,9 @@ import { describe, expect, test } from "bun:test";
 
 import {
   filterAndSortShopProducts,
-  type ShopProduct,
   type ShopProductFilters,
-} from "@/features/catalog/model/product-listing";
+} from "@/features/catalog/model/filter-products";
+import type { ShopProduct } from "@/features/catalog/model/product-listing";
 
 const products = [
   {
