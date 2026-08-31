@@ -2,14 +2,14 @@ import "server-only";
 
 import type { components } from "@shopware/api-client/store-api-types";
 
-import type { StoreNavigationItem } from "@/features/storefront-shell/model/navigation";
-import type { ShopwareClient } from "@/lib/shopware/client";
-import { shouldUseShopwareMocks } from "@/lib/shopware/mocks/config";
 import {
   footerNavigationMock,
   mainNavigationMock,
   serviceNavigationMock,
-} from "@/lib/shopware/mocks/navigation";
+} from "@/features/storefront-shell/fixtures/navigation";
+import type { StoreNavigationItem } from "@/features/storefront-shell/model/navigation";
+import type { ShopwareClient } from "@/lib/shopware/client";
+import { shouldUseShopwareMocks } from "@/lib/shopware/mocks/config";
 
 type ShopwareCategory = components["schemas"]["Category"];
 type NavigationType = components["schemas"]["NavigationType"];
