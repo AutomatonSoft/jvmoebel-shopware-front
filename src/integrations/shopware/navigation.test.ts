@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 
+import { getFooterNavigation } from "@/integrations/shopware/navigation";
 import type { ShopwareClient } from "@/lib/shopware/client";
-import { getFooterNavigation } from "@/lib/shopware/navigation";
 
 describe("Shopware navigation", () => {
   test("maps a category without a children array as a leaf item", async () => {
