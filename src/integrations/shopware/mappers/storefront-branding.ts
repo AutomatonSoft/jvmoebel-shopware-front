@@ -1,6 +1,7 @@
 import {
   defaultStorefrontBranding,
-  type StorefrontBranding,
+  type StorefrontBrandingIssue,
+  type StorefrontBrandingResult,
 } from "@/features/storefront-shell/model/branding";
 
 function getRecord(value: unknown): Record<string, unknown> | undefined {
@@ -53,10 +54,42 @@ function getImageUrl(record: Record<string, unknown> | undefined, key: string) {
 export function parseStorefrontBranding(
   configuration: unknown,
   fallbackName: unknown = defaultStorefrontBranding.name,
-): StorefrontBranding {
+): StorefrontBrandingResult {
+  const issues: StorefrontBrandingIssue[] = [];
   const root = getRecord(configuration);
-  const branding = getRecord(root?.jvStorefrontBranding);
-  const logoValue = getRecord(branding?.logo);
+  const brandingValue = root?.jvStorefrontBranding;
+  const branding = getRecord(brandingValue);
+  const logoSource = branding?.logo;
+  const logoValue = getRecord(logoSource);
+
+  if (configuration !== undefined && configuration !== null && !root) {
+    issues.push({
+      message: "Sales channel configuration must be an object.",
+      path: "configuration",
+    });
+  }
+
+  if (brandingValue !== undefined && brandingValue !== null && !branding) {
+    issues.push({
+      message: "Storefront branding configuration must be an object.",
+      path: "jvStorefrontBranding",
+    });
+  }
+
+  if (branding && "name" in branding && !getString(branding, "name")) {
+    issues.push({
+      message: "Configured storefront name must be a non-empty string.",
+      path: "jvStorefrontBranding.name",
+    });
+  }
+
+  if (logoSource !== undefined && logoSource !== null && !logoValue) {
+    issues.push({
+      message: "Configured storefront logo must be an object.",
+      path: "jvStorefrontBranding.logo",
+    });
+  }
+
   const name =
     getString(branding, "name") ||
     (typeof fallbackName === "string" && fallbackName.trim()
@@ -66,16 +99,43 @@ export function parseStorefrontBranding(
   const logoWidth = getPositiveNumber(logoValue, "width");
   const logoHeight = getPositiveNumber(logoValue, "height");
 
+  if (logoValue) {
+    if (!logoUrl) {
+      issues.push({
+        message:
+          "Configured logo URL must be root-relative or use HTTP or HTTPS.",
+        path: "jvStorefrontBranding.logo.url",
+      });
+    }
+
+    if (!logoWidth) {
+      issues.push({
+        message: "Configured logo width must be a positive finite number.",
+        path: "jvStorefrontBranding.logo.width",
+      });
+    }
+
+    if (!logoHeight) {
+      issues.push({
+        message: "Configured logo height must be a positive finite number.",
+        path: "jvStorefrontBranding.logo.height",
+      });
+    }
+  }
+
   return {
-    logo:
-      logoUrl && logoWidth && logoHeight
-        ? {
-            alt: getString(logoValue, "alt") || name,
-            height: logoHeight,
-            url: logoUrl,
-            width: logoWidth,
-          }
-        : undefined,
-    name,
+    data: {
+      logo:
+        logoUrl && logoWidth && logoHeight
+          ? {
+              alt: getString(logoValue, "alt") || name,
+              height: logoHeight,
+              url: logoUrl,
+              width: logoWidth,
+            }
+          : undefined,
+      name,
+    },
+    issues,
   };
 }

@@ -18,13 +18,16 @@ describe("parseStorefrontBranding", () => {
         },
       }),
     ).toEqual({
-      logo: {
-        alt: "JVMöbel home",
-        height: 48,
-        url: "/images/logo.svg",
-        width: 180,
+      data: {
+        logo: {
+          alt: "JVMöbel home",
+          height: 48,
+          url: "/images/logo.svg",
+          width: 180,
+        },
+        name: "JVMöbel",
       },
-      name: "JVMöbel",
+      issues: [],
     });
   });
 
@@ -38,7 +41,7 @@ describe("parseStorefrontBranding", () => {
             width: 160,
           },
         },
-      }).logo,
+      }).data.logo,
     ).toEqual({
       alt: "JVMöbel",
       height: 40,
@@ -47,7 +50,7 @@ describe("parseStorefrontBranding", () => {
     });
   });
 
-  test("falls back when the logo data is incomplete or unsafe", () => {
+  test("falls back and reports incomplete or unsafe logo data", () => {
     expect(
       parseStorefrontBranding(
         {
@@ -60,10 +63,26 @@ describe("parseStorefrontBranding", () => {
         },
         "Configured sales channel",
       ),
-    ).toEqual({ logo: undefined, name: "Configured sales channel" });
+    ).toEqual({
+      data: { logo: undefined, name: "Configured sales channel" },
+      issues: [
+        {
+          message:
+            "Configured logo URL must be root-relative or use HTTP or HTTPS.",
+          path: "jvStorefrontBranding.logo.url",
+        },
+        {
+          message: "Configured logo width must be a positive finite number.",
+          path: "jvStorefrontBranding.logo.width",
+        },
+      ],
+    });
+  });
 
-    expect(parseStorefrontBranding(undefined)).toEqual(
-      defaultStorefrontBranding,
-    );
+  test("uses the documented fallback without reporting absent branding", () => {
+    expect(parseStorefrontBranding(undefined)).toEqual({
+      data: defaultStorefrontBranding,
+      issues: [],
+    });
   });
 });

@@ -10,6 +10,16 @@ export type StorefrontBranding = Readonly<{
   name: string;
 }>;
 
+export type StorefrontBrandingIssue = Readonly<{
+  message: string;
+  path: string;
+}>;
+
+export type StorefrontBrandingResult = Readonly<{
+  data: StorefrontBranding;
+  issues: readonly StorefrontBrandingIssue[];
+}>;
+
 export const defaultStorefrontBranding: StorefrontBranding = {
   name: "JVMöbel",
 };
