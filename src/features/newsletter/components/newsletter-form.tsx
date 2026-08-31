@@ -3,13 +3,10 @@
 import { ArrowRight } from "lucide-react";
 import { useActionState } from "react";
 
-import {
-  subscribeToNewsletter,
-  type NewsletterActionState,
-} from "@/app/actions/newsletter";
+import { subscribeToNewsletter } from "@/features/newsletter/server/subscribe";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { CmsButtonSize } from "@/features/cms/model/button-size";
+import type { NewsletterActionState } from "@/features/newsletter/model/subscription";
 
 const buttonSizeMap = {
   large: "lg",
@@ -19,7 +16,7 @@ const buttonSizeMap = {
 
 export type NewsletterFormProps = {
   buttonLabel: string;
-  buttonSize: CmsButtonSize;
+  buttonSize: keyof typeof buttonSizeMap;
   errorMessage: string;
   invalidEmailMessage: string;
   placeholder: string;

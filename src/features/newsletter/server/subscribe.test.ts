@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { subscribeToNewsletter } from "@/app/actions/newsletter";
+import { subscribeToNewsletter } from "@/features/newsletter/server/subscribe";
 
 describe("subscribeToNewsletter", () => {
   test("rejects an invalid email address", async () => {

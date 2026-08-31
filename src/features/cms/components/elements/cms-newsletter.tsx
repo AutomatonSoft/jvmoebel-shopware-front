@@ -1,6 +1,6 @@
-import { NewsletterForm } from "@/components/storefront/newsletter-form";
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import { parseCmsNewsletterData } from "@/features/cms/contracts/newsletter";
+import { NewsletterForm } from "@/features/newsletter/components/newsletter-form";
 
 export function CmsNewsletter({ slot }: CmsSlotComponentProps) {
   const data = parseCmsNewsletterData(slot.data);
