@@ -1,4 +1,4 @@
-import type { ShopProductListing } from "@/lib/shopware/product-listing";
+import type { ShopProductListing } from "@/features/catalog/model/product-listing";
 
 const cream = { hex: "#ded6c8", label: "Cream", value: "cream" };
 const charcoal = { hex: "#292a29", label: "Charcoal", value: "charcoal" };

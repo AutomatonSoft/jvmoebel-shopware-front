@@ -4,7 +4,7 @@ import {
   filterAndSortShopProducts,
   type ShopProduct,
   type ShopProductFilters,
-} from "@/lib/shopware/product-listing";
+} from "@/features/catalog/model/product-listing";
 
 const products = [
   {

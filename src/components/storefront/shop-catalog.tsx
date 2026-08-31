@@ -24,7 +24,7 @@ import {
   type ShopProductListing,
   type ShopProductSize,
   type ShopProductSort,
-} from "@/lib/shopware/product-listing";
+} from "@/features/catalog/model/product-listing";
 
 function toggleValue<TValue extends string>(
   value: TValue,

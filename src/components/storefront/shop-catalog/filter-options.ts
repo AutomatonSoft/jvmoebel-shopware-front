@@ -2,7 +2,7 @@ import type {
   ShopProduct,
   ShopProductColor,
   ShopProductSize,
-} from "@/lib/shopware/product-listing";
+} from "@/features/catalog/model/product-listing";
 
 export type ProductFilterOption<TValue extends string = string> = {
   count: number;

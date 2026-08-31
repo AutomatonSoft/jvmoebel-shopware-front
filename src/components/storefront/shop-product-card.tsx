@@ -1,7 +1,7 @@
 import { Star } from "lucide-react";
 import Image from "next/image";
 
-import type { ShopProduct } from "@/lib/shopware/product-listing";
+import type { ShopProduct } from "@/features/catalog/model/product-listing";
 
 export type ShopProductCardProps = {
   currency: string;

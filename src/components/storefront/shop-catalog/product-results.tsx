@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 
 import { ShopProductCard } from "@/components/storefront/shop-product-card";
 import { Button } from "@/components/ui/button";
-import type { ShopProduct } from "@/lib/shopware/product-listing";
+import type { ShopProduct } from "@/features/catalog/model/product-listing";
 
 const resultScrollReleaseDelay = 700;
 
