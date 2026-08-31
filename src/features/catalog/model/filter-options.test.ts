@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { buildShopProductFilterOptions } from "@/components/storefront/shop-catalog/filter-options";
+import { buildShopProductFilterOptions } from "@/features/catalog/model/filter-options";
 import type { ShopProduct } from "@/features/catalog/model/product-listing";
 
 function createProduct(

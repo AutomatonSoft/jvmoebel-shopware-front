@@ -5,7 +5,6 @@ import { SlidersHorizontal, X } from "lucide-react";
 import Link from "next/link";
 import { useState, type Dispatch, type SetStateAction } from "react";
 
-import { buildShopProductFilterOptions } from "@/components/storefront/shop-catalog/filter-options";
 import {
   ProductFilterPanel,
   type ProductFilterPanelProps,
@@ -19,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { buildShopProductFilterOptions } from "@/features/catalog/model/filter-options";
 import {
   filterAndSortShopProducts,
   type ShopProductSort,

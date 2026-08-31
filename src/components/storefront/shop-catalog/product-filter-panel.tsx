@@ -6,7 +6,7 @@ import { useState, type ReactNode } from "react";
 import type {
   ProductColorFilterOption,
   ProductFilterOption,
-} from "@/components/storefront/shop-catalog/filter-options";
+} from "@/features/catalog/model/filter-options";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import type { ShopProductSize } from "@/features/catalog/model/product-listing";
