@@ -17,9 +17,10 @@ const validNewsletterData = {
 
 describe("parseCmsNewsletterData", () => {
   test("parses a valid newsletter contract", () => {
-    expect(parseCmsNewsletterData(validNewsletterData)).toEqual(
-      validNewsletterData,
-    );
+    expect(parseCmsNewsletterData(validNewsletterData)).toEqual({
+      data: validNewsletterData,
+      issues: [],
+    });
   });
 
   test("normalizes an unknown button size", () => {
@@ -27,7 +28,7 @@ describe("parseCmsNewsletterData", () => {
       parseCmsNewsletterData({
         ...validNewsletterData,
         buttonSize: "unexpected",
-      })?.buttonSize,
+      }).data?.buttonSize,
     ).toBe("medium");
   });
 
@@ -36,7 +37,7 @@ describe("parseCmsNewsletterData", () => {
       parseCmsNewsletterData({
         ...validNewsletterData,
         successMessage: "",
-      }),
+      }).data,
     ).toBeNull();
   });
 
@@ -45,7 +46,7 @@ describe("parseCmsNewsletterData", () => {
       parseCmsNewsletterData({
         ...validNewsletterData,
         storefrontUrl: "javascript:alert(1)",
-      }),
+      }).data,
     ).toBeNull();
   });
 });

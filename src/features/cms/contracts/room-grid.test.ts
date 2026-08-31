@@ -30,11 +30,11 @@ describe("parseCmsRoomGridData", () => {
       title: "Furniture for every room",
     });
 
-    expect(data?.rooms.map((room) => room.id)).toEqual([
+    expect(data.data?.rooms.map((room) => room.id)).toEqual([
       "living-room",
       "Bedroom-0",
     ]);
-    expect(data?.rooms[0]).toEqual({
+    expect(data.data?.rooms[0]).toEqual({
       featured: true,
       id: "living-room",
       image: {
@@ -46,6 +46,7 @@ describe("parseCmsRoomGridData", () => {
       title: "Sofas and armchairs",
       url: "/living",
     });
+    expect(data.issues).toEqual([]);
   });
 
   test("omits invalid room items", () => {
@@ -68,12 +69,13 @@ describe("parseCmsRoomGridData", () => {
       title: "Rooms",
     });
 
-    expect(data?.rooms).toHaveLength(1);
-    expect(data?.rooms[0]?.position).toBe(1);
+    expect(data.data?.rooms).toHaveLength(1);
+    expect(data.data?.rooms[0]?.position).toBe(1);
+    expect(data.issues.map((issue) => issue.path)).toEqual(["rooms.0"]);
   });
 
   test("rejects a grid without a title or valid rooms", () => {
-    expect(parseCmsRoomGridData({ rooms: [] })).toBeNull();
-    expect(parseCmsRoomGridData({ title: "Rooms", rooms: [] })).toBeNull();
+    expect(parseCmsRoomGridData({ rooms: [] }).data).toBeNull();
+    expect(parseCmsRoomGridData({ title: "Rooms", rooms: [] }).data).toBeNull();
   });
 });

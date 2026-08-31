@@ -1,14 +1,18 @@
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import { parseCmsNewsletterData } from "@/features/cms/contracts/newsletter";
+import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
 import { NewsletterForm } from "@/features/newsletter/components/newsletter-form";
 
 export function CmsNewsletter({ slot }: CmsSlotComponentProps) {
-  const data = parseCmsNewsletterData(slot.data);
+  const result = parseCmsNewsletterData(slot.data);
 
-  if (!data) {
+  reportCmsContractIssues(slot, result.issues);
+
+  if (!result.data) {
     return null;
   }
 
+  const data = result.data;
   const {
     buttonLabel,
     buttonSize,

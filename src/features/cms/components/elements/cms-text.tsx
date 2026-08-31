@@ -1,17 +1,32 @@
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import { getCmsTextContent } from "@/features/cms/contracts/text";
 import { sanitizeCmsHtml } from "@/features/cms/lib/sanitize-html";
+import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
 
 export function CmsText({ slot }: CmsSlotComponentProps) {
   const content = getCmsTextContent(slot);
 
   if (!content) {
+    reportCmsContractIssues(slot, [
+      {
+        message: "Resolved or static text content is missing or empty.",
+        path: "content",
+      },
+    ]);
+
     return null;
   }
 
   const sanitizedContent = sanitizeCmsHtml(content);
 
   if (!sanitizedContent.trim()) {
+    reportCmsContractIssues(slot, [
+      {
+        message: "Text content is empty after sanitization.",
+        path: "content",
+      },
+    ]);
+
     return null;
   }
 

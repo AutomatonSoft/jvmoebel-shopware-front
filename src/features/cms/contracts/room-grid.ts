@@ -1,4 +1,8 @@
 import { getCmsRecord, getCmsString } from "@/features/cms/contracts/parsing";
+import type {
+  CmsContractIssue,
+  CmsContractResult,
+} from "@/features/cms/contracts/result";
 
 export type CmsRoomGridImage = Readonly<{
   alt: string;
@@ -22,24 +26,39 @@ export type CmsRoomGridData = Readonly<{
   title: string;
 }>;
 
-function parseRooms(value: unknown): CmsRoomGridItem[] {
+function parseRooms(value: unknown): Readonly<{
+  data: CmsRoomGridItem[];
+  issues: readonly CmsContractIssue[];
+}> {
   const roomsRecord = getCmsRecord(value);
-  const roomValues = Array.isArray(value)
-    ? value
+  const roomEntries = Array.isArray(value)
+    ? value.map((room, index) => [String(index), room] as const)
     : roomsRecord
-      ? Object.values(roomsRecord)
+      ? Object.entries(roomsRecord)
       : [];
+  const issues: CmsContractIssue[] = [];
 
-  return roomValues
-    .flatMap((roomValue, index) => {
+  const rooms = roomEntries
+    .flatMap(([key, roomValue], index) => {
       const room = getCmsRecord(roomValue);
       const image = getCmsRecord(room?.image);
       const imageUrl = getCmsString(image, "url");
       const label = getCmsString(room, "label");
       const title = getCmsString(room, "title");
       const url = getCmsString(room, "url");
+      const missingFields = [
+        !imageUrl && "image.url",
+        !label && "label",
+        !title && "title",
+        !url && "url",
+      ].filter((field): field is string => Boolean(field));
 
       if (!imageUrl || !label || !title || !url) {
+        issues.push({
+          message: `Room is missing required fields: ${missingFields.join(", ")}.`,
+          path: `rooms.${key}`,
+        });
+
         return [];
       }
 
@@ -64,21 +83,40 @@ function parseRooms(value: unknown): CmsRoomGridItem[] {
       ];
     })
     .sort((first, second) => first.position - second.position);
+
+  return { data: rooms, issues };
 }
 
-export function parseCmsRoomGridData(value: unknown): CmsRoomGridData | null {
+export function parseCmsRoomGridData(
+  value: unknown,
+): CmsContractResult<CmsRoomGridData> {
   const data = getCmsRecord(value);
   const rooms = parseRooms(data?.rooms);
   const title = getCmsString(data, "title");
+  const issues: CmsContractIssue[] = [...rooms.issues];
 
-  if (!title || rooms.length === 0) {
-    return null;
+  if (!title) {
+    issues.push({ message: "Title is missing or empty.", path: "title" });
+  }
+
+  if (rooms.data.length === 0) {
+    issues.push({
+      message: "At least one valid room is required.",
+      path: "rooms",
+    });
+  }
+
+  if (!title || rooms.data.length === 0) {
+    return { data: null, issues };
   }
 
   return {
-    description: getCmsString(data, "description"),
-    eyebrow: getCmsString(data, "eyebrow"),
-    rooms,
-    title,
+    data: {
+      description: getCmsString(data, "description"),
+      eyebrow: getCmsString(data, "eyebrow"),
+      rooms: rooms.data,
+      title,
+    },
+    issues,
   };
 }

@@ -3,14 +3,18 @@ import Image from "next/image";
 
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import { parseCmsRoomGridData } from "@/features/cms/contracts/room-grid";
+import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
 
 export function CmsRoomGrid({ slot }: CmsSlotComponentProps) {
-  const data = parseCmsRoomGridData(slot.data);
+  const result = parseCmsRoomGridData(slot.data);
 
-  if (!data) {
+  reportCmsContractIssues(slot, result.issues);
+
+  if (!result.data) {
     return null;
   }
 
+  const data = result.data;
   const { description, eyebrow, rooms, title } = data;
 
   return (

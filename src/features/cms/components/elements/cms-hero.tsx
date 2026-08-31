@@ -3,14 +3,18 @@ import Image from "next/image";
 import { CmsButton } from "@/features/cms/components/cms-button";
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import { parseCmsHeroData } from "@/features/cms/contracts/hero";
+import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
 
 export function CmsHero({ slot }: CmsSlotComponentProps) {
-  const data = parseCmsHeroData(slot.data);
+  const result = parseCmsHeroData(slot.data);
 
-  if (!data) {
+  reportCmsContractIssues(slot, result.issues);
+
+  if (!result.data) {
     return null;
   }
 
+  const data = result.data;
   const { description, eyebrow, image, primaryLink, secondaryLink, title } =
     data;
 

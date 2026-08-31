@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, spyOn, test } from "bun:test";
 import type { ReactElement } from "react";
 
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
@@ -109,13 +109,20 @@ describe("CmsText", () => {
   });
 
   test("renders nothing for empty content", () => {
-    const element = CmsText({
-      slot: createTextSlot({
-        data: { content: "   " },
-        config: { content: { source: "static", value: "   " } },
-      }),
-    });
+    const consoleError = spyOn(console, "error").mockImplementation(() => {});
 
-    expect(element).toBeNull();
+    try {
+      const element = CmsText({
+        slot: createTextSlot({
+          data: { content: "   " },
+          config: { content: { source: "static", value: "   " } },
+        }),
+      });
+
+      expect(element).toBeNull();
+      expect(consoleError).toHaveBeenCalledTimes(1);
+    } finally {
+      consoleError.mockRestore();
+    }
   });
 });

@@ -3,14 +3,21 @@ import Image from "next/image";
 
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import { parseCmsProductGridData } from "@/features/cms/contracts/product-grid";
+import {
+  reportCmsContractIssues,
+  reportCmsRenderingIssue,
+} from "@/features/cms/server/report-rendering-issue";
 
 export function CmsProductGrid({ slot }: CmsSlotComponentProps) {
-  const data = parseCmsProductGridData(slot.data);
+  const result = parseCmsProductGridData(slot.data);
 
-  if (!data) {
+  reportCmsContractIssues(slot, result.issues);
+
+  if (!result.data) {
     return null;
   }
 
+  const data = result.data;
   const { currency, eyebrow, locale, products, title, viewAll } = data;
 
   let priceFormatter: Intl.NumberFormat;
@@ -21,7 +28,17 @@ export function CmsProductGrid({ slot }: CmsSlotComponentProps) {
       maximumFractionDigits: 0,
       style: "currency",
     });
-  } catch {
+  } catch (error) {
+    reportCmsRenderingIssue({
+      cause:
+        error instanceof Error
+          ? error.message
+          : "Unknown currency formatter error.",
+      code: "rendering-failed",
+      message: "Unable to create the product price formatter.",
+      slot,
+    });
+
     return null;
   }
 

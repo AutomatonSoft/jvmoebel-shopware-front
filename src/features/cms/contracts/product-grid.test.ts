@@ -43,11 +43,11 @@ describe("parseCmsProductGridData", () => {
       viewAll: { label: "View all", url: "/shop" },
     });
 
-    expect(data?.products.map((product) => product.id)).toEqual([
+    expect(data.data?.products.map((product) => product.id)).toEqual([
       "sofa",
       "chair",
     ]);
-    expect(data?.products[0]).toEqual({
+    expect(data.data?.products[0]).toEqual({
       badge: "Sale",
       description: "Natural boucle",
       id: "sofa",
@@ -63,7 +63,11 @@ describe("parseCmsProductGridData", () => {
       unitPrice: 2490,
       url: "/product/sofa",
     });
-    expect(data?.viewAll).toEqual({ label: "View all", url: "/shop" });
+    expect(data.data?.viewAll).toEqual({
+      label: "View all",
+      url: "/shop",
+    });
+    expect(data.issues).toEqual([]);
   });
 
   test("omits invalid products and incomplete links", () => {
@@ -91,20 +95,24 @@ describe("parseCmsProductGridData", () => {
       viewAll: { label: "Missing URL" },
     });
 
-    expect(data?.products).toHaveLength(1);
-    expect(data?.products[0]?.position).toBe(1);
-    expect(data?.viewAll).toBeUndefined();
+    expect(data.data?.products).toHaveLength(1);
+    expect(data.data?.products[0]?.position).toBe(1);
+    expect(data.data?.viewAll).toBeUndefined();
+    expect(data.issues.map((issue) => issue.path)).toEqual([
+      "products.0",
+      "viewAll",
+    ]);
   });
 
   test("rejects a grid without metadata or valid products", () => {
-    expect(parseCmsProductGridData({ products: [] })).toBeNull();
+    expect(parseCmsProductGridData({ products: [] }).data).toBeNull();
     expect(
       parseCmsProductGridData({
         currency: "EUR",
         locale: "de-DE",
         products: [],
         title: "Products",
-      }),
+      }).data,
     ).toBeNull();
   });
 });
