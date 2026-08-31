@@ -2,6 +2,7 @@
 
 import type { NewsletterActionState } from "@/features/newsletter/model/subscription";
 import { parseNewsletterSubscription } from "@/features/newsletter/model/validation";
+import { reportNewsletterSubscriptionIssue } from "@/features/newsletter/server/report-subscription-issue";
 import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
 import { subscribeToShopwareNewsletter } from "@/integrations/shopware/newsletter";
 import { createShopwareSession } from "@/integrations/shopware/session";
@@ -26,14 +27,26 @@ export async function subscribeToNewsletter(
 
   try {
     const session = createShopwareSession();
-    const subscribed = await subscribeToShopwareNewsletter(
+    const outcome = await subscribeToShopwareNewsletter(
       session.client,
       subscription,
     );
 
-    return { status: subscribed ? "success" : "error" };
+    if (!outcome.success) {
+      reportNewsletterSubscriptionIssue({
+        code: "unsuccessful-response",
+        shopwareStatus: outcome.status,
+      });
+
+      return { status: "error" };
+    }
+
+    return { status: "success" };
   } catch (error) {
-    console.error("Shopware newsletter subscription failed.", error);
+    reportNewsletterSubscriptionIssue({
+      cause: error,
+      code: "request-failed",
+    });
 
     return { status: "error" };
   }
