@@ -6,7 +6,7 @@ behavior. It is not the raw schema of a standard Shopware Store API response.
 
 When the backend is ready, an integration layer must map Shopware products,
 associations, calculated prices, and properties into this model. The current
-mock is located in `src/lib/shopware/mocks/product-listing.ts`.
+mock is located in `src/features/catalog/fixtures/product-listing.ts`.
 
 The current contract is enforced at TypeScript compile time. Runtime parsing of
 an unknown Store API response will be added together with the backend adapter.
