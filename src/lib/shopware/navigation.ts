@@ -77,7 +77,7 @@ async function getNavigation(
     },
   );
 
-  return response.data.map(mapCategory);
+  return (response.data ?? []).map(mapCategory);
 }
 
 export function getMainNavigation(client: ShopwareClient) {
