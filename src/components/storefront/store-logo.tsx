@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import type { StorefrontBranding } from "@/lib/shopware/storefront-branding";
+import type { StorefrontBranding } from "@/features/storefront-shell/model/branding";
 import { cn } from "@/lib/utils";
 
 export type StoreLogoProps = {

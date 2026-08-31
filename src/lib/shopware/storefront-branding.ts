@@ -1,24 +1,12 @@
 import "server-only";
 
+import {
+  defaultStorefrontBranding,
+  type StorefrontBranding,
+} from "@/features/storefront-shell/model/branding";
 import type { ShopwareClient } from "@/lib/shopware/client";
 import { getShopwareContext } from "@/lib/shopware/context";
 import { shouldUseShopwareMocks } from "@/lib/shopware/mocks/config";
-
-export type StorefrontLogo = Readonly<{
-  alt: string;
-  height: number;
-  url: string;
-  width: number;
-}>;
-
-export type StorefrontBranding = Readonly<{
-  logo?: StorefrontLogo;
-  name: string;
-}>;
-
-export const defaultStorefrontBranding: StorefrontBranding = {
-  name: "JVMöbel",
-};
 
 function getRecord(value: unknown): Record<string, unknown> | undefined {
   if (typeof value !== "object" || value === null || Array.isArray(value)) {

@@ -1,9 +1,7 @@
 import { describe, expect, test } from "bun:test";
 
-import {
-  defaultStorefrontBranding,
-  parseStorefrontBranding,
-} from "@/lib/shopware/storefront-branding";
+import { defaultStorefrontBranding } from "@/features/storefront-shell/model/branding";
+import { parseStorefrontBranding } from "@/lib/shopware/storefront-branding";
 
 describe("parseStorefrontBranding", () => {
   test("parses a configured storefront logo", () => {
