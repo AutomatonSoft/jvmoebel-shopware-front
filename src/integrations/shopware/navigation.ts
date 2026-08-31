@@ -8,40 +8,11 @@ import {
   serviceNavigationMock,
 } from "@/features/storefront-shell/fixtures/navigation";
 import type { StoreNavigationItem } from "@/features/storefront-shell/model/navigation";
+import { mapShopwareCategory } from "@/integrations/shopware/mappers/navigation";
 import type { ShopwareClient } from "@/lib/shopware/client";
 import { shouldUseShopwareMocks } from "@/lib/shopware/mocks/config";
 
-type ShopwareCategory = components["schemas"]["Category"];
 type NavigationType = components["schemas"]["NavigationType"];
-
-function getCategoryHref(category: ShopwareCategory) {
-  const externalLink =
-    category.translated.externalLink || category.externalLink;
-
-  if (externalLink) {
-    return externalLink;
-  }
-
-  const seoPath =
-    category.seoUrl ||
-    category.seoUrls?.find((seoUrl) => seoUrl.isCanonical && !seoUrl.isDeleted)
-      ?.seoPathInfo;
-
-  if (seoPath) {
-    return seoPath.startsWith("/") ? seoPath : `/${seoPath}`;
-  }
-
-  return `/navigation/${category.id}`;
-}
-
-function mapCategory(category: ShopwareCategory): StoreNavigationItem {
-  return {
-    id: category.id,
-    label: category.translated.name || category.name,
-    href: getCategoryHref(category),
-    children: (category.children ?? []).map(mapCategory),
-  };
-}
 
 async function getNavigation(
   client: ShopwareClient,
@@ -71,7 +42,7 @@ async function getNavigation(
     },
   );
 
-  return response.data.map(mapCategory);
+  return response.data.map(mapShopwareCategory);
 }
 
 export function getMainNavigation(client: ShopwareClient) {
