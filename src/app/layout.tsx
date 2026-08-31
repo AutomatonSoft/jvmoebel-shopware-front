@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 
-import { StoreFooter } from "@/components/storefront/store-footer";
-import { StoreHeader } from "@/components/storefront/store-header";
+import { StoreFooter } from "@/features/storefront-shell/components/store-footer";
+import { StoreHeader } from "@/features/storefront-shell/components/store-header";
 import {
   getFooterNavigation,
   getMainNavigation,

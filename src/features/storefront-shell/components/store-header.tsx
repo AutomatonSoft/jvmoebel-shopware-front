@@ -7,10 +7,10 @@ import {
   X,
 } from "lucide-react";
 
-import { CategoryMenu } from "@/components/storefront/category-menu";
-import { StoreLogo } from "@/components/storefront/store-logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { CategoryMenu } from "@/features/storefront-shell/components/category-menu";
+import { StoreLogo } from "@/features/storefront-shell/components/store-logo";
 import type { StorefrontBranding } from "@/features/storefront-shell/model/branding";
 import type { MainNavigation } from "@/features/storefront-shell/model/navigation";
 
