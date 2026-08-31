@@ -9,7 +9,7 @@ import {
   getMainNavigation,
   getServiceNavigation,
 } from "@/features/storefront-shell/server/navigation";
-import { getShopwareRequestSession } from "@/lib/shopware/session";
+import { getShopwareRequestSession } from "@/integrations/shopware/session";
 
 import "./globals.css";
 

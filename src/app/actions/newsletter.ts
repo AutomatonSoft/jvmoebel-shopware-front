@@ -1,6 +1,6 @@
 "use server";
 
-import { createShopwareSession } from "@/lib/shopware/session";
+import { createShopwareSession } from "@/integrations/shopware/session";
 import { shouldUseShopwareMocks } from "@/lib/shopware/mocks/config";
 
 export type NewsletterActionState = {
