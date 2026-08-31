@@ -8,8 +8,8 @@ import {
   getMainNavigation,
   getServiceNavigation,
 } from "@/features/storefront-shell/server/navigation";
+import { getStorefrontBranding } from "@/integrations/shopware/storefront-branding";
 import { getShopwareRequestSession } from "@/lib/shopware/session";
-import { getStorefrontBranding } from "@/lib/shopware/storefront-branding";
 
 import "./globals.css";
 
