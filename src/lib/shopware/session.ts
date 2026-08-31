@@ -2,8 +2,8 @@ import "server-only";
 
 import { cache } from "react";
 
+import { createShopwareClient } from "@/integrations/shopware/client";
 import type { ShopwareConfig } from "@/integrations/shopware/config";
-import { createShopwareClient } from "@/lib/shopware/client";
 
 export type CreateShopwareSessionOptions = {
   config?: ShopwareConfig;

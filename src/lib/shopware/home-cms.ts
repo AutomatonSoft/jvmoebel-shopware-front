@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { ShopwareClient } from "@/lib/shopware/client";
+import type { ShopwareClient } from "@/integrations/shopware/client";
 import type { CmsPage } from "@/lib/shopware/cms";
 import { shouldUseShopwareMocks } from "@/lib/shopware/mocks/config";
 import { homeCmsPageMock } from "@/lib/shopware/mocks/home-cms";

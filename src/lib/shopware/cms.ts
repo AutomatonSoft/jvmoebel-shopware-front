@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { ShopwareClient } from "@/lib/shopware/client";
+import type { ShopwareClient } from "@/integrations/shopware/client";
 
 const SHOPWARE_ID_PATTERN = /^[0-9a-f]{32}$/i;
 

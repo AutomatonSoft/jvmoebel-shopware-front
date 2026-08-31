@@ -2,8 +2,8 @@ import "server-only";
 
 import type { components } from "@shopware/api-client/store-api-types";
 
+import type { ShopwareClient } from "@/integrations/shopware/client";
 import { mapShopwareCategory } from "@/integrations/shopware/mappers/navigation";
-import type { ShopwareClient } from "@/lib/shopware/client";
 
 type NavigationType = components["schemas"]["NavigationType"];
 

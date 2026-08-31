@@ -4,8 +4,8 @@ import {
   defaultStorefrontBranding,
   type StorefrontBranding,
 } from "@/features/storefront-shell/model/branding";
+import type { ShopwareClient } from "@/integrations/shopware/client";
 import { getShopwareStorefrontBranding } from "@/integrations/shopware/storefront-branding";
-import type { ShopwareClient } from "@/lib/shopware/client";
 import { shouldUseShopwareMocks } from "@/lib/shopware/mocks/config";
 
 export async function getStorefrontBranding(

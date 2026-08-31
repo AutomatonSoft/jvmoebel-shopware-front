@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { ShopwareClient } from "@/lib/shopware/client";
+import type { ShopwareClient } from "@/integrations/shopware/client";
 
 export async function getShopwareContext(client: ShopwareClient) {
   const response = await client.invoke("readContext get /context", {
