@@ -1,10 +1,15 @@
 import { CmsPageRenderer } from "@/components/cms/cms-page-renderer";
+import { HomePreparationState } from "@/components/storefront/home-preparation-state";
 import { getHomeCmsPage } from "@/lib/shopware/home-cms";
 import { getShopwareRequestSession } from "@/lib/shopware/session";
 
 export default async function Home() {
   const session = getShopwareRequestSession();
   const page = await getHomeCmsPage({ client: session.client });
+
+  if (!page) {
+    return <HomePreparationState />;
+  }
 
   return (
     <main className="flex-1">
