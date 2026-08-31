@@ -3,12 +3,12 @@ import { Montserrat } from "next/font/google";
 
 import { StoreFooter } from "@/features/storefront-shell/components/store-footer";
 import { StoreHeader } from "@/features/storefront-shell/components/store-header";
+import { getStorefrontBranding } from "@/features/storefront-shell/server/branding";
 import {
   getFooterNavigation,
   getMainNavigation,
   getServiceNavigation,
 } from "@/features/storefront-shell/server/navigation";
-import { getStorefrontBranding } from "@/integrations/shopware/storefront-branding";
 import { getShopwareRequestSession } from "@/lib/shopware/session";
 
 import "./globals.css";
