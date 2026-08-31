@@ -2,8 +2,8 @@ import "server-only";
 
 import type { StorefrontBranding } from "@/features/storefront-shell/model/branding";
 import type { ShopwareClient } from "@/integrations/shopware/client";
+import { getShopwareContext } from "@/integrations/shopware/context";
 import { parseStorefrontBranding } from "@/integrations/shopware/mappers/storefront-branding";
-import { getShopwareContext } from "@/lib/shopware/context";
 
 export async function getShopwareStorefrontBranding(
   client: ShopwareClient,

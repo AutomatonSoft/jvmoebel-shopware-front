@@ -1,7 +1,7 @@
 "use server";
 
 import { createShopwareSession } from "@/integrations/shopware/session";
-import { shouldUseShopwareMocks } from "@/lib/shopware/mocks/config";
+import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
 
 export type NewsletterActionState = {
   status: "error" | "idle" | "invalid" | "success";

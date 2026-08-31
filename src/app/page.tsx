@@ -1,6 +1,6 @@
-import { CmsPageRenderer } from "@/components/cms/cms-page-renderer";
+import { CmsPageRenderer } from "@/features/cms/components/cms-page-renderer";
+import { getHomeCmsPage } from "@/features/cms/server/home-page";
 import { getShopwareRequestSession } from "@/integrations/shopware/session";
-import { getHomeCmsPage } from "@/lib/shopware/home-cms";
 
 export default async function Home() {
   const session = getShopwareRequestSession();

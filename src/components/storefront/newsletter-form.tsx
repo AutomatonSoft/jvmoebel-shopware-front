@@ -9,7 +9,7 @@ import {
 } from "@/app/actions/newsletter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { CmsButtonSize } from "@/lib/cms/button-size";
+import type { CmsButtonSize } from "@/features/cms/model/button-size";
 
 const buttonSizeMap = {
   large: "lg",

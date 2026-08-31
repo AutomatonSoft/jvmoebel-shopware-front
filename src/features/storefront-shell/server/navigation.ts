@@ -15,7 +15,7 @@ import {
   getShopwareServiceNavigation,
 } from "@/integrations/shopware/navigation";
 import type { ShopwareClient } from "@/integrations/shopware/client";
-import { shouldUseShopwareMocks } from "@/lib/shopware/mocks/config";
+import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
 
 export async function getMainNavigation(
   client: ShopwareClient,
