@@ -9,6 +9,7 @@ services:
       NODE_ENV: production
       SHOPWARE_ENDPOINT: ${SHOPWARE_ENDPOINT:?SHOPWARE_ENDPOINT is required}
       SHOPWARE_ACCESS_TOKEN: ${SHOPWARE_ACCESS_TOKEN:?SHOPWARE_ACCESS_TOKEN is required}
+      SHOPWARE_USE_MOCKS: ${SHOPWARE_USE_MOCKS:-false}
     ports:
       - "127.0.0.1:${FRONT_PORT:?FRONT_PORT is required}:3000"
     networks:
