@@ -5,6 +5,10 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     init: true
+    stop_grace_period: ${FRONT_STOP_GRACE_PERIOD:-30s}
+    mem_limit: ${FRONT_MEMORY_LIMIT:-1g}
+    cpus: ${FRONT_CPU_LIMIT:-1.5}
+    pids_limit: ${FRONT_PIDS_LIMIT:-256}
     environment:
       NODE_ENV: production
       SHOPWARE_ENDPOINT: ${SHOPWARE_ENDPOINT:?SHOPWARE_ENDPOINT is required}
