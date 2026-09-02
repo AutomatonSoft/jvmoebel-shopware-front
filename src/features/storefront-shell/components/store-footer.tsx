@@ -19,7 +19,8 @@ export function StoreFooter({
   footerNavigation,
   serviceNavigation,
 }: StoreFooterProps) {
-  const legalLinks = serviceNavigation.flatMap(getNavigationLinks);
+  const categoryLinks = footerNavigation.flatMap(getNavigationLinks);
+  const serviceLinks = serviceNavigation.flatMap(getNavigationLinks);
 
   return (
     <footer className="mt-auto bg-background">
@@ -56,41 +57,51 @@ export function StoreFooter({
           </a>
         </section>
 
-        {footerNavigation.map((column) => (
-          <nav className="flex flex-col gap-3" key={column.id}>
-            <h2 className="mb-2 text-xs font-semibold tracking-[0.12em] text-muted-foreground uppercase">
-              {column.label}
-            </h2>
-            {getNavigationLinks(column).map((item) => (
+        <nav
+          aria-label="Kategorien"
+          className="col-span-2 border-t border-[#d9d7ce] pt-7 xl:col-span-2"
+        >
+          <h2 className="text-xs font-semibold tracking-[0.16em] text-[#72786f] uppercase">
+            Kategorien
+          </h2>
+          <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3">
+            {categoryLinks.map((item) => (
               <a
-                className="w-fit text-sm text-foreground/75 transition-colors hover:text-primary"
+                className="w-fit text-sm leading-5 text-[#596158] underline decoration-transparent underline-offset-4 transition-[color,text-decoration-color] hover:text-[#b96548] hover:decoration-current"
                 href={item.href}
                 key={item.id}
               >
                 {item.label}
               </a>
             ))}
-          </nav>
-        ))}
+          </div>
+        </nav>
+
+        <nav
+          aria-label="Service"
+          className="col-span-2 border-t border-[#d9d7ce] pt-7 sm:col-span-1 xl:col-span-1"
+        >
+          <h2 className="text-xs font-semibold tracking-[0.16em] text-[#72786f] uppercase">
+            Service
+          </h2>
+          <div className="mt-6 flex flex-col gap-3">
+            {serviceLinks.map((item) => (
+              <a
+                className="w-fit text-sm leading-5 text-[#596158] underline decoration-transparent underline-offset-4 transition-[color,text-decoration-color] hover:text-[#b96548] hover:decoration-current"
+                href={item.href}
+                key={item.id}
+              >
+                {item.label}
+              </a>
+            ))}
+          </div>
+        </nav>
       </div>
 
-      <div className="mx-auto flex w-full max-w-360 flex-col gap-4 border-t px-6 py-6 text-xs text-muted-foreground sm:px-8 md:flex-row md:items-center md:justify-between">
+      <div className="mx-auto w-full max-w-360 border-t px-6 py-6 text-xs text-muted-foreground sm:px-8">
         <span>
           © {new Date().getFullYear()} JVMöbel. Alle Rechte vorbehalten.
         </span>
-        {legalLinks.length > 0 && (
-          <nav className="flex flex-wrap gap-x-6 gap-y-2">
-            {legalLinks.map((item) => (
-              <a
-                className="transition-colors hover:text-primary"
-                href={item.href}
-                key={item.id}
-              >
-                {item.label}
-              </a>
-            ))}
-          </nav>
-        )}
       </div>
     </footer>
   );
