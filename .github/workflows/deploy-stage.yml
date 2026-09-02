@@ -34,8 +34,9 @@ jobs:
       - shell: bash
         run: |
           set -Eeuo pipefail
-          test "$(sha256sum compose.deploy.yml | awk '{print $1}')" = 8e91b0c4544a98735e2758fe3b82452dffe0bf51ca46600ed0893425ae4c0b82
+          test "$(sha256sum compose.deploy.yml | awk '{print $1}')" = 2a931946bec173c5f0e22f58507835e1aa7dac3bd6a023b2008c3607e50988fd
           COMPOSE_DISABLE_ENV_FILE=1 SHOPWARE_ENDPOINT=https://example.invalid SHOPWARE_ACCESS_TOKEN=validation-token SHOPWARE_USE_MOCKS=false FRONT_PORT=3000 APP_NETWORK=validation-network docker compose -f compose.deploy.yml config --quiet
+          COMPOSE_DISABLE_ENV_FILE=1 SHOPWARE_USE_MOCKS=true FRONT_PORT=3000 APP_NETWORK=validation-network docker compose -f compose.deploy.yml config --quiet
           ! find . -type l -print -quit | grep -q .
           tar -czf "$RUNNER_TEMP/front.tar.gz" --exclude-vcs .
           test -s "$RUNNER_TEMP/front.tar.gz"
@@ -72,7 +73,7 @@ jobs:
       DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
       DEPLOY_KNOWN_HOSTS: ${{ vars.DEPLOY_KNOWN_HOSTS }}
       EXPECTED_DEPLOY_HOST: 85.215.147.19
-      EXPECTED_COMPOSE_SHA256: 8e91b0c4544a98735e2758fe3b82452dffe0bf51ca46600ed0893425ae4c0b82
+      EXPECTED_COMPOSE_SHA256: 2a931946bec173c5f0e22f58507835e1aa7dac3bd6a023b2008c3607e50988fd
       EXPECTED_HELPER_SHA256: 643c3bbf214283b2880cb0462ec1f87238b8a507b148f02911bc20e37f0da714
       EXPECTED_DEPLOY_KEY_FINGERPRINT: SHA256:Q3JQh8Yqz7EEoRVZXUufLmx160pk9ptugi+Zsj6qSU4
       EXPECTED_HOST_KEY_FINGERPRINT: SHA256:6BHoasAuc7ptnN/HhXaP3C/BtklHPtP85WZ2fAXcAzI
@@ -108,6 +109,7 @@ jobs:
           test "$DEPLOY_PATH" = /var/spool/jvmoebel/stage/front/incoming
           test "$(sha256sum compose.deploy.yml | awk '{print $1}')" = "$EXPECTED_COMPOSE_SHA256"
           COMPOSE_DISABLE_ENV_FILE=1 SHOPWARE_ENDPOINT=https://example.invalid SHOPWARE_ACCESS_TOKEN=validation-token SHOPWARE_USE_MOCKS=false FRONT_PORT=3000 APP_NETWORK=validation-network docker compose -f compose.deploy.yml config --quiet
+          COMPOSE_DISABLE_ENV_FILE=1 SHOPWARE_USE_MOCKS=true FRONT_PORT=3000 APP_NETWORK=validation-network docker compose -f compose.deploy.yml config --quiet
           ! find . -type l -print -quit | grep -q .
           printf '%s\n' "$DEPLOY_SSH_KEY" | tr -d '\r' > "$SSH_KEY_FILE"
           printf '%s\n' "$DEPLOY_ARTIFACT_SIGNING_KEY" | tr -d '\r' > "$SIGNING_KEY_FILE"

@@ -8,8 +8,11 @@ Install:
 bun install
 
 Shopware configuration:
-Copy .env.example to .env.local and replace the placeholder values with the
-Store API endpoint and access key of the Shopware sales channel.
+Copy .env.example to .env.local. With `SHOPWARE_USE_MOCKS=true`, the storefront
+uses local fixtures and the Shopware endpoint and access token may stay empty.
+With `SHOPWARE_USE_MOCKS=false`, provide the Store API endpoint and access key
+of the Shopware sales channel. Only `true` and `false` are accepted. When the
+flag is omitted, mocks are enabled in development and disabled otherwise.
 
 CMS integration contract:
 See [docs/cms-contract.md](docs/cms-contract.md) for the supported CMS elements

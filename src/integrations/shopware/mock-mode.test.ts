@@ -1,6 +1,9 @@
 import { afterEach, describe, expect, test } from "bun:test";
 
-import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
+import {
+  getShopwareDataMode,
+  shouldUseShopwareMocks,
+} from "@/integrations/shopware/mock-mode";
 
 const originalNodeEnv = process.env.NODE_ENV;
 const originalShopwareUseMocks = process.env.SHOPWARE_USE_MOCKS;
@@ -64,5 +67,13 @@ describe("shouldUseShopwareMocks", () => {
     setEnvironment("production", "  TrUe  ");
 
     expect(shouldUseShopwareMocks()).toBe(true);
+  });
+
+  test("rejects an unsupported explicit flag", () => {
+    setEnvironment("production", "yes");
+
+    expect(() => getShopwareDataMode()).toThrow(
+      'SHOPWARE_USE_MOCKS must be either "true" or "false".',
+    );
   });
 });
