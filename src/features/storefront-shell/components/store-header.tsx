@@ -24,7 +24,7 @@ function StoreSearchForm({ className }: { className: string }) {
   return (
     <form
       action="/shop"
-      className={`h-11 items-center rounded-full border bg-muted/80 p-1 pl-4 transition-[background,border-color,box-shadow] hover:border-foreground/15 hover:bg-card/70 focus-within:border-foreground/25 focus-within:bg-card focus-within:ring-3 focus-within:ring-primary/15 ${className}`}
+      className={`h-12 items-center rounded-full border bg-muted/80 p-1 pl-4 transition-[background,border-color,box-shadow] hover:border-foreground/15 hover:bg-card/70 focus-within:border-foreground/25 focus-within:bg-card focus-within:ring-3 focus-within:ring-primary/15 ${className}`}
       role="search"
     >
       <Search className="mr-2 size-4.5 shrink-0 text-muted-foreground transition-colors group-focus-within/search:text-foreground" />
@@ -38,7 +38,7 @@ function StoreSearchForm({ className }: { className: string }) {
       <Button
         aria-label="Submit search"
         className="shrink-0 rounded-full hover:bg-destructive motion-safe:hover:translate-x-px motion-safe:active:scale-90"
-        size="icon-lg"
+        size="icon"
         type="submit"
       >
         <ArrowRight className="size-4" />
@@ -80,7 +80,7 @@ export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
             <X className="hidden size-4.5 group-open:block" />
             <span className="sr-only">Toggle search</span>
           </summary>
-          <StoreSearchForm className="group/search absolute inset-x-3 top-[calc(100%+0.5rem)] z-10 flex h-14 shadow-xl motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-2 motion-safe:duration-200 sm:inset-x-8" />
+          <StoreSearchForm className="group/search absolute left-1/2 top-[calc(100%+0.5rem)] z-10 flex w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 shadow-xl motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-2 motion-safe:duration-200 sm:max-w-md" />
         </details>
 
         <div className="flex items-center justify-end">
