@@ -1,15 +1,12 @@
 import "server-only";
 
-import type { components } from "@shopware/api-client/store-api-types";
-
 import type { ShopwareClient } from "@/integrations/shopware/client";
 import { mapShopwareCategory } from "@/integrations/shopware/mappers/navigation";
 
-type NavigationType = components["schemas"]["NavigationType"];
-
 async function getNavigation(
   client: ShopwareClient,
-  navigationType: NavigationType,
+  rootId: string,
+  depth = 2,
 ) {
   const response = await client.invoke(
     "readNavigation post /navigation/{activeId}/{rootId}",
@@ -18,11 +15,11 @@ async function getNavigation(
         "sw-include-seo-urls": true,
       },
       pathParams: {
-        activeId: navigationType,
-        rootId: navigationType,
+        activeId: rootId,
+        rootId,
       },
       body: {
-        depth: 2,
+        depth,
       },
       fetchOptions: {
         cache: "no-store",
@@ -43,4 +40,11 @@ export function getShopwareFooterNavigation(client: ShopwareClient) {
 
 export function getShopwareServiceNavigation(client: ShopwareClient) {
   return getNavigation(client, "service-navigation");
+}
+
+export function getShopwareCategoryChildren(
+  client: ShopwareClient,
+  categoryId: string,
+) {
+  return getNavigation(client, categoryId, 0);
 }
