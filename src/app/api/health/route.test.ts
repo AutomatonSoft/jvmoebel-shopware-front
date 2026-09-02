@@ -4,6 +4,7 @@ import { GET } from "@/app/api/health/route";
 
 const originalShopwareEndpoint = process.env.SHOPWARE_ENDPOINT;
 const originalShopwareAccessToken = process.env.SHOPWARE_ACCESS_TOKEN;
+const originalShopwareAllowMockWrites = process.env.SHOPWARE_ALLOW_MOCK_WRITES;
 const originalShopwareUseMocks = process.env.SHOPWARE_USE_MOCKS;
 
 function setEnvironmentVariable(name: string, value: string | undefined) {
@@ -17,12 +18,17 @@ function setEnvironmentVariable(name: string, value: string | undefined) {
 afterEach(() => {
   setEnvironmentVariable("SHOPWARE_ENDPOINT", originalShopwareEndpoint);
   setEnvironmentVariable("SHOPWARE_ACCESS_TOKEN", originalShopwareAccessToken);
+  setEnvironmentVariable(
+    "SHOPWARE_ALLOW_MOCK_WRITES",
+    originalShopwareAllowMockWrites,
+  );
   setEnvironmentVariable("SHOPWARE_USE_MOCKS", originalShopwareUseMocks);
 });
 
 describe("GET /api/health", () => {
   test("accepts mock mode without Shopware credentials", async () => {
     process.env.SHOPWARE_USE_MOCKS = "true";
+    process.env.SHOPWARE_ALLOW_MOCK_WRITES = "false";
     delete process.env.SHOPWARE_ENDPOINT;
     delete process.env.SHOPWARE_ACCESS_TOKEN;
 
@@ -30,6 +36,7 @@ describe("GET /api/health", () => {
 
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({
+      mockWritesAllowed: false,
       shopwareMode: "mock",
       status: "ok",
     });
@@ -47,6 +54,22 @@ describe("GET /api/health", () => {
       shopwareMode: "live",
       status: "ok",
     });
+  });
+
+  test("rejects an invalid mock-write flag", async () => {
+    process.env.SHOPWARE_USE_MOCKS = "true";
+    process.env.SHOPWARE_ALLOW_MOCK_WRITES = "simulate";
+    const consoleError = spyOn(console, "error").mockImplementation(() => {});
+
+    try {
+      const response = GET();
+
+      expect(response.status).toBe(503);
+      expect(await response.json()).toEqual({ status: "error" });
+      expect(consoleError).toHaveBeenCalledTimes(1);
+    } finally {
+      consoleError.mockRestore();
+    }
   });
 
   test("rejects live mode without Shopware credentials", async () => {

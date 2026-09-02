@@ -14,6 +14,12 @@ With `SHOPWARE_USE_MOCKS=false`, provide the Store API endpoint and access key
 of the Shopware sales channel. Only `true` and `false` are accepted. When the
 flag is omitted, mocks are enabled in development and disabled otherwise.
 
+Mock write operations are simulated only in development by default. Set
+`SHOPWARE_ALLOW_MOCK_WRITES=true` explicitly when a non-development mock
+environment should simulate successful writes. Keep it `false` in production
+so forms such as newsletter subscription cannot report success without storing
+data.
+
 CMS integration contract:
 See [docs/cms-contract.md](docs/cms-contract.md) for the supported CMS elements
 and the JSON data expected from the Shopware backend.

@@ -1,11 +1,20 @@
 import { getShopwareConfig } from "@/integrations/shopware/config";
-import { getShopwareDataMode } from "@/integrations/shopware/mock-mode";
+import {
+  getShopwareDataMode,
+  shouldAllowShopwareMockWrites,
+} from "@/integrations/shopware/mock-mode";
 
 export function GET() {
   try {
     const shopwareMode = getShopwareDataMode();
 
-    if (shopwareMode === "live") {
+    if (shopwareMode === "mock") {
+      return Response.json({
+        mockWritesAllowed: shouldAllowShopwareMockWrites(),
+        shopwareMode,
+        status: "ok",
+      });
+    } else {
       getShopwareConfig();
     }
 

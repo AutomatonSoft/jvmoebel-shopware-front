@@ -2,24 +2,43 @@ import "server-only";
 
 export type ShopwareDataMode = "live" | "mock";
 
-export function getShopwareDataMode(): ShopwareDataMode {
-  const value = process.env.SHOPWARE_USE_MOCKS?.trim().toLowerCase();
+function getBooleanEnvironmentFlag(
+  name: string,
+  defaultValue: boolean,
+): boolean {
+  const value = process.env[name]?.trim().toLowerCase();
 
   if (!value) {
-    return process.env.NODE_ENV === "development" ? "mock" : "live";
+    return defaultValue;
   }
 
   if (value === "true") {
-    return "mock";
+    return true;
   }
 
   if (value === "false") {
-    return "live";
+    return false;
   }
 
-  throw new Error('SHOPWARE_USE_MOCKS must be either "true" or "false".');
+  throw new Error(`${name} must be either "true" or "false".`);
+}
+
+export function getShopwareDataMode(): ShopwareDataMode {
+  return getBooleanEnvironmentFlag(
+    "SHOPWARE_USE_MOCKS",
+    process.env.NODE_ENV === "development",
+  )
+    ? "mock"
+    : "live";
 }
 
 export function shouldUseShopwareMocks(): boolean {
   return getShopwareDataMode() === "mock";
+}
+
+export function shouldAllowShopwareMockWrites(): boolean {
+  return getBooleanEnvironmentFlag(
+    "SHOPWARE_ALLOW_MOCK_WRITES",
+    process.env.NODE_ENV === "development",
+  );
 }
