@@ -3,10 +3,7 @@
 import type { NewsletterActionState } from "@/features/newsletter/model/subscription";
 import { parseNewsletterSubscription } from "@/features/newsletter/model/validation";
 import { reportNewsletterSubscriptionIssue } from "@/features/newsletter/server/report-subscription-issue";
-import {
-  shouldAllowShopwareMockWrites,
-  shouldUseShopwareMocks,
-} from "@/integrations/shopware/mock-mode";
+import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
 import { subscribeToShopwareNewsletter } from "@/integrations/shopware/newsletter";
 import { createShopwareSession } from "@/integrations/shopware/session";
 
@@ -25,12 +22,6 @@ export async function subscribeToNewsletter(
   }
 
   if (shouldUseShopwareMocks()) {
-    if (!shouldAllowShopwareMockWrites()) {
-      reportNewsletterSubscriptionIssue({ code: "mock-write-rejected" });
-
-      return { status: "error" };
-    }
-
     return { status: "success" };
   }
 

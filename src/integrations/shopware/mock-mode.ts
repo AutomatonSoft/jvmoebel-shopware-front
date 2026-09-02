@@ -24,21 +24,20 @@ function getBooleanEnvironmentFlag(
 }
 
 export function getShopwareDataMode(): ShopwareDataMode {
-  return getBooleanEnvironmentFlag(
+  const useMocks = getBooleanEnvironmentFlag(
     "SHOPWARE_USE_MOCKS",
     process.env.NODE_ENV === "development",
-  )
-    ? "mock"
-    : "live";
+  );
+
+  if (useMocks && process.env.NODE_ENV === "production") {
+    throw new Error(
+      "SHOPWARE_USE_MOCKS=true is not allowed when NODE_ENV=production.",
+    );
+  }
+
+  return useMocks ? "mock" : "live";
 }
 
 export function shouldUseShopwareMocks(): boolean {
   return getShopwareDataMode() === "mock";
-}
-
-export function shouldAllowShopwareMockWrites(): boolean {
-  return getBooleanEnvironmentFlag(
-    "SHOPWARE_ALLOW_MOCK_WRITES",
-    process.env.NODE_ENV === "development",
-  );
 }
