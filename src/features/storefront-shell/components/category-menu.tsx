@@ -132,7 +132,7 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
         <Dialog.Backdrop className="fixed inset-0 z-60 min-h-dvh bg-foreground/30 backdrop-blur-[2px] transition-opacity duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-[-webkit-touch-callout:none]:absolute" />
         <Dialog.Viewport className="fixed inset-0 z-70 flex min-h-dvh items-center justify-center overflow-y-auto p-2 sm:p-6">
           <Dialog.Popup className="relative flex h-[min(44rem,calc(100dvh-1rem))] w-full max-w-4xl flex-col overflow-hidden rounded-[1.5rem] border border-foreground/10 bg-background shadow-[0_32px_100px_-32px_rgba(21,21,19,0.45)] transition-[transform,opacity] duration-200 ease-out data-ending-style:translate-y-2 data-ending-style:scale-[.99] data-ending-style:opacity-0 data-starting-style:translate-y-2 data-starting-style:scale-[.99] data-starting-style:opacity-0 sm:h-[min(42rem,calc(100dvh-3rem))] sm:rounded-[1.75rem]">
-            <div className="flex min-h-18 shrink-0 items-center justify-between gap-4 border-b border-foreground/10 px-5 py-3 sm:px-6">
+            <div className="flex min-h-16 shrink-0 items-center justify-between gap-4 border-b border-foreground/10 px-4 py-2 sm:min-h-18 sm:px-6 sm:py-3">
               <div className="min-w-0">
                 <Dialog.Title className="text-lg font-semibold tracking-[-0.025em]">
                   Kategorien
@@ -163,7 +163,7 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
             </div>
 
             <div className="grid min-h-0 flex-1 lg:grid-cols-[15rem_minmax(0,1fr)]">
-              <aside className="relative shrink-0 overflow-hidden border-b border-border bg-secondary/70 px-5 py-5 text-foreground lg:border-r lg:border-b-0 lg:px-6 lg:py-7">
+              <aside className="relative shrink-0 overflow-hidden border-b border-border bg-secondary/70 px-4 py-3 text-foreground sm:px-5 sm:py-5 lg:border-r lg:border-b-0 lg:px-6 lg:py-7">
                 <div
                   aria-hidden="true"
                   className="pointer-events-none absolute -right-16 -bottom-20 size-48 rounded-full bg-accent/55 blur-3xl"
@@ -172,7 +172,7 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
                 <div className="relative">
                   {currentCategory && (
                     <button
-                      className="-ml-2 mb-6 inline-flex h-8 items-center gap-1.5 rounded-full px-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-background/80 hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary"
+                      className="-ml-2 mb-3 inline-flex h-7 items-center gap-1.5 rounded-full px-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-background/80 hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary sm:mb-6 sm:h-8"
                       onClick={goBack}
                       type="button"
                     >
@@ -181,23 +181,23 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
                     </button>
                   )}
 
-                  <p className="mb-2 text-[0.625rem] font-semibold tracking-[0.16em] text-primary uppercase">
+                  <p className="mb-1 text-[0.625rem] font-semibold tracking-[0.16em] text-primary uppercase sm:mb-2">
                     {currentCategory
                       ? "Aktuelle Kategorie"
                       : "Katalogübersicht"}
                   </p>
-                  <h2 className="text-xl leading-tight font-semibold tracking-[-0.035em] text-balance sm:text-2xl">
+                  <h2 className="text-lg leading-tight font-semibold tracking-[-0.035em] text-balance sm:text-2xl">
                     {currentCategory?.label ?? "Kollektion entdecken"}
                   </h2>
                   {currentCategory && (
-                    <p className="mt-3 max-w-xs text-xs leading-5 text-muted-foreground sm:text-sm sm:leading-6">
+                    <p className="mt-1.5 max-w-xs text-xs leading-5 text-muted-foreground sm:mt-3 sm:text-sm sm:leading-6">
                       {getChildrenLabel(currentItems.length)}
                     </p>
                   )}
 
                   {currentCategory && (
                     <Dialog.Close
-                      className="group/view mt-6 inline-flex min-h-10 items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground transition-[background,color,transform] hover:bg-destructive focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-secondary motion-safe:active:scale-[.98]"
+                      className="group/view mt-3 inline-flex min-h-9 items-center gap-2 rounded-full bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground transition-[background,color,transform] hover:bg-destructive focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-secondary motion-safe:active:scale-[.98] sm:mt-6 sm:min-h-10 sm:px-4 sm:py-2"
                       nativeButton={false}
                       render={<a href={currentCategory.href} />}
                     >
