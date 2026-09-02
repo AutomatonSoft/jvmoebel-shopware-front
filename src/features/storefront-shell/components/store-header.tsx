@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CategoryMenu } from "@/features/storefront-shell/components/category-menu";
+import { HeaderSearch } from "@/features/storefront-shell/components/header-search";
 import { StoreLogo } from "@/features/storefront-shell/components/store-logo";
 import type { StorefrontBranding } from "@/features/storefront-shell/model/branding";
 import type { MainNavigation } from "@/features/storefront-shell/model/navigation";
@@ -71,7 +72,7 @@ export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
           </nav>
         )}
 
-        <StoreSearchForm className="group/search ml-auto hidden w-full max-w-80 xl:flex" />
+        <HeaderSearch className="ml-auto hidden w-full max-w-80 xl:flex" />
 
         <details className="group static ml-auto xl:hidden" name="header-panel">
           <summary className="flex size-10 cursor-pointer list-none items-center justify-center rounded-lg transition-colors hover:bg-muted motion-safe:transition-transform motion-safe:active:scale-95 [&::-webkit-details-marker]:hidden">
