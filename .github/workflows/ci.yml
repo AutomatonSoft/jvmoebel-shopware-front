@@ -27,7 +27,6 @@ jobs:
         env:
           SHOPWARE_ENDPOINT: https://example.invalid
           SHOPWARE_ACCESS_TOKEN: validation-token
-          SHOPWARE_USE_MOCKS: "false"
           FRONT_PORT: "3000"
           APP_NETWORK: validation-network
           FRONT_STOP_GRACE_PERIOD: 30s
@@ -36,7 +35,6 @@ jobs:
           FRONT_PIDS_LIMIT: "256"
         run: |
           COMPOSE_DISABLE_ENV_FILE=1 docker compose -f compose.deploy.yml config --quiet
-          env -u SHOPWARE_ENDPOINT -u SHOPWARE_ACCESS_TOKEN SHOPWARE_USE_MOCKS=true COMPOSE_DISABLE_ENV_FILE=1 docker compose -f compose.deploy.yml config --quiet
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

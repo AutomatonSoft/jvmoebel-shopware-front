@@ -34,9 +34,8 @@ jobs:
       - shell: bash
         run: |
           set -Eeuo pipefail
-          test "$(sha256sum compose.deploy.yml | awk '{print $1}')" = f9d28449971c99e9cc50a4fc8171ca5e9de7b1a469944a3b792375c73fee9327
-          COMPOSE_DISABLE_ENV_FILE=1 SHOPWARE_ENDPOINT=https://example.invalid SHOPWARE_ACCESS_TOKEN=validation-token SHOPWARE_USE_MOCKS=false FRONT_PORT=3000 APP_NETWORK=validation-network docker compose -f compose.deploy.yml config --quiet
-          COMPOSE_DISABLE_ENV_FILE=1 SHOPWARE_USE_MOCKS=true FRONT_PORT=3000 APP_NETWORK=validation-network docker compose -f compose.deploy.yml config --quiet
+          test "$(sha256sum compose.deploy.yml | awk '{print $1}')" = 296f19289f03ddef436165cfeb10dc1882a4856be2f10246fb1ad4405f49eb75
+          COMPOSE_DISABLE_ENV_FILE=1 SHOPWARE_ENDPOINT=https://example.invalid SHOPWARE_ACCESS_TOKEN=validation-token FRONT_PORT=3000 APP_NETWORK=validation-network docker compose -f compose.deploy.yml config --quiet
           ! find . -type l -print -quit | grep -q .
           tar -czf "$RUNNER_TEMP/front.tar.gz" --exclude-vcs .
           test -s "$RUNNER_TEMP/front.tar.gz"
@@ -73,7 +72,7 @@ jobs:
       DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
       DEPLOY_KNOWN_HOSTS: ${{ vars.DEPLOY_KNOWN_HOSTS }}
       EXPECTED_DEPLOY_HOST: 85.215.147.19
-      EXPECTED_COMPOSE_SHA256: f9d28449971c99e9cc50a4fc8171ca5e9de7b1a469944a3b792375c73fee9327
+      EXPECTED_COMPOSE_SHA256: 296f19289f03ddef436165cfeb10dc1882a4856be2f10246fb1ad4405f49eb75
       EXPECTED_HELPER_SHA256: 643c3bbf214283b2880cb0462ec1f87238b8a507b148f02911bc20e37f0da714
       EXPECTED_DEPLOY_KEY_FINGERPRINT: SHA256:Q3JQh8Yqz7EEoRVZXUufLmx160pk9ptugi+Zsj6qSU4
       EXPECTED_HOST_KEY_FINGERPRINT: SHA256:6BHoasAuc7ptnN/HhXaP3C/BtklHPtP85WZ2fAXcAzI
@@ -108,8 +107,7 @@ jobs:
           test "$DEPLOY_USER" = jvmoebel-stage-deploy
           test "$DEPLOY_PATH" = /var/spool/jvmoebel/stage/front/incoming
           test "$(sha256sum compose.deploy.yml | awk '{print $1}')" = "$EXPECTED_COMPOSE_SHA256"
-          COMPOSE_DISABLE_ENV_FILE=1 SHOPWARE_ENDPOINT=https://example.invalid SHOPWARE_ACCESS_TOKEN=validation-token SHOPWARE_USE_MOCKS=false FRONT_PORT=3000 APP_NETWORK=validation-network docker compose -f compose.deploy.yml config --quiet
-          COMPOSE_DISABLE_ENV_FILE=1 SHOPWARE_USE_MOCKS=true FRONT_PORT=3000 APP_NETWORK=validation-network docker compose -f compose.deploy.yml config --quiet
+          COMPOSE_DISABLE_ENV_FILE=1 SHOPWARE_ENDPOINT=https://example.invalid SHOPWARE_ACCESS_TOKEN=validation-token FRONT_PORT=3000 APP_NETWORK=validation-network docker compose -f compose.deploy.yml config --quiet
           ! find . -type l -print -quit | grep -q .
           printf '%s\n' "$DEPLOY_SSH_KEY" | tr -d '\r' > "$SSH_KEY_FILE"
           printf '%s\n' "$DEPLOY_ARTIFACT_SIGNING_KEY" | tr -d '\r' > "$SIGNING_KEY_FILE"

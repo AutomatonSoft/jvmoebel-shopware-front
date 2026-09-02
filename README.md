@@ -11,14 +11,14 @@ Shopware configuration:
 Copy .env.example to .env.local. With `SHOPWARE_USE_MOCKS=true`, the storefront
 uses local fixtures and the Shopware endpoint and access token may stay empty.
 With `SHOPWARE_USE_MOCKS=false`, provide the Store API endpoint and access key
-of the Shopware sales channel. Only `true` and `false` are accepted. When the
-flag is omitted, mocks are enabled in development and disabled otherwise.
+of the Shopware sales channel to work with real CMS and Store API data. Only
+`true` and `false` are accepted. When the flag is omitted, mocks are enabled in
+development.
 
-Mock write operations are simulated only in development by default. Set
-`SHOPWARE_ALLOW_MOCK_WRITES=true` explicitly when a non-development mock
-environment should simulate successful writes. Keep it `false` in production
-so forms such as newsletter subscription cannot report success without storing
-data.
+Production always uses real Shopware data. The deployment configuration
+requires the Store API endpoint and access key, and explicitly disables mocks.
+Starting the application with `SHOPWARE_USE_MOCKS=true` and
+`NODE_ENV=production` is treated as a configuration error.
 
 CMS integration contract:
 See [docs/cms-contract.md](docs/cms-contract.md) for the supported CMS elements
