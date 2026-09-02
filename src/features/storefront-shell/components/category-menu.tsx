@@ -15,7 +15,7 @@ export type CategoryMenuProps = {
 };
 
 function getChildrenLabel(count: number) {
-  return `${count} ${count === 1 ? "subcategory" : "subcategories"}`;
+  return `${count} ${count === 1 ? "Unterkategorie" : "Unterkategorien"}`;
 }
 
 function CategoryItemContent({ item }: { item: StoreNavigationItem }) {
@@ -30,7 +30,7 @@ function CategoryItemContent({ item }: { item: StoreNavigationItem }) {
         <span className="mt-1 block text-xs font-normal text-muted-foreground">
           {hasChildren
             ? getChildrenLabel(item.children.length)
-            : "Open category"}
+            : "Kategorie öffnen"}
         </span>
       </span>
       {hasChildren ? (
@@ -101,11 +101,11 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
       }}
     >
       <Dialog.Trigger
-        aria-label="Open categories"
+        aria-label="Kategorien öffnen"
         className="relative flex h-18 shrink-0 cursor-pointer items-center gap-2 bg-transparent px-0 text-xs font-semibold tracking-wide transition-colors after:absolute after:inset-x-0 after:bottom-5 after:hidden after:h-0.5 after:bg-primary hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4 focus-visible:outline-none lg:py-7 lg:after:block"
       >
         <Menu className="size-5 lg:hidden" aria-hidden="true" />
-        <span className="hidden lg:inline">Categories</span>
+        <span className="hidden lg:inline">Kategorien</span>
       </Dialog.Trigger>
 
       <Dialog.Portal>
@@ -116,7 +116,7 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
               <div className="flex min-w-0 items-start gap-2 sm:gap-3">
                 {currentCategory && (
                   <Button
-                    aria-label="Back to previous categories"
+                    aria-label="Zurück zu den vorherigen Kategorien"
                     className="mt-0.5 rounded-full"
                     onClick={goBack}
                     size="icon-lg"
@@ -128,18 +128,18 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
                 )}
                 <div className="min-w-0">
                   <Dialog.Title className="truncate text-xl font-semibold tracking-tight sm:text-2xl">
-                    {currentCategory?.label ?? "All categories"}
+                    {currentCategory?.label ?? "Alle Kategorien"}
                   </Dialog.Title>
                   <Dialog.Description className="mt-1 text-sm text-muted-foreground">
                     {currentCategory
                       ? getChildrenLabel(currentItems.length)
-                      : "Choose a collection to explore its subcategories."}
+                      : "Wählen Sie eine Kollektion, um ihre Unterkategorien zu entdecken."}
                   </Dialog.Description>
                 </div>
               </div>
 
               <Dialog.Close
-                aria-label="Close categories"
+                aria-label="Kategorien schließen"
                 render={
                   <Button
                     className="shrink-0 rounded-full"
@@ -155,7 +155,7 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
 
             <div className="min-h-0 overflow-y-auto px-4 py-4 sm:px-7 sm:py-6">
               <nav
-                aria-label="Category path"
+                aria-label="Kategoriepfad"
                 className="mb-4 flex flex-wrap items-center gap-1 text-xs text-muted-foreground sm:mb-5"
               >
                 <Button
@@ -165,7 +165,7 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
                   type="button"
                   variant="ghost"
                 >
-                  All categories
+                  Alle Kategorien
                 </Button>
                 {categoryPath.map((item, index) => (
                   <span className="flex items-center gap-1" key={item.id}>
@@ -195,7 +195,7 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
                   nativeButton={false}
                   render={<a href={currentCategory.href} />}
                 >
-                  <span>View all {currentCategory.label}</span>
+                  <span>Alle Artikel in {currentCategory.label} ansehen</span>
                   <ArrowRight
                     className="size-4.5 shrink-0"
                     aria-hidden="true"

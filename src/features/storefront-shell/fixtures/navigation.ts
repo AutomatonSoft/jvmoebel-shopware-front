@@ -3,13 +3,13 @@ import type { StoreNavigationItem } from "@/features/storefront-shell/model/navi
 export const mainNavigationMock = [
   {
     id: "new-in",
-    label: "New in",
+    label: "Neuheiten",
     href: "/new-in",
     children: [],
   },
   {
     id: "living",
-    label: "Living",
+    label: "Wohnzimmer",
     href: "/living",
     children: [
       {
@@ -20,7 +20,7 @@ export const mainNavigationMock = [
       },
       {
         id: "armchairs",
-        label: "Armchairs",
+        label: "Sessel",
         href: "/living/armchairs",
         children: [],
       },
@@ -28,25 +28,25 @@ export const mainNavigationMock = [
   },
   {
     id: "dining",
-    label: "Dining",
+    label: "Esszimmer",
     href: "/dining",
     children: [],
   },
   {
     id: "bedroom",
-    label: "Bedroom",
+    label: "Schlafzimmer",
     href: "/bedroom",
     children: [],
   },
   {
     id: "storage",
-    label: "Storage",
+    label: "Stauraum",
     href: "/storage",
     children: [],
   },
   {
     id: "sale",
-    label: "Sale",
+    label: "Angebote",
     href: "/sale",
     children: [],
   },

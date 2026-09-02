@@ -28,14 +28,14 @@ function StoreSearchForm({ className }: { className: string }) {
     >
       <Search className="mr-2 size-4.5 shrink-0 text-muted-foreground transition-colors group-focus-within/search:text-foreground" />
       <Input
-        aria-label="Search products"
+        aria-label="Produkte suchen"
         className="h-auto min-w-0 flex-1 rounded-none border-0 bg-transparent px-0 py-0 text-sm shadow-none focus-visible:border-0 focus-visible:ring-0"
         name="query"
-        placeholder="Search furniture"
+        placeholder="Möbel suchen"
         type="search"
       />
       <Button
-        aria-label="Submit search"
+        aria-label="Suche starten"
         className="shrink-0 rounded-full hover:bg-destructive motion-safe:hover:translate-x-px motion-safe:active:scale-90"
         size="icon-lg"
         type="submit"
@@ -57,7 +57,7 @@ export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
         />
 
         {navigation.length > 0 && (
-          <nav className="flex items-center gap-6" aria-label="Main navigation">
+          <nav className="flex items-center gap-6" aria-label="Hauptnavigation">
             <CategoryMenu navigation={navigation} />
             {navigation.map((item) => (
               <a
@@ -77,14 +77,14 @@ export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
           <summary className="flex size-10 cursor-pointer list-none items-center justify-center rounded-lg transition-colors hover:bg-muted motion-safe:transition-transform motion-safe:active:scale-95 [&::-webkit-details-marker]:hidden">
             <Search className="size-4.5 group-open:hidden" />
             <X className="hidden size-4.5 group-open:block" />
-            <span className="sr-only">Toggle search</span>
+            <span className="sr-only">Suche ein- oder ausblenden</span>
           </summary>
           <StoreSearchForm className="group/search absolute inset-x-3 top-[calc(100%+0.5rem)] z-10 flex h-14 shadow-xl motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-2 motion-safe:duration-200 sm:inset-x-8" />
         </details>
 
         <div className="flex items-center justify-end">
           <a
-            aria-label="Account"
+            aria-label="Kundenkonto"
             className="hidden min-h-10 items-center gap-2 rounded-full p-1 pr-3 transition-[background,transform,box-shadow] hover:bg-muted focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-[.975] xl:flex"
             href="/account"
           >
@@ -93,22 +93,22 @@ export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
             </span>
             <span className="flex min-w-12 flex-col leading-none">
               <span className="mb-1 text-[0.5rem] tracking-[0.09em] text-muted-foreground uppercase">
-                Account
+                Kundenkonto
               </span>
-              <strong className="text-xs font-semibold">Sign in</strong>
+              <strong className="text-xs font-semibold">Anmelden</strong>
             </span>
           </a>
 
           <div className="flex items-center gap-1 sm:ml-2 sm:border-l sm:border-foreground/10 sm:pl-2">
             <a
-              aria-label="Wishlist"
+              aria-label="Wunschliste"
               className="hidden size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-90 sm:flex"
               href="/shop"
             >
               <Heart className="size-4.5" />
             </a>
             <a
-              aria-label="Shopping bag"
+              aria-label="Warenkorb"
               className="flex size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-90"
               href="/cart"
             >
