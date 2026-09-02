@@ -2,11 +2,13 @@
 
 import { ArrowRight, Search } from "lucide-react";
 import { AnimatePresence, LayoutGroup, motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SearchResults } from "@/features/search/components/search-results";
+import { useProductSearch } from "@/features/search/hooks/use-product-search";
 
 const headerSearchLayoutTransition = {
   damping: 28,
@@ -20,9 +22,24 @@ export type HeaderSearchProps = {
 };
 
 export function HeaderSearch({ className }: HeaderSearchProps) {
+  const [isCloseRequested, setIsCloseRequested] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isSearchSettled, setIsSearchSettled] = useState(false);
   const [query, setQuery] = useState("");
+  const isSearchSettledRef = useRef(false);
   const overlayInputRef = useRef<HTMLInputElement>(null);
+  const search = useProductSearch(query, isOpen);
+
+  const requestClose = useCallback(() => {
+    if (isSearchSettledRef.current) {
+      isSearchSettledRef.current = false;
+      setIsCloseRequested(true);
+      setIsSearchSettled(false);
+      return;
+    }
+
+    setIsOpen(false);
+  }, []);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -44,7 +61,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
       overlayInputRef.current?.focus({ preventScroll: true });
     });
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsOpen(false);
+      if (event.key === "Escape") requestClose();
     };
 
     window.addEventListener("keydown", closeOnEscape);
@@ -55,7 +72,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
       window.cancelAnimationFrame(frame);
       window.removeEventListener("keydown", closeOnEscape);
     };
-  }, [isOpen]);
+  }, [isOpen, requestClose]);
 
   return (
     <LayoutGroup id="header-search">
@@ -63,7 +80,12 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
         action="/shop"
         className={`group/search h-11 items-center rounded-full border bg-muted/80 p-1 pl-4 transition-[background,border-color,box-shadow] hover:border-foreground/15 hover:bg-card/70 focus-within:border-foreground/25 focus-within:bg-card focus-within:ring-3 focus-within:ring-primary/15 ${className}`}
         layoutId="header-product-search"
-        onFocus={() => setIsOpen(true)}
+        onFocus={() => {
+          isSearchSettledRef.current = false;
+          setIsCloseRequested(false);
+          setIsSearchSettled(false);
+          setIsOpen(true);
+        }}
         role="search"
         style={{ borderRadius: 22 }}
         transition={{ layout: headerSearchLayoutTransition }}
@@ -106,24 +128,29 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
                 initial={{ opacity: 0 }}
                 key="header-search-overlay"
                 onMouseDown={(event) => {
-                  if (event.target === event.currentTarget) setIsOpen(false);
+                  if (event.target === event.currentTarget) requestClose();
                 }}
                 transition={{ duration: 0.35, ease: "easeOut" }}
               >
-                <motion.section
+                <section
                   aria-label="Product search"
                   aria-modal="true"
-                  className="w-[min(66vw,60rem)] overflow-hidden rounded-[1.375rem] border bg-background shadow-2xl"
-                  layoutId="header-product-search"
+                  className="w-[min(50vw,48rem)]"
                   role="dialog"
-                  style={{ borderRadius: 22 }}
-                  transition={{ layout: headerSearchLayoutTransition }}
                 >
                   <motion.form
                     action="/shop"
-                    className="relative flex h-11 items-center bg-muted/80 p-1 pl-4"
-                    layout="position"
+                    className={`relative z-10 flex h-11 items-center rounded-[1.375rem] border bg-muted/80 p-1 pl-4 transition-[border-color,box-shadow] duration-300 ${isSearchSettled ? "border-transparent shadow-none" : "shadow-lg"}`}
+                    layoutId="header-product-search"
+                    onLayoutAnimationComplete={() => {
+                      if (isOpen && !isCloseRequested) {
+                        isSearchSettledRef.current = true;
+                        setIsSearchSettled(true);
+                      }
+                    }}
                     role="search"
+                    style={{ borderRadius: 22 }}
+                    transition={{ layout: headerSearchLayoutTransition }}
                   >
                     <Search className="mr-2 size-4.5 shrink-0 text-muted-foreground" />
                     <Input
@@ -152,7 +179,42 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
                       </Button>
                     </motion.div>
                   </motion.form>
-                </motion.section>
+
+                  <AnimatePresence
+                    initial={false}
+                    onExitComplete={() => {
+                      if (isCloseRequested) {
+                        setIsCloseRequested(false);
+                        setIsOpen(false);
+                      }
+                    }}
+                  >
+                    {isSearchSettled && (
+                      <motion.div
+                        animate={{ height: "auto", opacity: 1 }}
+                        className="-mt-11 overflow-hidden rounded-[1.375rem] border bg-background pt-11 shadow-2xl"
+                        exit={{ height: 44, opacity: 0 }}
+                        initial={{ height: 44, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeOut" }}
+                      >
+                        <div
+                          aria-live="polite"
+                          className="max-h-[min(30rem,70dvh)] min-h-18 overflow-y-auto px-5 pt-3 pb-4"
+                        >
+                          <SearchResults
+                            currency={search.currency}
+                            debouncedQuery={search.debouncedQuery}
+                            errorMessage={search.errorMessage}
+                            isSearching={search.isSearching}
+                            locale={search.locale}
+                            query={query}
+                            results={search.results}
+                          />
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </section>
               </motion.div>
             )}
           </AnimatePresence>,
