@@ -1,10 +1,17 @@
 "use client";
 
 import { Dialog } from "@base-ui/react/dialog";
-import { ArrowRight, ChevronLeft, ChevronRight, Menu, X } from "lucide-react";
-import { useState } from "react";
+import {
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  LoaderCircle,
+  Menu,
+  X,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { useCategoryMenu } from "@/features/storefront-shell/hooks/use-category-menu";
 import type {
   MainNavigation,
   StoreNavigationItem,
@@ -18,48 +25,77 @@ function getChildrenLabel(count: number) {
   return `${count} ${count === 1 ? "subcategory" : "subcategories"}`;
 }
 
-function CategoryItemContent({ item }: { item: StoreNavigationItem }) {
-  const hasChildren = item.children.length > 0;
+function getChildCount(item: StoreNavigationItem) {
+  return Math.max(item.childCount ?? 0, item.children.length);
+}
+
+function CategoryItemContent({
+  item,
+  loading,
+}: {
+  item: StoreNavigationItem;
+  loading: boolean;
+}) {
+  const childCount = getChildCount(item);
+  const hasChildren = childCount > 0;
 
   return (
     <>
       <span className="min-w-0 text-left">
-        <span className="block font-semibold wrap-break-word">
+        <span className="block text-sm font-medium tracking-[-0.01em] wrap-break-word sm:text-[0.9375rem]">
           {item.label}
         </span>
-        <span className="mt-1 block text-xs font-normal text-muted-foreground">
-          {hasChildren
-            ? getChildrenLabel(item.children.length)
-            : "Open category"}
+      </span>
+
+      <span className="flex shrink-0 items-center gap-2.5">
+        {loading ? (
+          <span className="text-[0.6875rem] text-muted-foreground">
+            Loading
+          </span>
+        ) : (
+          hasChildren && (
+            <span className="min-w-6 rounded-full bg-secondary px-2 py-1 text-center text-[0.625rem] font-semibold tabular-nums text-muted-foreground">
+              {childCount}
+            </span>
+          )
+        )}
+
+        <span className="grid size-8 place-items-center rounded-full bg-secondary text-muted-foreground transition-[background,color,transform] group-hover/category-item:bg-primary group-hover/category-item:text-primary-foreground group-hover/category-item:translate-x-0.5">
+          {loading ? (
+            <LoaderCircle className="size-3.5 animate-spin" />
+          ) : hasChildren ? (
+            <ChevronRight className="size-3.5" />
+          ) : (
+            <ArrowRight className="size-3.5" />
+          )}
         </span>
       </span>
-      {hasChildren ? (
-        <ChevronRight className="size-4.5 shrink-0 text-muted-foreground transition-transform group-hover/category-item:translate-x-0.5 group-hover/category-item:text-primary" />
-      ) : (
-        <ArrowRight className="size-4.5 shrink-0 text-muted-foreground transition-transform group-hover/category-item:translate-x-0.5 group-hover/category-item:text-primary" />
-      )}
     </>
   );
 }
 
 function CategoryItem({
   item,
+  loading,
   onSelect,
 }: {
   item: StoreNavigationItem;
-  onSelect: (item: StoreNavigationItem) => void;
+  loading: boolean;
+  onSelect: (item: StoreNavigationItem) => Promise<void>;
 }) {
   const className =
-    "group/category-item flex min-h-20 w-full items-center justify-between gap-4 rounded-xl border bg-card/60 px-4 py-3 text-foreground transition-[background,border-color,box-shadow,transform] hover:border-primary/35 hover:bg-primary/5 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:scale-[.99]";
+    "group/category-item flex min-h-14 w-full items-center justify-between gap-4 rounded-xl border border-transparent px-3 py-2.5 text-foreground transition-[background,border-color,box-shadow,transform] hover:border-border hover:bg-card hover:shadow-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-wait motion-safe:active:scale-[.99]";
 
-  if (item.children.length > 0) {
+  if (getChildCount(item) > 0) {
     return (
       <button
+        aria-busy={loading || undefined}
         className={className}
-        onClick={() => onSelect(item)}
+        disabled={loading}
+        onClick={() => void onSelect(item)}
         type="button"
       >
-        <CategoryItemContent item={item} />
+        <CategoryItemContent item={item} loading={loading} />
       </button>
     );
   }
@@ -70,36 +106,26 @@ function CategoryItem({
       nativeButton={false}
       render={<a href={item.href} />}
     >
-      <CategoryItemContent item={item} />
+      <CategoryItemContent item={item} loading={false} />
     </Dialog.Close>
   );
 }
 
 export function CategoryMenu({ navigation }: CategoryMenuProps) {
-  const [categoryPath, setCategoryPath] = useState<StoreNavigationItem[]>([]);
-  const currentCategory = categoryPath.at(-1);
-  const currentItems = currentCategory?.children ?? navigation;
-
-  function openCategory(item: StoreNavigationItem) {
-    setCategoryPath((path) => [...path, item]);
-  }
-
-  function goBack() {
-    setCategoryPath((path) => path.slice(0, -1));
-  }
-
-  function goToPathDepth(depth: number) {
-    setCategoryPath((path) => path.slice(0, depth));
-  }
+  const {
+    categoryPath,
+    currentCategory,
+    currentItems,
+    goBack,
+    goToPathDepth,
+    handleOpenChange,
+    loadError,
+    loadingCategoryId,
+    openCategory,
+  } = useCategoryMenu(navigation);
 
   return (
-    <Dialog.Root
-      onOpenChange={(open) => {
-        if (open) {
-          setCategoryPath([]);
-        }
-      }}
-    >
+    <Dialog.Root onOpenChange={handleOpenChange}>
       <Dialog.Trigger
         aria-label="Open categories"
         className="relative flex h-18 shrink-0 cursor-pointer items-center gap-2 bg-transparent px-0 text-xs font-semibold tracking-wide transition-colors after:absolute after:inset-x-0 after:bottom-5 after:hidden after:h-0.5 after:bg-primary hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4 focus-visible:outline-none lg:py-7 lg:after:block"
@@ -109,111 +135,142 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
       </Dialog.Trigger>
 
       <Dialog.Portal>
-        <Dialog.Backdrop className="fixed inset-0 z-60 min-h-dvh bg-foreground/45 backdrop-blur-xs transition-opacity duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-[-webkit-touch-callout:none]:absolute" />
-        <Dialog.Viewport className="fixed inset-0 z-70 flex min-h-dvh items-center justify-center overflow-y-auto p-3 sm:p-8">
-          <Dialog.Popup className="relative flex max-h-[calc(100dvh-1.5rem)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border bg-background shadow-2xl transition-[transform,opacity] duration-200 ease-out data-ending-style:scale-[.98] data-ending-style:opacity-0 data-starting-style:scale-[.98] data-starting-style:opacity-0 sm:max-h-[calc(100dvh-4rem)]">
-            <div className="flex shrink-0 items-start justify-between gap-4 border-b px-4 py-4 sm:px-7 sm:py-6">
-              <div className="flex min-w-0 items-start gap-2 sm:gap-3">
-                {currentCategory && (
-                  <Button
-                    aria-label="Back to previous categories"
-                    className="mt-0.5 rounded-full"
-                    onClick={goBack}
-                    size="icon-lg"
-                    type="button"
-                    variant="ghost"
-                  >
-                    <ChevronLeft className="size-5" />
-                  </Button>
-                )}
-                <div className="min-w-0">
-                  <Dialog.Title className="truncate text-xl font-semibold tracking-tight sm:text-2xl">
-                    {currentCategory?.label ?? "All categories"}
-                  </Dialog.Title>
-                  <Dialog.Description className="mt-1 text-sm text-muted-foreground">
-                    {currentCategory
-                      ? getChildrenLabel(currentItems.length)
-                      : "Choose a collection to explore its subcategories."}
-                  </Dialog.Description>
-                </div>
+        <Dialog.Backdrop className="fixed inset-0 z-60 min-h-dvh bg-foreground/30 backdrop-blur-[2px] transition-opacity duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-[-webkit-touch-callout:none]:absolute" />
+        <Dialog.Viewport className="fixed inset-0 z-70 flex min-h-dvh items-center justify-center overflow-y-auto p-2 sm:p-6">
+          <Dialog.Popup className="relative flex h-[min(44rem,calc(100dvh-1rem))] w-full max-w-4xl flex-col overflow-hidden rounded-[1.5rem] border border-foreground/10 bg-background shadow-[0_32px_100px_-32px_rgba(21,21,19,0.45)] transition-[transform,opacity] duration-200 ease-out data-ending-style:translate-y-2 data-ending-style:scale-[.99] data-ending-style:opacity-0 data-starting-style:translate-y-2 data-starting-style:scale-[.99] data-starting-style:opacity-0 sm:h-[min(42rem,calc(100dvh-3rem))] sm:rounded-[1.75rem]">
+            <div className="flex min-h-18 shrink-0 items-center justify-between gap-4 border-b border-foreground/10 px-5 py-3 sm:px-6">
+              <div className="min-w-0">
+                <Dialog.Title className="text-lg font-semibold tracking-[-0.025em]">
+                  Categories
+                </Dialog.Title>
+                <Dialog.Description className="mt-0.5 truncate text-xs text-muted-foreground">
+                  Find furniture by department.
+                </Dialog.Description>
               </div>
 
-              <Dialog.Close
-                aria-label="Close categories"
-                render={
-                  <Button
-                    className="shrink-0 rounded-full"
-                    size="icon-lg"
-                    type="button"
-                    variant="ghost"
-                  />
-                }
-              >
-                <X className="size-5" />
-              </Dialog.Close>
+              <div className="flex shrink-0 items-center gap-3">
+                <span className="hidden text-[0.625rem] font-semibold tracking-[0.12em] text-muted-foreground uppercase sm:inline">
+                  {navigation.length} departments
+                </span>
+                <Dialog.Close
+                  aria-label="Close categories"
+                  render={
+                    <Button
+                      className="rounded-full border border-transparent hover:border-border hover:bg-secondary"
+                      size="icon-lg"
+                      type="button"
+                      variant="ghost"
+                    />
+                  }
+                >
+                  <X className="size-4.5" />
+                </Dialog.Close>
+              </div>
             </div>
 
-            <div className="min-h-0 overflow-y-auto px-4 py-4 sm:px-7 sm:py-6">
-              <nav
-                aria-label="Category path"
-                className="mb-4 flex flex-wrap items-center gap-1 text-xs text-muted-foreground sm:mb-5"
-              >
-                <Button
-                  className="h-8 px-2 text-xs"
-                  onClick={() => goToPathDepth(0)}
-                  size="sm"
-                  type="button"
-                  variant="ghost"
-                >
-                  All categories
-                </Button>
-                {categoryPath.map((item, index) => (
-                  <span className="flex items-center gap-1" key={item.id}>
-                    <ChevronRight className="size-3.5" aria-hidden="true" />
-                    {index === categoryPath.length - 1 ? (
-                      <span className="max-w-48 truncate px-2 font-medium text-foreground">
-                        {item.label}
-                      </span>
-                    ) : (
-                      <Button
-                        className="h-8 max-w-48 px-2 text-xs"
-                        onClick={() => goToPathDepth(index + 1)}
-                        size="sm"
-                        type="button"
-                        variant="ghost"
-                      >
-                        <span className="truncate">{item.label}</span>
-                      </Button>
-                    )}
-                  </span>
-                ))}
-              </nav>
+            <div className="grid min-h-0 flex-1 lg:grid-cols-[15rem_minmax(0,1fr)]">
+              <aside className="relative shrink-0 overflow-hidden border-b border-border bg-secondary/70 px-5 py-5 text-foreground lg:border-r lg:border-b-0 lg:px-6 lg:py-7">
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -right-16 -bottom-20 size-48 rounded-full bg-accent/55 blur-3xl"
+                />
 
-              {currentCategory && (
-                <Dialog.Close
-                  className="mb-4 flex min-h-12 w-full items-center justify-between gap-4 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground transition-[background,transform] hover:bg-destructive focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:scale-[.99] sm:mb-5"
-                  nativeButton={false}
-                  render={<a href={currentCategory.href} />}
-                >
-                  <span>View all {currentCategory.label}</span>
-                  <ArrowRight
-                    className="size-4.5 shrink-0"
-                    aria-hidden="true"
-                  />
-                </Dialog.Close>
-              )}
+                <div className="relative">
+                  {currentCategory && (
+                    <button
+                      className="-ml-2 mb-6 inline-flex h-8 items-center gap-1.5 rounded-full px-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-background/80 hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary"
+                      onClick={goBack}
+                      type="button"
+                    >
+                      <ChevronLeft className="size-3.5" />
+                      Back
+                    </button>
+                  )}
 
-              <div
-                className="grid gap-2.5 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-right-2 motion-safe:duration-200 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3"
-                key={currentCategory?.id ?? "all-categories"}
-              >
-                {currentItems.map((item) => (
-                  <CategoryItem
-                    item={item}
-                    key={item.id}
-                    onSelect={openCategory}
-                  />
-                ))}
+                  <p className="mb-2 text-[0.625rem] font-semibold tracking-[0.16em] text-primary uppercase">
+                    {currentCategory ? "Current category" : "Catalog overview"}
+                  </p>
+                  <h2 className="text-xl leading-tight font-semibold tracking-[-0.035em] text-balance sm:text-2xl">
+                    {currentCategory?.label ?? "Browse the collection"}
+                  </h2>
+                  <p className="mt-3 max-w-xs text-xs leading-5 text-muted-foreground sm:text-sm sm:leading-6">
+                    {currentCategory
+                      ? getChildrenLabel(currentItems.length)
+                      : `${navigation.length} departments ready to explore.`}
+                  </p>
+
+                  {currentCategory && (
+                    <Dialog.Close
+                      className="group/view mt-6 inline-flex min-h-10 items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground transition-[background,color,transform] hover:bg-destructive focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-secondary motion-safe:active:scale-[.98]"
+                      nativeButton={false}
+                      render={<a href={currentCategory.href} />}
+                    >
+                      View category
+                      <ArrowRight className="size-3.5 transition-transform group-hover/view:translate-x-0.5" />
+                    </Dialog.Close>
+                  )}
+                </div>
+              </aside>
+
+              <div className="flex min-h-0 min-w-0 flex-col">
+                <nav
+                  aria-label="Category path"
+                  className="flex min-h-11 shrink-0 items-center gap-1 overflow-x-auto border-b border-foreground/10 px-4 text-[0.6875rem] text-muted-foreground scrollbar-width:none sm:px-5 [&::-webkit-scrollbar]:hidden"
+                >
+                  <button
+                    className="shrink-0 rounded-md px-1.5 py-1 font-medium transition-colors hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary"
+                    onClick={() => goToPathDepth(0)}
+                    type="button"
+                  >
+                    All categories
+                  </button>
+                  {categoryPath.map((item, index) => (
+                    <span
+                      className="flex shrink-0 items-center gap-1"
+                      key={item.id}
+                    >
+                      <ChevronRight className="size-3 text-border" />
+                      {index === categoryPath.length - 1 ? (
+                        <span className="max-w-40 truncate px-1.5 py-1 font-medium text-foreground">
+                          {item.label}
+                        </span>
+                      ) : (
+                        <button
+                          className="max-w-40 truncate rounded-md px-1.5 py-1 transition-colors hover:bg-secondary hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary"
+                          onClick={() => goToPathDepth(index + 1)}
+                          type="button"
+                        >
+                          {item.label}
+                        </button>
+                      )}
+                    </span>
+                  ))}
+                </nav>
+
+                <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-4">
+                  {loadError && (
+                    <p
+                      className="mb-3 rounded-xl border border-destructive/25 bg-destructive/5 px-3.5 py-3 text-xs text-destructive"
+                      role="alert"
+                    >
+                      Subcategories could not be loaded. Please try again.
+                    </p>
+                  )}
+
+                  <div
+                    className="grid gap-1 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-right-1 motion-safe:duration-200 sm:grid-cols-2"
+                    key={currentCategory?.id ?? "all-categories"}
+                  >
+                    {currentItems.map((item) => (
+                      <CategoryItem
+                        item={item}
+                        key={item.id}
+                        loading={loadingCategoryId === item.id}
+                        onSelect={openCategory}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </Dialog.Popup>

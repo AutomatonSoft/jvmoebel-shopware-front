@@ -31,7 +31,7 @@ async function getNavigation(
 }
 
 export function getShopwareMainNavigation(client: ShopwareClient) {
-  return getNavigation(client, "main-navigation");
+  return getNavigation(client, "main-navigation", 1);
 }
 
 export function getShopwareFooterNavigation(client: ShopwareClient) {

@@ -3,6 +3,7 @@ import { describe, expect, test } from "bun:test";
 import {
   getShopwareCategoryChildren,
   getShopwareFooterNavigation,
+  getShopwareMainNavigation,
 } from "@/integrations/shopware/navigation";
 
 describe("getShopwareFooterNavigation", () => {
@@ -46,5 +47,22 @@ describe("getShopwareCategoryChildren", () => {
         rootId: categoryId,
       },
     });
+  });
+});
+
+describe("getShopwareMainNavigation", () => {
+  test("requests one level for the initial category menu payload", async () => {
+    const requests: Array<{ body?: unknown }> = [];
+    const client = {
+      invoke: async (_operation: string, request: { body?: unknown }) => {
+        requests.push(request);
+
+        return { data: undefined };
+      },
+    } as unknown as Parameters<typeof getShopwareMainNavigation>[0];
+
+    await expect(getShopwareMainNavigation(client)).resolves.toEqual([]);
+    expect(requests).toHaveLength(1);
+    expect(requests[0]).toMatchObject({ body: { depth: 1 } });
   });
 });
