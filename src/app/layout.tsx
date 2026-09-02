@@ -9,7 +9,6 @@ import {
   getMainNavigation,
   getServiceNavigation,
 } from "@/features/storefront-shell/server/navigation";
-import { getShopwareRequestSession } from "@/integrations/shopware/session";
 
 import "./globals.css";
 
@@ -26,13 +25,12 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const session = getShopwareRequestSession();
   const [branding, navigation, footerNavigation, serviceNavigation] =
     await Promise.all([
-      getStorefrontBranding(session.client),
-      getMainNavigation(session.client),
-      getFooterNavigation(session.client),
-      getServiceNavigation(session.client),
+      getStorefrontBranding(),
+      getMainNavigation(),
+      getFooterNavigation(),
+      getServiceNavigation(),
     ]);
 
   return (

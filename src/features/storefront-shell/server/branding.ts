@@ -5,18 +5,18 @@ import {
   type StorefrontBranding,
 } from "@/features/storefront-shell/model/branding";
 import { reportStorefrontBrandingIssues } from "@/features/storefront-shell/server/report-branding-issues";
-import type { ShopwareClient } from "@/integrations/shopware/client";
 import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
+import { getShopwareRequestSession } from "@/integrations/shopware/session";
 import { getShopwareStorefrontBranding } from "@/integrations/shopware/storefront-branding";
 
-export async function getStorefrontBranding(
-  client: ShopwareClient,
-): Promise<StorefrontBranding> {
+export async function getStorefrontBranding(): Promise<StorefrontBranding> {
   if (shouldUseShopwareMocks()) {
     return defaultStorefrontBranding;
   }
 
-  const result = await getShopwareStorefrontBranding(client);
+  const result = await getShopwareStorefrontBranding(
+    getShopwareRequestSession().client,
+  );
 
   reportStorefrontBrandingIssues(result.issues);
 

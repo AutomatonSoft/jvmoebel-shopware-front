@@ -14,35 +14,29 @@ import {
   getShopwareMainNavigation,
   getShopwareServiceNavigation,
 } from "@/integrations/shopware/navigation";
-import type { ShopwareClient } from "@/integrations/shopware/client";
 import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
+import { getShopwareRequestSession } from "@/integrations/shopware/session";
 
-export async function getMainNavigation(
-  client: ShopwareClient,
-): Promise<MainNavigation> {
+export async function getMainNavigation(): Promise<MainNavigation> {
   if (shouldUseShopwareMocks()) {
     return mainNavigationMock;
   }
 
-  return getShopwareMainNavigation(client);
+  return getShopwareMainNavigation(getShopwareRequestSession().client);
 }
 
-export async function getFooterNavigation(
-  client: ShopwareClient,
-): Promise<StoreNavigationItem[]> {
+export async function getFooterNavigation(): Promise<StoreNavigationItem[]> {
   if (shouldUseShopwareMocks()) {
     return footerNavigationMock;
   }
 
-  return getShopwareFooterNavigation(client);
+  return getShopwareFooterNavigation(getShopwareRequestSession().client);
 }
 
-export async function getServiceNavigation(
-  client: ShopwareClient,
-): Promise<StoreNavigationItem[]> {
+export async function getServiceNavigation(): Promise<StoreNavigationItem[]> {
   if (shouldUseShopwareMocks()) {
     return serviceNavigationMock;
   }
 
-  return getShopwareServiceNavigation(client);
+  return getShopwareServiceNavigation(getShopwareRequestSession().client);
 }
