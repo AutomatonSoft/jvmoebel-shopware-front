@@ -74,7 +74,7 @@ export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
 
         <HeaderSearch className="ml-auto hidden w-full max-w-80 xl:flex" />
 
-        <details className="group static ml-auto xl:hidden" name="header-panel">
+        <details className="group static xl:hidden" name="header-panel">
           <summary className="flex size-10 cursor-pointer list-none items-center justify-center rounded-lg transition-colors hover:bg-muted motion-safe:transition-transform motion-safe:active:scale-95 [&::-webkit-details-marker]:hidden">
             <Search className="size-4.5 group-open:hidden" />
             <X className="hidden size-4.5 group-open:block" />
@@ -83,7 +83,7 @@ export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
           <StoreSearchForm className="group/search absolute left-1/2 top-[calc(100%+0.5rem)] z-10 flex w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 shadow-xl motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-2 motion-safe:duration-200 sm:max-w-md" />
         </details>
 
-        <div className="flex items-center justify-end">
+        <div className="ml-auto flex items-center justify-end xl:ml-0">
           <a
             aria-label="Account"
             className="hidden min-h-10 items-center gap-2 rounded-full p-1 pr-3 transition-[background,transform,box-shadow] hover:bg-muted focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-[.975] xl:flex"
@@ -101,6 +101,13 @@ export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
           </a>
 
           <div className="flex items-center gap-1 sm:ml-2 sm:border-l sm:border-foreground/10 sm:pl-2">
+            <a
+              aria-label="Account"
+              className="flex size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-90 xl:hidden"
+              href="/account"
+            >
+              <UserRound className="size-4.5" />
+            </a>
             <a
               aria-label="Wishlist"
               className="hidden size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-90 sm:flex"
