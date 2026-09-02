@@ -27,7 +27,6 @@ jobs:
         env:
           SHOPWARE_ENDPOINT: https://example.invalid
           SHOPWARE_ACCESS_TOKEN: validation-token
-          SHOPWARE_ALLOW_MOCK_WRITES: "false"
           SHOPWARE_USE_MOCKS: "false"
           FRONT_PORT: "3000"
           APP_NETWORK: validation-network
