@@ -50,7 +50,7 @@ function StoreSearchForm({ className }: { className: string }) {
 export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
-      <div className="relative mx-auto flex h-18 max-w-360 items-center gap-6 px-4 sm:px-8">
+      <div className="relative mx-auto flex h-18 max-w-360 items-center gap-1 px-4 sm:px-8 lg:gap-6">
         <StoreLogo
           branding={branding}
           className="absolute left-1/2 flex -translate-x-1/2 items-center gap-2 lg:static lg:translate-x-0"
