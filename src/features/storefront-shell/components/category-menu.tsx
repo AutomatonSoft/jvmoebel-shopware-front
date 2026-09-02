@@ -22,7 +22,7 @@ export type CategoryMenuProps = {
 };
 
 function getChildrenLabel(count: number) {
-  return `${count} ${count === 1 ? "subcategory" : "subcategories"}`;
+  return `${count} ${count === 1 ? "Unterkategorie" : "Unterkategorien"}`;
 }
 
 function getChildCount(item: StoreNavigationItem) {
@@ -48,16 +48,10 @@ function CategoryItemContent({
       </span>
 
       <span className="flex shrink-0 items-center gap-2.5">
-        {loading ? (
-          <span className="text-[0.6875rem] text-muted-foreground">
-            Loading
+        {!loading && hasChildren && (
+          <span className="min-w-6 rounded-full bg-secondary px-2 py-1 text-center text-[0.625rem] font-semibold tabular-nums text-muted-foreground">
+            {childCount}
           </span>
-        ) : (
-          hasChildren && (
-            <span className="min-w-6 rounded-full bg-secondary px-2 py-1 text-center text-[0.625rem] font-semibold tabular-nums text-muted-foreground">
-              {childCount}
-            </span>
-          )
         )}
 
         <span className="grid size-8 place-items-center rounded-full bg-secondary text-muted-foreground transition-[background,color,transform] group-hover/category-item:bg-primary group-hover/category-item:text-primary-foreground group-hover/category-item:translate-x-0.5">
@@ -84,7 +78,7 @@ function CategoryItem({
   onSelect: (item: StoreNavigationItem) => Promise<void>;
 }) {
   const className =
-    "group/category-item flex min-h-14 w-full items-center justify-between gap-4 rounded-xl border border-transparent px-3 py-2.5 text-foreground transition-[background,border-color,box-shadow,transform] hover:border-border hover:bg-card hover:shadow-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-wait motion-safe:active:scale-[.99]";
+    "group/category-item flex min-h-14 w-full items-center justify-between gap-4 rounded-xl border border-transparent px-3 py-2.5 text-foreground transition-[background,border-color,box-shadow,transform] hover:border-border hover:bg-card hover:shadow-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:scale-[.99]";
 
   if (getChildCount(item) > 0) {
     return (
@@ -127,11 +121,11 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
   return (
     <Dialog.Root onOpenChange={handleOpenChange}>
       <Dialog.Trigger
-        aria-label="Open categories"
+        aria-label="Kategorien öffnen"
         className="relative flex h-18 shrink-0 cursor-pointer items-center gap-2 bg-transparent px-0 text-xs font-semibold tracking-wide transition-colors after:absolute after:inset-x-0 after:bottom-5 after:hidden after:h-0.5 after:bg-primary hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4 focus-visible:outline-none lg:py-7 lg:after:block"
       >
         <Menu className="size-5 lg:hidden" aria-hidden="true" />
-        <span className="hidden lg:inline">Categories</span>
+        <span className="hidden lg:inline">Kategorien</span>
       </Dialog.Trigger>
 
       <Dialog.Portal>
@@ -141,19 +135,19 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
             <div className="flex min-h-18 shrink-0 items-center justify-between gap-4 border-b border-foreground/10 px-5 py-3 sm:px-6">
               <div className="min-w-0">
                 <Dialog.Title className="text-lg font-semibold tracking-[-0.025em]">
-                  Categories
+                  Kategorien
                 </Dialog.Title>
-                <Dialog.Description className="mt-0.5 truncate text-xs text-muted-foreground">
-                  Find furniture by department.
+                <Dialog.Description className="sr-only">
+                  Produktkategorien durchsuchen.
                 </Dialog.Description>
               </div>
 
               <div className="flex shrink-0 items-center gap-3">
                 <span className="hidden text-[0.625rem] font-semibold tracking-[0.12em] text-muted-foreground uppercase sm:inline">
-                  {navigation.length} departments
+                  {navigation.length} Kategorien
                 </span>
                 <Dialog.Close
-                  aria-label="Close categories"
+                  aria-label="Kategorien schließen"
                   render={
                     <Button
                       className="rounded-full border border-transparent hover:border-border hover:bg-secondary"
@@ -183,21 +177,23 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
                       type="button"
                     >
                       <ChevronLeft className="size-3.5" />
-                      Back
+                      Zurück
                     </button>
                   )}
 
                   <p className="mb-2 text-[0.625rem] font-semibold tracking-[0.16em] text-primary uppercase">
-                    {currentCategory ? "Current category" : "Catalog overview"}
+                    {currentCategory
+                      ? "Aktuelle Kategorie"
+                      : "Katalogübersicht"}
                   </p>
                   <h2 className="text-xl leading-tight font-semibold tracking-[-0.035em] text-balance sm:text-2xl">
-                    {currentCategory?.label ?? "Browse the collection"}
+                    {currentCategory?.label ?? "Kollektion entdecken"}
                   </h2>
-                  <p className="mt-3 max-w-xs text-xs leading-5 text-muted-foreground sm:text-sm sm:leading-6">
-                    {currentCategory
-                      ? getChildrenLabel(currentItems.length)
-                      : `${navigation.length} departments ready to explore.`}
-                  </p>
+                  {currentCategory && (
+                    <p className="mt-3 max-w-xs text-xs leading-5 text-muted-foreground sm:text-sm sm:leading-6">
+                      {getChildrenLabel(currentItems.length)}
+                    </p>
+                  )}
 
                   {currentCategory && (
                     <Dialog.Close
@@ -205,7 +201,7 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
                       nativeButton={false}
                       render={<a href={currentCategory.href} />}
                     >
-                      View category
+                      Kategorie ansehen
                       <ArrowRight className="size-3.5 transition-transform group-hover/view:translate-x-0.5" />
                     </Dialog.Close>
                   )}
@@ -214,7 +210,7 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
 
               <div className="flex min-h-0 min-w-0 flex-col">
                 <nav
-                  aria-label="Category path"
+                  aria-label="Kategoriepfad"
                   className="flex min-h-11 shrink-0 items-center gap-1 overflow-x-auto border-b border-foreground/10 px-4 text-[0.6875rem] text-muted-foreground scrollbar-width:none sm:px-5 [&::-webkit-scrollbar]:hidden"
                 >
                   <button
@@ -222,7 +218,7 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
                     onClick={() => goToPathDepth(0)}
                     type="button"
                   >
-                    All categories
+                    Alle Kategorien
                   </button>
                   {categoryPath.map((item, index) => (
                     <span
@@ -253,7 +249,8 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
                       className="mb-3 rounded-xl border border-destructive/25 bg-destructive/5 px-3.5 py-3 text-xs text-destructive"
                       role="alert"
                     >
-                      Subcategories could not be loaded. Please try again.
+                      Unterkategorien konnten nicht geladen werden. Bitte
+                      versuche es erneut.
                     </p>
                   )}
 
