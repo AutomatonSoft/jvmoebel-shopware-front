@@ -37,8 +37,8 @@ export function ContractRevocationDialog() {
 
       <Dialog.Portal>
         <Dialog.Backdrop className="bg-footer-overlay/25 fixed inset-0 z-60 min-h-dvh backdrop-blur-sm transition-opacity duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0" />
-        <Dialog.Viewport className="fixed inset-0 z-70 flex min-h-dvh items-center justify-center overflow-hidden p-3 sm:p-5">
-          <Dialog.Popup className="border-footer-border bg-footer-surface text-footer-foreground shadow-footer-dialog relative w-full max-w-lg overflow-hidden rounded-3xl border transition-[transform,opacity] duration-200 ease-out data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:scale-[0.98] data-starting-style:opacity-0">
+        <Dialog.Viewport className="fixed inset-0 z-70 flex min-h-dvh items-start justify-center overflow-y-auto overscroll-contain p-3 sm:p-5">
+          <Dialog.Popup className="border-footer-border bg-footer-surface text-footer-foreground shadow-footer-dialog relative my-auto w-full max-w-lg overflow-hidden rounded-3xl border transition-[transform,opacity] duration-200 ease-out data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:scale-[0.98] data-starting-style:opacity-0">
             <header className="border-footer-border bg-footer-panel border-b px-5 py-3 pr-16 sm:px-6 sm:py-4">
               <Dialog.Title className="text-xl font-semibold tracking-[-0.035em] sm:text-2xl">
                 Vertrag widerrufen
