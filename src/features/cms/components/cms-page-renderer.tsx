@@ -5,6 +5,7 @@ import { CmsHero } from "@/features/cms/components/elements/cms-hero";
 import { CmsNewsletter } from "@/features/cms/components/elements/cms-newsletter";
 import { CmsProductGrid } from "@/features/cms/components/elements/cms-product-grid";
 import { CmsRoomGrid } from "@/features/cms/components/elements/cms-room-grid";
+import { CmsShopTheLook } from "@/features/cms/components/elements/cms-shop-the-look";
 import { CmsText } from "@/features/cms/components/elements/cms-text";
 import type {
   CmsBlock,
@@ -27,6 +28,7 @@ const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {
   "jv-newsletter": CmsNewsletter,
   "jv-product-grid": CmsProductGrid,
   "jv-room-grid": CmsRoomGrid,
+  "jv-shop-the-look": CmsShopTheLook,
   text: CmsText,
 };
 
