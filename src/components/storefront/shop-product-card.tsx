@@ -27,7 +27,7 @@ export function ShopProductCard({
       : undefined;
 
   return (
-    <article className="group min-w-0 transition-transform duration-300 motion-safe:hover:-translate-y-1.5">
+    <article className="group min-w-0 transition-transform motion-safe:hover:-translate-y-1.5">
       <a
         className="relative block aspect-[0.84] overflow-hidden rounded-2xl bg-muted shadow-[0_0_0_1px_rgba(21,21,19,0.04)]"
         href={product.url}

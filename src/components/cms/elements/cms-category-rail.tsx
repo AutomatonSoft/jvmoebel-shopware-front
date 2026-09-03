@@ -47,14 +47,14 @@ export function CmsCategoryRail({ slot }: CmsSlotComponentProps) {
       </div>
 
       <nav aria-label={title}>
-        <ul className="-mx-4 -my-4 grid snap-x snap-mandatory scroll-px-4 auto-cols-[8.5rem] grid-flow-col gap-4 overflow-x-auto overscroll-x-contain px-4 py-4 [scrollbar-width:none] sm:-mx-8 sm:scroll-px-8 sm:auto-cols-[10rem] sm:gap-5 sm:px-8 lg:mx-0 lg:scroll-px-0 lg:auto-cols-[calc((100%-6.25rem)/6)] lg:px-0 [&::-webkit-scrollbar]:hidden">
+        <ul className="-mx-4 -my-6 grid snap-x snap-mandatory scroll-px-4 auto-cols-[8.5rem] grid-flow-col gap-4 overflow-x-auto overscroll-x-contain px-4 py-6 [scrollbar-width:none] sm:-mx-8 sm:scroll-px-8 sm:auto-cols-[10rem] sm:gap-5 sm:px-8 lg:mx-0 lg:scroll-px-0 lg:auto-cols-[calc((100%-6.25rem)/6)] lg:px-0 [&::-webkit-scrollbar]:hidden">
           {categories.map((category) => (
             <li className="snap-start" key={category.id}>
               <a
-                className="group block rounded-2xl text-center focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:ring-offset-4 focus-visible:outline-none motion-safe:hover:-translate-y-1"
+                className="group block rounded-2xl text-center focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:ring-offset-4 focus-visible:outline-none motion-safe:transition-transform motion-safe:ease-out motion-safe:hover:-translate-y-1"
                 href={category.url}
               >
-                <span className="relative block aspect-square overflow-hidden rounded-full border border-foreground/10 bg-muted shadow-sm transition-[border-color,box-shadow] group-hover:border-primary/35 group-hover:shadow-lg">
+                <span className="relative block aspect-square overflow-hidden rounded-full border border-foreground/10 bg-muted shadow-[0_6px_18px_-10px_rgba(139,96,63,0.24)] transition-[border-color,box-shadow] group-hover:border-primary/35 group-hover:shadow-[0_18px_36px_-12px_rgba(139,96,63,0.45)]">
                   <Image
                     alt={category.image.alt}
                     className="object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.05]"
