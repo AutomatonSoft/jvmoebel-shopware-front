@@ -27,23 +27,70 @@ export const homeCmsPageMock = {
               slot: "content",
               type: "jv-hero",
               data: {
-                eyebrow: "The new living collection",
-                title: "A home that feels like you.",
-                description:
-                  "Thoughtful furniture, rich textures and lasting comfort — curated for everyday living.",
-                image: {
-                  alt: "Warm contemporary living room with an ivory sofa",
-                  url: "/images/hero-editorial.webp",
-                },
-                primaryLink: {
-                  label: "Shop new arrivals",
-                  size: "large",
-                  url: "/new-in",
-                },
-                secondaryLink: {
-                  label: "Explore the collection",
-                  size: "medium",
-                  url: "/living",
+                ariaLabel: "Aktuelle Angebote und Wohnideen",
+                autoplay: true,
+                autoplayIntervalMs: 6500,
+                slides: {
+                  livingRoom: {
+                    description:
+                      "Entdecken Sie ausgewählte Sofas, Tische und Wohnideen für ein Zuhause mit Persönlichkeit.",
+                    eyebrow: "Neue Wohnideen",
+                    id: "hero-living-room",
+                    image: {
+                      alt: "Helles Wohnzimmer mit einem großzügigen Sofa",
+                      url: "/images/hero-editorial.webp",
+                    },
+                    layout: "featured",
+                    position: 0,
+                    primaryLink: {
+                      label: "Wohnzimmer entdecken",
+                      size: "large",
+                      url: "/living",
+                    },
+                    promotion: {
+                      label: "Ausgewählte Kollektionen",
+                      value: "Bis zu 20 %",
+                    },
+                    secondaryLink: {
+                      label: "Alle Möbel ansehen",
+                      size: "medium",
+                      url: "/shop",
+                    },
+                    title: "Wohnzimmer, die sich nach Ihnen anfühlen.",
+                  },
+                  nomaChair: {
+                    eyebrow: "Neu eingetroffen",
+                    id: "hero-noma-chair",
+                    image: {
+                      alt: "Noma Loungesessel aus rostfarbenem Bouclé",
+                      url: "/images/lounge-chair.webp",
+                    },
+                    layout: "caption",
+                    position: 1,
+                    promotion: {
+                      value: "895 €",
+                    },
+                    title: "Noma Loungesessel zum Einführungspreis",
+                  },
+                  diningRoom: {
+                    eyebrow: "Nur für kurze Zeit",
+                    id: "hero-dining-room",
+                    image: {
+                      alt: "Esszimmer mit rundem Holztisch und gepolsterten Stühlen",
+                      url: "/images/dining-room.webp",
+                    },
+                    layout: "caption",
+                    position: 2,
+                    primaryLink: {
+                      label: "Esszimmer entdecken",
+                      size: "large",
+                      url: "/dining",
+                    },
+                    promotion: {
+                      value: "-15 %",
+                    },
+                    title: "Sale-Specials fürs Esszimmer mit bis zu",
+                  },
                 },
               },
             },

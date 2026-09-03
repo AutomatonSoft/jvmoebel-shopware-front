@@ -1,12 +1,16 @@
-import {
-  resolveCmsButtonSize,
-  type CmsButtonSize,
-} from "@/features/cms/model/button-size";
 import { getCmsRecord, getCmsString } from "@/features/cms/contracts/parsing";
 import type {
   CmsContractIssue,
   CmsContractResult,
 } from "@/features/cms/contracts/result";
+import {
+  resolveCmsButtonSize,
+  type CmsButtonSize,
+} from "@/features/cms/model/button-size";
+
+const DEFAULT_AUTOPLAY_INTERVAL_MS = 7000;
+const MIN_AUTOPLAY_INTERVAL_MS = 4000;
+const MAX_AUTOPLAY_INTERVAL_MS = 15000;
 
 export type CmsHeroImage = Readonly<{
   alt: string;
@@ -19,14 +23,36 @@ export type CmsHeroLink = Readonly<{
   url: string;
 }>;
 
-export type CmsHeroData = Readonly<{
+export type CmsHeroPromotion = Readonly<{
+  label?: string;
+  value: string;
+}>;
+
+export type CmsHeroSlideLayout = "caption" | "featured";
+
+export type CmsHeroSlide = Readonly<{
   description?: string;
   eyebrow?: string;
+  id: string;
   image: CmsHeroImage;
+  layout: CmsHeroSlideLayout;
+  position: number;
   primaryLink?: CmsHeroLink;
+  promotion?: CmsHeroPromotion;
   secondaryLink?: CmsHeroLink;
   title: string;
 }>;
+
+export type CmsHeroData = Readonly<{
+  ariaLabel?: string;
+  autoplay: boolean;
+  autoplayIntervalMs: number;
+  slides: readonly CmsHeroSlide[];
+}>;
+
+function getNestedPath(path: string, field: string) {
+  return path ? `${path}.${field}` : field;
+}
 
 function parseLink(
   value: unknown,
@@ -47,14 +73,14 @@ function parseLink(
   if (!label) {
     issues.push({
       message: "Link label is missing or empty.",
-      path: `${path}.label`,
+      path: getNestedPath(path, "label"),
     });
   }
 
   if (!url) {
     issues.push({
       message: "Link URL is missing or empty.",
-      path: `${path}.url`,
+      path: getNestedPath(path, "url"),
     });
   }
 
@@ -72,49 +98,185 @@ function parseLink(
   };
 }
 
-export function parseCmsHeroData(
+function parsePromotion(
   value: unknown,
-): CmsContractResult<CmsHeroData> {
-  const data = getCmsRecord(value);
-  const image = getCmsRecord(data?.image);
-  const title = getCmsString(data, "title");
+  path: string,
+): Readonly<{
+  data?: CmsHeroPromotion;
+  issues: readonly CmsContractIssue[];
+}> {
+  if (value === undefined || value === null) {
+    return { issues: [] };
+  }
+
+  const promotion = getCmsRecord(value);
+  const promotionValue = getCmsString(promotion, "value");
+
+  if (!promotionValue) {
+    return {
+      issues: [
+        {
+          message: "Promotion value is missing or empty.",
+          path: getNestedPath(path, "value"),
+        },
+      ],
+    };
+  }
+
+  return {
+    data: {
+      label: getCmsString(promotion, "label"),
+      value: promotionValue,
+    },
+    issues: [],
+  };
+}
+
+function parseSlide(
+  value: unknown,
+  path: string,
+  index: number,
+): Readonly<{
+  data?: CmsHeroSlide;
+  issues: readonly CmsContractIssue[];
+}> {
+  const slide = getCmsRecord(value);
+  const image = getCmsRecord(slide?.image);
+  const title = getCmsString(slide, "title");
   const imageUrl = getCmsString(image, "url");
-  const primaryLink = parseLink(data?.primaryLink, "primaryLink");
-  const secondaryLink = parseLink(data?.secondaryLink, "secondaryLink");
+  const primaryLink = parseLink(
+    slide?.primaryLink,
+    getNestedPath(path, "primaryLink"),
+  );
+  const secondaryLink = parseLink(
+    slide?.secondaryLink,
+    getNestedPath(path, "secondaryLink"),
+  );
+  const promotion = parsePromotion(
+    slide?.promotion,
+    getNestedPath(path, "promotion"),
+  );
   const issues: CmsContractIssue[] = [
     ...primaryLink.issues,
     ...secondaryLink.issues,
+    ...promotion.issues,
   ];
 
   if (!title) {
     issues.push({
       message: "Hero title is missing or empty.",
-      path: "title",
+      path: getNestedPath(path, "title"),
     });
   }
 
   if (!imageUrl) {
     issues.push({
       message: "Hero image URL is missing or empty.",
-      path: "image.url",
+      path: getNestedPath(path, "image.url"),
     });
   }
 
   if (!title || !imageUrl) {
+    return { issues };
+  }
+
+  const position = slide?.position;
+
+  return {
+    data: {
+      description: getCmsString(slide, "description"),
+      eyebrow: getCmsString(slide, "eyebrow"),
+      id: getCmsString(slide, "id") || `hero-slide-${index + 1}`,
+      image: {
+        alt: getCmsString(image, "alt") || "",
+        url: imageUrl,
+      },
+      layout: slide?.layout === "caption" ? "caption" : "featured",
+      position:
+        typeof position === "number" && Number.isFinite(position)
+          ? position
+          : index,
+      primaryLink: primaryLink.data,
+      promotion: promotion.data,
+      secondaryLink: secondaryLink.data,
+      title,
+    },
+    issues,
+  };
+}
+
+function parseSlides(value: unknown): Readonly<{
+  data: CmsHeroSlide[];
+  issues: readonly CmsContractIssue[];
+}> {
+  const slidesRecord = getCmsRecord(value);
+  const slideEntries = Array.isArray(value)
+    ? value.map((slide, index) => [String(index), slide] as const)
+    : slidesRecord
+      ? Object.entries(slidesRecord)
+      : [];
+  const issues: CmsContractIssue[] = [];
+
+  const slides = slideEntries
+    .flatMap(([key, slide], index) => {
+      const result = parseSlide(slide, `slides.${key}`, index);
+
+      issues.push(...result.issues);
+
+      return result.data ? [result.data] : [];
+    })
+    .sort((first, second) => first.position - second.position);
+
+  return { data: slides, issues };
+}
+
+function resolveAutoplay(value: unknown) {
+  return value !== false && value !== 0;
+}
+
+function resolveAutoplayInterval(value: unknown) {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return DEFAULT_AUTOPLAY_INTERVAL_MS;
+  }
+
+  return Math.min(
+    MAX_AUTOPLAY_INTERVAL_MS,
+    Math.max(MIN_AUTOPLAY_INTERVAL_MS, Math.round(value)),
+  );
+}
+
+export function parseCmsHeroData(
+  value: unknown,
+): CmsContractResult<CmsHeroData> {
+  const data = getCmsRecord(value);
+  const hasSlides = Boolean(data && Object.hasOwn(data, "slides"));
+  const parsedSlides = hasSlides
+    ? parseSlides(data?.slides)
+    : (() => {
+        const legacySlide = parseSlide(value, "", 0);
+
+        return {
+          data: legacySlide.data ? [legacySlide.data] : [],
+          issues: legacySlide.issues,
+        };
+      })();
+  const issues: CmsContractIssue[] = [...parsedSlides.issues];
+
+  if (parsedSlides.data.length === 0) {
+    issues.push({
+      message: "At least one valid hero slide is required.",
+      path: "slides",
+    });
+
     return { data: null, issues };
   }
 
   return {
     data: {
-      description: getCmsString(data, "description"),
-      eyebrow: getCmsString(data, "eyebrow"),
-      image: {
-        alt: getCmsString(image, "alt") || "",
-        url: imageUrl,
-      },
-      primaryLink: primaryLink.data,
-      secondaryLink: secondaryLink.data,
-      title,
+      ariaLabel: getCmsString(data, "ariaLabel"),
+      autoplay: resolveAutoplay(data?.autoplay),
+      autoplayIntervalMs: resolveAutoplayInterval(data?.autoplayIntervalMs),
+      slides: parsedSlides.data,
     },
     issues,
   };
