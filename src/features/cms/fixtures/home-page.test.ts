@@ -34,6 +34,20 @@ function collectLocalImagePaths(value: unknown): string[] {
   return Object.values(value).flatMap(collectLocalImagePaths);
 }
 
+function collectAnchorHrefs(value: unknown): string[] {
+  if (typeof value === "string") {
+    return Array.from(value.matchAll(/<a href=['"]([^'"]+)['"]/g), (match) =>
+      match[1] ? match[1] : "",
+    ).filter(Boolean);
+  }
+
+  if (!value || typeof value !== "object") {
+    return [];
+  }
+
+  return Object.values(value).flatMap(collectAnchorHrefs);
+}
+
 describe("homeCmsPageMock", () => {
   const page: CmsPage = homeCmsPageMock;
   const slots = page.sections.flatMap((section) =>
@@ -70,6 +84,16 @@ describe("homeCmsPageMock", () => {
       );
 
       expect(existsSync(publicPath)).toBe(true);
+    }
+  });
+
+  test("uses internal links in fixture content", () => {
+    const hrefs = collectAnchorHrefs(homeCmsPageMock);
+
+    expect(hrefs.length).toBeGreaterThan(0);
+
+    for (const href of hrefs) {
+      expect(href.startsWith("/")).toBe(true);
     }
   });
 });
