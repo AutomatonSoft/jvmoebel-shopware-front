@@ -60,7 +60,7 @@ export function CmsWhyJvmoebel({ slot }: CmsSlotComponentProps) {
           <div className="relative text-center">
             <span
               aria-hidden="true"
-              className="block text-[clamp(4.5rem,17vw,8rem)] leading-[0.8] font-semibold tracking-[-0.1em] text-[#a57d63]"
+              className="block text-[clamp(4.5rem,17vw,8rem)] leading-[0.8] font-semibold -tracking-widest text-[#a57d63]"
             >
               {mark}
             </span>
@@ -77,7 +77,7 @@ export function CmsWhyJvmoebel({ slot }: CmsSlotComponentProps) {
             </p>
           )}
           <h2
-            className="max-w-2xl text-4xl leading-[0.98] font-semibold tracking-[-0.05em] text-balance sm:text-5xl lg:text-6xl"
+            className="max-w-2xl text-4xl leading-[0.98] font-semibold tracking-tighter text-balance sm:text-5xl lg:text-6xl"
             id={headingId}
           >
             {title}
@@ -107,7 +107,7 @@ export function CmsWhyJvmoebel({ slot }: CmsSlotComponentProps) {
                           aria-hidden="true"
                           className="size-4.5 text-[#a86f4e]"
                         />
-                        <strong className="text-base font-semibold tracking-[-0.025em] sm:text-lg">
+                        <strong className="text-base font-semibold tracking-tight sm:text-lg">
                           {benefit.title}
                         </strong>
                       </span>
