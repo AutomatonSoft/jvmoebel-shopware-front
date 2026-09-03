@@ -51,12 +51,10 @@ describe("shouldUseShopwareMocks", () => {
     expect(shouldUseShopwareMocks()).toBe(false);
   });
 
-  test("rejects mocks when explicitly enabled in production", () => {
+  test("enables mocks when explicitly enabled with production Node runtime", () => {
     setEnvironment("production", "true");
 
-    expect(() => shouldUseShopwareMocks()).toThrow(
-      "SHOPWARE_USE_MOCKS=true is not allowed when NODE_ENV=production.",
-    );
+    expect(shouldUseShopwareMocks()).toBe(true);
   });
 
   test("disables mocks when explicitly disabled in production", () => {

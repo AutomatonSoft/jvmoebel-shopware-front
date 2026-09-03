@@ -52,20 +52,19 @@ describe("GET /api/health", () => {
     });
   });
 
-  test("rejects mock mode in production", async () => {
+  test("accepts explicitly enabled mock mode with production Node runtime", async () => {
     setEnvironmentVariable("NODE_ENV", "production");
     process.env.SHOPWARE_USE_MOCKS = "true";
-    const consoleError = spyOn(console, "error").mockImplementation(() => {});
+    delete process.env.SHOPWARE_ENDPOINT;
+    delete process.env.SHOPWARE_ACCESS_TOKEN;
 
-    try {
-      const response = GET();
+    const response = GET();
 
-      expect(response.status).toBe(503);
-      expect(await response.json()).toEqual({ status: "error" });
-      expect(consoleError).toHaveBeenCalledTimes(1);
-    } finally {
-      consoleError.mockRestore();
-    }
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({
+      shopwareMode: "mock",
+      status: "ok",
+    });
   });
 
   test("rejects live mode without Shopware credentials", async () => {
