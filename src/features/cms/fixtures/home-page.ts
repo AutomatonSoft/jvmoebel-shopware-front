@@ -7,6 +7,7 @@ const categoryRailBlockId = "mock-home-category-rail-block";
 const shopTheLookBlockId = "mock-home-shop-the-look-block";
 const roomGridBlockId = "mock-home-room-grid-block";
 const productGridBlockId = "mock-home-product-grid-block";
+const whyJvmoebelBlockId = "mock-home-why-jvmoebel-block";
 const newsletterBlockId = "mock-home-newsletter-block";
 
 export const homeCmsPageMock = {
@@ -358,8 +359,61 @@ export const homeCmsPageMock = {
           ],
         },
         {
-          id: newsletterBlockId,
+          id: whyJvmoebelBlockId,
           position: 5,
+          type: "jv-why-jvmoebel",
+          slots: [
+            {
+              id: "mock-home-why-jvmoebel-slot",
+              slot: "content",
+              type: "jv-why-jvmoebel",
+              data: {
+                benefits: {
+                  design: {
+                    description:
+                      "Ausdrucksstarke Formen und angenehme Materialien für ein Zuhause mit Charakter.",
+                    icon: "design",
+                    id: "why-jvmoebel-design",
+                    position: 0,
+                    title: "Ausgewählte Designs",
+                    url: "/shop",
+                  },
+                  advice: {
+                    description:
+                      "Persönliche Hilfe bei Auswahl, Kombination und Bestellung.",
+                    icon: "advice",
+                    id: "why-jvmoebel-advice",
+                    position: 1,
+                    title: "Persönliche Beratung",
+                    url: "/kontakt",
+                  },
+                  payment: {
+                    description:
+                      "Vertraute Zahlungsarten und ein transparenter Bestellprozess.",
+                    icon: "payment",
+                    id: "why-jvmoebel-payment",
+                    position: 2,
+                    title: "Sicher bezahlen",
+                    url: "/zahlungsarten",
+                  },
+                },
+                description:
+                  "Wir verbinden charakterstarkes Design mit persönlichem Service und einem Einkauf, der sich einfach und verlässlich anfühlt.",
+                eyebrow: "Mehr als nur Möbel",
+                mark: "JVM",
+                tagline: "Für Räume mit Persönlichkeit",
+                title: "Warum JVMöbel?",
+                viewAll: {
+                  label: "Mehr über JVMöbel",
+                  url: "/ueber-uns",
+                },
+              },
+            },
+          ],
+        },
+        {
+          id: newsletterBlockId,
+          position: 6,
           type: "jv-newsletter",
           slots: [
             {

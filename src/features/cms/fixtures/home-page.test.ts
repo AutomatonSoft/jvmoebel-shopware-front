@@ -10,6 +10,7 @@ import { parseCmsProductGridData } from "@/features/cms/contracts/product-grid";
 import type { CmsContractResult } from "@/features/cms/contracts/result";
 import { parseCmsRoomGridData } from "@/features/cms/contracts/room-grid";
 import { parseCmsShopTheLookData } from "@/features/cms/contracts/shop-the-look";
+import { parseCmsWhyJvmoebelData } from "@/features/cms/contracts/why-jvmoebel";
 import { homeCmsPageMock } from "@/features/cms/fixtures/home-page";
 import type { CmsPage } from "@/features/cms/model/page";
 
@@ -22,6 +23,7 @@ const fixtureParsers: Record<string, CmsFixtureParser | undefined> = {
   "jv-product-grid": parseCmsProductGridData,
   "jv-room-grid": parseCmsRoomGridData,
   "jv-shop-the-look": parseCmsShopTheLookData,
+  "jv-why-jvmoebel": parseCmsWhyJvmoebelData,
 };
 
 function collectLocalImagePaths(value: unknown): string[] {
