@@ -9,6 +9,7 @@ import { parseCmsNewsletterData } from "@/features/cms/contracts/newsletter";
 import { parseCmsProductGridData } from "@/features/cms/contracts/product-grid";
 import type { CmsContractResult } from "@/features/cms/contracts/result";
 import { parseCmsRoomGridData } from "@/features/cms/contracts/room-grid";
+import { parseCmsShopTheLookData } from "@/features/cms/contracts/shop-the-look";
 import { homeCmsPageMock } from "@/features/cms/fixtures/home-page";
 import type { CmsPage } from "@/features/cms/model/page";
 
@@ -20,6 +21,7 @@ const fixtureParsers: Record<string, CmsFixtureParser | undefined> = {
   "jv-newsletter": parseCmsNewsletterData,
   "jv-product-grid": parseCmsProductGridData,
   "jv-room-grid": parseCmsRoomGridData,
+  "jv-shop-the-look": parseCmsShopTheLookData,
 };
 
 function collectLocalImagePaths(value: unknown): string[] {

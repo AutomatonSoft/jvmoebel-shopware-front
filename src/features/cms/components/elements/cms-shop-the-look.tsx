@@ -18,18 +18,18 @@ export function CmsShopTheLook({ slot }: CmsSlotComponentProps) {
 
   return (
     <section
-      className="mx-2 mt-16 rounded-3xl bg-muted sm:mx-4 sm:mt-20 lg:mx-6"
+      className="mx-2 mt-12 rounded-3xl bg-muted sm:mx-4 sm:mt-16 lg:mx-6"
       data-cms-element="jv-shop-the-look"
     >
-      <div className="mx-auto w-full max-w-360 px-4 py-14 sm:px-8 sm:py-18 lg:py-20">
-        <div className="mb-8 grid gap-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-end sm:mb-10">
+      <div className="mx-auto w-full max-w-360 px-4 py-10 sm:px-8 sm:py-12 lg:py-14">
+        <div className="mb-6 grid gap-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-end sm:mb-8">
           <div>
             {eyebrow && (
               <p className="mb-4 flex items-center gap-3 text-xs font-semibold tracking-[0.16em] text-muted-foreground uppercase before:block before:size-2 before:bg-primary">
                 {eyebrow}
               </p>
             )}
-            <h2 className="max-w-3xl text-4xl leading-none font-semibold tracking-[-0.04em] text-balance sm:text-5xl">
+            <h2 className="max-w-3xl text-3xl leading-none font-semibold tracking-[-0.04em] text-balance sm:text-4xl lg:text-5xl">
               {title}
             </h2>
             {description && (
@@ -54,10 +54,10 @@ export function CmsShopTheLook({ slot }: CmsSlotComponentProps) {
         </div>
 
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1.7fr)_minmax(18rem,0.7fr)]">
-          <div className="relative min-h-96 overflow-hidden rounded-2xl bg-background shadow-[0_18px_50px_-34px_rgba(139,96,63,0.55)] sm:min-h-128 lg:min-h-[42rem]">
+          <div className="relative min-h-80 overflow-hidden rounded-2xl bg-background shadow-[0_18px_50px_-34px_rgba(139,96,63,0.55)] sm:min-h-112 lg:min-h-136">
             <Image
               alt={image.alt}
-              className="object-cover transition-transform duration-700 ease-out motion-safe:hover:scale-[1.015]"
+              className="object-cover"
               fill
               sizes="(max-width: 1024px) calc(100vw - 2rem), (max-width: 1536px) 62vw, 900px"
               src={image.url}
@@ -88,7 +88,7 @@ export function CmsShopTheLook({ slot }: CmsSlotComponentProps) {
             {items.map((item, index) => (
               <li key={item.id}>
                 <a
-                  className="group flex h-full min-h-28 items-center gap-4 rounded-2xl border border-foreground/10 bg-background/75 p-4 transition-[border-color,background-color,box-shadow,transform] hover:border-primary/30 hover:bg-background hover:shadow-[0_14px_30px_-22px_rgba(139,96,63,0.6)] focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:outline-none motion-safe:hover:-translate-y-0.5 sm:p-5"
+                  className="group flex h-full min-h-24 items-center gap-4 rounded-2xl border border-foreground/10 bg-background/75 p-4 transition-[border-color,background-color,box-shadow,transform] hover:border-primary/30 hover:bg-background hover:shadow-[0_14px_30px_-22px_rgba(139,96,63,0.6)] focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:outline-none motion-safe:hover:-translate-y-0.5 sm:p-5"
                   href={item.url}
                 >
                   <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-foreground/15 text-xs font-semibold text-muted-foreground">

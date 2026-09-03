@@ -4,6 +4,7 @@ const pageId = "mock-home-page";
 const sectionId = "mock-home-section";
 const heroBlockId = "mock-home-hero-block";
 const categoryRailBlockId = "mock-home-category-rail-block";
+const shopTheLookBlockId = "mock-home-shop-the-look-block";
 const roomGridBlockId = "mock-home-room-grid-block";
 const productGridBlockId = "mock-home-product-grid-block";
 const newsletterBlockId = "mock-home-newsletter-block";
@@ -135,8 +136,60 @@ export const homeCmsPageMock = {
           ],
         },
         {
-          id: roomGridBlockId,
+          id: shopTheLookBlockId,
           position: 2,
+          type: "jv-shop-the-look",
+          slots: [
+            {
+              id: "mock-home-shop-the-look-slot",
+              slot: "content",
+              type: "jv-shop-the-look",
+              data: {
+                description:
+                  "Entdecken Sie die Möbel dieses Wohnzimmers und stellen Sie den Look passend zu Ihrem Zuhause zusammen.",
+                eyebrow: "Ein Raum, ein Look",
+                image: {
+                  alt: "Helles Wohnzimmer mit Sofa, Loungesessel und TV-Lowboard",
+                  url: "/images/hero-living.webp",
+                },
+                items: {
+                  sofa: {
+                    description: "Naturfarbenes Bouclé · modular kombinierbar",
+                    hotspot: { x: 69, y: 66 },
+                    id: "look-alba-sofa",
+                    name: "Alba Modulsofa",
+                    position: 0,
+                    url: "/product/alba",
+                  },
+                  armchair: {
+                    description: "Rostrotes Bouclé · weiche Rundungen",
+                    hotspot: { x: 85, y: 79 },
+                    id: "look-noma-armchair",
+                    name: "Noma Loungesessel",
+                    position: 1,
+                    url: "/product/noma",
+                  },
+                  lowboard: {
+                    description: "Dunkles Holz · klare Linien",
+                    hotspot: { x: 63, y: 55 },
+                    id: "look-forma-lowboard",
+                    name: "Forma TV-Lowboard",
+                    position: 2,
+                    url: "/product/forma",
+                  },
+                },
+                title: "Diesen Look nach Hause holen.",
+                viewAll: {
+                  label: "Wohnzimmer entdecken",
+                  url: "/living",
+                },
+              },
+            },
+          ],
+        },
+        {
+          id: roomGridBlockId,
+          position: 3,
           type: "jv-room-grid",
           slots: [
             {
@@ -192,7 +245,7 @@ export const homeCmsPageMock = {
         },
         {
           id: productGridBlockId,
-          position: 3,
+          position: 4,
           type: "jv-product-grid",
           slots: [
             {
@@ -306,7 +359,7 @@ export const homeCmsPageMock = {
         },
         {
           id: newsletterBlockId,
-          position: 4,
+          position: 5,
           type: "jv-newsletter",
           slots: [
             {
