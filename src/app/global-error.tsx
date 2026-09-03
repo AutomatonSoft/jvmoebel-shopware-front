@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-import { ErrorExperience } from "@/components/storefront/error-experience";
+import { ErrorExperience } from "@/features/storefront-shell/components/error-experience";
 
 import "./globals.css";
 

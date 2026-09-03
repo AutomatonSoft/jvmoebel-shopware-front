@@ -1,4 +1,4 @@
-import { ErrorExperience } from "@/components/storefront/error-experience";
+import { ErrorExperience } from "@/features/storefront-shell/components/error-experience";
 
 export default function NotFound() {
   return (
