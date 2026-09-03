@@ -31,4 +31,16 @@ describe("Shopware navigation", () => {
       },
     ]);
   });
+
+  test("returns an empty navigation when Shopware responds without content", async () => {
+    const client = {
+      invoke: async () => ({
+        data: undefined,
+      }),
+    } as unknown as ShopwareClient;
+
+    const navigation = await getFooterNavigation(client);
+
+    expect(navigation).toEqual([]);
+  });
 });

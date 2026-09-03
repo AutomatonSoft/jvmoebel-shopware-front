@@ -1,0 +1,35 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    init: true
+    stop_grace_period: ${FRONT_STOP_GRACE_PERIOD:-30s}
+    mem_limit: ${FRONT_MEMORY_LIMIT:-1g}
+    cpus: ${FRONT_CPU_LIMIT:-1.5}
+    pids_limit: ${FRONT_PIDS_LIMIT:-256}
+    environment:
+      NODE_ENV: production
+      SHOPWARE_ENDPOINT: ${SHOPWARE_ENDPOINT:?SHOPWARE_ENDPOINT is required}
+      SHOPWARE_ACCESS_TOKEN: ${SHOPWARE_ACCESS_TOKEN:?SHOPWARE_ACCESS_TOKEN is required}
+      SHOPWARE_USE_MOCKS: ${SHOPWARE_USE_MOCKS:-false}
+    ports:
+      - "127.0.0.1:${FRONT_PORT:?FRONT_PORT is required}:3000"
+    networks:
+      - application
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/api/health').then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+networks:
+  application:
+    external: true
+    name: ${APP_NETWORK:?APP_NETWORK is required}

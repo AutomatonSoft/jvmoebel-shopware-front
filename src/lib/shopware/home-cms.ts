@@ -11,7 +11,7 @@ export type GetHomeCmsPageOptions = {
 
 export async function getHomeCmsPage({
   client,
-}: GetHomeCmsPageOptions): Promise<CmsPage> {
+}: GetHomeCmsPageOptions): Promise<CmsPage | null> {
   if (shouldUseShopwareMocks()) {
     return homeCmsPageMock;
   }
@@ -26,13 +26,8 @@ export async function getHomeCmsPage({
       },
     },
   );
-  const category = categoryResponse.data;
 
-  if (!category.cmsPage) {
-    throw new Error("Shopware home category has no CMS page assigned.");
-  }
-
-  return category.cmsPage;
+  return categoryResponse.data.cmsPage ?? null;
 }
 
 export type HomeCmsPage = CmsPage;
