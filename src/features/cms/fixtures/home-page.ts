@@ -33,7 +33,7 @@ export const homeCmsPageMock = {
                   "Durchdachte Möbel, edle Texturen und dauerhafter Komfort — ausgewählt für das tägliche Leben.",
                 image: {
                   alt: "Modernes, warm eingerichtetes Wohnzimmer mit elfenbeinfarbenem Sofa",
-                  url: "/images/hero-editorial.webp",
+                  url: "/images/main/hero-editorial.webp",
                 },
                 primaryLink: {
                   label: "Neuheiten entdecken",
@@ -69,7 +69,7 @@ export const homeCmsPageMock = {
                     id: "living-room",
                     image: {
                       alt: "Modern eingerichtetes Wohnzimmer",
-                      url: "/images/hero-living.webp",
+                      url: "/images/main/hero-living.webp",
                     },
                     label: "Wohnzimmer",
                     position: 0,
@@ -81,7 +81,7 @@ export const homeCmsPageMock = {
                     id: "dining-room",
                     image: {
                       alt: "Warm eingerichtetes Esszimmer mit Walnussholz",
-                      url: "/images/dining-room.webp",
+                      url: "/images/main/dining-room.webp",
                     },
                     label: "Esszimmer",
                     position: 1,
@@ -93,7 +93,7 @@ export const homeCmsPageMock = {
                     id: "bedroom",
                     image: {
                       alt: "Ruhiges Schlafzimmer in neutralen Farben",
-                      url: "/images/bedroom.webp",
+                      url: "/images/main/bedroom.webp",
                     },
                     label: "Schlafzimmer",
                     position: 2,
@@ -130,7 +130,7 @@ export const homeCmsPageMock = {
                     cover: {
                       media: {
                         alt: "Alba Modulsofa in einem warm eingerichteten Wohnzimmer",
-                        url: "/images/hero-living.webp",
+                        url: "/images/main/hero-living.webp",
                       },
                     },
                     id: "alba",
@@ -151,7 +151,7 @@ export const homeCmsPageMock = {
                     cover: {
                       media: {
                         alt: "Noma Loungesessel in Rostrot",
-                        url: "/images/lounge-chair.webp",
+                        url: "/images/main/lounge-chair.webp",
                       },
                     },
                     id: "noma",
@@ -172,7 +172,7 @@ export const homeCmsPageMock = {
                     cover: {
                       media: {
                         alt: "Forma TV-Lowboard aus massivem Walnussholz",
-                        url: "/images/media-console.webp",
+                        url: "/images/main/media-console.webp",
                       },
                     },
                     id: "forma",
@@ -196,7 +196,7 @@ export const homeCmsPageMock = {
                     cover: {
                       media: {
                         alt: "Mira Tisch in einem warm eingerichteten Esszimmer",
-                        url: "/images/dining-room.webp",
+                        url: "/images/main/dining-room.webp",
                       },
                     },
                     id: "mira",
