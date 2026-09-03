@@ -1,15 +1,8 @@
-import {
-  ArrowRight,
-  Heart,
-  Search,
-  ShoppingBag,
-  UserRound,
-  X,
-} from "lucide-react";
+import { Heart, ShoppingBag, UserRound } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { CategoryMenu } from "@/features/storefront-shell/components/category-menu";
+import { HeaderSearch } from "@/features/storefront-shell/components/header-search";
+import { MobileHeaderSearch } from "@/features/storefront-shell/components/mobile-header-search";
 import { StoreLogo } from "@/features/storefront-shell/components/store-logo";
 import type { StorefrontBranding } from "@/features/storefront-shell/model/branding";
 import type { MainNavigation } from "@/features/storefront-shell/model/navigation";
@@ -21,37 +14,10 @@ export type StoreHeaderProps = {
 
 const MAX_VISIBLE_CATEGORIES = 7;
 
-function StoreSearchForm({ className }: { className: string }) {
-  return (
-    <form
-      action="/shop"
-      className={`h-11 items-center rounded-full border bg-muted/80 p-1 pl-4 transition-[background,border-color,box-shadow] hover:border-foreground/15 hover:bg-card/70 focus-within:border-foreground/25 focus-within:bg-card focus-within:ring-3 focus-within:ring-primary/15 ${className}`}
-      role="search"
-    >
-      <Search className="mr-2 size-4.5 shrink-0 text-muted-foreground transition-colors group-focus-within/search:text-foreground" />
-      <Input
-        aria-label="Search products"
-        className="h-auto min-w-0 flex-1 rounded-none border-0 bg-transparent px-0 py-0 text-sm shadow-none focus-visible:border-0 focus-visible:ring-0"
-        name="query"
-        placeholder="Search furniture"
-        type="search"
-      />
-      <Button
-        aria-label="Submit search"
-        className="shrink-0 rounded-full hover:bg-destructive motion-safe:hover:translate-x-px motion-safe:active:scale-90"
-        size="icon-lg"
-        type="submit"
-      >
-        <ArrowRight className="size-4" />
-      </Button>
-    </form>
-  );
-}
-
 export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
-      <div className="relative mx-auto flex h-18 max-w-360 items-center gap-6 px-4 sm:px-8">
+      <div className="relative mx-auto flex h-18 max-w-360 items-center gap-1 px-4 sm:px-8 lg:gap-6">
         <StoreLogo
           branding={branding}
           className="absolute left-1/2 flex -translate-x-1/2 items-center gap-2 lg:static lg:translate-x-0"
@@ -73,18 +39,11 @@ export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
           </nav>
         )}
 
-        <StoreSearchForm className="group/search ml-auto hidden w-full max-w-80 xl:flex" />
+        <HeaderSearch className="ml-auto hidden w-full max-w-80 xl:flex" />
 
-        <details className="group static ml-auto xl:hidden" name="header-panel">
-          <summary className="flex size-10 cursor-pointer list-none items-center justify-center rounded-lg transition-colors hover:bg-muted motion-safe:transition-transform motion-safe:active:scale-95 [&::-webkit-details-marker]:hidden">
-            <Search className="size-4.5 group-open:hidden" />
-            <X className="hidden size-4.5 group-open:block" />
-            <span className="sr-only">Toggle search</span>
-          </summary>
-          <StoreSearchForm className="group/search absolute inset-x-3 top-[calc(100%+0.5rem)] z-10 flex h-14 shadow-xl motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-2 motion-safe:duration-200 sm:inset-x-8" />
-        </details>
+        <MobileHeaderSearch />
 
-        <div className="flex items-center justify-end">
+        <div className="ml-auto flex items-center justify-end xl:ml-0">
           <a
             aria-label="Account"
             className="hidden min-h-10 items-center gap-2 rounded-full p-1 pr-3 transition-[background,transform,box-shadow] hover:bg-muted focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-[.975] xl:flex"
@@ -102,6 +61,13 @@ export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
           </a>
 
           <div className="flex items-center gap-1 sm:ml-2 sm:border-l sm:border-foreground/10 sm:pl-2">
+            <a
+              aria-label="Account"
+              className="flex size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-90 xl:hidden"
+              href="/account"
+            >
+              <UserRound className="size-4.5" />
+            </a>
             <a
               aria-label="Wishlist"
               className="hidden size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-90 sm:flex"
