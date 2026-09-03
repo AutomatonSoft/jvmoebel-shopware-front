@@ -3,7 +3,6 @@
 import { Dialog } from "@base-ui/react/dialog";
 import { ArrowUpRight, Send, X } from "lucide-react";
 import type { FormEvent } from "react";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { buildContractRevocationMailto } from "@/features/storefront-shell/model/contract-revocation";

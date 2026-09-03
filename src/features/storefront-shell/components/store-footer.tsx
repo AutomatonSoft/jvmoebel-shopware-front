@@ -1,7 +1,6 @@
-import Image from "next/image";
-
-import { ContractRevocationDialog } from "@/features/storefront-shell/components/contract-revocation-dialog";
-import { StoreLogo } from "@/features/storefront-shell/components/store-logo";
+import { FooterAbout } from "@/features/storefront-shell/components/footer-about";
+import { FooterNavigation } from "@/features/storefront-shell/components/footer-navigation";
+import { FooterTrustSection } from "@/features/storefront-shell/components/footer-trust-section";
 import type { StorefrontBranding } from "@/features/storefront-shell/model/branding";
 import type { StoreNavigationItem } from "@/features/storefront-shell/model/navigation";
 
@@ -11,182 +10,22 @@ export type StoreFooterProps = {
   serviceNavigation: StoreNavigationItem[];
 };
 
-function getNavigationLinks(item: StoreNavigationItem) {
-  return item.children.length > 0 ? item.children : [item];
-}
-
-const paymentMethods = [
-  { label: "Mastercard", src: "/images/icons/mastercard.webp" },
-  { label: "Visa", src: "/images/icons/visa.webp" },
-  { label: "Vorkasse", src: "/images/icons/vorkasse.webp" },
-  { label: "Amazon Pay", src: "/images/icons/amazon.webp" },
-  { label: "PayPal", src: "/images/icons/paypal.webp" },
-  { label: "Klarna", src: "/images/icons/klarna.webp" },
-] as const;
-
-const socialLinks = [
-  {
-    href: "https://www.facebook.com/jvmoebel.de",
-    label: "Facebook",
-    src: "/images/icons/facebook.png",
-  },
-  {
-    href: "https://www.instagram.com/home_luxus_style_design/",
-    label: "Instagram",
-    src: "/images/icons/instagram.png",
-  },
-  {
-    href: "https://api.whatsapp.com/message/I5VAPEHCQNQTM1?autoload=1&app_absent=0",
-    label: "WhatsApp",
-    src: "/images/icons/whatsapp.png",
-  },
-  {
-    href: "https://www.youtube.com/channel/UClp5F2jZKfTJG1o902C1-eQ",
-    label: "YouTube",
-    src: "/images/icons/youtube.png",
-  },
-  {
-    href: "https://www.pinterest.de/jvmoebel_de",
-    label: "Pinterest",
-    src: "/images/icons/pinterest.png",
-  },
-  {
-    href: "https://t.me/XLANDJV",
-    label: "Telegram",
-    src: "/images/icons/telegram.png",
-  },
-] as const;
-
 export function StoreFooter({
   branding,
   footerNavigation,
   serviceNavigation,
 }: StoreFooterProps) {
-  const categoryLinks = footerNavigation.flatMap(getNavigationLinks);
-  const serviceLinks = serviceNavigation.flatMap(getNavigationLinks);
-
   return (
     <footer className="mt-auto bg-background">
       <div className="mx-auto grid w-full max-w-360 grid-cols-2 gap-x-5 gap-y-10 px-6 py-16 sm:px-8 xl:grid-cols-5 xl:gap-10 xl:py-20">
-        <section className="col-span-2 rounded-3xl border border-[#d7d9ce] bg-[#eef0e8] p-7 text-[#465047] sm:p-10">
-          <StoreLogo branding={branding} variant="footer" />
-          <p className="mt-9 flex items-center gap-3 text-xs font-semibold tracking-[0.16em] text-[#737b70] uppercase before:block before:size-2 before:bg-primary">
-            Über uns
-          </p>
-          <h2 className="mt-4 max-w-lg text-3xl leading-tight font-semibold tracking-[-0.04em] text-balance sm:text-4xl">
-            Möbel mit Charakter, gemacht für das echte Leben.
-          </h2>
-          <p className="mt-6 max-w-2xl text-sm leading-7 text-[#626b61]">
-            Wir bieten unseren Kunden schönes und praktisches für Haus und
-            Garten. Die Produktpalette ist breit gefächert. Von handgefertigten
-            Ledersofas über klassische Chesterfield wie stylische Wohnmöbel bis
-            zu den eigen gefertigten Designer Garnituren ist alles dabei, was
-            das Einrichterherz begehrt. Das stetig wachsende Auftragsvolumen
-            schultert das Team von jvmoebel.de mittels modernster Technologien
-            und durchdachten Strukturen mit Spaß und Motivation. Masse – aber
-            bitte mit Klasse ist das Motto, das von unseren Mitarbeitern Tag für
-            Tag gelebt wird. Schließen Sie sich der Gemeinschaft unserer
-            zufriedenen Kunden an. Ihr gemütliches Heim ist unser Ziel!
-          </p>
-          <ContractRevocationDialog />
-        </section>
+        <FooterAbout branding={branding} />
 
         <div className="col-span-2 grid gap-x-10 gap-y-10 sm:grid-cols-3 xl:col-span-3">
-          <nav
-            aria-label="Kategorien"
-            className="border-t border-[#d9d7ce] pt-7 sm:col-span-2"
-          >
-            <h2 className="text-xs font-semibold tracking-[0.16em] text-[#72786f] uppercase">
-              Kategorien
-            </h2>
-            <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3">
-              {categoryLinks.map((item) => (
-                <a
-                  className="w-fit text-sm leading-5 text-[#596158] underline decoration-transparent underline-offset-4 transition-[color,text-decoration-color] hover:text-[#b96548] hover:decoration-current"
-                  href={item.href}
-                  key={item.id}
-                >
-                  {item.label}
-                </a>
-              ))}
-            </div>
-          </nav>
-
-          <nav aria-label="Service" className="border-t border-[#d9d7ce] pt-7">
-            <h2 className="text-xs font-semibold tracking-[0.16em] text-[#72786f] uppercase">
-              Service
-            </h2>
-            <div className="mt-6 flex flex-col gap-3">
-              {serviceLinks.map((item) => (
-                <a
-                  className="w-fit text-sm leading-5 text-[#596158] underline decoration-transparent underline-offset-4 transition-[color,text-decoration-color] hover:text-[#b96548] hover:decoration-current"
-                  href={item.href}
-                  key={item.id}
-                >
-                  {item.label}
-                </a>
-              ))}
-            </div>
-          </nav>
-
-          <div className="grid gap-8 border-t border-[#d9d7ce] pt-7 sm:col-span-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
-            <section aria-labelledby="payment-methods-heading">
-              <h2
-                className="text-xs font-semibold tracking-[0.16em] text-[#72786f] uppercase"
-                id="payment-methods-heading"
-              >
-                Zahlungsarten
-              </h2>
-              <ul className="mt-4 flex flex-wrap gap-2">
-                {paymentMethods.map(({ label, src }) => (
-                  <li
-                    className="flex h-10 w-18 items-center justify-center rounded-xl border border-[#ded9cd] bg-[#fffdf8] p-1.5"
-                    key={label}
-                  >
-                    <Image
-                      alt={label}
-                      className="h-full w-full object-contain"
-                      title={label}
-                      height={32}
-                      src={src}
-                      width={72}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </section>
-
-            <section aria-labelledby="social-networks-heading">
-              <h2
-                className="text-xs font-semibold tracking-[0.16em] text-[#72786f] uppercase"
-                id="social-networks-heading"
-              >
-                Soziale Netzwerke
-              </h2>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {socialLinks.map(({ href, label, src }) => (
-                  <a
-                    aria-label={`${label} (öffnet in einem neuen Tab)`}
-                    className="flex size-10 items-center justify-center rounded-full border border-[#d6d9cf] bg-[#f8f7f1] text-[#525b52] transition-[background,border-color,color,transform] hover:border-[#c98b71] hover:bg-[#f1ded3] hover:text-[#a8563c] focus-visible:ring-3 focus-visible:ring-[#cf7859]/30 motion-safe:active:translate-y-px"
-                    href={href}
-                    key={label}
-                    title={label}
-                    target="_blank"
-                  >
-                    <Image
-                      alt={label}
-                      aria-hidden="true"
-                      className="size-5 object-contain"
-                      height={20}
-                      src={src}
-                      width={20}
-                    />
-                    <span className="sr-only">{label}</span>
-                  </a>
-                ))}
-              </div>
-            </section>
-          </div>
+          <FooterNavigation
+            footerNavigation={footerNavigation}
+            serviceNavigation={serviceNavigation}
+          />
+          <FooterTrustSection />
         </div>
       </div>
 
