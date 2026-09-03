@@ -74,7 +74,7 @@ export function CmsShopTheLook({ slot }: CmsSlotComponentProps) {
                   top: `${item.hotspot.y}%`,
                 }}
               >
-                <span className="flex size-10 items-center justify-center rounded-full border border-white/70 bg-background/95 text-xs font-bold text-foreground shadow-[0_8px_24px_-10px_rgba(91,65,43,0.65)] backdrop-blur transition-[border-color,color,transform] group-hover/hotspot:border-primary group-hover/hotspot:text-primary motion-safe:group-hover/hotspot:scale-110 sm:size-11">
+                <span className="flex size-10 items-center justify-center rounded-full border border-white/70 bg-background/95 text-xs font-bold text-foreground shadow-[0_8px_24px_-10px_rgba(91,65,43,0.65)] backdrop-blur transition-[background-color,border-color,box-shadow,color,transform] group-hover/hotspot:border-primary group-hover/hotspot:bg-primary/10 group-hover/hotspot:text-primary group-hover/hotspot:shadow-[0_12px_28px_-10px_rgba(91,65,43,0.75)] motion-safe:group-hover/hotspot:scale-110 sm:size-11">
                   {String(index + 1).padStart(2, "0")}
                 </span>
               </a>
@@ -91,7 +91,7 @@ export function CmsShopTheLook({ slot }: CmsSlotComponentProps) {
                   className="group flex h-full min-h-24 items-center gap-4 rounded-2xl border border-foreground/10 bg-background/75 p-4 transition-[border-color,background-color,box-shadow,transform] hover:border-primary/30 hover:bg-background hover:shadow-[0_14px_30px_-22px_rgba(139,96,63,0.6)] focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:outline-none motion-safe:hover:-translate-y-0.5 sm:p-5"
                   href={item.url}
                 >
-                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-foreground/15 text-xs font-semibold text-muted-foreground">
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-foreground/15 text-xs font-semibold text-muted-foreground transition-[background-color,border-color,box-shadow,color,transform] group-hover:border-primary/50 group-hover:bg-primary/10 group-hover:text-primary group-hover:shadow-[0_10px_24px_-16px_rgba(91,65,43,0.7)] motion-safe:group-hover:scale-105">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <span className="min-w-0 flex-1">
