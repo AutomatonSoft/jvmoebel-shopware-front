@@ -1,4 +1,4 @@
-import { Camera, MessageCircle, Pin, Play, Send, ThumbsUp } from "lucide-react";
+import Image from "next/image";
 
 import { ContractRevocationDialog } from "@/features/storefront-shell/components/contract-revocation-dialog";
 import { StoreLogo } from "@/features/storefront-shell/components/store-logo";
@@ -16,102 +16,46 @@ function getNavigationLinks(item: StoreNavigationItem) {
 }
 
 const paymentMethods = [
-  "Mastercard",
-  "Visa",
-  "Vorkasse",
-  "Amazon Pay",
-  "PayPal",
-  "Klarna",
+  { label: "Mastercard", src: "/images/icons/mastercard.webp" },
+  { label: "Visa", src: "/images/icons/visa.webp" },
+  { label: "Vorkasse", src: "/images/icons/vorkasse.webp" },
+  { label: "Amazon Pay", src: "/images/icons/amazon.webp" },
+  { label: "PayPal", src: "/images/icons/paypal.webp" },
+  { label: "Klarna", src: "/images/icons/klarna.webp" },
 ] as const;
-
-type PaymentMethod = (typeof paymentMethods)[number];
 
 const socialLinks = [
   {
     href: "https://www.facebook.com/jvmoebel.de",
-    icon: ThumbsUp,
     label: "Facebook",
+    src: "/images/icons/facebook.png",
   },
   {
     href: "https://www.instagram.com/home_luxus_style_design/",
-    icon: Camera,
     label: "Instagram",
+    src: "/images/icons/instagram.png",
   },
   {
     href: "https://api.whatsapp.com/message/I5VAPEHCQNQTM1?autoload=1&app_absent=0",
-    icon: MessageCircle,
     label: "WhatsApp",
+    src: "/images/icons/whatsapp.png",
   },
   {
     href: "https://www.youtube.com/channel/UClp5F2jZKfTJG1o902C1-eQ",
-    icon: Play,
     label: "YouTube",
+    src: "/images/icons/youtube.png",
   },
   {
     href: "https://www.pinterest.de/jvmoebel_de",
-    icon: Pin,
     label: "Pinterest",
+    src: "/images/icons/pinterest.png",
   },
   {
     href: "https://t.me/XLANDJV",
-    icon: Send,
     label: "Telegram",
+    src: "/images/icons/telegram.png",
   },
 ] as const;
-
-function PaymentMark({ method }: { method: PaymentMethod }) {
-  if (method === "Mastercard") {
-    return (
-      <span className="flex flex-col items-center gap-1">
-        <span className="flex -space-x-2">
-          <span className="size-5 rounded-full bg-[#d87559]" />
-          <span className="size-5 rounded-full bg-[#dca958]/85" />
-        </span>
-        <span className="text-[0.5rem] font-semibold tracking-tight">
-          mastercard
-        </span>
-      </span>
-    );
-  }
-
-  if (method === "Visa") {
-    return (
-      <span className="text-xl font-extrabold tracking-[-0.08em] text-[#48527a] italic">
-        VISA
-      </span>
-    );
-  }
-
-  if (method === "Amazon Pay") {
-    return (
-      <span className="text-sm font-semibold tracking-tight">
-        amazon <span className="text-[#b87545]">pay</span>
-      </span>
-    );
-  }
-
-  if (method === "PayPal") {
-    return (
-      <span className="text-base font-bold tracking-[-0.04em] text-[#52637a]">
-        Pay<span className="text-[#7291a8]">Pal</span>
-      </span>
-    );
-  }
-
-  if (method === "Klarna") {
-    return (
-      <span className="text-base font-bold tracking-[-0.04em] text-[#765f68]">
-        Klarna.
-      </span>
-    );
-  }
-
-  return (
-    <span className="text-[0.65rem] font-bold tracking-[0.12em] uppercase">
-      Vorkasse
-    </span>
-  );
-}
 
 export function StoreFooter({
   branding,
@@ -194,12 +138,19 @@ export function StoreFooter({
                 Zahlungsarten
               </h2>
               <ul className="mt-4 flex flex-wrap gap-2">
-                {paymentMethods.map((method) => (
+                {paymentMethods.map(({ label, src }) => (
                   <li
-                    className="flex h-10 min-w-18 items-center justify-center rounded-xl border border-[#ded9cd] bg-[#fffdf8] px-3 text-[#51584f]"
-                    key={method}
+                    className="flex h-10 w-18 items-center justify-center rounded-xl border border-[#ded9cd] bg-[#fffdf8] p-1.5"
+                    key={label}
                   >
-                    <PaymentMark method={method} />
+                    <Image
+                      alt={label}
+                      className="h-full w-full object-contain"
+                      title={label}
+                      height={32}
+                      src={src}
+                      width={72}
+                    />
                   </li>
                 ))}
               </ul>
@@ -213,16 +164,23 @@ export function StoreFooter({
                 Soziale Netzwerke
               </h2>
               <div className="mt-4 flex flex-wrap gap-2">
-                {socialLinks.map(({ href, icon: Icon, label }) => (
+                {socialLinks.map(({ href, label, src }) => (
                   <a
                     aria-label={`${label} (öffnet in einem neuen Tab)`}
                     className="flex size-10 items-center justify-center rounded-full border border-[#d6d9cf] bg-[#f8f7f1] text-[#525b52] transition-[background,border-color,color,transform] hover:border-[#c98b71] hover:bg-[#f1ded3] hover:text-[#a8563c] focus-visible:ring-3 focus-visible:ring-[#cf7859]/30 motion-safe:active:translate-y-px"
                     href={href}
                     key={label}
-                    rel="noreferrer"
+                    title={label}
                     target="_blank"
                   >
-                    <Icon className="size-4" aria-hidden="true" />
+                    <Image
+                      alt={label}
+                      aria-hidden="true"
+                      className="size-5 object-contain"
+                      height={20}
+                      src={src}
+                      width={20}
+                    />
                     <span className="sr-only">{label}</span>
                   </a>
                 ))}
