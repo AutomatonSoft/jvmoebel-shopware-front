@@ -19,6 +19,8 @@ export type StoreHeaderProps = {
   navigation: MainNavigation;
 };
 
+const MAX_VISIBLE_CATEGORIES = 7;
+
 function StoreSearchForm({ className }: { className: string }) {
   return (
     <form
@@ -59,13 +61,13 @@ export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
         {navigation.length > 0 && (
           <nav className="flex items-center gap-6" aria-label="Main navigation">
             <CategoryMenu navigation={navigation} />
-            {navigation.map((item) => (
+            {navigation.slice(0, MAX_VISIBLE_CATEGORIES).map((item) => (
               <a
                 className="relative hidden py-7 text-xs font-semibold tracking-wide transition-colors after:absolute after:inset-x-0 after:bottom-5 after:h-px after:origin-right after:scale-x-0 after:bg-primary after:transition-transform after:duration-200 hover:text-primary hover:after:origin-left hover:after:scale-x-100 motion-reduce:after:hidden lg:block"
                 href={item.href}
                 key={item.id}
               >
-                {item.label}
+                {item.label.replace(" & ", "\u00a0& ")}
               </a>
             ))}
           </nav>
