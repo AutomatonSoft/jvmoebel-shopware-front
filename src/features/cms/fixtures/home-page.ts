@@ -5,6 +5,7 @@ const sectionId = "mock-home-section";
 const heroBlockId = "mock-home-hero-block";
 const roomGridBlockId = "mock-home-room-grid-block";
 const productGridBlockId = "mock-home-product-grid-block";
+const homeEditorialBlockId = "mock-home-editorial-block";
 const newsletterBlockId = "mock-home-newsletter-block";
 
 export const homeCmsPageMock = {
@@ -220,8 +221,66 @@ export const homeCmsPageMock = {
           ],
         },
         {
-          id: newsletterBlockId,
+          id: homeEditorialBlockId,
           position: 3,
+          type: "jv-home-editorial",
+          slots: [
+            {
+              id: "mock-home-editorial-slot",
+              slot: "content",
+              type: "jv-home-editorial",
+              data: {
+                introduction: [
+                  "In unserem umfassenden Sortiment mit über 60.000 Artikeln finden Sie mühelos trendige und preiswerte Möbel, bezaubernde Lieblingsstücke und Inspirationen für die Gestaltung Ihres Zuhauses. Neben modernen und weichen Eckcouchen bieten wir diese auch in verschiedenen Größen an. Ob Kinderzimmer Möbel, Esszimmer Möbel, Wohnzimmer Möbel, Schlafzimmer Möbel oder Büro Möbel – unsere Möbel bieten wir online nun seit gut 20 Jahren an.",
+                  "Verleihen Sie Ihrem Zuhause mit hochwertigen Möbeln, Lampen und Wohnaccessoires den gewünschten Stil. Unser Angebot umfasst moderne Möbel zu unschlagbaren Preisen, namhafte Marken, erstklassige Materialien und exklusive Markenneuheiten. Dies und vieles mehr erwartet Sie in unserem Online-Möbelhaus.",
+                ],
+                sections: {
+                  assortment: {
+                    id: "editorial-assortment",
+                    paragraphs: [
+                      "Möbel günstig kaufen, da sind Sie genau richtig bei uns. Moderne Wohnzimmer Einrichtung oder ausgefallene Big Sofa machen Ihren Traum vom schönen Wohnen wahr. In unserer traumhaften Polsterwelt finden Sie zahlreiche Möbelstücke wie Wohnwand, Wohnlandschaft U Form und günstige Sideboards. Oft sind die Wohnlandschaften beleuchtet und sehr ausgefallen. Auch für den Essbereich finden Sie alles, was Ihr Herz begehrt. Von Esszimmerstühlen bis zu kompletten Essgarnituren ist für jeden etwas dabei. Ein besonderes Merkmal in unserem Sortiment sind die Wohnzimmermöbel aus Italien.",
+                      "Auch für die kleinen Seelen unter uns haben wir besondere Einrichtungen für das Kinderzimmer. Moderne oder klassische Möbel fürs Kinderzimmer sind ein Traum. Außer günstigen Kinderzimmermöbel bieten wir auch Einzelstücke wie Kinder Kleiderschrank und Kinderzimmer Regale. Ob ein Kleiderschrank Kinderzimmer für Mädchen oder kinderschränke Kinderzimmer für Jungs – Sie finden bei uns eine große Auswahl an günstigen Kinderzimmermöbeln. Außerdem bieten wir auch Doppelstockbetten oder Etagenbetten mit Regalen und Schränken an.",
+                    ],
+                    position: 0,
+                  },
+                  bedroom: {
+                    id: "editorial-bedroom",
+                    paragraphs: [
+                      "Wussten Sie, dass Sie 25 bis 31 Jahre Ihres Lebens mit Schlafen verbringen? Lassen Sie sich von unseren Ideen für das Schlafzimmer verzaubern und holen Sie sich diese direkt nach Hause. Neben den Schlafzimmermöbeln fürs Kind haben wir auch die Einrichtung für das Elternschlafzimmer. Neben ganzen Set-Schlafzimmer bieten wir auch runde Betten oder Chesterfield Betten an. Neben klassischen Betten sind auch moderne Betten bei uns ein Bestseller. Ein besonderes Merkmal fällt hier auf die typischen Boxspringbetten. Diese gibt es als klassische Betten mit Beleuchtung oder mit Metallverzierungen. Das Set-Schlafzimmer kann bereits zu günstigen Preisen erworben werden. Natürlich bieten wir auch den Schlafzimmerschrank, die Kommode oder das Sideboard einzeln an. Diese können nicht nur im modernen Schlafzimmer, sondern auch als Möbelstück im modernen oder klassischen Wohnzimmer verwendet werden. Der Schlafzimmerschrank ist übrigens in verschiedenen Ausführungen erhältlich, z.B. sechstürige oder viertürige Schränke. Lassen Sie sich von uns beraten und richten Sie Ihr Schlafzimmer modern oder klassisch ein.",
+                    ],
+                    position: 1,
+                    title: "Gesund und schön schlafen! Schönes Schlafzimmer",
+                  },
+                  diningRoom: {
+                    id: "editorial-dining-room",
+                    paragraphs: [
+                      "Wussten Sie, dass Sie 2,50 bis 5,00 Jahre Ihres Lebens mit Essen verbringen? Ein großer Blickfang sind auch unsere Möbel im Essbereich. Klassische Chesterfield Esszimmer Garnituren oder moderne Essgruppen werden auch als Esstisch Stühle Set angeboten. Neben ganzen Wohnideen für das Esszimmer bieten wir direkte Inspiration, passende Stühle, Hocker, Sessel, Bänke oder Esstische zu finden. Wir empfehlen die Epoxidharz-Tische. Diese sind blau gehalten und ein echter Blickfang für Ihre Nachbarn.",
+                    ],
+                    position: 2,
+                    title: "Eine schöne Wohnzimmergarnitur für Sie",
+                  },
+                  additionalRanges: {
+                    id: "editorial-additional-ranges",
+                    paragraphs: [
+                      "Wussten Sie, dass ein Mensch bis zu 2,50 Jahre seines Lebens im Badezimmer verbringt? Ein schönes Badezimmer sollte zu Ihrer Mindestausstattung gehören. Unser Angebot an Waschtischen, Badezimmermöbeln und Badmöbeln wird Sie begeistern.",
+                      "Wussten Sie, dass der Mensch im Jahr über 45 Jahre im Büro verbringen kann? Diese Tatsache sollte einem zu denken geben, ob man nicht sein Leben mit einer schönen Büroeinrichtung genießt. JVmoebel bietet eine große Auswahl an Büro Schreibtischen. Dazu finden Sie auch den passenden Aktenschrank. Die breite Auswahl an Büroausstattung finden Sie als modernes Büro oder als klassisches Büro. Das Ganze gibt es auch als Büro Möbel Set zur Auswahl. Für unsere gewerblichen Kunden bieten wir spezielle Angebote an. Lassen Sie sich hier zu unserer Hotel Einrichtung durch unseren Hotelzimmer Einrichter beraten. Unser Angebot mit Lounge, Club oder Zimmer Möbel wird Ihrem Hotel einen neuen Touch verleihen.",
+                    ],
+                    position: 3,
+                  },
+                },
+                showLessLabel: "Weniger anzeigen",
+                showMoreLabel: "Alles anzeigen",
+                statement:
+                  "Der von uns angebotene Service für unsere geschätzten Kunden zeichnet sich durch höchste Qualität und herausragende Merkmale aus.",
+                title:
+                  "Willkommen bei JV Möbel – Ihrem Online-Möbelhaus für Design & Qualität",
+              },
+            },
+          ],
+        },
+        {
+          id: newsletterBlockId,
+          position: 4,
           type: "jv-newsletter",
           slots: [
             {

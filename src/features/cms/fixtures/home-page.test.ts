@@ -4,6 +4,7 @@ import path from "node:path";
 import { describe, expect, test } from "bun:test";
 
 import { parseCmsHeroData } from "@/features/cms/contracts/hero";
+import { parseCmsHomeEditorialData } from "@/features/cms/contracts/home-editorial";
 import { parseCmsNewsletterData } from "@/features/cms/contracts/newsletter";
 import { parseCmsProductGridData } from "@/features/cms/contracts/product-grid";
 import type { CmsContractResult } from "@/features/cms/contracts/result";
@@ -15,6 +16,7 @@ type CmsFixtureParser = (value: unknown) => CmsContractResult<unknown>;
 
 const fixtureParsers: Record<string, CmsFixtureParser | undefined> = {
   "jv-hero": parseCmsHeroData,
+  "jv-home-editorial": parseCmsHomeEditorialData,
   "jv-newsletter": parseCmsNewsletterData,
   "jv-product-grid": parseCmsProductGridData,
   "jv-room-grid": parseCmsRoomGridData,
