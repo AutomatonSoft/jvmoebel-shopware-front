@@ -6,8 +6,7 @@ import type { FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
-const revocationEmail = "info@jvmoebel.de";
+import { buildContractRevocationMailto } from "@/features/storefront-shell/model/contract-revocation";
 
 function getFormValue(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -24,18 +23,9 @@ export function ContractRevocationDialog() {
     const contractId = getFormValue(formData, "contractId");
     const email = getFormValue(formData, "email");
     const reason = getFormValue(formData, "reason");
-    const body = [
-      "Hiermit widerrufe ich den folgenden Vertrag:",
-      "",
-      `Name: ${name}`,
-      `Vertragsidentifikation: ${contractId}`,
-      `E-Mail-Adresse: ${email}`,
-      ...(reason ? [`Widerrufsgrund: ${reason}`] : []),
-    ].join("\n");
-    const subject = `Widerruf – ${contractId}`;
 
     window.location.assign(
-      `mailto:${revocationEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
+      buildContractRevocationMailto({ contractId, email, name, reason }),
     );
   }
 
