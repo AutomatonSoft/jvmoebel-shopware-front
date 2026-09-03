@@ -57,10 +57,10 @@ export function CmsCategoryRail({ slot }: CmsSlotComponentProps) {
           {categories.map((category) => (
             <li className="snap-start" key={category.id}>
               <a
-                className="group block rounded-2xl text-center focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:ring-offset-4 focus-visible:outline-none motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out motion-safe:hover:-translate-y-1"
+                className="group block rounded-2xl text-center focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:ring-offset-4 focus-visible:outline-none motion-safe:transition-transform motion-safe:ease-out motion-safe:hover:-translate-y-1"
                 href={category.url}
               >
-                <span className="relative block aspect-square overflow-hidden rounded-full border border-foreground/10 bg-muted shadow-[0_6px_18px_-10px_rgba(139,96,63,0.24)] transition-[border-color,box-shadow] duration-300 group-hover:border-primary/35 group-hover:shadow-[0_18px_36px_-12px_rgba(139,96,63,0.45)]">
+                <span className="relative block aspect-square overflow-hidden rounded-full border border-foreground/10 bg-muted shadow-[0_6px_18px_-10px_rgba(139,96,63,0.24)] transition-[border-color,box-shadow] group-hover:border-primary/35 group-hover:shadow-[0_18px_36px_-12px_rgba(139,96,63,0.45)]">
                   <Image
                     alt={category.image.alt}
                     className="object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.05]"

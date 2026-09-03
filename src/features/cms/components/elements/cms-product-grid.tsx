@@ -81,7 +81,7 @@ export function CmsProductGrid({ slot }: CmsSlotComponentProps) {
 
             return (
               <article
-                className="group min-w-0 transition-transform duration-300 motion-safe:hover:-translate-y-1.5"
+                className="group min-w-0 transition-transform motion-safe:hover:-translate-y-1.5"
                 key={product.id}
               >
                 <a
