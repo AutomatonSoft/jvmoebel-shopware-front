@@ -1,12 +1,15 @@
 # Product listing frontend contract
 
-The `/shop` route currently renders local mock data. This document describes the
-normalized model consumed by the frontend and the current filtering and sorting
-behavior. It is not the raw schema of a standard Shopware Store API response.
+The `/shop` route renders local mock data only when Shopware mock mode is
+enabled. Until the backend adapter is ready, live mode renders a controlled
+preparation state instead of exposing mock products. This document describes
+the normalized model consumed by the frontend and the current filtering and
+sorting behavior. It is not the raw schema of a standard Shopware Store API
+response.
 
 When the backend is ready, an integration layer must map Shopware products,
 associations, calculated prices, and properties into this model. The current
-mock is located in `src/lib/shopware/mocks/product-listing.ts`.
+mock is located in `src/features/catalog/fixtures/product-listing.ts`.
 
 The current contract is enforced at TypeScript compile time. Runtime parsing of
 an unknown Store API response will be added together with the backend adapter.
