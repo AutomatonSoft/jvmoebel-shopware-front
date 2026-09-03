@@ -222,7 +222,7 @@ export const homeCmsPageMock = {
         },
         {
           id: homeEditorialBlockId,
-          position: 3,
+          position: 4,
           type: "jv-home-editorial",
           slots: [
             {
@@ -280,7 +280,7 @@ export const homeCmsPageMock = {
         },
         {
           id: newsletterBlockId,
-          position: 4,
+          position: 3,
           type: "jv-newsletter",
           slots: [
             {
