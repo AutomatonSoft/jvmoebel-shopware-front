@@ -1,13 +1,6 @@
-import {
-  ArrowUpRight,
-  Camera,
-  MessageCircle,
-  Pin,
-  Play,
-  Send,
-  ThumbsUp,
-} from "lucide-react";
+import { Camera, MessageCircle, Pin, Play, Send, ThumbsUp } from "lucide-react";
 
+import { ContractRevocationDialog } from "@/features/storefront-shell/components/contract-revocation-dialog";
 import { StoreLogo } from "@/features/storefront-shell/components/store-logo";
 import type { StorefrontBranding } from "@/features/storefront-shell/model/branding";
 import type { StoreNavigationItem } from "@/features/storefront-shell/model/navigation";
@@ -151,16 +144,7 @@ export function StoreFooter({
             Tag gelebt wird. Schließen Sie sich der Gemeinschaft unserer
             zufriedenen Kunden an. Ihr gemütliches Heim ist unser Ziel!
           </p>
-          <a
-            aria-label="Vertrag kündigen (öffnet in einem neuen Tab)"
-            className="mt-8 inline-flex min-h-11 items-center gap-2 rounded-full bg-[#cf7859] px-5 text-sm font-semibold text-[#fffaf5] transition-[background,transform] hover:bg-[#b96548] focus-visible:ring-3 focus-visible:ring-[#cf7859]/30 motion-safe:active:translate-y-px"
-            href="https://www.jvmoebel.de/Infos/Widerruf.htm"
-            rel="noreferrer"
-            target="_blank"
-          >
-            Vertrag kündigen
-            <ArrowUpRight className="size-4" aria-hidden="true" />
-          </a>
+          <ContractRevocationDialog />
         </section>
 
         <div className="col-span-2 grid gap-x-10 gap-y-10 sm:grid-cols-3 xl:col-span-3">
