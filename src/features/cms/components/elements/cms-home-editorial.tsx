@@ -2,7 +2,12 @@ import { ChevronDown, Sparkles } from "lucide-react";
 
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import { parseCmsHomeEditorialData } from "@/features/cms/contracts/home-editorial";
+import { sanitizeCmsHtml } from "@/features/cms/lib/sanitize-html";
 import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+
+function EditorialParagraph({ content }: { content: string }) {
+  return <p dangerouslySetInnerHTML={{ __html: sanitizeCmsHtml(content) }} />;
+}
 
 export function CmsHomeEditorial({ slot }: CmsSlotComponentProps) {
   const result = parseCmsHomeEditorialData(slot.data);
@@ -46,9 +51,12 @@ export function CmsHomeEditorial({ slot }: CmsSlotComponentProps) {
             <h2 className="max-w-4xl text-3xl leading-tight font-semibold tracking-[-0.04em] text-balance sm:text-4xl lg:text-5xl">
               {title}
             </h2>
-            <div className="mt-7 grid gap-5 text-sm leading-7 text-muted-foreground sm:text-base sm:leading-8">
+            <div className="mt-7 grid gap-5 text-sm leading-7 text-muted-foreground sm:text-base sm:leading-8 [&_a]:font-medium [&_a]:text-foreground [&_a]:underline [&_a]:decoration-primary/45 [&_a]:underline-offset-4 [&_a]:transition-colors [&_a:hover]:text-primary [&_a:focus-visible]:rounded-sm [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-offset-2 [&_a:focus-visible]:outline-primary">
               {introduction.map((paragraph, index) => (
-                <p key={`${index}-${paragraph.slice(0, 24)}`}>{paragraph}</p>
+                <EditorialParagraph
+                  content={paragraph}
+                  key={`${index}-${paragraph.slice(0, 24)}`}
+                />
               ))}
             </div>
           </div>
@@ -71,11 +79,12 @@ export function CmsHomeEditorial({ slot }: CmsSlotComponentProps) {
                     {section.title}
                   </h3>
                 )}
-                <div className="grid gap-4 text-sm leading-7 text-muted-foreground sm:text-base sm:leading-8">
+                <div className="grid gap-4 text-sm leading-7 text-muted-foreground sm:text-base sm:leading-8 [&_a]:font-medium [&_a]:text-foreground [&_a]:underline [&_a]:decoration-primary/45 [&_a]:underline-offset-4 [&_a]:transition-colors [&_a:hover]:text-primary [&_a:focus-visible]:rounded-sm [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-offset-2 [&_a:focus-visible]:outline-primary">
                   {section.paragraphs.map((paragraph, index) => (
-                    <p key={`${index}-${paragraph.slice(0, 24)}`}>
-                      {paragraph}
-                    </p>
+                    <EditorialParagraph
+                      content={paragraph}
+                      key={`${index}-${paragraph.slice(0, 24)}`}
+                    />
                   ))}
                 </div>
               </article>
