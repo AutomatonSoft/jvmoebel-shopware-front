@@ -20,15 +20,15 @@ export function FooterNavigation({
     <>
       <nav
         aria-label="Kategorien"
-        className="border-t border-[#d9d7ce] pt-7 sm:col-span-2"
+        className="border-footer-border border-t pt-7 sm:col-span-2"
       >
-        <h2 className="text-xs font-semibold tracking-[0.16em] text-[#72786f] uppercase">
+        <h2 className="text-footer-muted text-xs font-semibold tracking-[0.16em] uppercase">
           Kategorien
         </h2>
         <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3">
           {categoryLinks.map((item) => (
             <a
-              className="w-fit text-sm leading-5 text-[#596158] underline decoration-transparent underline-offset-4 transition-[color,text-decoration-color] hover:text-[#b96548] hover:decoration-current"
+              className="text-footer-link hover:text-footer-accent-hover w-fit text-sm leading-5 underline decoration-transparent underline-offset-4 transition-[color,text-decoration-color] hover:decoration-current"
               href={item.href}
               key={item.id}
             >
@@ -38,14 +38,14 @@ export function FooterNavigation({
         </div>
       </nav>
 
-      <nav aria-label="Service" className="border-t border-[#d9d7ce] pt-7">
-        <h2 className="text-xs font-semibold tracking-[0.16em] text-[#72786f] uppercase">
+      <nav aria-label="Service" className="border-footer-border border-t pt-7">
+        <h2 className="text-footer-muted text-xs font-semibold tracking-[0.16em] uppercase">
           Service
         </h2>
         <div className="mt-6 flex flex-col gap-3">
           {serviceLinks.map((item) => (
             <a
-              className="w-fit text-sm leading-5 text-[#596158] underline decoration-transparent underline-offset-4 transition-[color,text-decoration-color] hover:text-[#b96548] hover:decoration-current"
+              className="text-footer-link hover:text-footer-accent-hover w-fit text-sm leading-5 underline decoration-transparent underline-offset-4 transition-[color,text-decoration-color] hover:decoration-current"
               href={item.href}
               key={item.id}
             >

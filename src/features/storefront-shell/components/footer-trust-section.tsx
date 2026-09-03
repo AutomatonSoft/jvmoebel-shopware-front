@@ -44,10 +44,10 @@ const socialLinks = [
 
 export function FooterTrustSection() {
   return (
-    <div className="grid gap-8 border-t border-[#d9d7ce] pt-7 sm:col-span-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+    <div className="border-footer-border grid gap-8 border-t pt-7 sm:col-span-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
       <section aria-labelledby="payment-methods-heading">
         <h2
-          className="text-xs font-semibold tracking-[0.16em] text-[#72786f] uppercase"
+          className="text-footer-muted text-xs font-semibold tracking-[0.16em] uppercase"
           id="payment-methods-heading"
         >
           Zahlungsarten
@@ -55,7 +55,7 @@ export function FooterTrustSection() {
         <ul className="mt-4 flex flex-wrap gap-2">
           {paymentMethods.map(({ label, src }) => (
             <li
-              className="flex h-10 w-18 items-center justify-center rounded-xl border border-[#ded9cd] bg-[#fffdf8] p-1.5"
+              className="border-footer-border bg-footer-tile flex h-10 w-18 items-center justify-center rounded-xl border p-1.5"
               key={label}
             >
               <Image
@@ -73,7 +73,7 @@ export function FooterTrustSection() {
 
       <section aria-labelledby="social-networks-heading">
         <h2
-          className="text-xs font-semibold tracking-[0.16em] text-[#72786f] uppercase"
+          className="text-footer-muted text-xs font-semibold tracking-[0.16em] uppercase"
           id="social-networks-heading"
         >
           Soziale Netzwerke
@@ -82,7 +82,7 @@ export function FooterTrustSection() {
           {socialLinks.map(({ href, label, src }) => (
             <a
               aria-label={`${label} (öffnet in einem neuen Tab)`}
-              className="flex size-10 items-center justify-center rounded-full border border-[#d6d9cf] bg-[#f8f7f1] text-[#525b52] transition-[background,border-color,color,transform] hover:border-[#c98b71] hover:bg-[#f1ded3] hover:text-[#a8563c] focus-visible:ring-3 focus-visible:ring-[#cf7859]/30 motion-safe:active:translate-y-px"
+              className="border-footer-border bg-footer-control text-footer-foreground hover:border-footer-accent hover:bg-footer-control-hover hover:text-footer-accent-hover focus-visible:ring-footer-accent/30 flex size-10 items-center justify-center rounded-full border transition-[background,border-color,color,transform] focus-visible:ring-3 motion-safe:active:translate-y-px"
               href={href}
               key={label}
               title={label}
