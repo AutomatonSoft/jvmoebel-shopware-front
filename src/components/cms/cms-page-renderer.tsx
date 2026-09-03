@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 
+import { CmsCategoryRail } from "@/components/cms/elements/cms-category-rail";
 import { CmsHero } from "@/components/cms/elements/cms-hero";
 import { CmsNewsletter } from "@/components/cms/elements/cms-newsletter";
 import { CmsProductGrid } from "@/components/cms/elements/cms-product-grid";
@@ -19,6 +20,7 @@ export type CmsSlotComponentProps = {
 type CmsSlotComponent = ComponentType<CmsSlotComponentProps>;
 
 const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {
+  "jv-category-rail": CmsCategoryRail,
   "jv-hero": CmsHero,
   "jv-newsletter": CmsNewsletter,
   "jv-product-grid": CmsProductGrid,

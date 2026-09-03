@@ -3,6 +3,7 @@ import type { CmsPage } from "@/lib/shopware/cms";
 const pageId = "mock-home-page";
 const sectionId = "mock-home-section";
 const heroBlockId = "mock-home-hero-block";
+const categoryRailBlockId = "mock-home-category-rail-block";
 const roomGridBlockId = "mock-home-room-grid-block";
 const productGridBlockId = "mock-home-product-grid-block";
 const newsletterBlockId = "mock-home-newsletter-block";
@@ -75,8 +76,104 @@ export const homeCmsPageMock = {
         },
         {
           apiAlias: "cms_block",
-          id: roomGridBlockId,
+          id: categoryRailBlockId,
           position: 1,
+          sectionId,
+          type: "jv-category-rail",
+          slots: [
+            {
+              apiAlias: "cms_slot",
+              blockId: categoryRailBlockId,
+              id: "mock-home-category-rail-slot",
+              slot: "content",
+              type: "jv-category-rail",
+              translated: {
+                blockId: categoryRailBlockId,
+                cmsBlockVersionId: "",
+                slot: "content",
+                type: "jv-category-rail",
+                versionId: "",
+              },
+              data: {
+                apiAlias: "cms_jv_category_rail",
+                categories: {
+                  sofas: {
+                    id: "popular-sofas",
+                    image: {
+                      alt: "Helles Sofa in einem warmen Wohnzimmer",
+                      url: "/images/hero-living.webp",
+                    },
+                    label: "Sofas & Couches",
+                    position: 0,
+                    url: "/living/sofas",
+                  },
+                  armchairs: {
+                    id: "popular-armchairs",
+                    image: {
+                      alt: "Rostroter Loungesessel",
+                      url: "/images/lounge-chair.webp",
+                    },
+                    label: "Sessel",
+                    position: 1,
+                    url: "/living/armchairs",
+                  },
+                  diningTables: {
+                    id: "popular-dining-tables",
+                    image: {
+                      alt: "Esstisch aus dunklem Holz",
+                      url: "/images/dining-room.webp",
+                    },
+                    label: "Esstische",
+                    position: 2,
+                    url: "/dining/tables",
+                  },
+                  beds: {
+                    id: "popular-beds",
+                    image: {
+                      alt: "Ruhiges Schlafzimmer in hellen Naturtönen",
+                      url: "/images/bedroom.webp",
+                    },
+                    label: "Betten",
+                    position: 3,
+                    url: "/bedroom/beds",
+                  },
+                  tvFurniture: {
+                    id: "popular-tv-furniture",
+                    image: {
+                      alt: "TV-Lowboard aus Walnussholz",
+                      url: "/images/media-console.webp",
+                    },
+                    label: "TV-Möbel",
+                    position: 4,
+                    url: "/living/tv-furniture",
+                  },
+                  newArrivals: {
+                    id: "popular-new-arrivals",
+                    image: {
+                      alt: "Neue Möbelkollektion in einem hellen Interieur",
+                      url: "/images/hero-editorial.webp",
+                    },
+                    label: "Neuheiten",
+                    position: 5,
+                    url: "/new-in",
+                  },
+                },
+                description:
+                  "Direkt zu den Möbeln, die Ihr Zuhause besonders machen.",
+                eyebrow: "Schnell entdecken",
+                title: "Beliebte Kategorien",
+                viewAll: {
+                  label: "Alle Kategorien",
+                  url: "/shop",
+                },
+              },
+            },
+          ],
+        },
+        {
+          apiAlias: "cms_block",
+          id: roomGridBlockId,
+          position: 2,
           sectionId,
           type: "jv-room-grid",
           slots: [
@@ -144,7 +241,7 @@ export const homeCmsPageMock = {
         {
           apiAlias: "cms_block",
           id: productGridBlockId,
-          position: 2,
+          position: 3,
           sectionId,
           type: "jv-product-grid",
           slots: [
@@ -270,7 +367,7 @@ export const homeCmsPageMock = {
         {
           apiAlias: "cms_block",
           id: newsletterBlockId,
-          position: 3,
+          position: 4,
           sectionId,
           type: "jv-newsletter",
           slots: [
