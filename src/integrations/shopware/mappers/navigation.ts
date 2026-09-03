@@ -27,10 +27,17 @@ function getCategoryHref(category: ShopwareCategory) {
 export function mapShopwareCategory(
   category: ShopwareCategory,
 ): StoreNavigationItem {
+  const children = (category.children ?? []).map(mapShopwareCategory);
+
   return {
+    childCount: Math.max(
+      category.visibleChildCount ?? 0,
+      category.childCount ?? 0,
+      children.length,
+    ),
+    children,
     id: category.id,
     label: category.translated.name || category.name,
     href: getCategoryHref(category),
-    children: (category.children ?? []).map(mapShopwareCategory),
   };
 }

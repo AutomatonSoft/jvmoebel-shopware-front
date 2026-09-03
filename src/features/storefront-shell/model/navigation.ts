@@ -1,4 +1,5 @@
 export type StoreNavigationItem = {
+  childCount?: number;
   children: StoreNavigationItem[];
   href: string;
   id: string;
