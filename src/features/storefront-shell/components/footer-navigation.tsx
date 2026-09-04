@@ -13,7 +13,6 @@ export function FooterNavigation({
   footerNavigation,
   serviceNavigation,
 }: FooterNavigationProps) {
-  const categoryLinks = footerNavigation.flatMap(getNavigationLinks);
   const serviceLinks = serviceNavigation.flatMap(getNavigationLinks);
 
   return (
@@ -26,7 +25,7 @@ export function FooterNavigation({
           Kategorien
         </h2>
         <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3">
-          {categoryLinks.map((item) => (
+          {footerNavigation.map((item) => (
             <a
               className="text-footer-link hover:text-footer-accent-hover w-fit text-sm leading-5 underline decoration-transparent underline-offset-4 transition-[color,text-decoration-color] hover:decoration-current"
               href={item.href}

@@ -5,7 +5,6 @@ import { StoreFooter } from "@/features/storefront-shell/components/store-footer
 import { StoreHeader } from "@/features/storefront-shell/components/store-header";
 import { getStorefrontBranding } from "@/features/storefront-shell/server/branding";
 import {
-  getFooterNavigation,
   getMainNavigation,
   getServiceNavigation,
 } from "@/features/storefront-shell/server/navigation";
@@ -25,13 +24,11 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const [branding, navigation, footerNavigation, serviceNavigation] =
-    await Promise.all([
-      getStorefrontBranding(),
-      getMainNavigation(),
-      getFooterNavigation(),
-      getServiceNavigation(),
-    ]);
+  const [branding, navigation, serviceNavigation] = await Promise.all([
+    getStorefrontBranding(),
+    getMainNavigation(),
+    getServiceNavigation(),
+  ]);
 
   return (
     <html lang="de" className={`${montserrat.variable} h-full antialiased`}>
@@ -40,7 +37,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         {children}
         <StoreFooter
           branding={branding}
-          footerNavigation={footerNavigation}
+          footerNavigation={navigation}
           serviceNavigation={serviceNavigation}
         />
       </body>
