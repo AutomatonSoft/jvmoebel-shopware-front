@@ -35,6 +35,7 @@
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
   --color-foreground: var(--foreground);
+  --default-transition-duration: 300ms;
   --color-background: var(--background);
   --color-footer-accent-hover: var(--footer-accent-hover);
   --color-footer-accent: var(--footer-accent);

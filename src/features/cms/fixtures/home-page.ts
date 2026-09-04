@@ -3,8 +3,11 @@ import type { CmsPage } from "@/features/cms/model/page";
 const pageId = "mock-home-page";
 const sectionId = "mock-home-section";
 const heroBlockId = "mock-home-hero-block";
+const categoryRailBlockId = "mock-home-category-rail-block";
+const shopTheLookBlockId = "mock-home-shop-the-look-block";
 const roomGridBlockId = "mock-home-room-grid-block";
 const productGridBlockId = "mock-home-product-grid-block";
+const whyJvmoebelBlockId = "mock-home-why-jvmoebel-block";
 const newsletterBlockId = "mock-home-newsletter-block";
 
 export const homeCmsPageMock = {
@@ -50,8 +53,144 @@ export const homeCmsPageMock = {
           ],
         },
         {
-          id: roomGridBlockId,
+          id: categoryRailBlockId,
           position: 1,
+          type: "jv-category-rail",
+          slots: [
+            {
+              id: "mock-home-category-rail-slot",
+              slot: "content",
+              type: "jv-category-rail",
+              data: {
+                categories: {
+                  sofas: {
+                    id: "popular-sofas",
+                    image: {
+                      alt: "Helles Sofa in einem warmen Wohnzimmer",
+                      url: "/images/main/hero-living.webp",
+                    },
+                    label: "Sofas & Couches",
+                    position: 0,
+                    url: "/living/sofas",
+                  },
+                  armchairs: {
+                    id: "popular-armchairs",
+                    image: {
+                      alt: "Rostroter Loungesessel",
+                      url: "/images/main/lounge-chair.webp",
+                    },
+                    label: "Sessel",
+                    position: 1,
+                    url: "/living/armchairs",
+                  },
+                  diningTables: {
+                    id: "popular-dining-tables",
+                    image: {
+                      alt: "Esstisch aus dunklem Holz",
+                      url: "/images/main/dining-room.webp",
+                    },
+                    label: "Esstische",
+                    position: 2,
+                    url: "/dining/tables",
+                  },
+                  beds: {
+                    id: "popular-beds",
+                    image: {
+                      alt: "Ruhiges Schlafzimmer in hellen Naturtönen",
+                      url: "/images/main/bedroom.webp",
+                    },
+                    label: "Betten",
+                    position: 3,
+                    url: "/bedroom/beds",
+                  },
+                  tvFurniture: {
+                    id: "popular-tv-furniture",
+                    image: {
+                      alt: "TV-Lowboard aus Walnussholz",
+                      url: "/images/main/media-console.webp",
+                    },
+                    label: "TV-Möbel",
+                    position: 4,
+                    url: "/living/tv-furniture",
+                  },
+                  newArrivals: {
+                    id: "popular-new-arrivals",
+                    image: {
+                      alt: "Neue Möbelkollektion in einem hellen Interieur",
+                      url: "/images/main/hero-editorial.webp",
+                    },
+                    label: "Neuheiten",
+                    position: 5,
+                    url: "/new-in",
+                  },
+                },
+                description:
+                  "Direkt zu den Möbeln, die Ihr Zuhause besonders machen.",
+                eyebrow: "Schnell entdecken",
+                title: "Beliebte Kategorien",
+                viewAll: {
+                  label: "Alle Kategorien",
+                  url: "/shop",
+                },
+              },
+            },
+          ],
+        },
+        {
+          id: shopTheLookBlockId,
+          position: 2,
+          type: "jv-shop-the-look",
+          slots: [
+            {
+              id: "mock-home-shop-the-look-slot",
+              slot: "content",
+              type: "jv-shop-the-look",
+              data: {
+                description:
+                  "Entdecken Sie die Möbel dieses Wohnzimmers und stellen Sie den Look passend zu Ihrem Zuhause zusammen.",
+                eyebrow: "Ein Raum, ein Look",
+                image: {
+                  alt: "Helles Wohnzimmer mit Sofa, Loungesessel und TV-Lowboard",
+                  url: "/images/main/hero-living.webp",
+                },
+                items: {
+                  sofa: {
+                    description: "Naturfarbenes Bouclé · modular kombinierbar",
+                    hotspot: { x: 69, y: 66 },
+                    id: "look-alba-sofa",
+                    name: "Alba Modulsofa",
+                    position: 0,
+                    url: "/product/alba",
+                  },
+                  armchair: {
+                    description: "Rostrotes Bouclé · weiche Rundungen",
+                    hotspot: { x: 85, y: 79 },
+                    id: "look-noma-armchair",
+                    name: "Noma Loungesessel",
+                    position: 1,
+                    url: "/product/noma",
+                  },
+                  lowboard: {
+                    description: "Dunkles Holz · klare Linien",
+                    hotspot: { x: 63, y: 55 },
+                    id: "look-forma-lowboard",
+                    name: "Forma TV-Lowboard",
+                    position: 2,
+                    url: "/product/forma",
+                  },
+                },
+                title: "Diesen Look nach Hause holen.",
+                viewAll: {
+                  label: "Wohnzimmer entdecken",
+                  url: "/living",
+                },
+              },
+            },
+          ],
+        },
+        {
+          id: roomGridBlockId,
+          position: 3,
           type: "jv-room-grid",
           slots: [
             {
@@ -107,7 +246,7 @@ export const homeCmsPageMock = {
         },
         {
           id: productGridBlockId,
-          position: 2,
+          position: 4,
           type: "jv-product-grid",
           slots: [
             {
@@ -220,8 +359,61 @@ export const homeCmsPageMock = {
           ],
         },
         {
+          id: whyJvmoebelBlockId,
+          position: 5,
+          type: "jv-why-jvmoebel",
+          slots: [
+            {
+              id: "mock-home-why-jvmoebel-slot",
+              slot: "content",
+              type: "jv-why-jvmoebel",
+              data: {
+                benefits: {
+                  design: {
+                    description:
+                      "Ausdrucksstarke Formen und angenehme Materialien für ein Zuhause mit Charakter.",
+                    icon: "design",
+                    id: "why-jvmoebel-design",
+                    position: 0,
+                    title: "Ausgewählte Designs",
+                    url: "/shop",
+                  },
+                  advice: {
+                    description:
+                      "Persönliche Hilfe bei Auswahl, Kombination und Bestellung.",
+                    icon: "advice",
+                    id: "why-jvmoebel-advice",
+                    position: 1,
+                    title: "Persönliche Beratung",
+                    url: "/kontakt",
+                  },
+                  payment: {
+                    description:
+                      "Vertraute Zahlungsarten und ein transparenter Bestellprozess.",
+                    icon: "payment",
+                    id: "why-jvmoebel-payment",
+                    position: 2,
+                    title: "Sicher bezahlen",
+                    url: "/zahlungsarten",
+                  },
+                },
+                description:
+                  "Wir verbinden charakterstarkes Design mit persönlichem Service und einem Einkauf, der sich einfach und verlässlich anfühlt.",
+                eyebrow: "Mehr als nur Möbel",
+                mark: "JVM",
+                tagline: "Für Räume mit Persönlichkeit",
+                title: "Warum JVMöbel?",
+                viewAll: {
+                  label: "Mehr über JVMöbel",
+                  url: "/ueber-uns",
+                },
+              },
+            },
+          ],
+        },
+        {
           id: newsletterBlockId,
-          position: 3,
+          position: 6,
           type: "jv-newsletter",
           slots: [
             {

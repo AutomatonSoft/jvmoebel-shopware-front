@@ -28,7 +28,7 @@ export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
             <CategoryMenu navigation={navigation} />
             {navigation.slice(0, MAX_VISIBLE_CATEGORIES).map((item) => (
               <a
-                className="relative hidden py-7 text-xs font-semibold tracking-wide transition-colors after:absolute after:inset-x-0 after:bottom-5 after:h-px after:origin-right after:scale-x-0 after:bg-primary after:transition-transform after:duration-200 hover:text-primary hover:after:origin-left hover:after:scale-x-100 motion-reduce:after:hidden lg:block"
+                className="relative hidden py-7 text-xs font-semibold tracking-wide transition-colors after:absolute after:inset-x-0 after:bottom-5 after:h-px after:origin-right after:scale-x-0 after:bg-primary after:transition-transform hover:text-primary hover:after:origin-left hover:after:scale-x-100 motion-reduce:after:hidden lg:block"
                 href={item.href}
                 key={item.id}
               >

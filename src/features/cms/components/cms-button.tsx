@@ -36,7 +36,7 @@ export function CmsButton({
       href={href}
     >
       {label}
-      <ArrowRight className="transition-transform duration-200 motion-safe:group-hover:translate-x-1" />
+      <ArrowRight className="transition-transform motion-safe:group-hover:translate-x-1" />
     </a>
   );
 }
