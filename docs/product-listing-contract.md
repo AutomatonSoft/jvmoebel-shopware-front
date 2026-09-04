@@ -116,8 +116,58 @@ products.
   media storage and delivery host are agreed.
 - A remote product image URL must not be enabled by silently broadening the
   allowed Next.js image hosts.
-- Product URLs should be internal storefront paths. Product detail routes are
-  outside the scope of the current `/shop` implementation.
+- Product URLs must be internal `/product/{productId}` paths that resolve to the
+  corresponding product detail page.
+
+## Product detail pages
+
+The `/product/[productId]` route resolves every product shown by the mock
+listing. Unknown IDs render the shared not-found experience. Live Shopware
+product detail loading remains unavailable until the Store API adapter is
+implemented.
+
+The normalized detail model extends the listing product with:
+
+- an article number;
+- availability and delivery copy;
+- a gallery that always contains at least the listing image;
+- a longer description, dimensions, normalized specifications, optional paid
+  services, and suggested accessories.
+
+The page keeps Store API access outside presentation components. It renders the
+complete product image with `object-contain`, product identity, rating, price,
+available colors and sizes, delivery information, specifications, and up to
+five related products. The inquiry action opens an addressed e-mail containing
+the product name and article number; cart mutation is outside the current
+scope.
+
+When `gallery` contains multiple media entries, the product page renders a
+thumbnail rail, previous/next controls, and the current image position. The
+controls are hidden for products with only one image. Live data should preserve
+the Shopware media order and provide meaningful alternative text for every
+entry.
+
+Mock detail pages reuse the existing unique listing images so every mock product
+exercises the multi-image gallery. These shared mock images are presentation
+fixtures only and do not represent real product media relationships.
+
+The purchase panel renders `services` as optional checkbox selections. Every
+service requires a stable ID, customer-facing name and description, a price in
+the page currency, and an `available` flag. The flag independently controls
+whether the service can be selected. The postal-code form validates a
+five-digit German postal code and confirms the selected service region. The
+confirmed postal code and selected available service names are included in the
+product inquiry.
+
+Material and size choices are presented as expandable option rows. Below the
+purchase area, product information is grouped into five expandable sections:
+dimensions, details, function and quality, description, and brand. Separate
+blocks render ratings, product consultation and fabric-sample contacts,
+returns, safety information, and the legal-concerns contact.
+
+The purchase panel renders `accessories` separately from services. Accessories
+use the same required ID, name, description, and price fields. Selected
+accessories are also included in the product inquiry.
 
 ## Filters
 
