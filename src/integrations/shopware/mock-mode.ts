@@ -29,12 +29,6 @@ export function getShopwareDataMode(): ShopwareDataMode {
     process.env.NODE_ENV === "development",
   );
 
-  if (useMocks && process.env.NODE_ENV === "production") {
-    throw new Error(
-      "SHOPWARE_USE_MOCKS=true is not allowed when NODE_ENV=production.",
-    );
-  }
-
   return useMocks ? "mock" : "live";
 }
 

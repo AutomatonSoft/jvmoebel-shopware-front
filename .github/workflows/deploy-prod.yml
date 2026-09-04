@@ -1,0 +1,500 @@
+name: Deploy production
+
+on:
+  pull_request:
+    branches: [develop, stage, main]
+    paths:
+      [
+        .github/workflows/deploy-prod.yml,
+        .dockerignore,
+        Dockerfile,
+        compose.deploy.yml,
+        next.config.ts,
+        src/**,
+        public/**,
+        tsconfig.json,
+        postcss.config.*,
+        tailwind.config.*,
+        package.json,
+        bun.lock,
+      ]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: production deployment validation
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          test "$(sha256sum compose.deploy.yml | awk '{print $1}')" = \
+            7d694a8ee5d7c13551a223e3155db5c446b30825d4532ebdd91d12ffa97c6c81
+
+          COMPOSE_DISABLE_ENV_FILE=1 \
+          SHOPWARE_ENDPOINT=https://example.invalid \
+          SHOPWARE_ACCESS_TOKEN=validation-token \
+          SHOPWARE_USE_MOCKS=false \
+          FRONT_PORT=3000 \
+          APP_NETWORK=validation-network \
+          docker compose \
+            -f compose.deploy.yml \
+            config \
+            --quiet
+
+          ! find . -type l -print -quit | grep -q .
+
+          tar -czf "$RUNNER_TEMP/front.tar.gz" \
+            --exclude-vcs \
+            .
+
+          test -s "$RUNNER_TEMP/front.tar.gz"
+
+          test "$(
+            stat -c %s "$RUNNER_TEMP/front.tar.gz"
+          )" -le 536870912
+
+          ! tar -tzf "$RUNNER_TEMP/front.tar.gz" |
+            grep -Eq '^\./?\.git(/|$)'
+
+          tar -tzf "$RUNNER_TEMP/front.tar.gz" |
+            grep -Fx './Dockerfile'
+
+          tar -tzf "$RUNNER_TEMP/front.tar.gz" |
+            grep -Fx './package.json'
+
+          tar -tzf "$RUNNER_TEMP/front.tar.gz" |
+            grep -Fx './bun.lock'
+
+          tar -tzf "$RUNNER_TEMP/front.tar.gz" |
+            grep -Fx './next.config.ts'
+
+          tar -tzf "$RUNNER_TEMP/front.tar.gz" |
+            grep -Fx './src/app/api/health/route.ts'
+
+      - name: Build and smoke-test production image
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          docker build \
+            -t jvmoebel-front-production-validation \
+            -f Dockerfile \
+            .
+
+          docker run \
+            -d \
+            --rm \
+            --name jvmoebel-front-production-validation \
+            -p 127.0.0.1:3000:3000 \
+            -e SHOPWARE_ENDPOINT=https://example.invalid \
+            -e SHOPWARE_ACCESS_TOKEN=validation-token \
+            -e SHOPWARE_USE_MOCKS=false \
+            jvmoebel-front-production-validation
+
+          trap \
+            'docker rm -f jvmoebel-front-production-validation >/dev/null 2>&1 || true' \
+            EXIT
+
+          for _ in {1..30}; do
+            if curl \
+              --fail \
+              --silent \
+              --show-error \
+              http://127.0.0.1:3000/api/health
+            then
+              exit 0
+            fi
+
+            sleep 1
+          done
+
+          exit 1
+
+  deploy:
+    name: deploy frontend to production
+
+    if: >-
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main'
+
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    environment:
+      name: production
+
+    concurrency:
+      group: jvmoebel-front-production
+      queue: max
+
+    env:
+      DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+      DEPLOY_PORT: ${{ vars.DEPLOY_PORT }}
+      DEPLOY_USER: ${{ vars.DEPLOY_USER }}
+      DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
+      DEPLOY_KNOWN_HOSTS: ${{ vars.DEPLOY_KNOWN_HOSTS }}
+
+      EXPECTED_DEPLOY_HOST: 85.215.147.19
+
+      EXPECTED_COMPOSE_SHA256: >-
+        7d694a8ee5d7c13551a223e3155db5c446b30825d4532ebdd91d12ffa97c6c81
+
+      EXPECTED_HELPER_SHA256: ${{ vars.EXPECTED_HELPER_SHA256 }}
+
+      EXPECTED_DEPLOY_KEY_FINGERPRINT: >-
+        SHA256:5Nrt2d3mukWirANKg36mWPihnrT5m7rQuDdac5++N6Y
+
+      EXPECTED_HOST_KEY_FINGERPRINT: >-
+        SHA256:6BHoasAuc7ptnN/HhXaP3C/BtklHPtP85WZ2fAXcAzI
+
+      EXPECTED_SIGNING_KEY_FINGERPRINT: >-
+        SHA256:wAiSlQkXRIFQtvZ0GSCRnEijdTXi5/IMmvUsIcc72QA
+
+      SIGNER_IDENTITY: jvmoebel-prod-front@automatonsoft
+      SIGNATURE_NAMESPACE: jvmoebel-prod-front@automatonsoft
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Initialize runner paths
+        shell: bash
+        run: |
+          {
+            echo "SSH_KEY_FILE=${RUNNER_TEMP}/deploy-key"
+            echo "KNOWN_HOSTS_FILE=${RUNNER_TEMP}/known-hosts"
+            echo "SIGNING_KEY_FILE=${RUNNER_TEMP}/signing-key"
+            echo "SIGNING_PUBLIC_KEY_FILE=${RUNNER_TEMP}/signing.pub"
+            echo "ALLOWED_SIGNERS_FILE=${RUNNER_TEMP}/allowed-signers"
+          } >> "$GITHUB_ENV"
+
+      - name: Validate, build and sign exact release
+        shell: bash
+
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_ARTIFACT_SIGNING_KEY: >-
+            ${{ secrets.DEPLOY_ARTIFACT_SIGNING_KEY }}
+
+        run: |
+          set -Eeuo pipefail
+
+          test "$GITHUB_SHA" = "$(git rev-parse HEAD)"
+
+          [[ "$GITHUB_SHA" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$EXPECTED_HELPER_SHA256" =~ ^[0-9a-f]{64}$ ]]
+
+          test "$DEPLOY_HOST" = "$EXPECTED_DEPLOY_HOST"
+          test "$DEPLOY_PORT" = 22
+          test "$DEPLOY_USER" = jvmoebel-prod-front-deploy
+
+          test "$DEPLOY_PATH" = \
+            /var/spool/jvmoebel/prod/front/incoming
+
+          test "$(
+            sha256sum compose.deploy.yml |
+              awk '{print $1}'
+          )" = "$EXPECTED_COMPOSE_SHA256"
+
+          COMPOSE_DISABLE_ENV_FILE=1 \
+          SHOPWARE_ENDPOINT=https://example.invalid \
+          SHOPWARE_ACCESS_TOKEN=validation-token \
+          SHOPWARE_USE_MOCKS=false \
+          FRONT_PORT=3000 \
+          APP_NETWORK=validation-network \
+          docker compose \
+            -f compose.deploy.yml \
+            config \
+            --quiet
+
+          ! find . -type l -print -quit | grep -q .
+
+          printf '%s\n' "$DEPLOY_SSH_KEY" |
+            tr -d '\r' \
+            > "$SSH_KEY_FILE"
+
+          printf '%s\n' "$DEPLOY_ARTIFACT_SIGNING_KEY" |
+            tr -d '\r' \
+            > "$SIGNING_KEY_FILE"
+
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" |
+            tr -d '\r' \
+            > "$KNOWN_HOSTS_FILE"
+
+          chmod 600 \
+            "$SSH_KEY_FILE" \
+            "$SIGNING_KEY_FILE" \
+            "$KNOWN_HOSTS_FILE"
+
+          ssh-keygen \
+            -y \
+            -f "$SSH_KEY_FILE" \
+            > "$RUNNER_TEMP/deploy.pub"
+
+          test "$(
+            ssh-keygen \
+              -lf "$RUNNER_TEMP/deploy.pub" \
+              -E sha256 |
+            awk '{print $2}'
+          )" = "$EXPECTED_DEPLOY_KEY_FINGERPRINT"
+
+          ssh-keygen \
+            -y \
+            -f "$SIGNING_KEY_FILE" \
+            > "$SIGNING_PUBLIC_KEY_FILE"
+
+          test "$(
+            ssh-keygen \
+              -lf "$SIGNING_PUBLIC_KEY_FILE" \
+              -E sha256 |
+            awk '{print $2}'
+          )" = "$EXPECTED_SIGNING_KEY_FINGERPRINT"
+
+          read -r \
+            key_type \
+            key_data \
+            _ \
+            < "$SIGNING_PUBLIC_KEY_FILE"
+
+          printf \
+            '%s namespaces="%s" %s %s\n' \
+            "$SIGNER_IDENTITY" \
+            "$SIGNATURE_NAMESPACE" \
+            "$key_type" \
+            "$key_data" \
+            > "$ALLOWED_SIGNERS_FILE"
+
+          ssh-keygen \
+            -F "$DEPLOY_HOST" \
+            -f "$KNOWN_HOSTS_FILE" \
+            >/dev/null
+
+          ssh-keygen \
+            -lf "$KNOWN_HOSTS_FILE" \
+            -E sha256 |
+            awk '{print $2}' |
+            grep -Fx "$EXPECTED_HOST_KEY_FINGERPRINT"
+
+          ARCHIVE_NAME="front-${GITHUB_SHA}.tar.gz"
+          MANIFEST_NAME="front-${GITHUB_SHA}.manifest"
+          SIGNATURE_NAME="front-${GITHUB_SHA}.manifest.sig"
+
+          ARCHIVE_PATH="$RUNNER_TEMP/$ARCHIVE_NAME"
+          MANIFEST_PATH="$RUNNER_TEMP/$MANIFEST_NAME"
+          SIGNATURE_PATH="$RUNNER_TEMP/$SIGNATURE_NAME"
+
+          tar -czf "$ARCHIVE_PATH" \
+            --exclude-vcs \
+            .
+
+          test -s "$ARCHIVE_PATH"
+
+          test "$(
+            stat -c %s "$ARCHIVE_PATH"
+          )" -le 536870912
+
+          ! tar -tzf "$ARCHIVE_PATH" |
+            grep -Eq '^\./?\.git(/|$)'
+
+          ARCHIVE_SHA256="$(
+            sha256sum "$ARCHIVE_PATH" |
+            awk '{print $1}'
+          )"
+
+          printf \
+            'version=1\nsha=%s\narchive=%s\nsha256=%s\n' \
+            "$GITHUB_SHA" \
+            "$ARCHIVE_NAME" \
+            "$ARCHIVE_SHA256" \
+            > "$MANIFEST_PATH"
+
+          ssh-keygen \
+            -Y sign \
+            -f "$SIGNING_KEY_FILE" \
+            -n "$SIGNATURE_NAMESPACE" \
+            "$MANIFEST_PATH"
+
+          ssh-keygen \
+            -Y verify \
+            -f "$ALLOWED_SIGNERS_FILE" \
+            -I "$SIGNER_IDENTITY" \
+            -n "$SIGNATURE_NAMESPACE" \
+            -s "$SIGNATURE_PATH" \
+            < "$MANIFEST_PATH" \
+            >/dev/null
+
+          rm -f "$SIGNING_KEY_FILE"
+
+          {
+            echo "ARCHIVE_NAME=$ARCHIVE_NAME"
+            echo "MANIFEST_NAME=$MANIFEST_NAME"
+            echo "SIGNATURE_NAME=$SIGNATURE_NAME"
+            echo "ARCHIVE_PATH=$ARCHIVE_PATH"
+            echo "MANIFEST_PATH=$MANIFEST_PATH"
+            echo "SIGNATURE_PATH=$SIGNATURE_PATH"
+            echo "ARCHIVE_SHA256=$ARCHIVE_SHA256"
+          } >> "$GITHUB_ENV"
+
+      - name: Verify server and deploy signed SHA
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          ssh_opts=(
+            -p "$DEPLOY_PORT"
+            -i "$SSH_KEY_FILE"
+            -o BatchMode=yes
+            -o IdentitiesOnly=yes
+            -o StrictHostKeyChecking=yes
+            -o "UserKnownHostsFile=$KNOWN_HOSTS_FILE"
+            -o ConnectTimeout=10
+            -o ServerAliveInterval=15
+            -o ServerAliveCountMax=3
+            -o ForwardAgent=no
+            -o ClearAllForwardings=yes
+          )
+
+          scp_opts=(
+            -P "$DEPLOY_PORT"
+            -i "$SSH_KEY_FILE"
+            -o BatchMode=yes
+            -o IdentitiesOnly=yes
+            -o StrictHostKeyChecking=yes
+            -o "UserKnownHostsFile=$KNOWN_HOSTS_FILE"
+            -o ConnectTimeout=10
+            -o ServerAliveInterval=15
+            -o ServerAliveCountMax=3
+            -o ForwardAgent=no
+            -o ClearAllForwardings=yes
+          )
+
+          ssh \
+            "${ssh_opts[@]}" \
+            "$DEPLOY_USER@$DEPLOY_HOST" \
+            "test -d '$DEPLOY_PATH' && test ! -L '$DEPLOY_PATH' && test -w '$DEPLOY_PATH'"
+
+          test "$(
+            ssh \
+              "${ssh_opts[@]}" \
+              "$DEPLOY_USER@$DEPLOY_HOST" \
+              "sha256sum /usr/local/sbin/deploy-jvmoebel-prod-front | awk '{print \$1}'"
+          )" = "$EXPECTED_HELPER_SHA256"
+
+          ssh \
+            "${ssh_opts[@]}" \
+            "$DEPLOY_USER@$DEPLOY_HOST" \
+            "sha256sum -c /usr/local/lib/jvmoebel/front/artifact-signing.prod.allowed_signers.sha256 >/dev/null"
+
+          test "$(
+            ssh \
+              "${ssh_opts[@]}" \
+              "$DEPLOY_USER@$DEPLOY_HOST" \
+              "awk '{print \$3, \$4}' /usr/local/lib/jvmoebel/front/artifact-signing.prod.allowed_signers | ssh-keygen -lf - -E sha256 | awk '{print \$2}'"
+          )" = "$EXPECTED_SIGNING_KEY_FINGERPRINT"
+
+          suffix="$GITHUB_RUN_ID.$GITHUB_RUN_ATTEMPT.uploading"
+
+          for name in \
+            "$ARCHIVE_NAME" \
+            "$MANIFEST_NAME" \
+            "$SIGNATURE_NAME"
+          do
+            ssh \
+              "${ssh_opts[@]}" \
+              "$DEPLOY_USER@$DEPLOY_HOST" \
+              "rm -f -- '$DEPLOY_PATH/.$name.$suffix'"
+          done
+
+          scp \
+            "${scp_opts[@]}" \
+            "$ARCHIVE_PATH" \
+            "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/.$ARCHIVE_NAME.$suffix"
+
+          scp \
+            "${scp_opts[@]}" \
+            "$MANIFEST_PATH" \
+            "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/.$MANIFEST_NAME.$suffix"
+
+          scp \
+            "${scp_opts[@]}" \
+            "$SIGNATURE_PATH" \
+            "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/.$SIGNATURE_NAME.$suffix"
+
+          ssh \
+            "${ssh_opts[@]}" \
+            "$DEPLOY_USER@$DEPLOY_HOST" \
+            "chmod 0640 -- '$DEPLOY_PATH/.$ARCHIVE_NAME.$suffix' '$DEPLOY_PATH/.$MANIFEST_NAME.$suffix' '$DEPLOY_PATH/.$SIGNATURE_NAME.$suffix' && mv -f -- '$DEPLOY_PATH/.$ARCHIVE_NAME.$suffix' '$DEPLOY_PATH/$ARCHIVE_NAME' && mv -f -- '$DEPLOY_PATH/.$MANIFEST_NAME.$suffix' '$DEPLOY_PATH/$MANIFEST_NAME' && mv -f -- '$DEPLOY_PATH/.$SIGNATURE_NAME.$suffix' '$DEPLOY_PATH/$SIGNATURE_NAME'"
+
+          test "$(
+            ssh \
+              "${ssh_opts[@]}" \
+              "$DEPLOY_USER@$DEPLOY_HOST" \
+              "sha256sum '$DEPLOY_PATH/$ARCHIVE_NAME' | awk '{print \$1}'"
+          )" = "$ARCHIVE_SHA256"
+
+          ssh \
+            "${ssh_opts[@]}" \
+            "$DEPLOY_USER@$DEPLOY_HOST" \
+            "sudo -n /usr/local/sbin/deploy-jvmoebel-prod-front '$GITHUB_SHA'"
+
+          ssh \
+            "${ssh_opts[@]}" \
+            "$DEPLOY_USER@$DEPLOY_HOST" \
+            "test ! -e '$DEPLOY_PATH/$ARCHIVE_NAME' && test ! -e '$DEPLOY_PATH/$MANIFEST_NAME' && test ! -e '$DEPLOY_PATH/$SIGNATURE_NAME'"
+
+      - name: Clean failed remote upload
+        if: failure()
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          [[
+            -n "${ARCHIVE_NAME:-}" &&
+            -f "${SSH_KEY_FILE:-}" &&
+            -f "${KNOWN_HOSTS_FILE:-}"
+          ]] || exit 0
+
+          suffix="${GITHUB_RUN_ID}.${GITHUB_RUN_ATTEMPT}.uploading"
+
+          ssh_opts=(
+            -p "$DEPLOY_PORT"
+            -i "$SSH_KEY_FILE"
+            -o BatchMode=yes
+            -o IdentitiesOnly=yes
+            -o StrictHostKeyChecking=yes
+            -o "UserKnownHostsFile=$KNOWN_HOSTS_FILE"
+            -o ConnectTimeout=10
+            -o ServerAliveInterval=15
+            -o ServerAliveCountMax=3
+            -o ForwardAgent=no
+            -o ClearAllForwardings=yes
+          )
+
+          ssh \
+            "${ssh_opts[@]}" \
+            "$DEPLOY_USER@$DEPLOY_HOST" \
+            "rm -f -- '$DEPLOY_PATH/$ARCHIVE_NAME' '$DEPLOY_PATH/$MANIFEST_NAME' '$DEPLOY_PATH/$SIGNATURE_NAME' '$DEPLOY_PATH/.$ARCHIVE_NAME.$suffix' '$DEPLOY_PATH/.$MANIFEST_NAME.$suffix' '$DEPLOY_PATH/.$SIGNATURE_NAME.$suffix'"
+
+      - name: Remove runner material
+        if: always()
+        shell: bash
+        run: |
+          rm -f -- \
+            "$SSH_KEY_FILE" \
+            "$KNOWN_HOSTS_FILE" \
+            "$SIGNING_KEY_FILE" \
+            "$SIGNING_PUBLIC_KEY_FILE" \
+            "$ALLOWED_SIGNERS_FILE" \
+            "$RUNNER_TEMP/deploy.pub"

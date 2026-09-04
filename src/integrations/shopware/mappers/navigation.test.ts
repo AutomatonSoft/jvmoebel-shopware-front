@@ -14,10 +14,28 @@ describe("mapShopwareCategory", () => {
     } as unknown as Parameters<typeof mapShopwareCategory>[0];
 
     expect(mapShopwareCategory(category)).toEqual({
+      childCount: 0,
       children: [],
       href: "/navigation/footer-category",
       id: "footer-category",
       label: "Information",
+    });
+  });
+
+  test("preserves the visible child count without preloading children", () => {
+    const category = {
+      children: undefined,
+      id: "parent-category",
+      name: "Living room",
+      translated: {
+        name: "Living room",
+      },
+      visibleChildCount: 3,
+    } as unknown as Parameters<typeof mapShopwareCategory>[0];
+
+    expect(mapShopwareCategory(category)).toMatchObject({
+      childCount: 3,
+      children: [],
     });
   });
 });
