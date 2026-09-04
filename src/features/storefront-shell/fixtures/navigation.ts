@@ -47,7 +47,7 @@ export const mainNavigationMock = [
   {
     id: "sale",
     label: "Angebote",
-    href: "/sale",
+    href: "/rabatt-angebote",
     children: [],
   },
 ] satisfies StoreNavigationItem[];
@@ -61,7 +61,7 @@ export const footerNavigationMock = [
       {
         id: "footer-special-offers",
         label: "Sonderangebote",
-        href: "/sale",
+        href: "/rabatt-angebote",
         children: [],
       },
       {
