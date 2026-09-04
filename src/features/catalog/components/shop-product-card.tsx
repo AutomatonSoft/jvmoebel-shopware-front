@@ -34,7 +34,7 @@ export function ShopProductCard({
       >
         <Image
           alt={product.image.alt}
-          className="object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.035]"
+          className="object-contain"
           fill
           loading={eagerImage ? "eager" : "lazy"}
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
