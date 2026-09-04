@@ -92,11 +92,11 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
       >
         <Search className="mr-2 size-4.5 shrink-0 text-muted-foreground transition-colors group-focus-within/search:text-foreground" />
         <Input
-          aria-label="Search products"
+          aria-label="Produkte suchen"
           className="h-auto min-w-0 flex-1 rounded-none border-0 bg-transparent px-0 py-0 text-sm shadow-none focus-visible:border-0 focus-visible:ring-0 [&::-webkit-search-cancel-button]:hidden"
           name="query"
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search furniture"
+          placeholder="Möbel suchen"
           type="search"
           value={query}
         />
@@ -107,7 +107,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
           transition={{ layout: headerSearchLayoutTransition }}
         >
           <Button
-            aria-label="Submit search"
+            aria-label="Suche starten"
             className="shrink-0 rounded-full hover:bg-destructive motion-safe:hover:translate-x-px motion-safe:active:scale-90"
             size="icon-lg"
             type="submit"
@@ -133,7 +133,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
                 transition={{ duration: 0.35, ease: "easeOut" }}
               >
                 <section
-                  aria-label="Product search"
+                  aria-label="Produktsuche"
                   aria-modal="true"
                   className="w-[min(50vw,48rem)]"
                   role="dialog"
@@ -154,11 +154,11 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
                   >
                     <Search className="mr-2 size-4.5 shrink-0 text-muted-foreground" />
                     <Input
-                      aria-label="Search products"
+                      aria-label="Produkte suchen"
                       className="h-auto min-w-0 flex-1 rounded-none border-0 bg-transparent px-0 py-0 text-sm shadow-none focus-visible:border-0 focus-visible:ring-0 [&::-webkit-search-cancel-button]:hidden"
                       name="query"
                       onChange={(event) => setQuery(event.target.value)}
-                      placeholder="Search furniture"
+                      placeholder="Möbel suchen"
                       ref={overlayInputRef}
                       type="search"
                       value={query}
@@ -170,7 +170,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
                       transition={{ layout: headerSearchLayoutTransition }}
                     >
                       <Button
-                        aria-label="Submit search"
+                        aria-label="Suche starten"
                         className="shrink-0 rounded-full"
                         size="icon-lg"
                         type="submit"

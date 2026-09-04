@@ -23,9 +23,8 @@ export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
           className="absolute left-1/2 flex -translate-x-1/2 items-center gap-2 lg:static lg:translate-x-0"
           variant="header"
         />
-
         {navigation.length > 0 && (
-          <nav className="flex items-center gap-6" aria-label="Main navigation">
+          <nav className="flex items-center gap-6" aria-label="Hauptnavigation">
             <CategoryMenu navigation={navigation} />
             {navigation.slice(0, MAX_VISIBLE_CATEGORIES).map((item) => (
               <a
@@ -38,14 +37,11 @@ export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
             ))}
           </nav>
         )}
-
         <HeaderSearch className="ml-auto hidden w-full max-w-80 xl:flex" />
-
         <MobileHeaderSearch />
-
         <div className="ml-auto flex items-center justify-end xl:ml-0">
           <a
-            aria-label="Account"
+            aria-label="Kundenkonto"
             className="hidden min-h-10 items-center gap-2 rounded-full p-1 pr-3 transition-[background,transform,box-shadow] hover:bg-muted focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-[.975] xl:flex"
             href="/account"
           >
@@ -54,29 +50,28 @@ export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
             </span>
             <span className="flex min-w-12 flex-col leading-none">
               <span className="mb-1 text-[0.5rem] tracking-[0.09em] text-muted-foreground uppercase">
-                Account
+                Kundenkonto
               </span>
-              <strong className="text-xs font-semibold">Sign in</strong>
+              <strong className="text-xs font-semibold">Anmelden</strong>
             </span>
           </a>
-
           <div className="flex items-center gap-1 sm:ml-2 sm:border-l sm:border-foreground/10 sm:pl-2">
             <a
-              aria-label="Account"
+              aria-label="Kundenkonto"
               className="flex size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-90 xl:hidden"
               href="/account"
             >
               <UserRound className="size-4.5" />
             </a>
             <a
-              aria-label="Wishlist"
-              className="hidden size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-90 sm:flex"
+              aria-label="Wunschliste"
+              className="hidden size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:scale-90 sm:flex"
               href="/shop"
             >
               <Heart className="size-4.5" />
             </a>
             <a
-              aria-label="Shopping bag"
+              aria-label="Warenkorb"
               className="flex size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-90"
               href="/cart"
             >

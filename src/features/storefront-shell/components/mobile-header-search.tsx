@@ -55,7 +55,7 @@ export function MobileHeaderSearch() {
       <button
         aria-controls={MOBILE_SEARCH_PANEL_ID}
         aria-expanded={isOpen}
-        aria-label={isOpen ? "Close search" : "Open search"}
+        aria-label={isOpen ? "Suche schließen" : "Suche öffnen"}
         className="flex size-10 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:transition-transform motion-safe:active:scale-95"
         onClick={() => setIsOpen((open) => !open)}
         ref={triggerRef}
@@ -85,17 +85,17 @@ export function MobileHeaderSearch() {
             >
               <Search className="mr-2 size-4.5 shrink-0 text-muted-foreground transition-colors group-focus-within/search:text-foreground" />
               <Input
-                aria-label="Search products"
+                aria-label="Produkte suchen"
                 className="h-auto min-w-0 flex-1 rounded-none border-0 bg-transparent px-0 py-0 text-sm shadow-none focus-visible:border-0 focus-visible:ring-0 [&::-webkit-search-cancel-button]:hidden"
                 name="query"
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search furniture"
+                placeholder="Möbel suchen"
                 ref={inputRef}
                 type="search"
                 value={query}
               />
               <Button
-                aria-label="Submit search"
+                aria-label="Suche starten"
                 className="shrink-0 rounded-full hover:bg-destructive motion-safe:hover:translate-x-px motion-safe:active:scale-90"
                 size="icon"
                 type="submit"

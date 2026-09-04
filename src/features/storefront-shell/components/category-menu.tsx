@@ -17,9 +17,7 @@ import type {
   StoreNavigationItem,
 } from "@/features/storefront-shell/model/navigation";
 
-export type CategoryMenuProps = {
-  navigation: MainNavigation;
-};
+export type CategoryMenuProps = { navigation: MainNavigation };
 
 function getChildrenLabel(count: number) {
   return `${count} ${count === 1 ? "Unterkategorie" : "Unterkategorien"}`;
@@ -46,14 +44,12 @@ function CategoryItemContent({
           {item.label}
         </span>
       </span>
-
       <span className="flex shrink-0 items-center gap-2.5">
         {!loading && hasChildren && (
           <span className="min-w-6 rounded-full bg-secondary px-2 py-1 text-center text-[0.625rem] font-semibold tabular-nums text-muted-foreground">
             {childCount}
           </span>
         )}
-
         <span className="grid size-8 place-items-center rounded-full bg-secondary text-muted-foreground transition-[background,color,transform] group-hover/category-item:bg-primary group-hover/category-item:text-primary-foreground group-hover/category-item:translate-x-0.5">
           {loading ? (
             <LoaderCircle className="size-3.5 animate-spin" />
@@ -127,7 +123,6 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
         <Menu className="size-5 lg:hidden" aria-hidden="true" />
         <span className="hidden lg:inline">Kategorien</span>
       </Dialog.Trigger>
-
       <Dialog.Portal>
         <Dialog.Backdrop className="fixed inset-0 z-60 min-h-dvh bg-foreground/30 backdrop-blur-[2px] transition-opacity duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-[-webkit-touch-callout:none]:absolute" />
         <Dialog.Viewport className="fixed inset-0 z-70 flex min-h-dvh items-center justify-center overflow-y-auto p-2 sm:p-6">
@@ -141,7 +136,6 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
                   Produktkategorien durchsuchen.
                 </Dialog.Description>
               </div>
-
               <div className="flex shrink-0 items-center gap-3">
                 <span className="hidden text-[0.625rem] font-semibold tracking-[0.12em] text-muted-foreground uppercase sm:inline">
                   {navigation.length} Kategorien
@@ -161,14 +155,12 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
                 </Dialog.Close>
               </div>
             </div>
-
             <div className="grid min-h-0 flex-1 lg:grid-cols-[15rem_minmax(0,1fr)]">
               <aside className="relative shrink-0 overflow-hidden border-b border-border bg-secondary/70 px-4 py-3 text-foreground sm:px-5 sm:py-5 lg:border-r lg:border-b-0 lg:px-6 lg:py-7">
                 <div
                   aria-hidden="true"
                   className="pointer-events-none absolute -right-16 -bottom-20 size-48 rounded-full bg-accent/55 blur-3xl"
                 />
-
                 <div className="relative">
                   {currentCategory && (
                     <button
@@ -180,7 +172,6 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
                       Zurück
                     </button>
                   )}
-
                   <p className="mb-1 text-[0.625rem] font-semibold tracking-[0.16em] text-primary uppercase sm:mb-2">
                     {currentCategory
                       ? "Aktuelle Kategorie"
@@ -194,7 +185,6 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
                       {getChildrenLabel(currentItems.length)}
                     </p>
                   )}
-
                   {currentCategory && (
                     <Dialog.Close
                       className="group/view mt-3 inline-flex min-h-9 items-center gap-2 rounded-full bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground transition-[background,color,transform] hover:bg-destructive focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-secondary motion-safe:active:scale-[.98] sm:mt-6 sm:min-h-10 sm:px-4 sm:py-2"
@@ -207,7 +197,6 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
                   )}
                 </div>
               </aside>
-
               <div className="flex min-h-0 min-w-0 flex-col">
                 <nav
                   aria-label="Kategoriepfad"
@@ -242,7 +231,6 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
                     </span>
                   ))}
                 </nav>
-
                 <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-4">
                   {loadError && (
                     <p
@@ -253,7 +241,6 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
                       versuche es erneut.
                     </p>
                   )}
-
                   <div
                     className="grid gap-1 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-right-1 motion-safe:duration-200 sm:grid-cols-2"
                     key={currentCategory?.id ?? "all-categories"}
