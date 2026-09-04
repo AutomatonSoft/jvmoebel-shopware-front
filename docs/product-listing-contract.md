@@ -3,9 +3,9 @@
 The `/shop` route renders local mock data only when Shopware mock mode is
 enabled. Until the backend adapter is ready, live mode renders a controlled
 preparation state instead of exposing mock products. This document describes
-the normalized model consumed by the frontend and the current filtering and
-sorting behavior. It is not the raw schema of a standard Shopware Store API
-response.
+the normalized model consumed by the frontend and the current filtering,
+sorting, and pagination behavior. It is not the raw schema of a standard
+Shopware Store API response.
 
 When the backend is ready, an integration layer must map Shopware products,
 associations, calculated prices, and properties into this model. The current
@@ -180,10 +180,24 @@ The frontend currently provides these fixed options:
 | `rating`           | `rating` descending; a missing rating is treated as zero. |
 
 The option labels, order, and default value are not currently controlled by
-Shopware Administration. Filtering and sorting are performed in the browser on
-the complete mock array. The real Store API integration may move these
-operations to Shopware for pagination and large catalogs, but it must preserve
-the documented UI values or introduce an explicit replacement contract.
+Shopware Administration. Filtering, sorting, and pagination are performed in
+the browser on the complete mock array. The real Store API integration may move
+these operations to Shopware for large catalogs, but it must preserve the
+documented UI values or introduce an explicit replacement contract.
+
+## Pagination
+
+- The frontend shows eight products per page after applying the active filters
+  and sort order.
+- Changing a filter, clearing filters, or changing the sort order returns the
+  listing to page one.
+- Pagination controls are rendered only when the filtered result contains more
+  than one page.
+- The current page is clamped to the available range, and an empty result stays
+  on page one without rendering pagination controls.
+- Changing pages scrolls the product results back into view.
+- The controls expose page labels, disabled previous/next states, and
+  `aria-current="page"` for the active page.
 
 ## Administration responsibility boundary
 

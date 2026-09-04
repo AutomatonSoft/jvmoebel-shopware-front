@@ -7,6 +7,10 @@ import {
   filterAndSortShopProducts,
   type ShopProductSort,
 } from "@/features/catalog/model/filter-products";
+import {
+  paginateProducts,
+  productsPerPage,
+} from "@/features/catalog/model/paginate-products";
 import type {
   ShopProduct,
   ShopProductSize,
@@ -15,12 +19,14 @@ import type {
 function toggleValue<TValue extends string>(
   value: TValue,
   setValues: Dispatch<SetStateAction<TValue[]>>,
+  resetPage: () => void,
 ) {
   setValues((values) =>
     values.includes(value)
       ? values.filter((selectedValue) => selectedValue !== value)
       : [...values, value],
   );
+  resetPage();
 }
 
 export function useCatalogState(products: readonly ShopProduct[]) {
@@ -37,6 +43,7 @@ export function useCatalogState(products: readonly ShopProduct[]) {
   const [minimumPrice, setMinimumPrice] = useState(minimumPriceBound);
   const [maximumPrice, setMaximumPrice] = useState(maximumPriceBound);
   const [sort, setSort] = useState<ShopProductSort>("featured");
+  const [currentPage, setCurrentPage] = useState(1);
   const activeFilterCount =
     selectedCategories.length +
     selectedColors.length +
@@ -59,6 +66,11 @@ export function useCatalogState(products: readonly ShopProduct[]) {
     },
     sort,
   );
+  const pagination = paginateProducts(filteredProducts, currentPage);
+
+  function resetPage() {
+    setCurrentPage(1);
+  }
 
   function clearFilters() {
     setSelectedCategories([]);
@@ -68,6 +80,12 @@ export function useCatalogState(products: readonly ShopProduct[]) {
     setSelectedSizes([]);
     setMinimumPrice(minimumPriceBound);
     setMaximumPrice(maximumPriceBound);
+    resetPage();
+  }
+
+  function changeSort(value: ShopProductSort) {
+    setSort(value);
+    resetPage();
   }
 
   return {
@@ -83,23 +101,28 @@ export function useCatalogState(products: readonly ShopProduct[]) {
       minimumPrice,
       minimumPriceBound,
       onClear: clearFilters,
-      onMaximumPriceChange: (value: number) =>
+      onMaximumPriceChange: (value: number) => {
         setMaximumPrice(
           Math.max(minimumPrice, Math.min(value, maximumPriceBound)),
-        ),
-      onMinimumPriceChange: (value: number) =>
+        );
+        resetPage();
+      },
+      onMinimumPriceChange: (value: number) => {
         setMinimumPrice(
           Math.min(maximumPrice, Math.max(value, minimumPriceBound)),
-        ),
+        );
+        resetPage();
+      },
       onToggleCategory: (value: string) =>
-        toggleValue(value, setSelectedCategories),
-      onToggleColor: (value: string) => toggleValue(value, setSelectedColors),
+        toggleValue(value, setSelectedCategories, resetPage),
+      onToggleColor: (value: string) =>
+        toggleValue(value, setSelectedColors, resetPage),
       onToggleCompany: (value: string) =>
-        toggleValue(value, setSelectedCompanies),
+        toggleValue(value, setSelectedCompanies, resetPage),
       onToggleMaterial: (value: string) =>
-        toggleValue(value, setSelectedMaterials),
+        toggleValue(value, setSelectedMaterials, resetPage),
       onToggleSize: (value: ShopProductSize) =>
-        toggleValue(value, setSelectedSizes),
+        toggleValue(value, setSelectedSizes, resetPage),
       selectedCategories,
       selectedColors,
       selectedCompanies,
@@ -107,8 +130,15 @@ export function useCatalogState(products: readonly ShopProduct[]) {
       selectedSizes,
       sizes,
     },
-    products: filteredProducts,
-    setSort,
+    paginationProps: {
+      currentPage: pagination.currentPage,
+      onPageChange: setCurrentPage,
+      pageSize: productsPerPage,
+      totalPages: pagination.totalPages,
+      totalProducts: pagination.totalProducts,
+    },
+    products: pagination.products,
+    setSort: changeSort,
     sort,
   };
 }

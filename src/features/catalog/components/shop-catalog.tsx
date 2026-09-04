@@ -24,8 +24,14 @@ export type ShopCatalogProps = {
 };
 
 export function ShopCatalog({ isLoading = false, listing }: ShopCatalogProps) {
-  const { clearFilters, filterPanelProps, products, setSort, sort } =
-    useCatalogState(listing.products);
+  const {
+    clearFilters,
+    filterPanelProps,
+    paginationProps,
+    products,
+    setSort,
+    sort,
+  } = useCatalogState(listing.products);
   const { activeFilterCount } = filterPanelProps;
 
   return (
@@ -110,8 +116,10 @@ export function ShopCatalog({ isLoading = false, listing }: ShopCatalogProps) {
                       <Dialog.Close
                         render={<Button className="w-full" size="lg" />}
                       >
-                        Show {products.length}{" "}
-                        {products.length === 1 ? "product" : "products"}
+                        Show {paginationProps.totalProducts}{" "}
+                        {paginationProps.totalProducts === 1
+                          ? "product"
+                          : "products"}
                       </Dialog.Close>
                     </div>
                   </Dialog.Popup>
@@ -178,6 +186,7 @@ export function ShopCatalog({ isLoading = false, listing }: ShopCatalogProps) {
             isLoading={isLoading}
             locale={listing.locale}
             onClearFilters={clearFilters}
+            paginationProps={paginationProps}
             products={products}
           />
         </section>
