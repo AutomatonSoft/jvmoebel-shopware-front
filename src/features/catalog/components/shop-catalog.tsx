@@ -79,7 +79,7 @@ export function ShopCatalog({ isLoading = false, listing }: ShopCatalogProps) {
               <Dialog.Portal>
                 <Dialog.Backdrop className="fixed inset-0 z-60 min-h-dvh bg-foreground/45 transition-opacity duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-[-webkit-touch-callout:none]:absolute" />
                 <Dialog.Viewport className="fixed inset-0 z-70 flex min-h-dvh justify-end">
-                  <Dialog.Popup className="flex h-dvh w-[min(24rem,92vw)] flex-col rounded-l-2xl border-l bg-background shadow-2xl transition-transform duration-300 ease-out data-ending-style:translate-x-full data-starting-style:translate-x-full">
+                  <Dialog.Popup className="flex h-dvh w-[min(24rem,92vw)] flex-col rounded-l-2xl border-l bg-background shadow-2xl transition-transform ease-out data-ending-style:translate-x-full data-starting-style:translate-x-full">
                     <div className="flex items-start justify-between gap-4 border-b px-5 py-5">
                       <div>
                         <Dialog.Title className="text-2xl font-semibold tracking-tight">

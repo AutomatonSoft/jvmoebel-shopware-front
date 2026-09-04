@@ -1,10 +1,13 @@
 import type { ComponentType } from "react";
 
+import { CmsCategoryRail } from "@/features/cms/components/elements/cms-category-rail";
 import { CmsHero } from "@/features/cms/components/elements/cms-hero";
 import { CmsNewsletter } from "@/features/cms/components/elements/cms-newsletter";
 import { CmsProductGrid } from "@/features/cms/components/elements/cms-product-grid";
 import { CmsRoomGrid } from "@/features/cms/components/elements/cms-room-grid";
+import { CmsShopTheLook } from "@/features/cms/components/elements/cms-shop-the-look";
 import { CmsText } from "@/features/cms/components/elements/cms-text";
+import { CmsWhyJvmoebel } from "@/features/cms/components/elements/cms-why-jvmoebel";
 import type {
   CmsBlock,
   CmsPage,
@@ -21,10 +24,13 @@ export type CmsSlotComponentProps = {
 type CmsSlotComponent = ComponentType<CmsSlotComponentProps>;
 
 const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {
+  "jv-category-rail": CmsCategoryRail,
   "jv-hero": CmsHero,
   "jv-newsletter": CmsNewsletter,
   "jv-product-grid": CmsProductGrid,
   "jv-room-grid": CmsRoomGrid,
+  "jv-shop-the-look": CmsShopTheLook,
+  "jv-why-jvmoebel": CmsWhyJvmoebel,
   text: CmsText,
 };
 
