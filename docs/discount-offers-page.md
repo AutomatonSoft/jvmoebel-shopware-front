@@ -15,9 +15,11 @@ The page contains:
 
 A product is eligible for the sale selection when `previousPrice` exists and
 is greater than `unitPrice`. The frontend calculates and displays the discount
-percentage from those two values. Category tiles currently route to `/shop`;
-category-specific query mapping will be added with the Shopware listing
-adapter.
+percentage from those two values. Category tiles route to
+`/shop?category={value}`. The shop reads the query parameter, activates the
+matching category filter, and returns to page one. A known offer category stays
+visible as the selected filter even when the local mock has no products for it;
+the live Shopware adapter is responsible for supplying its inventory.
 
 The banner images are generated project assets stored in
 `public/images/offers`. Text and calls to action remain HTML so they stay

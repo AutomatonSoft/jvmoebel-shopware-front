@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { ShopCatalog } from "@/features/catalog/components/shop-catalog";
 import { getShopProductListing } from "@/features/catalog/server/product-listing";
+import { findOfferCategory } from "@/features/offers/model/offer-categories";
 import { ErrorExperience } from "@/features/storefront-shell/components/error-experience";
 
 export const metadata: Metadata = {
@@ -9,8 +10,15 @@ export const metadata: Metadata = {
   title: "Shop | JVMöbel",
 };
 
-export default async function ShopPage() {
-  const listing = await getShopProductListing();
+type ShopPageProps = Readonly<{
+  searchParams: Promise<{ category?: string | string[] }>;
+}>;
+
+export default async function ShopPage({ searchParams }: ShopPageProps) {
+  const [listing, parameters] = await Promise.all([
+    getShopProductListing(),
+    searchParams,
+  ]);
 
   if (!listing) {
     return (
@@ -24,9 +32,31 @@ export default async function ShopPage() {
     );
   }
 
+  const requestedCategory = Array.isArray(parameters.category)
+    ? parameters.category[0]
+    : parameters.category;
+  const offerCategory = requestedCategory
+    ? findOfferCategory(requestedCategory)
+    : undefined;
+  const listingCategory = requestedCategory
+    ? listing.products.find((product) => product.category === requestedCategory)
+    : undefined;
+  const initialCategory = offerCategory
+    ? { label: offerCategory.label, value: offerCategory.value }
+    : listingCategory
+      ? {
+          label: listingCategory.categoryLabel,
+          value: listingCategory.category,
+        }
+      : undefined;
+
   return (
     <main className="flex-1">
-      <ShopCatalog listing={listing} />
+      <ShopCatalog
+        initialCategory={initialCategory}
+        key={initialCategory?.value ?? "all-products"}
+        listing={listing}
+      />
     </main>
   );
 }

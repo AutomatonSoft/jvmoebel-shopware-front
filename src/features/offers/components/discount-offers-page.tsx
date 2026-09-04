@@ -13,28 +13,7 @@ import { Button } from "@/components/ui/button";
 import { ShopProductCard } from "@/features/catalog/components/shop-product-card";
 import type { ShopProductListing } from "@/features/catalog/model/product-listing";
 import { SaleProductsButton } from "@/features/offers/components/sale-products-button";
-
-const categoryOffers = [
-  {
-    image: "/images/main/hero-editorial.webp",
-    label: "Garten & Freizeit",
-  },
-  { image: "/images/main/dining-room.webp", label: "Tische" },
-  { image: "/images/main/hero-living.webp", label: "Sofas & Couches" },
-  { image: "/images/main/bedroom.webp", label: "Betten" },
-  { image: "/images/main/lounge-chair.webp", label: "Stühle" },
-  { image: "/images/main/media-console.webp", label: "Schränke" },
-  { image: "/images/main/bedroom.webp", label: "Lampen" },
-  { image: "/images/main/media-console.webp", label: "Regale" },
-  { image: "/images/main/lounge-chair.webp", label: "Sessel" },
-  { image: "/images/main/media-console.webp", label: "Sideboards" },
-  { image: "/images/main/dining-room.webp", label: "Kommoden" },
-  { image: "/images/main/media-console.webp", label: "TV-Möbel" },
-  { image: "/images/main/bedroom.webp", label: "Badmöbel" },
-  { image: "/images/main/hero-editorial.webp", label: "Teppiche" },
-  { image: "/images/main/bedroom.webp", label: "Textilien" },
-  { image: "/images/main/dining-room.webp", label: "Accessoires" },
-] as const;
+import { offerCategories } from "@/features/offers/model/offer-categories";
 
 const benefits = [
   {
@@ -195,10 +174,13 @@ export function DiscountOffersPage({ listing }: DiscountOffersPageProps) {
           </div>
 
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8">
-            {categoryOffers.map((category) => (
+            {offerCategories.map((category) => (
               <Link
                 className="group min-w-0 rounded-2xl border bg-card p-2 shadow-[0_10px_30px_-26px_rgba(21,21,19,0.6)] transition-[transform,border-color,box-shadow] hover:border-foreground/25 hover:shadow-[0_18px_36px_-25px_rgba(21,21,19,0.65)] motion-safe:hover:-translate-y-1"
-                href="/shop"
+                href={{
+                  pathname: "/shop",
+                  query: { category: category.value },
+                }}
                 key={category.label}
               >
                 <span className="relative block aspect-square overflow-hidden rounded-xl bg-muted/60">

@@ -3,6 +3,7 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
 
 import { buildShopProductFilterOptions } from "@/features/catalog/model/filter-options";
+import type { ProductFilterOption } from "@/features/catalog/model/filter-options";
 import {
   filterAndSortShopProducts,
   type ShopProductSort,
@@ -29,13 +30,35 @@ function toggleValue<TValue extends string>(
   resetPage();
 }
 
-export function useCatalogState(products: readonly ShopProduct[]) {
+export function useCatalogState(
+  products: readonly ShopProduct[],
+  initialCategory?: Pick<ProductFilterOption, "label" | "value">,
+) {
   const prices = products.map((product) => product.unitPrice);
   const minimumPriceBound = Math.floor(Math.min(...prices) / 10) * 10;
   const maximumPriceBound = Math.ceil(Math.max(...prices) / 10) * 10;
-  const { categories, colors, companies, materials, sizes } =
-    buildShopProductFilterOptions(products);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const {
+    categories: productCategories,
+    colors,
+    companies,
+    materials,
+    sizes,
+  } = buildShopProductFilterOptions(products);
+  const categoryCount =
+    productCategories.find(
+      (category) => category.value === initialCategory?.value,
+    )?.count ?? 0;
+  const categories = initialCategory
+    ? [
+        { ...initialCategory, count: categoryCount },
+        ...productCategories.filter(
+          (category) => category.value !== initialCategory.value,
+        ),
+      ]
+    : productCategories;
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(() =>
+    initialCategory ? [initialCategory.value] : [],
+  );
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
   const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);

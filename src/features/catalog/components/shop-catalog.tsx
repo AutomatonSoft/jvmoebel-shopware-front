@@ -15,15 +15,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useCatalogState } from "@/features/catalog/hooks/use-catalog-state";
+import type { ProductFilterOption } from "@/features/catalog/model/filter-options";
 import type { ShopProductSort } from "@/features/catalog/model/filter-products";
 import type { ShopProductListing } from "@/features/catalog/model/product-listing";
 
 export type ShopCatalogProps = {
+  initialCategory?: Pick<ProductFilterOption, "label" | "value">;
   isLoading?: boolean;
   listing: ShopProductListing;
 };
 
-export function ShopCatalog({ isLoading = false, listing }: ShopCatalogProps) {
+export function ShopCatalog({
+  initialCategory,
+  isLoading = false,
+  listing,
+}: ShopCatalogProps) {
   const {
     clearFilters,
     filterPanelProps,
@@ -31,7 +37,7 @@ export function ShopCatalog({ isLoading = false, listing }: ShopCatalogProps) {
     products,
     setSort,
     sort,
-  } = useCatalogState(listing.products);
+  } = useCatalogState(listing.products, initialCategory);
   const { activeFilterCount } = filterPanelProps;
 
   return (
