@@ -34,7 +34,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     ]);
 
   return (
-    <html lang="en" className={`${montserrat.variable} h-full antialiased`}>
+    <html lang="de" className={`${montserrat.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
         <StoreHeader branding={branding} navigation={navigation} />
         {children}

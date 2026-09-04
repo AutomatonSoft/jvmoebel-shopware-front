@@ -24,7 +24,7 @@ export const shopProductListingMock = {
       id: "alba",
       image: {
         alt: "Alba modular sofa in a warm living room",
-        url: "/images/hero-living.webp",
+        url: "/images/main/hero-living.webp",
       },
       material: "Bouclé",
       name: "Alba Modular Sofa",
@@ -47,7 +47,7 @@ export const shopProductListingMock = {
       id: "noma",
       image: {
         alt: "Noma rust lounge chair",
-        url: "/images/lounge-chair.webp",
+        url: "/images/main/lounge-chair.webp",
       },
       material: "Bouclé",
       name: "Noma Lounge Chair",
@@ -69,7 +69,7 @@ export const shopProductListingMock = {
       id: "forma",
       image: {
         alt: "Forma solid walnut media console",
-        url: "/images/media-console.webp",
+        url: "/images/main/media-console.webp",
       },
       material: "Walnut",
       name: "Forma Media Console",
@@ -91,7 +91,7 @@ export const shopProductListingMock = {
       id: "mira",
       image: {
         alt: "Mira table in a warm walnut dining room",
-        url: "/images/dining-room.webp",
+        url: "/images/main/dining-room.webp",
       },
       material: "Oak",
       name: "Mira Dining Table",
@@ -114,7 +114,7 @@ export const shopProductListingMock = {
       id: "aura",
       image: {
         alt: "Aura deep sofa in oatmeal linen",
-        url: "/images/hero-editorial.webp",
+        url: "/images/main/hero-editorial.webp",
       },
       material: "Linen",
       name: "Aura Deep Sofa",
@@ -136,7 +136,7 @@ export const shopProductListingMock = {
       id: "luma",
       image: {
         alt: "Luma cream lounge chair",
-        url: "/images/bedroom.webp",
+        url: "/images/main/bedroom.webp",
       },
       material: "Bouclé",
       name: "Luma Lounge Chair",
@@ -158,7 +158,7 @@ export const shopProductListingMock = {
       id: "koto",
       image: {
         alt: "Koto corner sofa in stone weave",
-        url: "/images/hero-living.webp",
+        url: "/images/main/hero-living.webp",
       },
       material: "Linen",
       name: "Koto Corner Sofa",
@@ -180,7 +180,7 @@ export const shopProductListingMock = {
       id: "linea",
       image: {
         alt: "Linea low cabinet in dark walnut",
-        url: "/images/media-console.webp",
+        url: "/images/main/media-console.webp",
       },
       material: "Walnut",
       name: "Linea Low Cabinet",
@@ -203,7 +203,7 @@ export const shopProductListingMock = {
       id: "nara",
       image: {
         alt: "Nara occasional chair in rust wool",
-        url: "/images/lounge-chair.webp",
+        url: "/images/main/lounge-chair.webp",
       },
       material: "Wool",
       name: "Nara Occasional Chair",

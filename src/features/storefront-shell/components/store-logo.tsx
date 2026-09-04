@@ -12,7 +12,7 @@ export type StoreLogoProps = {
 export function StoreLogo({ branding, className, variant }: StoreLogoProps) {
   return (
     <Link
-      aria-label={`${branding.name} home`}
+      aria-label={`${branding.name} Startseite`}
       className={cn("inline-flex items-center gap-2", className)}
       href="/"
     >
