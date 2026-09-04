@@ -52,7 +52,8 @@ export function useProductSearch(query: string, isOpen: boolean) {
         }
 
         setRequest({
-          errorMessage: "Search is temporarily unavailable. Please try again.",
+          errorMessage:
+            "Die Suche ist vorübergehend nicht verfügbar. Bitte versuchen Sie es erneut.",
           query: normalizedQuery,
           status: "error",
         });
