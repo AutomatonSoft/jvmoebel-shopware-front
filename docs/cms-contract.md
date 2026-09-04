@@ -59,6 +59,7 @@ Supported `slot.type` values:
 - `jv-hero`
 - `jv-room-grid`
 - `jv-product-grid`
+- `jv-home-editorial`
 - `jv-newsletter`
 - `text`
 
@@ -251,6 +252,59 @@ The current UI formats prices without fractional digits.
 }
 ```
 
+## `jv-home-editorial`
+
+The home editorial element presents a prominent service statement, an
+introduction, and additional long-form content in a native expandable section.
+
+Required fields:
+
+- `statement`, `title`, `showMoreLabel`, and `showLessLabel`: non-empty strings.
+- `introduction`: non-empty array or keyed object of non-empty paragraph
+  strings.
+- `sections`: non-empty array or keyed object containing at least one valid
+  section.
+- Each section requires at least one non-empty string in `paragraphs`.
+
+Optional section fields:
+
+- `id`: falls back to the keyed-object key or array index.
+- `position`: finite number; otherwise the input order is used.
+- `title`: non-empty string when provided.
+
+Arrays are the canonical backend representation. Keyed objects remain
+supported for compatibility with frontend fixtures.
+
+```json
+{
+  "statement": "Unser Service steht für höchste Qualität.",
+  "title": "Willkommen bei JV Möbel",
+  "introduction": [
+    "Entdecken Sie Möbel und Wohnideen für Ihr Zuhause.",
+    "Unser Sortiment verbindet Design, Qualität und Komfort."
+  ],
+  "sections": [
+    {
+      "id": "schlafzimmer",
+      "position": 0,
+      "title": "Gesund und schön schlafen",
+      "paragraphs": [
+        "Finden Sie passende Betten, Schränke und Schlafzimmer-Sets."
+      ]
+    }
+  ],
+  "showMoreLabel": "Alles anzeigen",
+  "showLessLabel": "Weniger anzeigen"
+}
+```
+
+The Next.js storefront already parses and renders this element. Editing it in
+Shopware Administration additionally requires a Shopware extension that
+registers the `jv-home-editorial` CMS element and block, exposes the documented
+fields, and resolves their values into `slot.data` for the Store API response.
+The frontend implementation alone does not add controls to Shopware
+Administration.
+
 ## `jv-newsletter`
 
 All fields below are required except `eyebrow` and `buttonSize`:
@@ -295,7 +349,7 @@ JavaScript URLs, and other unsupported markup are removed.
 ## Backend implementation checklist
 
 1. Return the standard Store API `CmsPage` hierarchy.
-2. Register the four custom element names exactly as documented.
+2. Register the custom element names exactly as documented.
 3. Resolve custom element values into `slot.data`, not only `slot.config`.
 4. Return stable IDs and numeric positions for pages, sections, blocks, slots,
    rooms, and products where applicable.
