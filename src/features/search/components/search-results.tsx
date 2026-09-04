@@ -34,7 +34,7 @@ export function SearchResults({
   if (!query.trim()) {
     return (
       <p className="py-3 text-sm text-muted-foreground">
-        Start typing to see matching products.
+        Tippen Sie, um passende Produkte zu sehen.
       </p>
     );
   }
@@ -43,7 +43,7 @@ export function SearchResults({
     return (
       <p className="flex items-center gap-2 py-3 text-sm text-muted-foreground">
         <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />
-        Searching...
+        Suche läuft...
       </p>
     );
   }
@@ -59,7 +59,7 @@ export function SearchResults({
   if (!results.length) {
     return (
       <p className="py-3 text-sm text-muted-foreground">
-        No products found for &quot;{debouncedQuery}&quot;.
+        Keine Produkte für „{debouncedQuery}“ gefunden.
       </p>
     );
   }
