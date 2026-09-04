@@ -72,7 +72,10 @@ Required fields:
 
 - `slides`: non-empty array or keyed object containing at least one valid
   slide.
-- Each slide requires `title` and `image.url` as non-empty strings.
+- Each slide requires:
+  - `position`: unique non-negative integer used to order banners. The admin
+    integration must assign a number to every banner.
+  - `title` and `image.url` as non-empty strings.
 
 Optional carousel fields:
 
@@ -84,7 +87,8 @@ Optional carousel fields:
 Optional slide fields:
 
 - `id`: falls back to a generated frontend key.
-- `position`: finite number; otherwise the input order is used.
+- `url`: makes the whole banner clickable and navigates to this URL. Buttons
+  inside the banner keep their own configured URLs.
 - `layout`: `featured` for the full Hero composition or `caption` for a
   bottom-aligned advertising caption; defaults to `featured`.
 - `eyebrow`, `description`, and `image.alt`.
@@ -99,6 +103,11 @@ at the root remains supported for backward compatibility. New CMS integrations
 should use `slides`; arrays are canonical and keyed objects are supported for
 fixture compatibility.
 
+The carousel accepts any positive number of valid slides. Slides are always
+rendered in ascending `position` order; the order received from the API is not
+used. A slide with a missing, invalid, or duplicate `position` is omitted and
+reported as a CMS contract issue.
+
 ```json
 {
   "ariaLabel": "Aktuelle Angebote und Wohnideen",
@@ -110,6 +119,7 @@ fixture compatibility.
       "position": 0,
       "layout": "featured",
       "title": "Wohnzimmer, die sich nach Ihnen anfühlen.",
+      "url": "/living",
       "eyebrow": "Neue Wohnideen",
       "description": "Entdecken Sie ausgewählte Möbel für Ihr Zuhause.",
       "image": {

@@ -41,6 +41,7 @@ export type CmsHeroSlide = Readonly<{
   promotion?: CmsHeroPromotion;
   secondaryLink?: CmsHeroLink;
   title: string;
+  url?: string;
 }>;
 
 export type CmsHeroData = Readonly<{
@@ -136,6 +137,7 @@ function parseSlide(
   value: unknown,
   path: string,
   index: number,
+  requirePosition = false,
 ): Readonly<{
   data?: CmsHeroSlide;
   issues: readonly CmsContractIssue[];
@@ -156,6 +158,9 @@ function parseSlide(
     slide?.promotion,
     getNestedPath(path, "promotion"),
   );
+  const position = slide?.position;
+  const hasValidPosition =
+    typeof position === "number" && Number.isInteger(position) && position >= 0;
   const issues: CmsContractIssue[] = [
     ...primaryLink.issues,
     ...secondaryLink.issues,
@@ -176,11 +181,16 @@ function parseSlide(
     });
   }
 
-  if (!title || !imageUrl) {
-    return { issues };
+  if (requirePosition && !hasValidPosition) {
+    issues.push({
+      message: "Hero slide position must be a non-negative integer.",
+      path: getNestedPath(path, "position"),
+    });
   }
 
-  const position = slide?.position;
+  if (!title || !imageUrl || (requirePosition && !hasValidPosition)) {
+    return { issues };
+  }
 
   return {
     data: {
@@ -192,14 +202,12 @@ function parseSlide(
         url: imageUrl,
       },
       layout: slide?.layout === "caption" ? "caption" : "featured",
-      position:
-        typeof position === "number" && Number.isFinite(position)
-          ? position
-          : index,
+      position: hasValidPosition ? position : index,
       primaryLink: primaryLink.data,
       promotion: promotion.data,
       secondaryLink: secondaryLink.data,
       title,
+      url: getCmsString(slide, "url"),
     },
     issues,
   };
@@ -216,14 +224,31 @@ function parseSlides(value: unknown): Readonly<{
       ? Object.entries(slidesRecord)
       : [];
   const issues: CmsContractIssue[] = [];
+  const usedPositions = new Set<number>();
 
   const slides = slideEntries
     .flatMap(([key, slide], index) => {
-      const result = parseSlide(slide, `slides.${key}`, index);
+      const path = `slides.${key}`;
+      const result = parseSlide(slide, path, index, true);
 
       issues.push(...result.issues);
 
-      return result.data ? [result.data] : [];
+      if (!result.data) {
+        return [];
+      }
+
+      if (usedPositions.has(result.data.position)) {
+        issues.push({
+          message: "Hero slide position must be unique.",
+          path: getNestedPath(path, "position"),
+        });
+
+        return [];
+      }
+
+      usedPositions.add(result.data.position);
+
+      return [result.data];
     })
     .sort((first, second) => first.position - second.position);
 

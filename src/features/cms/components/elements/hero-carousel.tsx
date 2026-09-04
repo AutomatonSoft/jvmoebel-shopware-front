@@ -95,8 +95,16 @@ function HeroSlide({
         )}
       />
 
+      {slide.url && (
+        <a
+          aria-label={slide.title}
+          className="absolute inset-0 z-10 cursor-pointer rounded-3xl focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset focus-visible:outline-none"
+          href={slide.url}
+        />
+      )}
+
       {slide.layout === "featured" && slide.promotion && (
-        <div className="absolute top-5 right-5 rounded-2xl border border-white/25 bg-background/90 px-4 py-3 text-right text-foreground shadow-xl backdrop-blur-sm sm:top-8 sm:right-8 sm:px-5 sm:py-4 lg:top-12 lg:right-12">
+        <div className="pointer-events-none absolute top-5 right-5 z-20 rounded-2xl border border-white/25 bg-background/90 px-4 py-3 text-right text-foreground shadow-xl backdrop-blur-sm sm:top-8 sm:right-8 sm:px-5 sm:py-4 lg:top-12 lg:right-12">
           {slide.promotion.label && (
             <span className="block text-[0.625rem] font-semibold tracking-[0.12em] text-muted-foreground uppercase">
               {slide.promotion.label}
@@ -110,7 +118,7 @@ function HeroSlide({
 
       <div
         className={cn(
-          "relative mx-auto flex min-h-136 max-w-360 items-end px-6 pt-32 pb-28 sm:min-h-168 sm:px-12 lg:px-20",
+          "pointer-events-none relative z-20 mx-auto flex min-h-136 max-w-360 items-end px-6 pt-32 pb-28 sm:min-h-168 sm:px-12 lg:px-20",
           slide.layout === "featured" && "sm:items-center sm:py-28",
           slide.layout === "caption" && "lg:pb-12",
         )}
@@ -161,7 +169,7 @@ function HeroSlide({
           {slide.primaryLink || slide.secondaryLink ? (
             <div
               className={cn(
-                "flex flex-wrap items-center gap-5",
+                "pointer-events-auto flex flex-wrap items-center gap-5",
                 slide.layout === "caption" ? "mt-5" : "mt-8",
               )}
             >

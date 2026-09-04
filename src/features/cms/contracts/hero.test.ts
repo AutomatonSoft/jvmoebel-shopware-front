@@ -18,6 +18,7 @@ describe("parseCmsHeroData", () => {
           url: "/shop",
         },
         title: "A home that feels like you.",
+        url: "/living-room",
       }),
     ).toEqual({
       data: {
@@ -43,6 +44,7 @@ describe("parseCmsHeroData", () => {
             promotion: undefined,
             secondaryLink: undefined,
             title: "A home that feels like you.",
+            url: "/living-room",
           },
         ],
       },
@@ -96,6 +98,7 @@ describe("parseCmsHeroData", () => {
       slides: [
         {
           image: { url: "/hero.webp" },
+          position: 0,
           primaryLink: { label: "Missing URL" },
           promotion: { label: "Missing value" },
           secondaryLink: {
@@ -137,7 +140,49 @@ describe("parseCmsHeroData", () => {
     expect(result.issues.map((issue) => issue.path)).toEqual([
       "slides.0.title",
       "slides.0.image.url",
+      "slides.0.position",
       "slides",
+    ]);
+  });
+
+  test("requires unique numbered positions for carousel slides", () => {
+    const result = parseCmsHeroData({
+      slides: [
+        {
+          image: { url: "/first.webp" },
+          position: 0,
+          title: "First",
+        },
+        {
+          image: { url: "/missing-position.webp" },
+          title: "Missing position",
+        },
+        {
+          image: { url: "/duplicate.webp" },
+          position: 0,
+          title: "Duplicate position",
+        },
+        {
+          image: { url: "/second.webp" },
+          position: 1,
+          title: "Second",
+        },
+      ],
+    });
+
+    expect(result.data?.slides.map((slide) => slide.title)).toEqual([
+      "First",
+      "Second",
+    ]);
+    expect(result.issues).toEqual([
+      {
+        message: "Hero slide position must be a non-negative integer.",
+        path: "slides.1.position",
+      },
+      {
+        message: "Hero slide position must be unique.",
+        path: "slides.2.position",
+      },
     ]);
   });
 });
