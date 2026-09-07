@@ -36,9 +36,11 @@ async function getShopwareProductListingPage(
 
 export async function getShopwareProductListing(
   client: ShopwareClient,
+  requestedCategoryId?: string,
 ): Promise<ShopProductListing | null> {
   const context = await getShopwareContext(client);
-  const categoryId = context.salesChannel.navigationCategoryId;
+  const categoryId =
+    requestedCategoryId ?? context.salesChannel.navigationCategoryId;
   const products: components["schemas"]["Product"][] = [];
   let page = 1;
   let total: number | undefined;

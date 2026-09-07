@@ -58,4 +58,36 @@ describe("getShopwareProductListing", () => {
       pathParams: { categoryId: "root-category-id" },
     });
   });
+
+  test("loads products from a requested category", async () => {
+    const requests: Array<{ operation: string; request: unknown }> = [];
+    const client = {
+      invoke: async (operation: string, request: unknown) => {
+        requests.push({ operation, request });
+
+        if (operation === "readContext get /context") {
+          return {
+            data: {
+              currency: { isoCode: "EUR" },
+              languageInfo: { localeCode: "de-DE" },
+              salesChannel: { navigationCategoryId: "root-category-id" },
+            },
+          };
+        }
+
+        return {
+          data: {
+            elements: [],
+            total: 0,
+          },
+        };
+      },
+    } as unknown as Parameters<typeof getShopwareProductListing>[0];
+
+    await getShopwareProductListing(client, "requested-category-id");
+
+    expect(requests[1]?.request).toMatchObject({
+      pathParams: { categoryId: "requested-category-id" },
+    });
+  });
 });

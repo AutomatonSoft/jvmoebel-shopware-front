@@ -6,10 +6,15 @@ import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
 import { getShopwareProductListing } from "@/integrations/shopware/product-listing";
 import { getShopwareRequestSession } from "@/integrations/shopware/session";
 
-export async function getShopProductListing(): Promise<ShopProductListing | null> {
+export async function getShopProductListing(
+  categoryId?: string,
+): Promise<ShopProductListing | null> {
   if (shouldUseShopwareMocks()) {
     return shopProductListingMock;
   }
 
-  return getShopwareProductListing(getShopwareRequestSession().client);
+  return getShopwareProductListing(
+    getShopwareRequestSession().client,
+    categoryId,
+  );
 }
