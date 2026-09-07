@@ -203,6 +203,7 @@ export function DiscountOffersPage({ listing }: DiscountOffersPageProps) {
 
           <Button
             className="mt-5 w-full sm:hidden"
+            nativeButton={false}
             render={<Link href="/shop" />}
             variant="outline"
           >
@@ -229,6 +230,7 @@ export function DiscountOffersPage({ listing }: DiscountOffersPageProps) {
             </div>
             <Button
               className="mt-6 shrink-0 sm:mt-0"
+              nativeButton={false}
               render={<Link href="/shop" />}
               size="lg"
             >
