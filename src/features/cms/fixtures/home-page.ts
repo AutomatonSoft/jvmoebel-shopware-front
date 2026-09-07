@@ -86,9 +86,9 @@ export const homeCmsPageMock = {
                     layout: "caption",
                     position: 2,
                     primaryLink: {
-                      label: "Esszimmer entdecken",
+                      label: "Jetzt sparen",
                       size: "large",
-                      url: "/esszimmer",
+                      url: "/rabatt-angebote",
                     },
                     promotion: {
                       value: "-15 %",

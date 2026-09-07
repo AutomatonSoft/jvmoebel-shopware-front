@@ -44,12 +44,6 @@ export const mainNavigationMock = [
     href: "/stauraum",
     children: [],
   },
-  {
-    id: "sale",
-    label: "Angebote",
-    href: "/rabatt-angebote",
-    children: [],
-  },
 ] satisfies StoreNavigationItem[];
 
 export const footerNavigationMock = [

@@ -13,7 +13,7 @@ export type StoreHeaderProps = {
   navigation: MainNavigation;
 };
 
-const MAX_VISIBLE_CATEGORIES = 7;
+const MAX_VISIBLE_CATEGORIES = 6;
 
 export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
   return (
@@ -27,6 +27,12 @@ export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
         {navigation.length > 0 && (
           <nav className="flex items-center gap-6" aria-label="Hauptnavigation">
             <CategoryMenu navigation={navigation} />
+            <Link
+              className="relative hidden py-7 text-xs font-semibold tracking-wide text-primary transition-colors after:absolute after:inset-x-0 after:bottom-5 after:h-px after:origin-right after:scale-x-0 after:bg-primary after:transition-transform hover:after:origin-left hover:after:scale-x-100 motion-reduce:after:hidden lg:block"
+              href="/rabatt-angebote"
+            >
+              Angebote
+            </Link>
             {navigation.slice(0, MAX_VISIBLE_CATEGORIES).map((item) => (
               <a
                 className="relative hidden py-7 text-xs font-semibold tracking-wide transition-colors after:absolute after:inset-x-0 after:bottom-5 after:h-px after:origin-right after:scale-x-0 after:bg-primary after:transition-transform hover:text-primary hover:after:origin-left hover:after:scale-x-100 motion-reduce:after:hidden lg:block"

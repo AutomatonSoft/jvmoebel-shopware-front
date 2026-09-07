@@ -3,12 +3,14 @@
 import { Dialog } from "@base-ui/react/dialog";
 import {
   ArrowRight,
+  BadgePercent,
   ChevronLeft,
   ChevronRight,
   LoaderCircle,
   Menu,
   X,
 } from "lucide-react";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { useCategoryMenu } from "@/features/storefront-shell/hooks/use-category-menu";
@@ -110,6 +112,29 @@ function ViewAllCategoryItem({ item }: { item: StoreNavigationItem }) {
         <ArrowRight className="size-3.5" />
       </span>
     </a>
+  );
+}
+
+function OffersMenuItem() {
+  return (
+    <Dialog.Close
+      render={
+        <Link
+          className="group/category-item flex min-h-14 w-full items-center justify-between gap-4 rounded-xl border border-primary/25 bg-primary/8 px-3 py-2.5 text-foreground transition-[background,border-color,box-shadow,transform] hover:border-primary/45 hover:bg-primary/12 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:scale-[.99]"
+          href="/rabatt-angebote"
+        />
+      }
+    >
+      <span className="flex min-w-0 items-center gap-3 text-left">
+        <span className="grid size-8 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground">
+          <BadgePercent aria-hidden="true" className="size-4" />
+        </span>
+        <span className="text-sm font-semibold sm:text-[0.9375rem]">
+          Angebote
+        </span>
+      </span>
+      <ArrowRight className="size-4 text-primary transition-transform group-hover/category-item:translate-x-0.5" />
+    </Dialog.Close>
   );
 }
 
@@ -247,6 +272,7 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
                     className="grid gap-1 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-right-1 motion-safe:duration-200 sm:grid-cols-2"
                     key={currentCategory?.id ?? "all-categories"}
                   >
+                    {!currentCategory && <OffersMenuItem />}
                     {currentCategory && currentCategory.type !== "folder" && (
                       <ViewAllCategoryItem item={currentCategory} />
                     )}
