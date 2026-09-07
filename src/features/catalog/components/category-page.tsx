@@ -1,4 +1,4 @@
-import { ArrowRight, PackageOpen } from "lucide-react";
+import { ListFilter, PackageOpen } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 
@@ -52,36 +52,30 @@ export function CategoryPage({ page }: { page: ShopCategoryPage }) {
         </header>
 
         {children.length > 0 && (
-          <section className="border-b py-8" aria-labelledby="subcategories">
-            <div className="mb-5 flex items-end justify-between gap-4">
-              <div>
-                <p className="mb-2 text-[0.625rem] font-semibold tracking-[0.14em] text-primary uppercase">
-                  Weiter entdecken
-                </p>
-                <h2
-                  className="text-xl font-semibold tracking-[-0.03em]"
-                  id="subcategories"
-                >
-                  Unterkategorien
-                </h2>
+          <section className="border-b py-4" aria-labelledby="subcategories">
+            <h2 className="sr-only" id="subcategories">
+              Unterkategorien
+            </h2>
+            <div className="-mx-4 overflow-x-auto overscroll-x-contain px-4 [scrollbar-width:none] sm:-mx-8 sm:px-8 [&::-webkit-scrollbar]:hidden">
+              <div className="flex w-max min-w-full gap-2">
+                <span className="flex h-11 shrink-0 items-center gap-2 rounded-md border bg-background px-3.5 text-sm font-semibold">
+                  <ListFilter className="size-4 text-muted-foreground" />
+                  Kategorien
+                </span>
+                <ul className="flex gap-2">
+                  {children.map((child) => (
+                    <li key={child.id}>
+                      <Link
+                        className="flex h-11 items-center whitespace-nowrap rounded-md border bg-background px-4 text-sm font-medium transition-[border-color,background-color,color] hover:border-primary/40 hover:bg-muted/60 hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                        href={child.href as Route}
+                      >
+                        {child.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <span className="text-xs text-muted-foreground">
-                {children.length} Kategorien
-              </span>
             </div>
-            <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {children.map((child) => (
-                <li key={child.id}>
-                  <Link
-                    className="group flex min-h-16 items-center justify-between gap-4 rounded-xl border bg-card px-4 py-3 text-sm font-semibold transition-[border-color,box-shadow,transform] hover:border-primary/40 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:scale-[.99]"
-                    href={child.href as Route}
-                  >
-                    <span>{child.label}</span>
-                    <ArrowRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
-                  </Link>
-                </li>
-              ))}
-            </ul>
           </section>
         )}
       </div>
