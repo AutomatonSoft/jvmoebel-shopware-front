@@ -20,28 +20,27 @@ requires the Store API endpoint and access key, and explicitly disables mocks.
 Starting the application with `SHOPWARE_USE_MOCKS=true` and
 `NODE_ENV=production` is treated as a configuration error.
 
-CMS integration contract:
-See [docs/cms-contract.md](docs/cms-contract.md) for the supported CMS elements
-and the JSON data expected from the Shopware backend.
+CMS component contracts:
+See [docs/README.md](docs/README.md) for the supported CMS elements, their
+`slot.data` contracts, and the fields managed through Shopware Administration.
 
 Storefront branding contract:
-See [docs/storefront-branding-contract.md](docs/storefront-branding-contract.md)
+See [STOREFRONT_BRANDING_CONTRACT.md](STOREFRONT_BRANDING_CONTRACT.md)
 for the sales channel logo configuration expected from the backend.
 
 Storefront navigation contract:
-See [docs/storefront-navigation-contract.md](docs/storefront-navigation-contract.md)
+See [STOREFRONT_NAVIGATION_CONTRACT.md](STOREFRONT_NAVIGATION_CONTRACT.md)
 for the header and footer navigation sources, link resolution, and required
 Shopware sales channel entry points.
 
-Storefront footer CMS contract:
-See [docs/storefront-footer-contract.md](docs/storefront-footer-contract.md) for
-the dedicated footer Shopping Experience, `jv-footer` element payload, media
-rules, fallback behavior, and Shopware Administration checklist.
-
 Product listing contract:
-See [docs/product-listing-contract.md](docs/product-listing-contract.md) for the
+See [PRODUCT_LISTING_CONTRACT.md](PRODUCT_LISTING_CONTRACT.md) for the
 normalized `/shop` product model, filter and sorting behavior, and Shopware
 Administration responsibility boundary.
+
+Discount offers page:
+See [DISCOUNT_OFFERS_PAGE.md](DISCOUNT_OFFERS_PAGE.md) for the sale overview
+behavior and its catalog integration.
 
 Development:
 bun dev
