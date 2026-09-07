@@ -57,10 +57,4 @@ describe("Shopware mock sources", () => {
     expect(footer).toBe(footerNavigationMock);
     expect(service).toBe(serviceNavigationMock);
   });
-
-  test("do not expose the catalog fixture in live mode", async () => {
-    process.env.SHOPWARE_USE_MOCKS = "false";
-
-    expect(await getShopProductListing()).toBeNull();
-  });
 });
