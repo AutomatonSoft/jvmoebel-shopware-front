@@ -1,4 +1,5 @@
 import { Heart, ShoppingBag, UserRound } from "lucide-react";
+import Link from "next/link";
 
 import { CategoryMenu } from "@/features/storefront-shell/components/category-menu";
 import { HeaderSearch } from "@/features/storefront-shell/components/header-search";
@@ -40,7 +41,7 @@ export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
         <HeaderSearch className="ml-auto hidden w-full max-w-80 xl:flex" />
         <MobileHeaderSearch />
         <div className="ml-auto flex items-center justify-end xl:ml-0">
-          <a
+          <Link
             aria-label="Kundenkonto"
             className="hidden min-h-10 items-center gap-2 rounded-full p-1 pr-3 transition-[background,transform,box-shadow] hover:bg-muted focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-[.975] xl:flex"
             href="/kundenkonto"
@@ -54,29 +55,29 @@ export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
               </span>
               <strong className="text-xs font-semibold">Anmelden</strong>
             </span>
-          </a>
+          </Link>
           <div className="flex items-center gap-1 sm:ml-2 sm:border-l sm:border-foreground/10 sm:pl-2">
-            <a
+            <Link
               aria-label="Kundenkonto"
               className="flex size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-90 xl:hidden"
               href="/kundenkonto"
             >
               <UserRound className="size-4.5" />
-            </a>
-            <a
+            </Link>
+            <Link
               aria-label="Wunschliste"
               className="hidden size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:scale-90 sm:flex"
               href="/moebel-sortiment"
             >
               <Heart className="size-4.5" />
-            </a>
-            <a
+            </Link>
+            <Link
               aria-label="Warenkorb"
               className="flex size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-90"
               href="/warenkorb"
             >
               <ShoppingBag className="size-4.5" />
-            </a>
+            </Link>
           </div>
         </div>
       </div>
