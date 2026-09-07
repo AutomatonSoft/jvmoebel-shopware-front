@@ -96,10 +96,69 @@ function getSpecifications(
   product: ShopwareProduct,
   listingProduct: ShopProduct,
 ): ShopProductSpecification[] {
+  const specifications: ShopProductSpecification[] = [];
   const propertyGroups = new Map<
     string,
     { id: string; label: string; values: Set<string> }
   >();
+
+  function addSpecification(
+    id: string,
+    label: string,
+    value: string | number | null | undefined,
+  ) {
+    const normalizedValue = String(value ?? "").trim();
+
+    if (normalizedValue) {
+      specifications.push({ id, label, value: normalizedValue });
+    }
+  }
+
+  const manufacturer = product.manufacturer
+    ? getShopwarePlainText(
+        product.manufacturer.translated?.name?.trim() ||
+          product.manufacturer.name?.trim() ||
+          "",
+      )
+    : "";
+  const unit = product.unit
+    ? getShopwarePlainText(
+        product.unit.translated?.shortCode?.trim() ||
+          product.unit.shortCode?.trim() ||
+          product.unit.translated?.name?.trim() ||
+          product.unit.name?.trim() ||
+          "",
+      )
+    : "";
+  const weight =
+    product.measurements?.weight?.value ?? product.weight ?? undefined;
+  const weightUnit = product.measurements?.weight?.unit || "kg";
+  const availableStock = product.availableStock ?? product.stock;
+
+  addSpecification("article-number", "Artikelnummer", product.productNumber);
+  addSpecification("ean", "EAN", product.ean);
+  addSpecification("manufacturer", "Hersteller", manufacturer);
+  addSpecification("category", "Kategorie", listingProduct.categoryLabel);
+
+  if (product.purchaseUnit && unit) {
+    addSpecification(
+      "purchase-unit",
+      "Verkaufseinheit",
+      `${product.purchaseUnit} ${unit}`,
+    );
+  }
+
+  if (typeof weight === "number" && weight > 0) {
+    addSpecification("weight", "Gewicht", `${weight} ${weightUnit}`);
+  }
+
+  if (typeof availableStock === "number" && availableStock >= 0) {
+    addSpecification(
+      "available-stock",
+      "Verfügbarer Bestand",
+      `${availableStock}${unit ? ` ${unit}` : ""}`,
+    );
+  }
 
   for (const property of product.properties ?? []) {
     const label = getShopwarePlainText(
@@ -129,23 +188,15 @@ function getSpecifications(
     }
   }
 
-  return [
-    {
-      id: "article-number",
-      label: "Artikelnummer",
-      value: product.productNumber,
-    },
-    {
-      id: "category",
-      label: "Kategorie",
-      value: listingProduct.categoryLabel,
-    },
+  specifications.push(
     ...Array.from(propertyGroups.values(), ({ id, label, values }) => ({
       id,
       label,
       value: Array.from(values).join(", "),
     })),
-  ];
+  );
+
+  return specifications;
 }
 
 function getAvailability(product: ShopwareProduct) {
@@ -180,11 +231,12 @@ export function mapShopwareProductDetail({
       articleNumber: product.productNumber,
       availability: getAvailability(product),
       deliveryEstimate: getDeliveryEstimate(product),
-      deliveryMethod: "Möbelspedition bis in die Wohnung",
       dimensions: getDimensions(product),
       gallery: getGallery(product, listingProduct),
+      isAvailable: product.available,
       longDescription,
       services: [],
+      shippingFree: product.shippingFree,
       specifications: getSpecifications(product, listingProduct),
     },
     relatedProducts: [],

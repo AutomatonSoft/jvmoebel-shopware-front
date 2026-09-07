@@ -87,6 +87,7 @@ function createProductDetail(product: ShopProduct): ShopProductDetail {
     deliveryMethod: "Möbelspedition bis zum Wunschort",
     dimensions: productDimensions[product.id] ?? fallbackDimensions,
     gallery: createProductGallery(product),
+    isAvailable: true,
     longDescription: `${product.name} verbindet eine klare Formensprache mit dem charakteristischen Material ${product.material}. Das Möbelstück ist für moderne Wohnräume gestaltet und lässt sich durch die verfügbaren Farben und Größen auf das persönliche Einrichtungskonzept abstimmen.`,
     services: [
       {
@@ -111,6 +112,7 @@ function createProductDetail(product: ShopProduct): ShopProductDetail {
         price: 129,
       },
     ],
+    shippingFree: false,
     specifications: [
       {
         id: "article-number",

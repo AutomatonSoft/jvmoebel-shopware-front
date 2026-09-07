@@ -34,11 +34,13 @@ export type ShopProductDetail = ShopProduct &
     articleNumber: string;
     availability: string;
     deliveryEstimate: string;
-    deliveryMethod: string;
+    deliveryMethod?: string;
     dimensions: ShopProductDimensions;
     gallery: readonly [ShopProduct["image"], ...ShopProduct["image"][]];
+    isAvailable?: boolean;
     longDescription: string;
     services: readonly ShopProductService[];
+    shippingFree?: boolean;
     specifications: readonly ShopProductSpecification[];
   }>;
 

@@ -146,7 +146,10 @@ export function ProductPurchasePanel({
             </span>
           )}
           <span className="w-full pt-1 text-xs text-muted-foreground">
-            inkl. MwSt. zzgl. Versandkosten
+            inkl. MwSt.{" "}
+            {product.shippingFree
+              ? "inkl. Versandkosten"
+              : "zzgl. Versandkosten"}
           </span>
         </div>
       </header>
@@ -155,7 +158,7 @@ export function ProductPurchasePanel({
         <p className="flex items-center gap-2 text-sm font-semibold">
           <span
             aria-hidden="true"
-            className="size-2.5 rounded-full bg-emerald-600"
+            className={`size-2.5 rounded-full ${product.isAvailable === false ? "bg-destructive" : product.isAvailable === true ? "bg-emerald-600" : "bg-muted-foreground"}`}
           />
           {product.availability}
         </p>
@@ -166,10 +169,12 @@ export function ProductPurchasePanel({
               Lieferung in <strong>{product.deliveryEstimate}</strong>
             </span>
           </p>
-          <p className="flex items-start gap-2.5">
-            <Truck className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-            <span>{product.deliveryMethod}</span>
-          </p>
+          {product.deliveryMethod && (
+            <p className="flex items-start gap-2.5">
+              <Truck className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+              <span>{product.deliveryMethod}</span>
+            </p>
+          )}
         </div>
         <p className="mt-4 text-xs text-muted-foreground">
           Verkauf und Versand durch:&nbsp;
@@ -177,19 +182,25 @@ export function ProductPurchasePanel({
         </p>
       </section>
 
-      <div className="space-y-2 border-b py-5">
+      <div
+        className={
+          product.colors.length > 0 || product.sizes.length > 0
+            ? "space-y-2 border-b py-5"
+            : "hidden"
+        }
+      >
         {product.colors.length > 0 && (
           <details className="group overflow-hidden rounded-xl border bg-card">
             <summary className="flex min-h-20 cursor-pointer list-none items-center gap-4 px-4 py-3 [&::-webkit-details-marker]:hidden">
               <span className="min-w-0 flex-1">
                 <strong className="block text-sm font-semibold">
-                  Material{" "}
+                  Farbe{" "}
                   <span className="font-normal">
                     ({product.colors.length} Optionen)
                   </span>
                 </strong>
                 <span className="mt-1 block truncate text-sm text-muted-foreground">
-                  {product.material}: {selectedColorLabel}
+                  {selectedColorLabel}
                 </span>
               </span>
               <span
@@ -419,6 +430,7 @@ export function ProductPurchasePanel({
       <div className="sticky bottom-0 z-10 -mx-1 bg-background/95 px-1 pt-5 pb-1 backdrop-blur">
         <Button
           className="h-12 w-full rounded-xl text-base shadow-sm"
+          nativeButton={false}
           render={
             <a href={`mailto:info@jvmoebel.de?subject=${inquirySubject}`} />
           }

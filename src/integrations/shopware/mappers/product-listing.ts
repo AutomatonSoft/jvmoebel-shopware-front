@@ -163,7 +163,17 @@ function getColors(product: ShopwareProduct): ShopProductColor[] {
 }
 
 function getMaterial(product: ShopwareProduct) {
-  const material = getProperties(product, ["material"])[0];
+  const materialGroupNames = [
+    "material",
+    "bezug",
+    "material sitzflache",
+    "bezug korpus",
+    "material korpus",
+    "material untergestell",
+  ];
+  const material = materialGroupNames
+    .map((groupName) => getProperties(product, [groupName])[0])
+    .find(Boolean);
 
   return material ? getTranslatedName(material) : "Nicht angegeben";
 }

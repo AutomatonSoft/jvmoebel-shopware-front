@@ -9,6 +9,7 @@ describe("mapShopwareProductDetail", () => {
   test("normalizes a Store API product without CMS data", () => {
     const product = {
       available: true,
+      availableStock: 7,
       calculatedPrice: { listPrice: null, unitPrice: 1499 },
       categories: [
         {
@@ -26,10 +27,16 @@ describe("mapShopwareProductDetail", () => {
       },
       deliveryTime: { max: 6, min: 2, unit: "week" },
       description: "<p>Ausführliche Produktbeschreibung.</p>",
+      ean: "4260123456789",
       id: "product-id",
+      manufacturer: {
+        name: "JV Möbel",
+        translated: { name: "JV Möbel" },
+      },
       measurements: {
         height: { unit: "cm", value: 82 },
         length: { unit: "cm", value: 95 },
+        weight: { unit: "kg", value: 42 },
         width: { unit: "cm", value: 220 },
       },
       media: [
@@ -44,6 +51,7 @@ describe("mapShopwareProductDetail", () => {
       ],
       name: "Sofa Alba",
       productNumber: "SW-10001",
+      purchaseUnit: 1,
       properties: [
         {
           group: { id: "material", name: "Material" },
@@ -56,6 +64,12 @@ describe("mapShopwareProductDetail", () => {
       translated: {
         description: "<p>Ausführliche Produktbeschreibung.</p>",
         name: "Sofa Alba",
+      },
+      shippingFree: true,
+      unit: {
+        name: "Stück",
+        shortCode: "Stück",
+        translated: { name: "Stück", shortCode: "Stück" },
       },
     } as ShopwareProduct;
 
@@ -77,14 +91,25 @@ describe("mapShopwareProductDetail", () => {
           { url: "https://shop.example.com/media/front.webp" },
           { url: "https://shop.example.com/media/detail.webp" },
         ],
+        isAvailable: true,
         longDescription: "Ausführliche Produktbeschreibung.",
         services: [],
+        shippingFree: true,
       },
       relatedProducts: [],
     });
     expect(pageData.product.specifications).toEqual([
       { id: "article-number", label: "Artikelnummer", value: "SW-10001" },
+      { id: "ean", label: "EAN", value: "4260123456789" },
+      { id: "manufacturer", label: "Hersteller", value: "JV Möbel" },
       { id: "category", label: "Kategorie", value: "Sofas" },
+      { id: "purchase-unit", label: "Verkaufseinheit", value: "1 Stück" },
+      { id: "weight", label: "Gewicht", value: "42 kg" },
+      {
+        id: "available-stock",
+        label: "Verfügbarer Bestand",
+        value: "7 Stück",
+      },
       { id: "material", label: "Material", value: "Samt" },
     ]);
   });

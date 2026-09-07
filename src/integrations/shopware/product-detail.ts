@@ -14,6 +14,7 @@ const productDetailAssociations = {
   manufacturer: {},
   media: { associations: { media: {} } },
   properties: { associations: { group: {} } },
+  unit: {},
 } satisfies components["schemas"]["Associations"];
 
 export async function getShopwareProductDetail(

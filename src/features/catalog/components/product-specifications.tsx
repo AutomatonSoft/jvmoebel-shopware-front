@@ -28,28 +28,32 @@ export function ProductSpecifications({ product }: ProductSpecificationsProps) {
     { label: "Breite", value: product.dimensions.width },
     { label: "Höhe", value: product.dimensions.height },
     { label: "Tiefe", value: product.dimensions.length },
-  ];
+  ].filter((dimension) => dimension.value > 0);
   const sections: readonly ProductDetailSection[] = [
-    {
-      content: (
-        <dl className="grid gap-3 sm:grid-cols-3">
-          {dimensions.map((dimension) => (
-            <div
-              className="rounded-xl border bg-background p-4"
-              key={dimension.label}
-            >
-              <dt className="text-xs text-muted-foreground">
-                {dimension.label}
-              </dt>
-              <dd className="mt-1 text-lg font-semibold">
-                {dimension.value} {product.dimensions.unit}
-              </dd>
-            </div>
-          ))}
-        </dl>
-      ),
-      title: "Produktabmessungen",
-    },
+    ...(dimensions.length > 0
+      ? [
+          {
+            content: (
+              <dl className="grid gap-3 sm:grid-cols-3">
+                {dimensions.map((dimension) => (
+                  <div
+                    className="rounded-xl border bg-background p-4"
+                    key={dimension.label}
+                  >
+                    <dt className="text-xs text-muted-foreground">
+                      {dimension.label}
+                    </dt>
+                    <dd className="mt-1 text-lg font-semibold">
+                      {dimension.value} {product.dimensions.unit}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            ),
+            title: "Produktabmessungen",
+          },
+        ]
+      : []),
     {
       content: (
         <dl className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
@@ -66,25 +70,6 @@ export function ProductSpecifications({ product }: ProductSpecificationsProps) {
         </dl>
       ),
       title: "Produktdetails",
-    },
-    {
-      content: (
-        <ul className="grid gap-3 text-sm leading-6 sm:grid-cols-2">
-          <li className="rounded-xl border bg-background p-4">
-            Ausführung in {product.material}
-          </li>
-          <li className="rounded-xl border bg-background p-4">
-            {product.colors.length} Farbvarianten verfügbar
-          </li>
-          <li className="rounded-xl border bg-background p-4">
-            {product.sizes.length} Größen zur Auswahl
-          </li>
-          <li className="rounded-xl border bg-background p-4">
-            Lieferung per Möbelspedition
-          </li>
-        </ul>
-      ),
-      title: "Funktion & Qualität",
     },
     {
       content: (
@@ -107,8 +92,8 @@ export function ProductSpecifications({ product }: ProductSpecificationsProps) {
       title: "Über die Marke",
     },
   ];
-  const rating = product.rating ?? 0;
-  const filledStars = Math.round(rating);
+  const rating = product.rating;
+  const filledStars = Math.round(rating ?? 0);
   const adviceSubject = encodeURIComponent(
     `Produktberatung: ${product.name} (${product.articleNumber})`,
   );
@@ -135,40 +120,44 @@ export function ProductSpecifications({ product }: ProductSpecificationsProps) {
         ))}
       </div>
 
-      <section
-        aria-labelledby="product-ratings-title"
-        className="rounded-2xl border bg-card px-5 py-7 sm:px-7"
-      >
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="text-xl font-semibold" id="product-ratings-title">
-            Bewertungen
-          </h2>
-          <Info className="size-5 text-muted-foreground" />
-        </div>
-        <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2">
-          <p className="text-4xl font-semibold tracking-tight">
-            {rating.toFixed(1).replace(".", ",")}
-            <span className="ml-1 text-base font-normal text-muted-foreground">
-              / 5
-            </span>
-          </p>
-          <div
-            aria-label={`${rating.toFixed(1)} von 5 Sternen`}
-            className="flex gap-1"
-          >
-            {Array.from({ length: 5 }, (_, index) => (
-              <Star
-                aria-hidden="true"
-                className={`size-5 text-primary ${index < filledStars ? "fill-primary" : "fill-transparent"}`}
-                key={index}
-              />
-            ))}
+      {rating !== undefined && (
+        <section
+          aria-labelledby="product-ratings-title"
+          className="rounded-2xl border bg-card px-5 py-7 sm:px-7"
+        >
+          <div className="flex items-center justify-between gap-4">
+            <h2 className="text-xl font-semibold" id="product-ratings-title">
+              Bewertungen
+            </h2>
+            <Info className="size-5 text-muted-foreground" />
           </div>
-        </div>
-        <p className="mt-3 text-sm text-muted-foreground">
-          von {product.reviewCount ?? 0} Kund:innen
-        </p>
-      </section>
+          <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-2">
+            <p className="text-4xl font-semibold tracking-tight">
+              {rating.toFixed(1).replace(".", ",")}
+              <span className="ml-1 text-base font-normal text-muted-foreground">
+                / 5
+              </span>
+            </p>
+            <div
+              aria-label={`${rating.toFixed(1)} von 5 Sternen`}
+              className="flex gap-1"
+            >
+              {Array.from({ length: 5 }, (_, index) => (
+                <Star
+                  aria-hidden="true"
+                  className={`size-5 text-primary ${index < filledStars ? "fill-primary" : "fill-transparent"}`}
+                  key={index}
+                />
+              ))}
+            </div>
+          </div>
+          {product.reviewCount !== undefined && (
+            <p className="mt-3 text-sm text-muted-foreground">
+              von {product.reviewCount} Kund:innen
+            </p>
+          )}
+        </section>
+      )}
 
       <section
         aria-labelledby="product-advice-title"
