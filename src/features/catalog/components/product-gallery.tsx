@@ -50,6 +50,7 @@ export function ProductGallery({ badge, images }: ProductGalleryProps) {
                   fill
                   sizes="80px"
                   src={image.url}
+                  unoptimized={image.url.startsWith("http")}
                 />
               </button>
             );
@@ -65,6 +66,7 @@ export function ProductGallery({ badge, images }: ProductGalleryProps) {
           loading="eager"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) calc(100vw - 8rem), 58vw"
           src={activeImage.url}
+          unoptimized={activeImage.url.startsWith("http")}
         />
 
         {badge && (

@@ -3,6 +3,8 @@ import sanitizeHtml from "sanitize-html";
 
 import type {
   ShopProduct,
+  ShopProductAttributeGroup,
+  ShopProductAttributeOption,
   ShopProductColor,
   ShopProductListing,
   ShopProductSize,
@@ -20,7 +22,7 @@ type ShopwareProductListingInput = Readonly<{
 const fallbackProductImage =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='1000' viewBox='0 0 800 1000'%3E%3Crect width='800' height='1000' fill='%23dedbd4'/%3E%3C/svg%3E";
 
-function getPlainText(value: string) {
+export function getShopwarePlainText(value: string) {
   return sanitizeHtml(
     value.replace(/<br\s*\/?\s*>|<\/(?:div|h[1-6]|li|p)>/gi, " "),
     {
@@ -36,7 +38,7 @@ function getTranslatedName(value: {
   name?: string | null;
   translated?: { name?: string | null };
 }) {
-  return getPlainText(
+  return getShopwarePlainText(
     value.translated?.name?.trim() || value.name?.trim() || "",
   );
 }
@@ -82,7 +84,7 @@ function getCategory(product: ShopwareProduct) {
 function getDescription(product: ShopwareProduct) {
   const source =
     product.translated.description?.trim() || product.description?.trim() || "";
-  const description = getPlainText(source);
+  const description = getShopwarePlainText(source);
 
   return description.length > 140
     ? `${description.slice(0, 139).trimEnd()}…`
@@ -94,9 +96,54 @@ function getImage(product: ShopwareProduct, name: string) {
   const alt = media?.translated?.alt?.trim() || media?.alt?.trim() || name;
 
   return {
-    alt: getPlainText(alt),
+    alt: getShopwarePlainText(alt),
     url: media?.url?.trim() || fallbackProductImage,
   };
+}
+
+function getPropertyHex(property: ShopwareProperty) {
+  const hex =
+    property.translated?.colorHexCode?.trim() || property.colorHexCode?.trim();
+
+  return hex && /^#[0-9a-f]{3,8}$/i.test(hex) ? hex : undefined;
+}
+
+function getAttributes(product: ShopwareProduct): ShopProductAttributeGroup[] {
+  const groups = new Map<
+    string,
+    {
+      id: string;
+      label: string;
+      options: ShopProductAttributeOption[];
+    }
+  >();
+
+  for (const property of product.properties ?? []) {
+    const groupLabel = getTranslatedName(property.group);
+    const optionLabel = getTranslatedName(property);
+
+    if (!groupLabel || !optionLabel) {
+      continue;
+    }
+
+    const group = groups.get(property.groupId) ?? {
+      id: property.groupId,
+      label: groupLabel,
+      options: [],
+    };
+
+    if (!group.options.some((option) => option.value === property.id)) {
+      group.options.push({
+        hex: getPropertyHex(property),
+        label: optionLabel,
+        value: property.id,
+      });
+    }
+
+    groups.set(group.id, group);
+  }
+
+  return Array.from(groups.values());
 }
 
 function getColors(product: ShopwareProduct): ShopProductColor[] {
@@ -106,9 +153,7 @@ function getColors(product: ShopwareProduct): ShopProductColor[] {
     "farbe",
     "grundfarbe",
   ]).flatMap((property) => {
-    const hex =
-      property.translated?.colorHexCode?.trim() ||
-      property.colorHexCode?.trim();
+    const hex = getPropertyHex(property);
     const label = getTranslatedName(property);
 
     return hex && /^#[0-9a-f]{3,8}$/i.test(hex) && label
@@ -157,7 +202,7 @@ function getSizes(product: ShopwareProduct): ShopProductSize[] {
   );
 }
 
-function mapShopwareProduct(
+export function mapShopwareProduct(
   product: ShopwareProduct,
   index: number,
 ): ShopProduct {
@@ -170,6 +215,7 @@ function mapShopwareProduct(
   const rating = product.ratingAverage;
 
   return {
+    attributes: getAttributes(product),
     badge: product.markAsTopseller
       ? "Bestseller"
       : product.isNew

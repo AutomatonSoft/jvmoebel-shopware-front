@@ -6,7 +6,20 @@ export type ShopProductColor = Readonly<{
 
 export type ShopProductSize = "small" | "medium" | "large" | "extra-large";
 
+export type ShopProductAttributeOption = Readonly<{
+  hex?: string;
+  label: string;
+  value: string;
+}>;
+
+export type ShopProductAttributeGroup = Readonly<{
+  id: string;
+  label: string;
+  options: readonly ShopProductAttributeOption[];
+}>;
+
 export type ShopProduct = Readonly<{
+  attributes: readonly ShopProductAttributeGroup[];
   badge?: string;
   category: string;
   categoryLabel: string;

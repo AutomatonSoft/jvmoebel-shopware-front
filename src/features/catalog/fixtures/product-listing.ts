@@ -1,10 +1,42 @@
-import type { ShopProductListing } from "@/features/catalog/model/product-listing";
+import type {
+  ShopProductAttributeGroup,
+  ShopProductColor,
+  ShopProductListing,
+  ShopProductSize,
+} from "@/features/catalog/model/product-listing";
 
 const cream = { hex: "#ded6c8", label: "Cream", value: "cream" };
 const charcoal = { hex: "#292a29", label: "Charcoal", value: "charcoal" };
 const rust = { hex: "#a5452a", label: "Rust", value: "rust" };
 const olive = { hex: "#4e5347", label: "Olive", value: "olive" };
 const blue = { hex: "#445265", label: "Blue", value: "blue" };
+
+const sizeLabels = {
+  "extra-large": "Extra large",
+  large: "Large",
+  medium: "Medium",
+  small: "Small",
+} satisfies Record<ShopProductSize, string>;
+
+function getMockAttributes(
+  colors: readonly ShopProductColor[],
+  material: string,
+  sizes: readonly ShopProductSize[],
+): ShopProductAttributeGroup[] {
+  return [
+    { id: "color", label: "Colour", options: colors },
+    {
+      id: "material",
+      label: "Material",
+      options: [{ label: material, value: material }],
+    },
+    {
+      id: "size",
+      label: "Size",
+      options: sizes.map((size) => ({ label: sizeLabels[size], value: size })),
+    },
+  ];
+}
 
 export const shopProductListingMock = {
   currency: "EUR",
@@ -13,6 +45,10 @@ export const shopProductListingMock = {
   locale: "de-DE",
   products: [
     {
+      attributes: getMockAttributes([cream, rust, olive], "Bouclé", [
+        "large",
+        "extra-large",
+      ]),
       badge: "Bestseller",
       category: "sofas",
       categoryLabel: "Sofas",
@@ -36,6 +72,10 @@ export const shopProductListingMock = {
       url: "/product/alba",
     },
     {
+      attributes: getMockAttributes([rust, cream], "Bouclé", [
+        "small",
+        "medium",
+      ]),
       badge: "New",
       category: "armchairs",
       categoryLabel: "Armchairs",
@@ -59,6 +99,10 @@ export const shopProductListingMock = {
       url: "/product/noma",
     },
     {
+      attributes: getMockAttributes([charcoal, rust], "Walnut", [
+        "medium",
+        "large",
+      ]),
       badge: "Low stock",
       category: "storage",
       categoryLabel: "Storage",
@@ -82,6 +126,7 @@ export const shopProductListingMock = {
       url: "/product/forma",
     },
     {
+      attributes: getMockAttributes([rust, charcoal], "Oak", ["large"]),
       badge: "Sale",
       category: "tables",
       categoryLabel: "Tables",
@@ -105,6 +150,10 @@ export const shopProductListingMock = {
       url: "/product/mira",
     },
     {
+      attributes: getMockAttributes([cream, olive, blue], "Linen", [
+        "medium",
+        "large",
+      ]),
       badge: "New",
       category: "sofas",
       categoryLabel: "Sofas",
@@ -128,6 +177,7 @@ export const shopProductListingMock = {
       url: "/product/aura",
     },
     {
+      attributes: getMockAttributes([cream, blue], "Bouclé", ["small"]),
       badge: "Online only",
       category: "armchairs",
       categoryLabel: "Armchairs",
@@ -151,6 +201,10 @@ export const shopProductListingMock = {
       url: "/product/luma",
     },
     {
+      attributes: getMockAttributes([charcoal, cream], "Linen", [
+        "large",
+        "extra-large",
+      ]),
       badge: "Bestseller",
       category: "sofas",
       categoryLabel: "Sofas",
@@ -174,6 +228,10 @@ export const shopProductListingMock = {
       url: "/product/koto",
     },
     {
+      attributes: getMockAttributes([charcoal, rust, olive], "Walnut", [
+        "medium",
+        "large",
+      ]),
       badge: "Sale",
       category: "storage",
       categoryLabel: "Storage",
@@ -197,6 +255,10 @@ export const shopProductListingMock = {
       url: "/product/linea",
     },
     {
+      attributes: getMockAttributes([rust, charcoal, olive], "Wool", [
+        "small",
+        "medium",
+      ]),
       badge: "New",
       category: "armchairs",
       categoryLabel: "Armchairs",

@@ -6,11 +6,16 @@ import { shopProductDetailsMock } from "@/features/catalog/fixtures/product-deta
 import { shopProductListingMock } from "@/features/catalog/fixtures/product-listing";
 import type { ShopProductPageData } from "@/features/catalog/model/product-detail";
 import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
+import { getShopwareProductDetail } from "@/integrations/shopware/product-detail";
+import { getShopwareRequestSession } from "@/integrations/shopware/session";
 
 export const getShopProductPageData = cache(
   async (productId: string): Promise<ShopProductPageData | null> => {
     if (!shouldUseShopwareMocks()) {
-      return null;
+      return getShopwareProductDetail(
+        getShopwareRequestSession().client,
+        productId,
+      );
     }
 
     const product = shopProductDetailsMock.find(

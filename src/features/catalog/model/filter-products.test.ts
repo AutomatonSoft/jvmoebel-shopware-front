@@ -8,6 +8,26 @@ import type { ShopProduct } from "@/features/catalog/model/product-listing";
 
 const products = [
   {
+    attributes: [
+      {
+        id: "color",
+        label: "Colour",
+        options: [{ label: "Cream", value: "cream" }],
+      },
+      {
+        id: "material",
+        label: "Material",
+        options: [{ label: "Linen", value: "linen" }],
+      },
+      {
+        id: "size",
+        label: "Size",
+        options: [
+          { label: "Large", value: "large" },
+          { label: "Extra large", value: "extra-large" },
+        ],
+      },
+    ],
     category: "sofas",
     categoryLabel: "Sofas",
     colors: [{ hex: "#ffffff", label: "Cream", value: "cream" }],
@@ -25,6 +45,26 @@ const products = [
     url: "/product/sofa",
   },
   {
+    attributes: [
+      {
+        id: "color",
+        label: "Colour",
+        options: [{ label: "Black", value: "black" }],
+      },
+      {
+        id: "material",
+        label: "Material",
+        options: [{ label: "Velvet", value: "velvet" }],
+      },
+      {
+        id: "size",
+        label: "Size",
+        options: [
+          { label: "Small", value: "small" },
+          { label: "Medium", value: "medium" },
+        ],
+      },
+    ],
     category: "chairs",
     categoryLabel: "Chairs",
     colors: [{ hex: "#000000", label: "Black", value: "black" }],
@@ -44,9 +84,8 @@ const products = [
 ] satisfies ShopProduct[];
 
 const allProductsFilters = {
+  attributes: {},
   categories: [],
-  colors: [],
-  materials: [],
   maximumPrice: 3000,
   minimumPrice: 0,
 } satisfies ShopProductFilters;
@@ -57,11 +96,13 @@ describe("shop product listing", () => {
       products,
       {
         ...allProductsFilters,
+        attributes: {
+          color: ["cream"],
+          material: ["linen"],
+          size: ["large"],
+        },
         categories: ["sofas"],
-        colors: ["cream"],
         companies: ["JV Studio"],
-        materials: ["Linen"],
-        sizes: ["large"],
       },
       "featured",
     );
@@ -69,12 +110,12 @@ describe("shop product listing", () => {
     expect(filteredProducts.map((product) => product.id)).toEqual(["sofa"]);
   });
 
-  test("matches any selected size within the size group", () => {
+  test("matches any selected option within an attribute group", () => {
     const filteredProducts = filterAndSortShopProducts(
       products,
       {
         ...allProductsFilters,
-        sizes: ["medium", "extra-large"],
+        attributes: { size: ["medium", "extra-large"] },
       },
       "featured",
     );

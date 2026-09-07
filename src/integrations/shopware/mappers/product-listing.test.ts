@@ -45,19 +45,34 @@ describe("mapShopwareProductListing", () => {
       properties: [
         {
           colorHexCode: "#ded6c8",
-          group: { name: "Farbe", translated: { name: "Farbe" } },
+          group: {
+            id: "color-group",
+            name: "Farbe",
+            translated: { name: "Farbe" },
+          },
+          groupId: "color-group",
           id: "beige",
           name: "Beige",
           translated: { colorHexCode: "#ded6c8", name: "Beige" },
         },
         {
-          group: { name: "Material", translated: { name: "Material" } },
+          group: {
+            id: "material-group",
+            name: "Material",
+            translated: { name: "Material" },
+          },
+          groupId: "material-group",
           id: "velvet",
           name: "Samt",
           translated: { name: "Samt" },
         },
         {
-          group: { name: "Größe", translated: { name: "Größe" } },
+          group: {
+            id: "size-group",
+            name: "Größe",
+            translated: { name: "Größe" },
+          },
+          groupId: "size-group",
           id: "large",
           name: "Groß",
           translated: { name: "Groß" },
@@ -77,6 +92,23 @@ describe("mapShopwareProductListing", () => {
     });
 
     expect(listing?.products[0]).toMatchObject({
+      attributes: [
+        {
+          id: "color-group",
+          label: "Farbe",
+          options: [{ hex: "#ded6c8", label: "Beige", value: "beige" }],
+        },
+        {
+          id: "material-group",
+          label: "Material",
+          options: [{ label: "Samt", value: "velvet" }],
+        },
+        {
+          id: "size-group",
+          label: "Größe",
+          options: [{ label: "Groß", value: "large" }],
+        },
+      ],
       badge: "Bestseller",
       category: "sofas",
       categoryLabel: "Sofas",
