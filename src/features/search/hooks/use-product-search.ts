@@ -29,7 +29,7 @@ export function useProductSearch(query: string, isOpen: boolean) {
 
       try {
         const response = await fetch(
-          `/api/products/search?query=${encodeURIComponent(normalizedQuery)}`,
+          `/bff/products/search?query=${encodeURIComponent(normalizedQuery)}`,
           { cache: "no-store", signal: controller.signal },
         );
 
