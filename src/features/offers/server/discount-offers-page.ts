@@ -23,27 +23,27 @@ export async function getDiscountOffersCmsPage(): Promise<CmsPage | null> {
     return discountOffersCmsPageMock;
   }
 
-  const client = getShopwareRequestSession().client;
-  const context = await getShopwareContext(client);
-  const configuration = getCmsRecord(context.salesChannel.configuration);
-  const pageId = getCmsString(configuration, pageIdConfigurationKey);
-
-  if (!pageId) {
-    reportOffersCmsIssue(`${pageIdConfigurationKey} is missing.`);
-    return null;
-  }
-
-  if (!shopwareIdPattern.test(pageId)) {
-    reportOffersCmsIssue(
-      `${pageIdConfigurationKey} must be a 32-character Shopware ID.`,
-    );
-    return null;
-  }
-
   try {
+    const client = getShopwareRequestSession().client;
+    const context = await getShopwareContext(client);
+    const configuration = getCmsRecord(context.salesChannel.configuration);
+    const pageId = getCmsString(configuration, pageIdConfigurationKey);
+
+    if (!pageId) {
+      reportOffersCmsIssue(`${pageIdConfigurationKey} is missing.`);
+      return null;
+    }
+
+    if (!shopwareIdPattern.test(pageId)) {
+      reportOffersCmsIssue(
+        `${pageIdConfigurationKey} must be a 32-character Shopware ID.`,
+      );
+      return null;
+    }
+
     return await getShopwareCmsPage({ client, id: pageId });
   } catch (error) {
-    reportOffersCmsIssue(`Failed to load offers CMS page ${pageId}.`, error);
+    reportOffersCmsIssue("Failed to load the offers CMS page.", error);
     return null;
   }
 }
