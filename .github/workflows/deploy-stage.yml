@@ -34,7 +34,7 @@ jobs:
       - shell: bash
         run: |
           set -Eeuo pipefail
-          test "$(sha256sum compose.deploy.yml | awk '{print $1}')" = 10951f0de5f70189ae36c3d411f030e4ba7e82a4f1ef64ea1ecaf1cc3d2addfe
+          test "$(sha256sum compose.deploy.yml | awk '{print $1}')" = 7d694a8ee5d7c13551a223e3155db5c446b30825d4532ebdd91d12ffa97c6c81
           COMPOSE_DISABLE_ENV_FILE=1 SHOPWARE_ENDPOINT=https://example.invalid SHOPWARE_ACCESS_TOKEN=validation-token FRONT_PORT=3000 APP_NETWORK=validation-network docker compose -f compose.deploy.yml config --quiet
           ! find . -type l -print -quit | grep -q .
           tar -czf "$RUNNER_TEMP/front.tar.gz" --exclude-vcs .
@@ -72,7 +72,7 @@ jobs:
       DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
       DEPLOY_KNOWN_HOSTS: ${{ vars.DEPLOY_KNOWN_HOSTS }}
       EXPECTED_DEPLOY_HOST: 85.215.147.19
-      EXPECTED_COMPOSE_SHA256: 10951f0de5f70189ae36c3d411f030e4ba7e82a4f1ef64ea1ecaf1cc3d2addfe
+      EXPECTED_COMPOSE_SHA256: 7d694a8ee5d7c13551a223e3155db5c446b30825d4532ebdd91d12ffa97c6c81
       EXPECTED_HELPER_SHA256: 643c3bbf214283b2880cb0462ec1f87238b8a507b148f02911bc20e37f0da714
       EXPECTED_DEPLOY_KEY_FINGERPRINT: SHA256:Q3JQh8Yqz7EEoRVZXUufLmx160pk9ptugi+Zsj6qSU4
       EXPECTED_HOST_KEY_FINGERPRINT: SHA256:6BHoasAuc7ptnN/HhXaP3C/BtklHPtP85WZ2fAXcAzI
