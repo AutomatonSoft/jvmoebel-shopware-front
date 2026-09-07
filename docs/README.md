@@ -9,6 +9,7 @@ fields that should be editable in Shopware Administration.
 
 | `slot.type`         | Documentation                                  | Purpose                      |
 | ------------------- | ---------------------------------------------- | ---------------------------- |
+| `jv-page-header`    | [`jv-page-header.md`](jv-page-header.md)       | Internal page heading        |
 | `jv-hero`           | [`jv-hero.md`](jv-hero.md)                     | Hero banner carousel         |
 | `jv-category-rail`  | [`jv-category-rail.md`](jv-category-rail.md)   | Horizontal category cards    |
 | `jv-room-grid`      | [`jv-room-grid.md`](jv-room-grid.md)           | Editorial room grid          |
