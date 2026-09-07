@@ -76,7 +76,7 @@ function CategoryItem({
   const className =
     "group/category-item flex min-h-14 w-full items-center justify-between gap-4 rounded-xl border border-transparent px-3 py-2.5 text-foreground transition-[background,border-color,box-shadow,transform] hover:border-border hover:bg-card hover:shadow-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:scale-[.99]";
 
-  if (getChildCount(item) > 0) {
+  if (getChildCount(item) > 0 && item.type !== "link") {
     return (
       <button
         aria-busy={loading || undefined}
@@ -91,13 +91,25 @@ function CategoryItem({
   }
 
   return (
-    <Dialog.Close
-      className={className}
-      nativeButton={false}
-      render={<a href={item.href} />}
-    >
+    <a className={className} href={item.href}>
       <CategoryItemContent item={item} loading={false} />
-    </Dialog.Close>
+    </a>
+  );
+}
+
+function ViewAllCategoryItem({ item }: { item: StoreNavigationItem }) {
+  return (
+    <a
+      className="group/category-item flex min-h-14 w-full items-center justify-between gap-4 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2.5 text-foreground transition-[background,border-color,box-shadow,transform] hover:border-primary/40 hover:bg-primary/10 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:scale-[.99]"
+      href={item.href}
+    >
+      <span className="text-left text-sm font-semibold sm:text-[0.9375rem]">
+        Alle {item.label}
+      </span>
+      <span className="grid size-8 place-items-center rounded-full bg-primary text-primary-foreground transition-transform group-hover/category-item:translate-x-0.5">
+        <ArrowRight className="size-3.5" />
+      </span>
+    </a>
   );
 }
 
@@ -185,16 +197,6 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
                       {getChildrenLabel(currentItems.length)}
                     </p>
                   )}
-                  {currentCategory && (
-                    <Dialog.Close
-                      className="group/view mt-3 inline-flex min-h-9 items-center gap-2 rounded-full bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground transition-[background,color,transform] hover:bg-destructive focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-secondary motion-safe:active:scale-[.98] sm:mt-6 sm:min-h-10 sm:px-4 sm:py-2"
-                      nativeButton={false}
-                      render={<a href={currentCategory.href} />}
-                    >
-                      Kategorie ansehen
-                      <ArrowRight className="size-3.5 transition-transform group-hover/view:translate-x-0.5" />
-                    </Dialog.Close>
-                  )}
                 </div>
               </aside>
               <div className="flex min-h-0 min-w-0 flex-col">
@@ -245,6 +247,9 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
                     className="grid gap-1 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-right-1 motion-safe:duration-200 sm:grid-cols-2"
                     key={currentCategory?.id ?? "all-categories"}
                   >
+                    {currentCategory && currentCategory.type !== "folder" && (
+                      <ViewAllCategoryItem item={currentCategory} />
+                    )}
                     {currentItems.map((item) => (
                       <CategoryItem
                         item={item}

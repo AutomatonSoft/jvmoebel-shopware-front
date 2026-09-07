@@ -20,12 +20,14 @@ import type { ShopProductSort } from "@/features/catalog/model/filter-products";
 import type { ShopProductListing } from "@/features/catalog/model/product-listing";
 
 export type ShopCatalogProps = {
+  hideHeader?: boolean;
   initialCategory?: Pick<ProductFilterOption, "label" | "value">;
   isLoading?: boolean;
   listing: ShopProductListing;
 };
 
 export function ShopCatalog({
+  hideHeader = false,
   initialCategory,
   isLoading = false,
   listing,
@@ -42,30 +44,34 @@ export function ShopCatalog({
 
   return (
     <div className="mx-auto w-full max-w-360 px-4 pb-20 sm:px-8 sm:pb-28">
-      <nav
-        aria-label="Breadcrumb"
-        className="flex items-center gap-2.5 pt-6 text-[0.625rem] text-muted-foreground"
-      >
-        <Link className="transition-colors hover:text-primary" href="/">
-          Home
-        </Link>
-        <span aria-hidden="true">/</span>
-        <strong className="font-medium text-foreground">Shop</strong>
-      </nav>
+      {!hideHeader && (
+        <>
+          <nav
+            aria-label="Breadcrumb"
+            className="flex items-center gap-2.5 pt-6 text-[0.625rem] text-muted-foreground"
+          >
+            <Link className="transition-colors hover:text-primary" href="/">
+              Home
+            </Link>
+            <span aria-hidden="true">/</span>
+            <strong className="font-medium text-foreground">Shop</strong>
+          </nav>
 
-      <header className="border-b pt-9 pb-6 sm:flex sm:items-end sm:justify-between sm:gap-8">
-        <div>
-          <p className="mb-3 flex items-center gap-2 text-[0.625rem] font-semibold tracking-[0.14em] text-muted-foreground uppercase before:block before:size-1.5 before:rounded-full before:bg-primary">
-            {listing.eyebrow}
-          </p>
-          <h1 className="text-3xl leading-none font-semibold tracking-[-0.04em] text-balance sm:text-4xl">
-            {listing.title}
-          </h1>
-        </div>
-        <p className="mt-4 max-w-md text-sm leading-6 text-muted-foreground sm:mt-0 sm:text-right">
-          {listing.description}
-        </p>
-      </header>
+          <header className="border-b pt-9 pb-6 sm:flex sm:items-end sm:justify-between sm:gap-8">
+            <div>
+              <p className="mb-3 flex items-center gap-2 text-[0.625rem] font-semibold tracking-[0.14em] text-muted-foreground uppercase before:block before:size-1.5 before:rounded-full before:bg-primary">
+                {listing.eyebrow}
+              </p>
+              <h1 className="text-3xl leading-none font-semibold tracking-[-0.04em] text-balance sm:text-4xl">
+                {listing.title}
+              </h1>
+            </div>
+            <p className="mt-4 max-w-md text-sm leading-6 text-muted-foreground sm:mt-0 sm:text-right">
+              {listing.description}
+            </p>
+          </header>
+        </>
+      )}
 
       <div className="grid gap-8 pt-8 lg:grid-cols-[13.75rem_minmax(0,1fr)] lg:gap-10 xl:gap-12">
         <aside className="sticky top-24 hidden max-h-[calc(100dvh-7rem)] self-start overflow-y-auto rounded-xl border bg-card/70 p-4 scrollbar-width:none lg:block [&::-webkit-scrollbar]:hidden">
@@ -74,6 +80,9 @@ export function ShopCatalog({
 
         <section aria-label="Product results" className="min-w-0">
           <div className="mb-6 flex items-center justify-between gap-3">
+            <span className="text-xs font-medium text-muted-foreground">
+              {paginationProps.totalProducts} Produkte
+            </span>
             <Dialog.Root>
               <Dialog.Trigger
                 render={

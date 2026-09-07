@@ -19,6 +19,7 @@ describe("mapShopwareCategory", () => {
       href: "/kategorie/footer-category",
       id: "footer-category",
       label: "Information",
+      type: undefined,
     });
   });
 

@@ -39,5 +39,6 @@ export function mapShopwareCategory(
     id: category.id,
     label: category.translated.name || category.name,
     href: getCategoryHref(category),
+    type: category.type,
   };
 }
