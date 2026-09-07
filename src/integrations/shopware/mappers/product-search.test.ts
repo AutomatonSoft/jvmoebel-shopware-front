@@ -40,7 +40,7 @@ describe("mapShopwareProductSearchResult", () => {
       },
       name: "Nara Chair",
       unitPrice: 895,
-      url: "/product/chair-id",
+      url: "/produkt/chair-id",
     });
   });
 });

@@ -79,7 +79,7 @@ export function MobileHeaderSearch() {
             transition={{ duration: 0.2, ease: "easeOut" }}
           >
             <form
-              action="/shop"
+              action="/moebel-sortiment"
               className="group/search flex h-12 items-center border-b bg-muted/80 p-1 pl-4"
               role="search"
             >

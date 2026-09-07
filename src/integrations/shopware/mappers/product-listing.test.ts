@@ -125,7 +125,7 @@ describe("mapShopwareProductListing", () => {
       rating: 4.8,
       sizes: ["large"],
       unitPrice: 999,
-      url: "/product/product-id",
+      url: "/produkt/product-id",
     });
   });
 

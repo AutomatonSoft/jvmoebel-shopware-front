@@ -43,7 +43,7 @@ export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
           <a
             aria-label="Kundenkonto"
             className="hidden min-h-10 items-center gap-2 rounded-full p-1 pr-3 transition-[background,transform,box-shadow] hover:bg-muted focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-[.975] xl:flex"
-            href="/account"
+            href="/kundenkonto"
           >
             <span className="flex size-8.5 shrink-0 items-center justify-center rounded-full border border-foreground/15">
               <UserRound className="size-4" />
@@ -59,21 +59,21 @@ export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
             <a
               aria-label="Kundenkonto"
               className="flex size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-90 xl:hidden"
-              href="/account"
+              href="/kundenkonto"
             >
               <UserRound className="size-4.5" />
             </a>
             <a
               aria-label="Wunschliste"
               className="hidden size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:scale-90 sm:flex"
-              href="/shop"
+              href="/moebel-sortiment"
             >
               <Heart className="size-4.5" />
             </a>
             <a
               aria-label="Warenkorb"
               className="flex size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-90"
-              href="/cart"
+              href="/warenkorb"
             >
               <ShoppingBag className="size-4.5" />
             </a>

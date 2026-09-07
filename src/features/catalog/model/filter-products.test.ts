@@ -42,7 +42,7 @@ const products = [
     rating: 4.5,
     sizes: ["large", "extra-large"],
     unitPrice: 2000,
-    url: "/product/sofa",
+    url: "/produkt/sofa",
   },
   {
     attributes: [
@@ -79,7 +79,7 @@ const products = [
     rating: 4.9,
     sizes: ["small", "medium"],
     unitPrice: 900,
-    url: "/product/chair",
+    url: "/produkt/chair",
   },
 ] satisfies ShopProduct[];
 

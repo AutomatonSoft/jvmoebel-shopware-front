@@ -31,7 +31,7 @@ function createProduct(
     name: "Product",
     sizes: ["large"],
     unitPrice: 1000,
-    url: `/product/${overrides.id}`,
+    url: `/produkt/${overrides.id}`,
     ...overrides,
   };
 }

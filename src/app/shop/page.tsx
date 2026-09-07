@@ -6,8 +6,8 @@ import { findOfferCategory } from "@/features/offers/model/offer-categories";
 import { ErrorExperience } from "@/features/storefront-shell/components/error-experience";
 
 export const metadata: Metadata = {
-  description: "Browse the JVMöbel furniture collection.",
-  title: "Shop | JVMöbel",
+  description: "Entdecken Sie das Möbelsortiment von JVMöbel.",
+  title: "Möbel-Sortiment | JVMöbel",
 };
 
 type ShopPageProps = Readonly<{

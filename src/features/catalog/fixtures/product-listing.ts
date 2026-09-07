@@ -69,7 +69,7 @@ export const shopProductListingMock = {
       reviewCount: 128,
       sizes: ["large", "extra-large"],
       unitPrice: 2490,
-      url: "/product/alba",
+      url: "/produkt/alba",
     },
     {
       attributes: getMockAttributes([rust, cream], "Bouclé", [
@@ -96,7 +96,7 @@ export const shopProductListingMock = {
       reviewCount: 64,
       sizes: ["small", "medium"],
       unitPrice: 895,
-      url: "/product/noma",
+      url: "/produkt/noma",
     },
     {
       attributes: getMockAttributes([charcoal, rust], "Walnut", [
@@ -123,7 +123,7 @@ export const shopProductListingMock = {
       reviewCount: 39,
       sizes: ["medium", "large"],
       unitPrice: 1290,
-      url: "/product/forma",
+      url: "/produkt/forma",
     },
     {
       attributes: getMockAttributes([rust, charcoal], "Oak", ["large"]),
@@ -147,7 +147,7 @@ export const shopProductListingMock = {
       reviewCount: 81,
       sizes: ["large"],
       unitPrice: 1650,
-      url: "/product/mira",
+      url: "/produkt/mira",
     },
     {
       attributes: getMockAttributes([cream, olive, blue], "Linen", [
@@ -174,7 +174,7 @@ export const shopProductListingMock = {
       reviewCount: 52,
       sizes: ["medium", "large"],
       unitPrice: 2180,
-      url: "/product/aura",
+      url: "/produkt/aura",
     },
     {
       attributes: getMockAttributes([cream, blue], "Bouclé", ["small"]),
@@ -198,7 +198,7 @@ export const shopProductListingMock = {
       reviewCount: 31,
       sizes: ["small"],
       unitPrice: 760,
-      url: "/product/luma",
+      url: "/produkt/luma",
     },
     {
       attributes: getMockAttributes([charcoal, cream], "Linen", [
@@ -225,7 +225,7 @@ export const shopProductListingMock = {
       reviewCount: 93,
       sizes: ["large", "extra-large"],
       unitPrice: 3190,
-      url: "/product/koto",
+      url: "/produkt/koto",
     },
     {
       attributes: getMockAttributes([charcoal, rust, olive], "Walnut", [
@@ -252,7 +252,7 @@ export const shopProductListingMock = {
       reviewCount: 44,
       sizes: ["medium", "large"],
       unitPrice: 1190,
-      url: "/product/linea",
+      url: "/produkt/linea",
     },
     {
       attributes: getMockAttributes([rust, charcoal, olive], "Wool", [
@@ -279,7 +279,7 @@ export const shopProductListingMock = {
       reviewCount: 28,
       sizes: ["small", "medium"],
       unitPrice: 940,
-      url: "/product/nara",
+      url: "/produkt/nara",
     },
   ],
   title: "Furniture collection",

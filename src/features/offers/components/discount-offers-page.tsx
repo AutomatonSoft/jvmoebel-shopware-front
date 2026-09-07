@@ -167,7 +167,7 @@ export function DiscountOffersPage({ listing }: DiscountOffersPageProps) {
             </h2>
             <Link
               className="hidden text-sm font-semibold underline decoration-foreground/30 underline-offset-4 transition-colors hover:text-primary sm:block"
-              href="/shop"
+              href="/moebel-sortiment"
             >
               Alle Deals entdecken
             </Link>
@@ -178,7 +178,7 @@ export function DiscountOffersPage({ listing }: DiscountOffersPageProps) {
               <Link
                 className="group min-w-0 rounded-2xl border bg-card p-2 shadow-[0_10px_30px_-26px_rgba(21,21,19,0.6)] transition-[transform,border-color,box-shadow] hover:border-foreground/25 hover:shadow-[0_18px_36px_-25px_rgba(21,21,19,0.65)] motion-safe:hover:-translate-y-1"
                 href={{
-                  pathname: "/shop",
+                  pathname: "/moebel-sortiment",
                   query: { category: category.value },
                 }}
                 key={category.label}
@@ -204,7 +204,7 @@ export function DiscountOffersPage({ listing }: DiscountOffersPageProps) {
           <Button
             className="mt-5 w-full sm:hidden"
             nativeButton={false}
-            render={<Link href="/shop" />}
+            render={<Link href="/moebel-sortiment" />}
             variant="outline"
           >
             Alle Deals entdecken
@@ -231,7 +231,7 @@ export function DiscountOffersPage({ listing }: DiscountOffersPageProps) {
             <Button
               className="mt-6 shrink-0 sm:mt-0"
               nativeButton={false}
-              render={<Link href="/shop" />}
+              render={<Link href="/moebel-sortiment" />}
               size="lg"
             >
               Jetzt entdecken

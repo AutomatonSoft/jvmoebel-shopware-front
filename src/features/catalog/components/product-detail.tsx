@@ -26,7 +26,10 @@ export function ProductDetail({
             Home
           </Link>
           <span aria-hidden="true">/</span>
-          <Link className="transition-colors hover:text-primary" href="/shop">
+          <Link
+            className="transition-colors hover:text-primary"
+            href="/moebel-sortiment"
+          >
             Shop
           </Link>
           <span aria-hidden="true">/</span>
@@ -69,7 +72,7 @@ export function ProductDetail({
 
               <Link
                 className="group hidden items-center gap-2 text-sm font-semibold underline underline-offset-4 transition-colors hover:text-primary sm:inline-flex"
-                href="/shop"
+                href="/moebel-sortiment"
               >
                 Alle Produkte
                 <ArrowRight className="size-4 transition-transform motion-safe:group-hover:translate-x-1" />
@@ -89,7 +92,7 @@ export function ProductDetail({
 
             <Link
               className="mt-10 flex h-11 items-center justify-center gap-2 rounded-xl border text-sm font-semibold transition-colors hover:bg-foreground hover:text-background sm:hidden"
-              href="/shop"
+              href="/moebel-sortiment"
             >
               Alle Produkte
               <ArrowRight className="size-4" />

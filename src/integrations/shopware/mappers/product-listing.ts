@@ -253,7 +253,7 @@ export function mapShopwareProduct(
         : undefined,
     sizes: getSizes(product),
     unitPrice: product.calculatedPrice.unitPrice,
-    url: `/product/${encodeURIComponent(product.id)}`,
+    url: `/produkt/${encodeURIComponent(product.id)}`,
   };
 }
 

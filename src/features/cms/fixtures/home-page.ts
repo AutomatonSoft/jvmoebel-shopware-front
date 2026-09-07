@@ -49,7 +49,7 @@ export const homeCmsPageMock = {
                     primaryLink: {
                       label: "Wohnzimmer entdecken",
                       size: "large",
-                      url: "/living",
+                      url: "/wohnzimmer",
                     },
                     promotion: {
                       label: "Ausgewählte Kollektionen",
@@ -58,7 +58,7 @@ export const homeCmsPageMock = {
                     secondaryLink: {
                       label: "Alle Möbel ansehen",
                       size: "medium",
-                      url: "/shop",
+                      url: "/moebel-sortiment",
                     },
                     title: "Wohnzimmer, die sich nach Ihnen anfühlen.",
                   },
@@ -88,7 +88,7 @@ export const homeCmsPageMock = {
                     primaryLink: {
                       label: "Esszimmer entdecken",
                       size: "large",
-                      url: "/dining",
+                      url: "/esszimmer",
                     },
                     promotion: {
                       value: "-15 %",
@@ -119,7 +119,7 @@ export const homeCmsPageMock = {
                     },
                     label: "Sofas & Couches",
                     position: 0,
-                    url: "/living/sofas",
+                    url: "/wohnzimmer/sofas",
                   },
                   armchairs: {
                     id: "popular-armchairs",
@@ -129,7 +129,7 @@ export const homeCmsPageMock = {
                     },
                     label: "Sessel",
                     position: 1,
-                    url: "/living/armchairs",
+                    url: "/wohnzimmer/sessel",
                   },
                   diningTables: {
                     id: "popular-dining-tables",
@@ -139,7 +139,7 @@ export const homeCmsPageMock = {
                     },
                     label: "Esstische",
                     position: 2,
-                    url: "/dining/tables",
+                    url: "/esszimmer/esstische",
                   },
                   beds: {
                     id: "popular-beds",
@@ -149,7 +149,7 @@ export const homeCmsPageMock = {
                     },
                     label: "Betten",
                     position: 3,
-                    url: "/bedroom/beds",
+                    url: "/schlafzimmer/betten",
                   },
                   tvFurniture: {
                     id: "popular-tv-furniture",
@@ -159,7 +159,7 @@ export const homeCmsPageMock = {
                     },
                     label: "TV-Möbel",
                     position: 4,
-                    url: "/living/tv-furniture",
+                    url: "/wohnzimmer/tv-moebel",
                   },
                   newArrivals: {
                     id: "popular-new-arrivals",
@@ -169,7 +169,7 @@ export const homeCmsPageMock = {
                     },
                     label: "Neuheiten",
                     position: 5,
-                    url: "/new-in",
+                    url: "/neuheiten",
                   },
                 },
                 description:
@@ -178,7 +178,7 @@ export const homeCmsPageMock = {
                 title: "Beliebte Kategorien",
                 viewAll: {
                   label: "Alle Kategorien",
-                  url: "/shop",
+                  url: "/moebel-sortiment",
                 },
               },
             },
@@ -208,7 +208,7 @@ export const homeCmsPageMock = {
                     id: "look-alba-sofa",
                     name: "Alba Modulsofa",
                     position: 0,
-                    url: "/product/alba",
+                    url: "/produkt/alba",
                   },
                   armchair: {
                     description: "Rostrotes Bouclé · weiche Rundungen",
@@ -216,7 +216,7 @@ export const homeCmsPageMock = {
                     id: "look-noma-armchair",
                     name: "Noma Loungesessel",
                     position: 1,
-                    url: "/product/noma",
+                    url: "/produkt/noma",
                   },
                   lowboard: {
                     description: "Dunkles Holz · klare Linien",
@@ -224,13 +224,13 @@ export const homeCmsPageMock = {
                     id: "look-forma-lowboard",
                     name: "Forma TV-Lowboard",
                     position: 2,
-                    url: "/product/forma",
+                    url: "/produkt/forma",
                   },
                 },
                 title: "Diesen Look nach Hause holen.",
                 viewAll: {
                   label: "Wohnzimmer entdecken",
-                  url: "/living",
+                  url: "/wohnzimmer",
                 },
               },
             },
@@ -261,7 +261,7 @@ export const homeCmsPageMock = {
                     label: "Wohnzimmer",
                     position: 0,
                     title: "Sofas, Sessel & Tische",
-                    url: "/living",
+                    url: "/wohnzimmer",
                   },
                   diningRoom: {
                     featured: 0,
@@ -273,7 +273,7 @@ export const homeCmsPageMock = {
                     label: "Esszimmer",
                     position: 1,
                     title: "Tische, Stühle & Stauraum",
-                    url: "/dining",
+                    url: "/esszimmer",
                   },
                   bedroom: {
                     featured: 0,
@@ -285,7 +285,7 @@ export const homeCmsPageMock = {
                     label: "Schlafzimmer",
                     position: 2,
                     title: "Betten, Nachttische & Kleiderschränke",
-                    url: "/bedroom",
+                    url: "/schlafzimmer",
                   },
                 },
               },
@@ -328,7 +328,7 @@ export const homeCmsPageMock = {
                       description: "Naturfarbenes Bouclé · 4-Sitzer",
                       name: "Alba Modulsofa",
                     },
-                    url: "/product/alba",
+                    url: "/produkt/alba",
                   },
                   noma: {
                     badge: "Neu",
@@ -349,7 +349,7 @@ export const homeCmsPageMock = {
                       description: "Rostrotes Bouclé · Walnussholz",
                       name: "Noma Loungesessel",
                     },
-                    url: "/product/noma",
+                    url: "/produkt/noma",
                   },
                   forma: {
                     badge: "Nur noch wenige verfügbar",
@@ -370,7 +370,7 @@ export const homeCmsPageMock = {
                       description: "Massives Walnussholz · 180 cm",
                       name: "Forma TV-Lowboard",
                     },
-                    url: "/product/forma",
+                    url: "/produkt/forma",
                   },
                   mira: {
                     badge: "Angebot",
@@ -394,13 +394,13 @@ export const homeCmsPageMock = {
                       description: "Geräucherte Eiche · Ø 140 cm",
                       name: "Mira Esstisch",
                     },
-                    url: "/product/mira",
+                    url: "/produkt/mira",
                   },
                 },
                 title: "Ausgewählte Möbelstücke",
                 viewAll: {
                   label: "Alle Produkte ansehen",
-                  url: "/shop",
+                  url: "/moebel-sortiment",
                 },
               },
             },
@@ -424,7 +424,7 @@ export const homeCmsPageMock = {
                     id: "why-jvmoebel-design",
                     position: 0,
                     title: "Ausgewählte Designs",
-                    url: "/shop",
+                    url: "/moebel-sortiment",
                   },
                   advice: {
                     description:
@@ -470,22 +470,22 @@ export const homeCmsPageMock = {
               type: "jv-home-editorial",
               data: {
                 introduction: [
-                  "In unserem umfassenden Sortiment mit über 60.000 Artikeln finden Sie mühelos <a href='/shop'>trendige und preiswerte Möbel</a>, bezaubernde Lieblingsstücke und Inspirationen für die Gestaltung Ihres Zuhauses. Neben modernen und weichen <a href='/living/sofas'>Eckcouchen</a> bieten wir diese auch in verschiedenen Größen an. Ob <a href='/children'>Kinderzimmer Möbel</a>, <a href='/dining'>Esszimmer Möbel</a>, <a href='/living'>Wohnzimmer Möbel</a>, <a href='/bedroom'>Schlafzimmer Möbel</a> oder <a href='/office'>Büro Möbel</a> – unsere Möbel bieten wir online nun seit gut 20 Jahren an.",
-                  "Verleihen Sie Ihrem Zuhause mit hochwertigen <a href='/shop'>Möbeln</a>, <a href='/lighting'>Lampen</a> und <a href='/decor'>Wohnaccessoires</a> den gewünschten Stil. Unser Angebot umfasst moderne Möbel zu unschlagbaren Preisen, namhafte Marken, erstklassige Materialien und exklusive Markenneuheiten. Dies und vieles mehr erwartet Sie in unserem <a href='/shop'>Online-Möbelhaus</a>.",
+                  "In unserem umfassenden Sortiment mit über 60.000 Artikeln finden Sie mühelos <a href='/moebel-sortiment'>trendige und preiswerte Möbel</a>, bezaubernde Lieblingsstücke und Inspirationen für die Gestaltung Ihres Zuhauses. Neben modernen und weichen <a href='/wohnzimmer/sofas'>Eckcouchen</a> bieten wir diese auch in verschiedenen Größen an. Ob <a href='/kinder'>Kinderzimmer Möbel</a>, <a href='/esszimmer'>Esszimmer Möbel</a>, <a href='/wohnzimmer'>Wohnzimmer Möbel</a>, <a href='/schlafzimmer'>Schlafzimmer Möbel</a> oder <a href='/buero'>Büro Möbel</a> – unsere Möbel bieten wir online nun seit gut 20 Jahren an.",
+                  "Verleihen Sie Ihrem Zuhause mit hochwertigen <a href='/moebel-sortiment'>Möbeln</a>, <a href='/lampen'>Lampen</a> und <a href='/dekoration'>Wohnaccessoires</a> den gewünschten Stil. Unser Angebot umfasst moderne Möbel zu unschlagbaren Preisen, namhafte Marken, erstklassige Materialien und exklusive Markenneuheiten. Dies und vieles mehr erwartet Sie in unserem <a href='/moebel-sortiment'>Online-Möbelhaus</a>.",
                 ],
                 sections: {
                   assortment: {
                     id: "editorial-assortment",
                     paragraphs: [
-                      "Möbel günstig kaufen, da sind Sie genau richtig bei uns. Moderne <a href='/living'>Wohnzimmer Einrichtung</a> oder ausgefallene <a href='/living/sofas'>Big Sofa</a> machen Ihren Traum vom schönen Wohnen wahr. In unserer traumhaften <a href='/living/sofas'>Polsterwelt</a> finden Sie zahlreiche Möbelstücke wie <a href='/storage'>Wohnwand</a>, <a href='/living/sofas'>Wohnlandschaft U Form</a> und <a href='/storage'>günstige Sideboards</a>. Oft sind die Wohnlandschaften beleuchtet und sehr ausgefallen. Auch für den Essbereich finden Sie alles, was Ihr Herz begehrt. Von <a href='/dining'>Esszimmerstühlen</a> bis zu kompletten <a href='/dining'>Essgarnituren</a> ist für jeden etwas dabei. Ein besonderes Merkmal in unserem Sortiment sind die <a href='/living'>Wohnzimmermöbel aus Italien</a>.",
-                      "Auch für die kleinen Seelen unter uns haben wir besondere Einrichtungen für das <a href='/children'>Kinderzimmer</a>. Moderne oder klassische Möbel fürs Kinderzimmer sind ein Traum. Außer günstigen <a href='/children'>Kinderzimmermöbel</a> bieten wir auch Einzelstücke wie <a href='/children'>Kinder Kleiderschrank</a> und <a href='/children'>Kinderzimmer Regale</a>. Ob ein <a href='/children'>Kleiderschrank Kinderzimmer</a> für Mädchen oder kinderschränke Kinderzimmer für Jungs – Sie finden bei uns eine große Auswahl an günstigen Kinderzimmermöbeln. Außerdem bieten wir auch <a href='/children'>Doppelstockbetten</a> oder <a href='/children'>Etagenbetten</a> mit Regalen und Schränken an.",
+                      "Möbel günstig kaufen, da sind Sie genau richtig bei uns. Moderne <a href='/wohnzimmer'>Wohnzimmer Einrichtung</a> oder ausgefallene <a href='/wohnzimmer/sofas'>Big Sofa</a> machen Ihren Traum vom schönen Wohnen wahr. In unserer traumhaften <a href='/wohnzimmer/sofas'>Polsterwelt</a> finden Sie zahlreiche Möbelstücke wie <a href='/stauraum'>Wohnwand</a>, <a href='/wohnzimmer/sofas'>Wohnlandschaft U Form</a> und <a href='/stauraum'>günstige Sideboards</a>. Oft sind die Wohnlandschaften beleuchtet und sehr ausgefallen. Auch für den Essbereich finden Sie alles, was Ihr Herz begehrt. Von <a href='/esszimmer'>Esszimmerstühlen</a> bis zu kompletten <a href='/esszimmer'>Essgarnituren</a> ist für jeden etwas dabei. Ein besonderes Merkmal in unserem Sortiment sind die <a href='/wohnzimmer'>Wohnzimmermöbel aus Italien</a>.",
+                      "Auch für die kleinen Seelen unter uns haben wir besondere Einrichtungen für das <a href='/kinder'>Kinderzimmer</a>. Moderne oder klassische Möbel fürs Kinderzimmer sind ein Traum. Außer günstigen <a href='/kinder'>Kinderzimmermöbel</a> bieten wir auch Einzelstücke wie <a href='/kinder'>Kinder Kleiderschrank</a> und <a href='/kinder'>Kinderzimmer Regale</a>. Ob ein <a href='/kinder'>Kleiderschrank Kinderzimmer</a> für Mädchen oder kinderschränke Kinderzimmer für Jungs – Sie finden bei uns eine große Auswahl an günstigen Kinderzimmermöbeln. Außerdem bieten wir auch <a href='/kinder'>Doppelstockbetten</a> oder <a href='/kinder'>Etagenbetten</a> mit Regalen und Schränken an.",
                     ],
                     position: 0,
                   },
                   bedroom: {
                     id: "editorial-bedroom",
                     paragraphs: [
-                      "Wussten Sie, dass Sie 25 bis 31 Jahre Ihres Lebens mit Schlafen verbringen? Lassen Sie sich von unseren <a href='/bedroom'>Ideen für das Schlafzimmer</a> verzaubern und holen Sie sich diese direkt nach Hause. Neben den Schlafzimmermöbeln fürs Kind haben wir auch die Einrichtung für das Elternschlafzimmer. Neben ganzen <a href='/bedroom'>Set-Schlafzimmer</a> bieten wir auch <a href='/bedroom'>runde Betten</a> oder <a href='/bedroom'>Chesterfield Betten</a> an. Neben klassischen Betten sind auch moderne Betten bei uns ein Bestseller. Ein besonderes Merkmal fällt hier auf die typischen <a href='/bedroom'>Boxspringbetten</a>. Diese gibt es als klassische Betten mit Beleuchtung oder mit Metallverzierungen. Das <a href='/bedroom'>Set-Schlafzimmer</a> kann bereits zu günstigen Preisen erworben werden. Natürlich bieten wir auch den <a href='/bedroom'>Schlafzimmerschrank</a>, die <a href='/storage'>Kommode</a> oder das <a href='/storage'>Sideboard</a> einzeln an. Diese können nicht nur im modernen Schlafzimmer, sondern auch als Möbelstück im modernen oder klassischen Wohnzimmer verwendet werden. Der <a href='/bedroom'>Schlafzimmerschrank</a> ist übrigens in verschiedenen Ausführungen erhältlich, z.B. sechstürige oder viertürige Schränke. Lassen Sie sich von uns beraten und richten Sie Ihr Schlafzimmer modern oder klassisch ein.",
+                      "Wussten Sie, dass Sie 25 bis 31 Jahre Ihres Lebens mit Schlafen verbringen? Lassen Sie sich von unseren <a href='/schlafzimmer'>Ideen für das Schlafzimmer</a> verzaubern und holen Sie sich diese direkt nach Hause. Neben den Schlafzimmermöbeln fürs Kind haben wir auch die Einrichtung für das Elternschlafzimmer. Neben ganzen <a href='/schlafzimmer'>Set-Schlafzimmer</a> bieten wir auch <a href='/schlafzimmer'>runde Betten</a> oder <a href='/schlafzimmer'>Chesterfield Betten</a> an. Neben klassischen Betten sind auch moderne Betten bei uns ein Bestseller. Ein besonderes Merkmal fällt hier auf die typischen <a href='/schlafzimmer'>Boxspringbetten</a>. Diese gibt es als klassische Betten mit Beleuchtung oder mit Metallverzierungen. Das <a href='/schlafzimmer'>Set-Schlafzimmer</a> kann bereits zu günstigen Preisen erworben werden. Natürlich bieten wir auch den <a href='/schlafzimmer'>Schlafzimmerschrank</a>, die <a href='/stauraum'>Kommode</a> oder das <a href='/stauraum'>Sideboard</a> einzeln an. Diese können nicht nur im modernen Schlafzimmer, sondern auch als Möbelstück im modernen oder klassischen Wohnzimmer verwendet werden. Der <a href='/schlafzimmer'>Schlafzimmerschrank</a> ist übrigens in verschiedenen Ausführungen erhältlich, z.B. sechstürige oder viertürige Schränke. Lassen Sie sich von uns beraten und richten Sie Ihr Schlafzimmer modern oder klassisch ein.",
                     ],
                     position: 1,
                     title: "Gesund und schön schlafen! Schönes Schlafzimmer",
@@ -493,7 +493,7 @@ export const homeCmsPageMock = {
                   diningRoom: {
                     id: "editorial-dining-room",
                     paragraphs: [
-                      "Wussten Sie, dass Sie 2,50 bis 5,00 Jahre Ihres Lebens mit Essen verbringen? Ein großer Blickfang sind auch unsere Möbel im <a href='/dining'>Essbereich</a>. Klassische <a href='/dining'>Chesterfield Esszimmer Garnituren</a> oder moderne <a href='/dining'>Essgruppen</a> werden auch als <a href='/dining'>Esstisch Stühle Set</a> angeboten. Neben ganzen Wohnideen für das Esszimmer bieten wir direkte Inspiration, passende Stühle, Hocker, Sessel, Bänke oder Esstische zu finden. Wir empfehlen die <a href='/dining'>Epoxidharz-Tische</a>. Diese sind blau gehalten und ein echter Blickfang für Ihre Nachbarn.",
+                      "Wussten Sie, dass Sie 2,50 bis 5,00 Jahre Ihres Lebens mit Essen verbringen? Ein großer Blickfang sind auch unsere Möbel im <a href='/esszimmer'>Essbereich</a>. Klassische <a href='/esszimmer'>Chesterfield Esszimmer Garnituren</a> oder moderne <a href='/esszimmer'>Essgruppen</a> werden auch als <a href='/esszimmer'>Esstisch Stühle Set</a> angeboten. Neben ganzen Wohnideen für das Esszimmer bieten wir direkte Inspiration, passende Stühle, Hocker, Sessel, Bänke oder Esstische zu finden. Wir empfehlen die <a href='/esszimmer'>Epoxidharz-Tische</a>. Diese sind blau gehalten und ein echter Blickfang für Ihre Nachbarn.",
                     ],
                     position: 2,
                     title: "Eine schöne Wohnzimmergarnitur für Sie",
@@ -501,8 +501,8 @@ export const homeCmsPageMock = {
                   additionalRanges: {
                     id: "editorial-additional-ranges",
                     paragraphs: [
-                      "Wussten Sie, dass ein Mensch bis zu 2,50 Jahre seines Lebens im <a href='/bathroom'>Badezimmer</a> verbringt? Ein schönes Badezimmer sollte zu Ihrer Mindestausstattung gehören. Unser Angebot an <a href='/bathroom'>Waschtischen</a>, <a href='/bathroom'>Badezimmermöbeln und Badmöbeln</a> wird Sie begeistern.",
-                      "Wussten Sie, dass der Mensch im Jahr über 45 Jahre im <a href='/office'>Büro</a> verbringen kann? Diese Tatsache sollte einem zu denken geben, ob man nicht sein Leben mit einer schönen <a href='/office'>Büroeinrichtung</a> genießt. JVmoebel bietet eine große Auswahl an <a href='/office'>Büro Schreibtischen</a>. Dazu finden Sie auch den passenden <a href='/office'>Aktenschrank</a>. Die breite Auswahl an Büroausstattung finden Sie als <a href='/office'>modernes Büro</a> oder als <a href='/office'>klassisches Büro</a>. Das Ganze gibt es auch als <a href='/office'>Büro Möbel Set</a> zur Auswahl. Für unsere gewerblichen Kunden bieten wir spezielle Angebote an. Lassen Sie sich hier zu unserer <a href='/business'>Hotel Einrichtung</a> durch unseren <a href='/business'>Hotelzimmer Einrichter</a> beraten. Unser Angebot mit <a href='/business'>Lounge, Club oder Zimmer Möbel</a> wird Ihrem Hotel einen neuen Touch verleihen.",
+                      "Wussten Sie, dass ein Mensch bis zu 2,50 Jahre seines Lebens im <a href='/badezimmer'>Badezimmer</a> verbringt? Ein schönes Badezimmer sollte zu Ihrer Mindestausstattung gehören. Unser Angebot an <a href='/badezimmer'>Waschtischen</a>, <a href='/badezimmer'>Badezimmermöbeln und Badmöbeln</a> wird Sie begeistern.",
+                      "Wussten Sie, dass der Mensch im Jahr über 45 Jahre im <a href='/buero'>Büro</a> verbringen kann? Diese Tatsache sollte einem zu denken geben, ob man nicht sein Leben mit einer schönen <a href='/buero'>Büroeinrichtung</a> genießt. JVmoebel bietet eine große Auswahl an <a href='/buero'>Büro Schreibtischen</a>. Dazu finden Sie auch den passenden <a href='/buero'>Aktenschrank</a>. Die breite Auswahl an Büroausstattung finden Sie als <a href='/buero'>modernes Büro</a> oder als <a href='/buero'>klassisches Büro</a>. Das Ganze gibt es auch als <a href='/buero'>Büro Möbel Set</a> zur Auswahl. Für unsere gewerblichen Kunden bieten wir spezielle Angebote an. Lassen Sie sich hier zu unserer <a href='/gewerbekunden'>Hotel Einrichtung</a> durch unseren <a href='/gewerbekunden'>Hotelzimmer Einrichter</a> beraten. Unser Angebot mit <a href='/gewerbekunden'>Lounge, Club oder Zimmer Möbel</a> wird Ihrem Hotel einen neuen Touch verleihen.",
                     ],
                     position: 3,
                   },

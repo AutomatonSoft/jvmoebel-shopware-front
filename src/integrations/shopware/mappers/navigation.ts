@@ -21,7 +21,7 @@ function getCategoryHref(category: ShopwareCategory) {
     return seoPath.startsWith("/") ? seoPath : `/${seoPath}`;
   }
 
-  return `/navigation/${category.id}`;
+  return `/kategorie/${category.id}`;
 }
 
 export function mapShopwareCategory(
