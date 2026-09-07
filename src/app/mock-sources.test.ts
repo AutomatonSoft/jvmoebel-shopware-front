@@ -10,7 +10,9 @@ import {
   serviceNavigationMock,
 } from "@/features/storefront-shell/fixtures/navigation";
 import { defaultStorefrontBranding } from "@/features/storefront-shell/model/branding";
+import { defaultStorefrontFooterContent } from "@/features/storefront-shell/fixtures/footer";
 import { getStorefrontBranding } from "@/features/storefront-shell/server/branding";
+import { getStorefrontFooterContent } from "@/features/storefront-shell/server/footer";
 import {
   getFooterNavigation,
   getMainNavigation,
@@ -41,18 +43,21 @@ describe("Shopware mock sources", () => {
     delete process.env.SHOPWARE_ENDPOINT;
     delete process.env.SHOPWARE_ACCESS_TOKEN;
 
-    const [listing, page, branding, main, footer, service] = await Promise.all([
-      getShopProductListing(),
-      getHomeCmsPage(),
-      getStorefrontBranding(),
-      getMainNavigation(),
-      getFooterNavigation(),
-      getServiceNavigation(),
-    ]);
+    const [listing, page, branding, footerContent, main, footer, service] =
+      await Promise.all([
+        getShopProductListing(),
+        getHomeCmsPage(),
+        getStorefrontBranding(),
+        getStorefrontFooterContent(),
+        getMainNavigation(),
+        getFooterNavigation(),
+        getServiceNavigation(),
+      ]);
 
     expect(listing).toBe(shopProductListingMock);
     expect(page).toBe(homeCmsPageMock);
     expect(branding).toBe(defaultStorefrontBranding);
+    expect(footerContent).toBe(defaultStorefrontFooterContent);
     expect(main).toBe(mainNavigationMock);
     expect(footer).toBe(footerNavigationMock);
     expect(service).toBe(serviceNavigationMock);

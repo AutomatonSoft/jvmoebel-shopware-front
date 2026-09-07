@@ -4,6 +4,7 @@ import { Montserrat } from "next/font/google";
 import { StoreFooter } from "@/features/storefront-shell/components/store-footer";
 import { StoreHeader } from "@/features/storefront-shell/components/store-header";
 import { getStorefrontBranding } from "@/features/storefront-shell/server/branding";
+import { getStorefrontFooterContent } from "@/features/storefront-shell/server/footer";
 import {
   getMainNavigation,
   getServiceNavigation,
@@ -24,11 +25,13 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const [branding, navigation, serviceNavigation] = await Promise.all([
-    getStorefrontBranding(),
-    getMainNavigation(),
-    getServiceNavigation(),
-  ]);
+  const [branding, footerContent, navigation, serviceNavigation] =
+    await Promise.all([
+      getStorefrontBranding(),
+      getStorefrontFooterContent(),
+      getMainNavigation(),
+      getServiceNavigation(),
+    ]);
 
   return (
     <html lang="de" className={`${montserrat.variable} h-full antialiased`}>
@@ -37,6 +40,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         {children}
         <StoreFooter
           branding={branding}
+          content={footerContent}
           footerNavigation={navigation}
           serviceNavigation={serviceNavigation}
         />

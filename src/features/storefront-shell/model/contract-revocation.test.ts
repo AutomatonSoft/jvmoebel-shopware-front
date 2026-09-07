@@ -44,4 +44,17 @@ describe("buildContractRevocationMailto", () => {
       "Widerrufsgrund:",
     );
   });
+
+  test("uses the recipient configured by the footer CMS", () => {
+    const mailto = buildContractRevocationMailto(
+      {
+        contractId: "789",
+        email: "max@example.com",
+        name: "Max Mustermann",
+      },
+      "widerruf@example.com",
+    );
+
+    expect(mailto).toStartWith("mailto:widerruf@example.com?");
+  });
 });

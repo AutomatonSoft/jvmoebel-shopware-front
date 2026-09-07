@@ -61,11 +61,19 @@ Supported `slot.type` values:
 - `jv-product-grid`
 - `jv-home-editorial`
 - `jv-newsletter`
+- `jv-footer` (resolved globally by the storefront shell, not by the page body
+  renderer)
 - `text`
 
 An unknown element is shown as an unsupported-element marker in development
 and omitted in production. A known element with invalid required data is
 omitted without breaking the rest of the page.
+
+The global `jv-footer` element has a dedicated loading flow and data contract.
+See
+[`storefront-footer-contract.md`](storefront-footer-contract.md). It belongs to
+a separate Shopping Experience referenced by the sales channel configuration;
+it must not be placed inside an ordinary page body layout.
 
 ## `jv-hero`
 

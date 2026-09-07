@@ -33,6 +33,11 @@ See [docs/storefront-navigation-contract.md](docs/storefront-navigation-contract
 for the header and footer navigation sources, link resolution, and required
 Shopware sales channel entry points.
 
+Storefront footer CMS contract:
+See [docs/storefront-footer-contract.md](docs/storefront-footer-contract.md) for
+the dedicated footer Shopping Experience, `jv-footer` element payload, media
+rules, fallback behavior, and Shopware Administration checklist.
+
 Product listing contract:
 See [docs/product-listing-contract.md](docs/product-listing-contract.md) for the
 normalized `/shop` product model, filter and sorting behavior, and Shopware
