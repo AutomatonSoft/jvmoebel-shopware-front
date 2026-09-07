@@ -38,7 +38,7 @@ jobs:
           set -Eeuo pipefail
 
           test "$(sha256sum compose.deploy.yml | awk '{print $1}')" = \
-            8e91b0c4544a98735e2758fe3b82452dffe0bf51ca46600ed0893425ae4c0b82
+            7d694a8ee5d7c13551a223e3155db5c446b30825d4532ebdd91d12ffa97c6c81
 
           COMPOSE_DISABLE_ENV_FILE=1 \
           SHOPWARE_ENDPOINT=https://example.invalid \
@@ -147,7 +147,7 @@ jobs:
       EXPECTED_DEPLOY_HOST: 85.215.147.19
 
       EXPECTED_COMPOSE_SHA256: >-
-        8e91b0c4544a98735e2758fe3b82452dffe0bf51ca46600ed0893425ae4c0b82
+        7d694a8ee5d7c13551a223e3155db5c446b30825d4532ebdd91d12ffa97c6c81
 
       EXPECTED_HELPER_SHA256: ${{ vars.EXPECTED_HELPER_SHA256 }}
 

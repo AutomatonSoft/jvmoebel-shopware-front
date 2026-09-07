@@ -1,11 +1,9 @@
-import { CmsPageRenderer } from "@/components/cms/cms-page-renderer";
-import { HomePreparationState } from "@/components/storefront/home-preparation-state";
-import { getHomeCmsPage } from "@/lib/shopware/home-cms";
-import { getShopwareRequestSession } from "@/lib/shopware/session";
+import { CmsPageRenderer } from "@/features/cms/components/cms-page-renderer";
+import { getHomeCmsPage } from "@/features/cms/server/home-page";
+import { HomePreparationState } from "@/features/storefront-shell/components/home-preparation-state";
 
 export default async function Home() {
-  const session = getShopwareRequestSession();
-  const page = await getHomeCmsPage({ client: session.client });
+  const page = await getHomeCmsPage();
 
   if (!page) {
     return <HomePreparationState />;

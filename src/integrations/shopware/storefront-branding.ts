@@ -1,0 +1,17 @@
+import "server-only";
+
+import type { StorefrontBrandingResult } from "@/features/storefront-shell/model/branding";
+import type { ShopwareClient } from "@/integrations/shopware/client";
+import { getShopwareContext } from "@/integrations/shopware/context";
+import { parseStorefrontBranding } from "@/integrations/shopware/mappers/storefront-branding";
+
+export async function getShopwareStorefrontBranding(
+  client: ShopwareClient,
+): Promise<StorefrontBrandingResult> {
+  const context = await getShopwareContext(client);
+
+  return parseStorefrontBranding(
+    context.salesChannel.configuration,
+    context.salesChannel.name,
+  );
+}

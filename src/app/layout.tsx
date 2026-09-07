@@ -1,15 +1,14 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 
-import { StoreFooter } from "@/components/storefront/store-footer";
-import { StoreHeader } from "@/components/storefront/store-header";
+import { StoreFooter } from "@/features/storefront-shell/components/store-footer";
+import { StoreHeader } from "@/features/storefront-shell/components/store-header";
+import { getStorefrontBranding } from "@/features/storefront-shell/server/branding";
 import {
   getFooterNavigation,
   getMainNavigation,
   getServiceNavigation,
-} from "@/lib/shopware/navigation";
-import { getShopwareRequestSession } from "@/lib/shopware/session";
-import { getStorefrontBranding } from "@/lib/shopware/storefront-branding";
+} from "@/features/storefront-shell/server/navigation";
 
 import "./globals.css";
 
@@ -26,17 +25,16 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const session = getShopwareRequestSession();
   const [branding, navigation, footerNavigation, serviceNavigation] =
     await Promise.all([
-      getStorefrontBranding(session.client),
-      getMainNavigation(session.client),
-      getFooterNavigation(session.client),
-      getServiceNavigation(session.client),
+      getStorefrontBranding(),
+      getMainNavigation(),
+      getFooterNavigation(),
+      getServiceNavigation(),
     ]);
 
   return (
-    <html lang="en" className={`${montserrat.variable} h-full antialiased`}>
+    <html lang="de" className={`${montserrat.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
         <StoreHeader branding={branding} navigation={navigation} />
         {children}

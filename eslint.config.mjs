@@ -38,6 +38,65 @@ export default defineConfig([
     },
   },
 
+  {
+    files: ["src/features/**/components/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/app/**", "@/integrations/**"],
+              message:
+                "Feature UI must use its feature API instead of app or integration modules.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+
+  {
+    files: ["src/components/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/app/**", "@/features/**", "@/integrations/**"],
+              message:
+                "Shared UI components must not depend on app, feature, or integration modules.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+
+  {
+    files: ["src/integrations/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: [
+                "@/app/**",
+                "@/components/**",
+                "@/features/**/components/**",
+                "@/features/**/server/**",
+              ],
+              message:
+                "Integration modules may depend on feature models, not UI or orchestration.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+
   globalIgnores([
     ".next/**",
     "node_modules/**",
