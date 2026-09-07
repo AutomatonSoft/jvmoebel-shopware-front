@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 
 import { ShopCatalog } from "@/features/catalog/components/shop-catalog";
 import { getShopProductListing } from "@/features/catalog/server/product-listing";
-import { findOfferCategory } from "@/features/offers/model/offer-categories";
 import { ErrorExperience } from "@/features/storefront-shell/components/error-experience";
 
 export const metadata: Metadata = {
@@ -11,7 +10,10 @@ export const metadata: Metadata = {
 };
 
 type ShopPageProps = Readonly<{
-  searchParams: Promise<{ category?: string | string[] }>;
+  searchParams: Promise<{
+    category?: string | string[];
+    categoryLabel?: string | string[];
+  }>;
 }>;
 
 export default async function ShopPage({ searchParams }: ShopPageProps) {
@@ -35,18 +37,17 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
   const requestedCategory = Array.isArray(parameters.category)
     ? parameters.category[0]
     : parameters.category;
-  const offerCategory = requestedCategory
-    ? findOfferCategory(requestedCategory)
-    : undefined;
+  const requestedCategoryLabel = Array.isArray(parameters.categoryLabel)
+    ? parameters.categoryLabel[0]
+    : parameters.categoryLabel;
   const listingCategory = requestedCategory
     ? listing.products.find((product) => product.category === requestedCategory)
     : undefined;
-  const initialCategory = offerCategory
-    ? { label: offerCategory.label, value: offerCategory.value }
-    : listingCategory
+  const initialCategory =
+    requestedCategory && (requestedCategoryLabel || listingCategory)
       ? {
-          label: listingCategory.categoryLabel,
-          value: listingCategory.category,
+          label: requestedCategoryLabel || listingCategory?.categoryLabel || "",
+          value: requestedCategory,
         }
       : undefined;
 

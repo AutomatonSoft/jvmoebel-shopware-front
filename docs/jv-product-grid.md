@@ -9,6 +9,8 @@ contract, not the full catalog listing contract.
 {
   "eyebrow": "Für Sie ausgewählt",
   "title": "Beliebte Möbel",
+  "anchorId": "sale-products",
+  "layout": "rail",
   "locale": "de-DE",
   "currency": "EUR",
   "products": [
@@ -46,14 +48,16 @@ contract, not the full catalog listing contract.
 
 ## Field contract
 
-| Field      | Required | Rule                                                         |
-| ---------- | -------- | ------------------------------------------------------------ |
-| `title`    | yes      | Non-empty section heading.                                   |
-| `locale`   | yes      | Locale used by `Intl.NumberFormat`, for example `de-DE`.     |
-| `currency` | yes      | Currency code used to format prices, for example `EUR`.      |
-| `products` | yes      | Array or keyed object containing at least one valid product. |
-| `eyebrow`  | no       | Short text above the heading.                                |
-| `viewAll`  | no       | Rendered only when both `label` and `url` are present.       |
+| Field      | Required | Rule                                                           |
+| ---------- | -------- | -------------------------------------------------------------- |
+| `title`    | yes      | Non-empty section heading.                                     |
+| `locale`   | yes      | Locale used by `Intl.NumberFormat`, for example `de-DE`.       |
+| `currency` | yes      | Currency code used to format prices, for example `EUR`.        |
+| `products` | yes      | Array or keyed object containing at least one valid product.   |
+| `anchorId` | no       | HTML anchor beginning with a letter, such as `sale-products`.  |
+| `layout`   | no       | `grid` or `rail`. Invalid or missing values default to `grid`. |
+| `eyebrow`  | no       | Short text above the heading.                                  |
+| `viewAll`  | no       | Rendered only when both `label` and `url` are present.         |
 
 Each product requires:
 
@@ -82,8 +86,11 @@ keyed objects are also accepted.
 ## Shopware Administration
 
 Register the `jv-product-grid` element and block. Editors should control the
-section copy, product selection and order, and the optional view-all link.
-Product name, description, cover media, prices and reviews should normally be
-resolved from the selected Shopware products rather than copied into CMS
-configuration. The resolver must return the documented normalized product
-objects and sales-channel prices in `slot.data`.
+section copy, layout, anchor, optional view-all link, and a manual multi-product
+selection. The selected products must keep the order set by the editor; the
+resolver writes that order to each product's `position`. Product name,
+description, cover media, prices and reviews should be resolved from the
+selected Shopware products rather than copied into CMS configuration. The
+resolver must return the documented normalized product objects and
+sales-channel prices in `slot.data`. Products that are unavailable in the
+current sales channel should be omitted by the resolver.

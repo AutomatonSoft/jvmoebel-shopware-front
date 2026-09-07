@@ -55,16 +55,18 @@ function CaptionPrimaryLink({ link }: { link: CmsHeroLink }) {
 
 function HeroSlide({
   active,
+  headingLevel,
   index,
   slide,
   total,
 }: {
   active: boolean;
+  headingLevel: CmsHeroData["headingLevel"];
   index: number;
   slide: CmsHeroSlide;
   total: number;
 }) {
-  const Heading = index === 0 ? "h1" : "h2";
+  const Heading = index === 0 ? headingLevel : "h2";
 
   return (
     <li
@@ -200,7 +202,8 @@ function HeroSlide({
 }
 
 export function HeroCarousel({ data }: { data: CmsHeroData }) {
-  const { ariaLabel, autoplay, autoplayIntervalMs, slides } = data;
+  const { ariaLabel, autoplay, autoplayIntervalMs, headingLevel, slides } =
+    data;
   const [activeIndex, setActiveIndex] = useState(0);
   const [isInteracting, setIsInteracting] = useState(false);
   const prefersReducedMotion = useSyncExternalStore(
@@ -245,6 +248,7 @@ export function HeroCarousel({ data }: { data: CmsHeroData }) {
         {slides.map((slide, index) => (
           <HeroSlide
             active={index === activeIndex}
+            headingLevel={headingLevel}
             index={index}
             key={slide.id}
             slide={slide}

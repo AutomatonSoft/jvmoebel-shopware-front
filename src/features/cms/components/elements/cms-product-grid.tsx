@@ -7,6 +7,7 @@ import {
   reportCmsContractIssues,
   reportCmsRenderingIssue,
 } from "@/features/cms/server/report-rendering-issue";
+import { cn } from "@/lib/utils";
 
 export function CmsProductGrid({ slot }: CmsSlotComponentProps) {
   const result = parseCmsProductGridData(slot.data);
@@ -18,7 +19,16 @@ export function CmsProductGrid({ slot }: CmsSlotComponentProps) {
   }
 
   const data = result.data;
-  const { currency, eyebrow, locale, products, title, viewAll } = data;
+  const {
+    anchorId,
+    currency,
+    eyebrow,
+    layout,
+    locale,
+    products,
+    title,
+    viewAll,
+  } = data;
 
   let priceFormatter: Intl.NumberFormat;
 
@@ -44,10 +54,21 @@ export function CmsProductGrid({ slot }: CmsSlotComponentProps) {
 
   return (
     <section
-      className="mx-2 overflow-hidden rounded-3xl bg-muted sm:mx-6"
+      className={cn(
+        layout === "grid"
+          ? "mx-2 overflow-hidden rounded-3xl bg-muted sm:mx-6"
+          : "mx-auto w-full max-w-360 px-4 sm:px-8",
+      )}
       data-cms-element="jv-product-grid"
+      id={anchorId}
     >
-      <div className="mx-auto w-full max-w-360 px-4 py-20 sm:px-8 sm:py-28">
+      <div
+        className={cn(
+          layout === "grid"
+            ? "mx-auto w-full max-w-360 px-4 py-20 sm:px-8 sm:py-28"
+            : "py-16 sm:py-20",
+        )}
+      >
         <div className="mb-10 flex items-end justify-between gap-6">
           <div>
             {eyebrow && (
@@ -70,7 +91,13 @@ export function CmsProductGrid({ slot }: CmsSlotComponentProps) {
           )}
         </div>
 
-        <div className="grid grid-cols-2 gap-x-3 gap-y-9 lg:grid-cols-4 lg:gap-x-4">
+        <div
+          className={cn(
+            layout === "grid"
+              ? "grid grid-cols-2 gap-x-3 gap-y-9 lg:grid-cols-4 lg:gap-x-4"
+              : "grid grid-flow-col auto-cols-[minmax(15rem,18rem)] gap-3 overflow-x-auto pb-4 sm:gap-4",
+          )}
+        >
           {products.map((product) => {
             const discount =
               product.previousPrice && product.previousPrice > product.unitPrice

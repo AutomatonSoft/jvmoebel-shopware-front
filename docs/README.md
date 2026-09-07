@@ -11,9 +11,12 @@ fields that should be editable in Shopware Administration.
 | ------------------- | ---------------------------------------------- | ---------------------------- |
 | `jv-page-header`    | [`jv-page-header.md`](jv-page-header.md)       | Internal page heading        |
 | `jv-hero`           | [`jv-hero.md`](jv-hero.md)                     | Hero banner carousel         |
-| `jv-category-rail`  | [`jv-category-rail.md`](jv-category-rail.md)   | Horizontal category cards    |
+| `jv-category-rail`  | [`jv-category-rail.md`](jv-category-rail.md)   | Category cards               |
 | `jv-room-grid`      | [`jv-room-grid.md`](jv-room-grid.md)           | Editorial room grid          |
 | `jv-product-grid`   | [`jv-product-grid.md`](jv-product-grid.md)     | Curated product cards        |
+| `jv-promo-banner`   | [`jv-promo-banner.md`](jv-promo-banner.md)     | Image and promotional copy   |
+| `jv-benefit-strip`  | [`jv-benefit-strip.md`](jv-benefit-strip.md)   | Service benefits             |
+| `jv-faq`            | [`jv-faq.md`](jv-faq.md)                       | Expandable questions         |
 | `jv-shop-the-look`  | [`jv-shop-the-look.md`](jv-shop-the-look.md)   | Image with product hotspots  |
 | `jv-why-jvmoebel`   | [`jv-why-jvmoebel.md`](jv-why-jvmoebel.md)     | Brand benefits section       |
 | `jv-home-editorial` | [`jv-home-editorial.md`](jv-home-editorial.md) | Expandable editorial content |

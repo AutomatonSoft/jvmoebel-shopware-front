@@ -1,6 +1,6 @@
 # `jv-category-rail`
 
-Horizontal rail of linked category cards.
+Linked category cards displayed as a horizontal rail or a responsive grid.
 
 ## `slot.data`
 
@@ -9,6 +9,7 @@ Horizontal rail of linked category cards.
   "eyebrow": "Räume entdecken",
   "title": "Möbel für jeden Raum",
   "description": "Finden Sie passende Möbel nach Wohnbereich.",
+  "layout": "grid",
   "categories": [
     {
       "id": "living-room",
@@ -30,13 +31,14 @@ Horizontal rail of linked category cards.
 
 ## Field contract
 
-| Field         | Required | Rule                                                          |
-| ------------- | -------- | ------------------------------------------------------------- |
-| `title`       | yes      | Non-empty section heading.                                    |
-| `categories`  | yes      | Array or keyed object containing at least one valid category. |
-| `eyebrow`     | no       | Short text above the heading.                                 |
-| `description` | no       | Supporting text.                                              |
-| `viewAll`     | no       | Rendered only when both `label` and `url` are present.        |
+| Field         | Required | Rule                                                           |
+| ------------- | -------- | -------------------------------------------------------------- |
+| `title`       | yes      | Non-empty section heading.                                     |
+| `categories`  | yes      | Array or keyed object containing at least one valid category.  |
+| `layout`      | no       | `rail` or `grid`. Invalid or missing values default to `rail`. |
+| `eyebrow`     | no       | Short text above the heading.                                  |
+| `description` | no       | Supporting text.                                               |
+| `viewAll`     | no       | Rendered only when both `label` and `url` are present.         |
 
 Each category requires non-empty `label`, `url`, and `image.url`. `id` is
 optional and generated from the label and index when omitted. `image.alt`
@@ -51,6 +53,7 @@ also accepted.
 
 Register the `jv-category-rail` element and block. Editors should control the
 heading copy, category cards, their order, links and media, and the optional
-view-all link. A category selector may be used, but the Store API resolver must
-still return the documented strings and resolved `{ "url", "alt" }` media
-object in `slot.data`.
+view-all link. Editors should also choose between the horizontal `rail` and
+responsive `grid` layouts. A category selector may be used, but the Store API
+resolver must still return the documented strings and resolved
+`{ "url", "alt" }` media object in `slot.data`.

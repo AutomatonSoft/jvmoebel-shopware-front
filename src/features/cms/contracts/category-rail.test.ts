@@ -23,6 +23,7 @@ describe("parseCmsCategoryRailData", () => {
           url: "/living/sofas",
         },
       },
+      layout: "grid",
       title: "Beliebte Kategorien",
       viewAll: { label: "Alle Kategorien", url: "/shop" },
     });
@@ -32,6 +33,7 @@ describe("parseCmsCategoryRailData", () => {
       "Betten-0",
     ]);
     expect(result.data?.categories[1]?.image.alt).toBe("Betten");
+    expect(result.data?.layout).toBe("grid");
     expect(result.data?.viewAll).toEqual({
       label: "Alle Kategorien",
       url: "/shop",
@@ -60,6 +62,7 @@ describe("parseCmsCategoryRailData", () => {
 
     expect(result.data?.categories).toHaveLength(1);
     expect(result.data?.categories[0]?.position).toBe(1);
+    expect(result.data?.layout).toBe("rail");
     expect(result.data?.viewAll).toBeUndefined();
     expect(result.issues.map((issue) => issue.path)).toEqual([
       "categories.0",

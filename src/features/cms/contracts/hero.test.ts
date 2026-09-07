@@ -25,6 +25,7 @@ describe("parseCmsHeroData", () => {
         ariaLabel: undefined,
         autoplay: true,
         autoplayIntervalMs: 7000,
+        headingLevel: "h1",
         slides: [
           {
             description: "Furniture for everyday living.",
@@ -57,6 +58,7 @@ describe("parseCmsHeroData", () => {
       ariaLabel: "Seasonal highlights",
       autoplay: 0,
       autoplayIntervalMs: 2000,
+      headingLevel: "h2",
       slides: {
         product: {
           image: { url: "/images/product.webp" },
@@ -78,6 +80,7 @@ describe("parseCmsHeroData", () => {
     expect(result.data?.ariaLabel).toBe("Seasonal highlights");
     expect(result.data?.autoplay).toBe(false);
     expect(result.data?.autoplayIntervalMs).toBe(4000);
+    expect(result.data?.headingLevel).toBe("h2");
     expect(result.data?.slides.map((slide) => slide.id)).toEqual([
       "sale-slide",
       "hero-slide-1",

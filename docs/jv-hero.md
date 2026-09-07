@@ -9,6 +9,7 @@ Hero banner carousel for the main CMS page.
   "ariaLabel": "Aktuelle Angebote und Wohnideen",
   "autoplay": true,
   "autoplayIntervalMs": 6500,
+  "headingLevel": "h2",
   "slides": [
     {
       "id": "living-room",
@@ -51,6 +52,7 @@ Top-level fields:
 | `ariaLabel`          | no       | Non-empty accessible carousel label.                                              |
 | `autoplay`           | no       | `false` or `0` disables autoplay; every other value enables it. Default: enabled. |
 | `autoplayIntervalMs` | no       | Finite number rounded and clamped to `4000`–`15000`. Default: `7000`.             |
+| `headingLevel`       | no       | `h1` or `h2`. Invalid or missing values default to `h1`.                          |
 
 Each slide:
 
@@ -83,6 +85,8 @@ Autoplay pauses during hover or focus and respects reduced-motion preferences.
 
 Register the `jv-hero` element and block. Editors should be able to add,
 remove, reorder, and configure slides; choose media; select the layout and
-button sizes; set links and promotion copy; and control carousel autoplay.
-The resolver must convert selected media to `{ "url", "alt" }` and assign a
-unique numeric `position` to every slide.
+button sizes; set links and promotion copy; control carousel autoplay; and
+choose the first slide's heading level. Use `h2` when a `jv-page-header` before
+the hero already supplies the page's `h1`. The resolver must convert selected
+media to `{ "url", "alt" }` and assign a unique numeric `position` to every
+slide.

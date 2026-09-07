@@ -4,6 +4,8 @@ import { shopProductListingMock } from "@/features/catalog/fixtures/product-list
 import { getShopProductListing } from "@/features/catalog/server/product-listing";
 import { homeCmsPageMock } from "@/features/cms/fixtures/home-page";
 import { getHomeCmsPage } from "@/features/cms/server/home-page";
+import { discountOffersCmsPageMock } from "@/features/offers/fixtures/discount-offers-page";
+import { getDiscountOffersCmsPage } from "@/features/offers/server/discount-offers-page";
 import {
   footerNavigationMock,
   mainNavigationMock,
@@ -43,19 +45,29 @@ describe("Shopware mock sources", () => {
     delete process.env.SHOPWARE_ENDPOINT;
     delete process.env.SHOPWARE_ACCESS_TOKEN;
 
-    const [listing, page, branding, footerContent, main, footer, service] =
-      await Promise.all([
-        getShopProductListing(),
-        getHomeCmsPage(),
-        getStorefrontBranding(),
-        getStorefrontFooterContent(),
-        getMainNavigation(),
-        getFooterNavigation(),
-        getServiceNavigation(),
-      ]);
+    const [
+      listing,
+      page,
+      offersPage,
+      branding,
+      footerContent,
+      main,
+      footer,
+      service,
+    ] = await Promise.all([
+      getShopProductListing(),
+      getHomeCmsPage(),
+      getDiscountOffersCmsPage(),
+      getStorefrontBranding(),
+      getStorefrontFooterContent(),
+      getMainNavigation(),
+      getFooterNavigation(),
+      getServiceNavigation(),
+    ]);
 
     expect(listing).toBe(shopProductListingMock);
     expect(page).toBe(homeCmsPageMock);
+    expect(offersPage).toBe(discountOffersCmsPageMock);
     expect(branding).toBe(defaultStorefrontBranding);
     expect(footerContent).toBe(defaultStorefrontFooterContent);
     expect(main).toBe(mainNavigationMock);
