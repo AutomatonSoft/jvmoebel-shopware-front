@@ -45,7 +45,7 @@ jobs:
           tar -tzf "$RUNNER_TEMP/front.tar.gz" | grep -Fx './package.json'
           tar -tzf "$RUNNER_TEMP/front.tar.gz" | grep -Fx './bun.lock'
           tar -tzf "$RUNNER_TEMP/front.tar.gz" | grep -Fx './next.config.ts'
-          tar -tzf "$RUNNER_TEMP/front.tar.gz" | grep -Fx './src/app/api/health/route.ts'
+          tar -tzf "$RUNNER_TEMP/front.tar.gz" | grep -Fx './src/app/bff/health/route.ts'
       - name: Build and smoke-test production image
         shell: bash
         run: |
@@ -53,7 +53,7 @@ jobs:
           docker build -t jvmoebel-front-stage-validation -f Dockerfile .
           docker run -d --rm --name jvmoebel-front-stage-validation -p 127.0.0.1:3000:3000 -e SHOPWARE_ENDPOINT=https://example.invalid -e SHOPWARE_ACCESS_TOKEN=validation-token jvmoebel-front-stage-validation
           trap 'docker rm -f jvmoebel-front-stage-validation >/dev/null 2>&1 || true' EXIT
-          for _ in {1..30}; do curl --fail --silent --show-error http://127.0.0.1:3000/api/health && exit 0; sleep 1; done
+          for _ in {1..30}; do curl --fail --silent --show-error http://127.0.0.1:3000/bff/health && exit 0; sleep 1; done
           exit 1
 
   deploy:
