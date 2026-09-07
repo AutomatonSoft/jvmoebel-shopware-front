@@ -246,30 +246,58 @@ export const discountOffersCmsPageMock: CmsPage = {
           ],
           title: "Häufige Fragen zu Rabattcodes",
         }),
-        createCmsBlock("text", 7, {
-          content: `
-            <h2>Möbel im Sale bequem online bestellen</h2>
-            <p>Bei JVMöbel findest du das ganze Jahr über ausgewählte Möbel und Wohnaccessoires zu reduzierten Preisen. Aktueller Preis und vorheriger Vergleichspreis zeigen den Vorteil direkt am Produkt.</p>
-            <h2>So kannst du bei JVMöbel sparen</h2>
-            <h3>Newsletter</h3>
-            <p>Erfahre frühzeitig von neuen Aktionen, Sortimentsergänzungen und zeitlich begrenzten Preisvorteilen.</p>
-            <h3>Sale und Rabattaktionen</h3>
-            <p>Reduzierte Produkte sind mit dem gültigen Vorteilspreis ausgezeichnet. Aktionscodes können für ausgewählte Produkte, Kategorien oder ab einem bestimmten Bestellwert gelten.</p>
-            <h2>Reduzierte Möbel für jeden Raum</h2>
-            <p>Im Sale findest du Möbel für Wohnzimmer, Esszimmer, Schlafzimmer und Arbeitsbereich.</p>
-            <ul>
-              <li>Sofas, Sessel und weitere Sitzmöbel</li>
-              <li>Ess-, Couch- und Beistelltische</li>
-              <li>Betten und Möbel für das Schlafzimmer</li>
-              <li>Schränke, Regale und Sideboards</li>
-              <li>Leuchten, Teppiche und Textilien</li>
-              <li>Accessoires für ein stimmiges Zuhause</li>
-            </ul>
-            <h2>Schneller das passende Angebot finden</h2>
-            <p>Nutze im Shop die Filter für Kategorie, Eigenschaften, Marke und Preis, um passende Möbel miteinander zu vergleichen.</p>
-            <h2>Günstig bestellen und komfortabel liefern lassen</h2>
-            <p>Auf der Produktseite findest du Maße, Materialien, Varianten und Lieferinformationen. Bei teilnehmenden Produkten kannst du zusätzliche Services auswählen.</p>
-          `,
+        createCmsBlock("jv-home-editorial", 7, {
+          appearance: "plain",
+          introduction: [
+            "Bei JVMöbel findest du das ganze Jahr über ausgewählte Möbel und Wohnaccessoires zu reduzierten Preisen. Aktueller Preis und vorheriger Vergleichspreis zeigen den Vorteil direkt am Produkt.",
+          ],
+          sections: [
+            {
+              id: "saving-options",
+              paragraphs: [
+                "<strong>Newsletter:</strong> Erfahre frühzeitig von neuen Aktionen, Sortimentsergänzungen und zeitlich begrenzten Preisvorteilen.",
+                "<strong>Sale und Rabattaktionen:</strong> Reduzierte Produkte sind mit dem gültigen Vorteilspreis ausgezeichnet. Aktionscodes können für ausgewählte Produkte, Kategorien oder ab einem bestimmten Bestellwert gelten.",
+              ],
+              position: 0,
+              title: "So kannst du bei JVMöbel sparen",
+            },
+            {
+              id: "rooms",
+              paragraphs: [
+                "Im Sale findest du Sofas, Sessel, Tische, Betten, Schränke, Regale, Leuchten, Teppiche und Wohnaccessoires für unterschiedliche Räume und Einrichtungsstile.",
+              ],
+              position: 1,
+              title: "Reduzierte Möbel für jeden Raum",
+            },
+            {
+              id: "filters",
+              paragraphs: [
+                "Nutze im Shop die Filter für Kategorie, Eigenschaften, Marke und Preis, um passende Möbel miteinander zu vergleichen.",
+              ],
+              position: 2,
+              title: "Schneller das passende Angebot finden",
+            },
+            {
+              id: "design",
+              paragraphs: [
+                "Ein reduzierter Preis schränkt die Auswahl nicht auf einen Stil ein. Vergleiche klare moderne Formen, warme Naturmaterialien und markante Polstermöbel direkt miteinander.",
+              ],
+              position: 3,
+              title: "Preisvorteil ohne Kompromisse beim Design",
+            },
+            {
+              id: "delivery",
+              paragraphs: [
+                "Auf der Produktseite findest du Maße, Materialien, Varianten und Lieferinformationen. Bei teilnehmenden Produkten kannst du zusätzliche Services auswählen.",
+              ],
+              position: 4,
+              title: "Günstig bestellen und komfortabel liefern lassen",
+            },
+          ],
+          showLessLabel: "Weniger anzeigen",
+          showMoreLabel: "Mehr über Sale, Auswahl und Lieferung",
+          statement: "Ratgeber & Service",
+          title: "Möbel im Sale bequem online bestellen",
         }),
       ],
       id: "mock-discount-offers-section",

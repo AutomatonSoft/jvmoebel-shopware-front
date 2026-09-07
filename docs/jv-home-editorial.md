@@ -7,6 +7,7 @@ section.
 
 ```json
 {
+  "appearance": "plain",
   "statement": "Unser Service steht für höchste Qualität.",
   "title": "Willkommen bei JVMöbel",
   "introduction": [
@@ -32,6 +33,7 @@ section.
 
 | Field           | Required | Rule                                                         |
 | --------------- | -------- | ------------------------------------------------------------ |
+| `appearance`    | no       | `card` or `plain`. Invalid values default to `card`.         |
 | `statement`     | yes      | Non-empty introductory statement.                            |
 | `title`         | yes      | Non-empty section heading.                                   |
 | `introduction`  | yes      | Array or keyed object with at least one non-empty paragraph. |
@@ -55,5 +57,5 @@ Arrays are canonical; keyed objects are also accepted.
 
 Register the `jv-home-editorial` element and block. Editors should control the
 statement, title, introduction paragraphs, expandable sections and their
-order, and both disclosure labels. Rich-text controls must produce markup
-supported by the storefront sanitizer.
+order, both disclosure labels, and the `card` or `plain` appearance. Rich-text
+controls must produce markup supported by the storefront sanitizer.

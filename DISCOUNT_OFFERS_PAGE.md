@@ -20,7 +20,8 @@ The Shopping Experience should contain these elements from top to bottom:
 5. `jv-promo-banner` for the consultation campaign;
 6. `jv-benefit-strip` for service benefits;
 7. `jv-faq` for discount-code questions;
-8. the standard Shopware `text` element for editorial and SEO content.
+8. `jv-home-editorial` with `appearance: "plain"` for expandable editorial and
+   SEO content.
 
 The frontend breadcrumb, route metadata, global header, and global footer are
 outside this Shopping Experience.

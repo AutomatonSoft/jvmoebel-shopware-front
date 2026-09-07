@@ -7,11 +7,11 @@ import { parseCmsBenefitStripData } from "@/features/cms/contracts/benefit-strip
 import { parseCmsCategoryRailData } from "@/features/cms/contracts/category-rail";
 import { parseCmsFaqData } from "@/features/cms/contracts/faq";
 import { parseCmsHeroData } from "@/features/cms/contracts/hero";
+import { parseCmsHomeEditorialData } from "@/features/cms/contracts/home-editorial";
 import { parseCmsPageHeaderData } from "@/features/cms/contracts/page-header";
 import { parseCmsProductGridData } from "@/features/cms/contracts/product-grid";
 import { parseCmsPromoBannerData } from "@/features/cms/contracts/promo-banner";
 import type { CmsContractResult } from "@/features/cms/contracts/result";
-import { getCmsTextContent } from "@/features/cms/contracts/text";
 import { discountOffersCmsPageMock } from "@/features/offers/fixtures/discount-offers-page";
 
 type CmsFixtureParser = (value: unknown) => CmsContractResult<unknown>;
@@ -21,6 +21,7 @@ const fixtureParsers: Record<string, CmsFixtureParser | undefined> = {
   "jv-category-rail": parseCmsCategoryRailData,
   "jv-faq": parseCmsFaqData,
   "jv-hero": parseCmsHeroData,
+  "jv-home-editorial": parseCmsHomeEditorialData,
   "jv-page-header": parseCmsPageHeaderData,
   "jv-product-grid": parseCmsProductGridData,
   "jv-promo-banner": parseCmsPromoBannerData,
@@ -45,11 +46,6 @@ describe("discountOffersCmsPageMock", () => {
 
   test("satisfies every CMS element contract", () => {
     for (const slot of slots) {
-      if (slot.type === "text") {
-        expect(getCmsTextContent(slot)).not.toBeNull();
-        continue;
-      }
-
       const parser = fixtureParsers[slot.type];
 
       if (!parser) {
@@ -88,7 +84,7 @@ describe("discountOffersCmsPageMock", () => {
       "jv-promo-banner",
       "jv-benefit-strip",
       "jv-faq",
-      "text",
+      "jv-home-editorial",
     ]);
 
     const productGridSlot = slots.find(
