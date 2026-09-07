@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 
+import { CmsLink } from "@/features/cms/components/cms-link";
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import { parseCmsCategoryRailData } from "@/features/cms/contracts/category-rail";
 import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
@@ -41,7 +42,7 @@ export function CmsCategoryRail({ slot }: CmsSlotComponentProps) {
         </div>
 
         {viewAll && (
-          <a
+          <CmsLink
             className="group hidden shrink-0 items-center gap-2 text-sm font-semibold underline underline-offset-4 transition-colors hover:text-primary sm:inline-flex"
             href={viewAll.url}
           >
@@ -50,7 +51,7 @@ export function CmsCategoryRail({ slot }: CmsSlotComponentProps) {
               aria-hidden="true"
               className="size-4 transition-transform motion-safe:group-hover:translate-x-1"
             />
-          </a>
+          </CmsLink>
         )}
       </div>
 
@@ -67,7 +68,7 @@ export function CmsCategoryRail({ slot }: CmsSlotComponentProps) {
               className={cn(layout === "rail" && "snap-start")}
               key={category.id}
             >
-              <a
+              <CmsLink
                 className={cn(
                   "group block rounded-2xl text-center focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:ring-offset-4 focus-visible:outline-none motion-safe:transition-transform motion-safe:ease-out motion-safe:hover:-translate-y-1",
                   layout === "grid" &&
@@ -102,20 +103,20 @@ export function CmsCategoryRail({ slot }: CmsSlotComponentProps) {
                 >
                   {category.label}
                 </strong>
-              </a>
+              </CmsLink>
             </li>
           ))}
         </ul>
       </nav>
 
       {viewAll && (
-        <a
+        <CmsLink
           className="mt-6 flex h-11 items-center justify-center gap-2 rounded-xl border border-foreground text-sm font-semibold transition-colors hover:bg-foreground hover:text-background sm:hidden"
           href={viewAll.url}
         >
           {viewAll.label}
           <ArrowRight aria-hidden="true" className="size-4" />
-        </a>
+        </CmsLink>
       )}
     </section>
   );

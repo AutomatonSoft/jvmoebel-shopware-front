@@ -9,6 +9,7 @@ import {
 } from "react";
 
 import { CmsButton } from "@/features/cms/components/cms-button";
+import { CmsLink } from "@/features/cms/components/cms-link";
 import type {
   CmsHeroData,
   CmsHeroLink,
@@ -41,7 +42,7 @@ function getServerReducedMotionSnapshot() {
 
 function CaptionPrimaryLink({ link }: { link: CmsHeroLink }) {
   return (
-    <a
+    <CmsLink
       className={cn(
         "inline-flex items-center justify-center rounded-full border border-white/75 bg-black/10 font-medium text-white backdrop-blur-sm transition-[background-color,border-color,color,transform] duration-300 hover:border-white hover:bg-white hover:text-foreground focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none motion-safe:active:scale-[0.98]",
         captionLinkSizeClasses[link.size],
@@ -49,7 +50,7 @@ function CaptionPrimaryLink({ link }: { link: CmsHeroLink }) {
       href={link.url}
     >
       {link.label}
-    </a>
+    </CmsLink>
   );
 }
 
@@ -98,7 +99,7 @@ function HeroSlide({
       />
 
       {slide.url && (
-        <a
+        <CmsLink
           aria-label={slide.title}
           className="absolute inset-0 z-10 cursor-pointer rounded-3xl focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset focus-visible:outline-none"
           href={slide.url}

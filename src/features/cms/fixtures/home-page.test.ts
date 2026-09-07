@@ -102,4 +102,15 @@ describe("homeCmsPageMock", () => {
       expect(href.startsWith("/")).toBe(true);
     }
   });
+
+  test("provides a destination for every hero campaign", () => {
+    const heroSlot = slots.find((slot) => slot.type === "jv-hero");
+    const hero = parseCmsHeroData(heroSlot?.data);
+
+    expect(hero.data?.slides).not.toHaveLength(0);
+
+    for (const slide of hero.data?.slides ?? []) {
+      expect(Boolean(slide.url || slide.primaryLink)).toBe(true);
+    }
+  });
 });

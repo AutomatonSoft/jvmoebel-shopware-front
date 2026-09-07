@@ -71,6 +71,11 @@ export const homeCmsPageMock = {
                     },
                     layout: "caption",
                     position: 1,
+                    primaryLink: {
+                      label: "Noma entdecken",
+                      size: "large",
+                      url: "/produkt/noma",
+                    },
                     promotion: {
                       value: "895 €",
                     },

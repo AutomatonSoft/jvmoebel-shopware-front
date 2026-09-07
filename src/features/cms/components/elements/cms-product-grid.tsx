@@ -1,6 +1,7 @@
 import { ArrowRight, Star } from "lucide-react";
 import Image from "next/image";
 
+import { CmsLink } from "@/features/cms/components/cms-link";
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import { parseCmsProductGridData } from "@/features/cms/contracts/product-grid";
 import {
@@ -81,13 +82,13 @@ export function CmsProductGrid({ slot }: CmsSlotComponentProps) {
             </h2>
           </div>
           {viewAll && (
-            <a
+            <CmsLink
               className="group hidden items-center gap-2 text-sm font-semibold underline underline-offset-4 transition-colors hover:text-primary sm:inline-flex"
               href={viewAll.url}
             >
               {viewAll.label}
               <ArrowRight className="size-4 transition-transform motion-safe:group-hover:translate-x-1" />
-            </a>
+            </CmsLink>
           )}
         </div>
 
@@ -111,7 +112,7 @@ export function CmsProductGrid({ slot }: CmsSlotComponentProps) {
                 className="group flex min-w-0 flex-col rounded-2xl border border-foreground/10 bg-background p-2 shadow-[0_10px_30px_-24px_rgba(21,21,19,0.55)] transition-[transform,border-color,box-shadow] duration-300 hover:border-foreground/20 hover:shadow-[0_22px_48px_-28px_rgba(21,21,19,0.6)] motion-safe:hover:-translate-y-1"
                 key={product.id}
               >
-                <a
+                <CmsLink
                   className="relative block aspect-[4/5] overflow-hidden rounded-xl bg-muted/45 ring-1 ring-foreground/5 transition-colors duration-300 group-hover:bg-muted/70"
                   href={product.url}
                 >
@@ -134,7 +135,7 @@ export function CmsProductGrid({ slot }: CmsSlotComponentProps) {
                       −{discount}%
                     </span>
                   )}
-                </a>
+                </CmsLink>
 
                 <div className="flex flex-1 flex-col px-2 pt-4 pb-2">
                   {product.rating !== undefined && (
@@ -149,9 +150,9 @@ export function CmsProductGrid({ slot }: CmsSlotComponentProps) {
                     </p>
                   )}
                   <h3 className="text-sm leading-5 font-medium tracking-[-0.01em] sm:text-base">
-                    <a className="hover:text-primary" href={product.url}>
+                    <CmsLink className="hover:text-primary" href={product.url}>
                       {product.name}
-                    </a>
+                    </CmsLink>
                   </h3>
                   {product.description && (
                     <p className="mt-1 line-clamp-2 text-xs leading-5 text-muted-foreground">
@@ -175,13 +176,13 @@ export function CmsProductGrid({ slot }: CmsSlotComponentProps) {
         </div>
 
         {viewAll && (
-          <a
+          <CmsLink
             className="mt-10 flex h-11 items-center justify-center gap-2 rounded-xl border border-foreground text-sm font-semibold transition-colors hover:bg-foreground hover:text-background sm:hidden"
             href={viewAll.url}
           >
             {viewAll.label}
             <ArrowRight className="size-4" />
-          </a>
+          </CmsLink>
         )}
       </div>
     </section>

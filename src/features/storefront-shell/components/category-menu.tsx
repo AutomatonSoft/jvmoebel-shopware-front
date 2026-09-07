@@ -118,6 +118,7 @@ function ViewAllCategoryItem({ item }: { item: StoreNavigationItem }) {
 function OffersMenuItem() {
   return (
     <Dialog.Close
+      nativeButton={false}
       render={
         <Link
           className="group/category-item flex min-h-14 w-full items-center justify-between gap-4 rounded-xl border border-primary/25 bg-primary/8 px-3 py-2.5 text-foreground transition-[background,border-color,box-shadow,transform] hover:border-primary/45 hover:bg-primary/12 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:scale-[.99]"
