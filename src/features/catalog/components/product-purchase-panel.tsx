@@ -4,10 +4,10 @@ import {
   CalendarDays,
   ChevronRight,
   Info,
-  Mail,
   MapPin,
   Recycle,
   ShieldCheck,
+  ShoppingBag,
   Sparkles,
   Star,
   Truck,
@@ -436,8 +436,8 @@ export function ProductPurchasePanel({
           }
           size="lg"
         >
-          Produkt anfragen
-          <Mail className="size-4" />
+          In den Warenkorb
+          <ShoppingBag className="size-4" />
         </Button>
         <p className="mt-3 flex items-center justify-center gap-2 text-xs text-muted-foreground">
           <ShieldCheck className="size-3.5" />
