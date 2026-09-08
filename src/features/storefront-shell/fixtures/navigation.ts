@@ -239,8 +239,8 @@ export const serviceNavigationMock = [
   },
   {
     id: "jvmoebel",
-    label: "JVMöbel",
-    href: "/",
+    label: "Über uns",
+    href: "/ueber-uns",
     children: [],
   },
 ] satisfies StoreNavigationItem[];
