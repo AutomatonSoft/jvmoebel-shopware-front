@@ -1,11 +1,20 @@
 "use client";
 
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Building2,
+  Check,
+  ChevronDown,
+  Globe2,
+  House,
+  MapPin,
+} from "lucide-react";
 import Link from "next/link";
 import { useActionState, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { AccountField } from "@/features/customer-account/components/account-field";
 import type {
   AccountActionState,
   RegistrationOptions,
@@ -42,51 +51,62 @@ export function RegisterForm({ options }: { options: RegistrationOptions }) {
   }
 
   return (
-    <form ref={formRef} action={formAction} className="space-y-7">
-      <div
-        className="flex items-center gap-4"
+    <form ref={formRef} action={formAction} className="space-y-6">
+      <ol
         aria-label="Registrierungsfortschritt"
+        className="flex items-center gap-4 text-xs"
       >
-        <span className="shrink-0 text-xs font-bold tracking-[0.12em] uppercase">
-          Schritt {step === "account" ? "1" : "2"} von 2
-        </span>
-        <div className="grid h-1 flex-1 grid-cols-2 gap-1" aria-hidden="true">
-          <span className="rounded-full bg-primary" />
+        <li
+          aria-current={step === "account" ? "step" : undefined}
+          className="flex flex-1 items-center gap-2.5 text-foreground after:ml-1 after:h-px after:flex-1 after:bg-border"
+        >
+          <span className="grid size-6 shrink-0 place-items-center rounded-full bg-primary/10 text-[0.65rem] font-medium text-primary">
+            {step === "address" ? (
+              <Check aria-hidden="true" className="size-3" />
+            ) : (
+              "01"
+            )}
+          </span>
+          Zugang
+        </li>
+        <li
+          aria-current={step === "address" ? "step" : undefined}
+          className={`flex items-center gap-2.5 ${
+            step === "address" ? "text-foreground" : "text-muted-foreground"
+          }`}
+        >
           <span
-            className={`rounded-full ${step === "address" ? "bg-primary" : "bg-border"}`}
-          />
-        </div>
-      </div>
+            className={`grid size-6 place-items-center rounded-full text-[0.65rem] font-medium ${
+              step === "address" ? "bg-primary/10 text-primary" : "bg-muted"
+            }`}
+          >
+            02
+          </span>
+          Adresse
+        </li>
+      </ol>
 
-      <div className="grid">
+      <div>
         <div
           aria-hidden={step !== "account"}
-          className={`col-start-1 row-start-1 space-y-7 transition-opacity duration-150 ${
-            step === "account" ? "visible opacity-100" : "invisible opacity-0"
-          }`}
+          className={step === "account" ? "space-y-6" : "hidden"}
           inert={step !== "account"}
         >
-          <fieldset className="grid gap-4 sm:grid-cols-2" data-step="account">
+          <fieldset className="grid gap-3 sm:grid-cols-2" data-step="account">
             <legend className="sr-only">Persönliche Angaben</legend>
-            <div className="mb-1 flex items-center gap-3 sm:col-span-2">
-              <span className="grid size-8 place-items-center rounded-full bg-foreground text-xs font-bold text-background">
-                01
-              </span>
-              <h2 className="text-base font-bold">Persönliche Angaben</h2>
-            </div>
-            <Field
+            <AccountField
               autoComplete="given-name"
               id="firstName"
               invalid={invalid}
               label="Vorname"
             />
-            <Field
+            <AccountField
               autoComplete="family-name"
               id="lastName"
               invalid={invalid}
               label="Nachname"
             />
-            <Field
+            <AccountField
               autoComplete="email"
               className="sm:col-span-2"
               id="email"
@@ -94,7 +114,7 @@ export function RegisterForm({ options }: { options: RegistrationOptions }) {
               label="E-Mail-Adresse"
               type="email"
             />
-            <Field
+            <AccountField
               autoComplete="new-password"
               className="sm:col-span-2"
               id="password"
@@ -106,46 +126,42 @@ export function RegisterForm({ options }: { options: RegistrationOptions }) {
           </fieldset>
 
           <Button
-            className="w-full justify-between font-bold"
+            className="w-full justify-between rounded-lg bg-foreground text-background hover:bg-foreground/85"
             onClick={showAddressStep}
-            size="lg"
             type="button"
           >
             Weiter
-            <ArrowRight className="size-4" />
+            <span className="grid size-6 place-items-center rounded-full bg-background/10">
+              <ArrowRight aria-hidden="true" className="size-3.5" />
+            </span>
           </Button>
         </div>
 
         <div
           aria-hidden={step !== "address"}
-          className={`col-start-1 row-start-1 space-y-7 transition-opacity duration-150 ${
-            step === "address" ? "visible opacity-100" : "invisible opacity-0"
-          }`}
+          className={step === "address" ? "space-y-6" : "hidden"}
           inert={step !== "address"}
         >
-          <fieldset className="grid gap-4 sm:grid-cols-2">
+          <fieldset className="grid gap-3 sm:grid-cols-2">
             <legend className="sr-only">Rechnungsadresse</legend>
-            <div className="mb-1 flex items-center gap-3 sm:col-span-2">
-              <span className="grid size-8 place-items-center rounded-full bg-foreground text-xs font-bold text-background">
-                02
-              </span>
-              <h2 className="text-base font-bold">Rechnungsadresse</h2>
-            </div>
-            <Field
+            <AccountField
               autoComplete="street-address"
               className="sm:col-span-2"
+              icon={House}
               id="street"
               invalid={invalid}
               label="Straße und Hausnummer"
             />
-            <Field
+            <AccountField
               autoComplete="postal-code"
+              icon={MapPin}
               id="zipcode"
               invalid={invalid}
               label="Postleitzahl"
             />
-            <Field
+            <AccountField
               autoComplete="address-level2"
+              icon={Building2}
               id="city"
               invalid={invalid}
               label="Ort"
@@ -157,15 +173,16 @@ export function RegisterForm({ options }: { options: RegistrationOptions }) {
                 value={options.countries[0].id}
               />
             ) : (
-              <div className="space-y-2 sm:col-span-2">
+              <div className="relative sm:col-span-2">
                 <label
-                  className="text-[0.68rem] font-bold tracking-[0.12em] uppercase"
+                  className="absolute top-2 left-11 text-[0.65rem] leading-4 text-muted-foreground"
                   htmlFor="countryId"
                 >
                   Land
                 </label>
                 <select
-                  className="h-12 w-full rounded-xl border border-input bg-background px-4 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                  aria-invalid={invalid}
+                  className="h-14 w-full appearance-none rounded-lg border border-border/80 bg-card/80 pt-5 pr-10 pb-1 pl-11 text-base outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/10 aria-invalid:border-destructive md:text-sm"
                   defaultValue=""
                   id="countryId"
                   name="countryId"
@@ -180,13 +197,23 @@ export function RegisterForm({ options }: { options: RegistrationOptions }) {
                     </option>
                   ))}
                 </select>
+                <Globe2
+                  aria-hidden="true"
+                  className="pointer-events-none absolute top-5 left-3.5 size-4 text-muted-foreground/70"
+                  strokeWidth={1.5}
+                />
+                <ChevronDown
+                  aria-hidden="true"
+                  className="pointer-events-none absolute top-5 right-3.5 size-4 text-muted-foreground"
+                  strokeWidth={1.5}
+                />
               </div>
             )}
           </fieldset>
 
-          <label className="flex items-start gap-3 rounded-2xl bg-muted/55 p-4 text-sm leading-6 text-muted-foreground">
+          <label className="flex items-start gap-3 text-xs leading-5 text-muted-foreground">
             <input
-              className="mt-1 size-4 shrink-0 accent-primary"
+              className="mt-0.5 size-4 shrink-0 accent-primary"
               name="acceptedDataProtection"
               required
               type="checkbox"
@@ -194,7 +221,7 @@ export function RegisterForm({ options }: { options: RegistrationOptions }) {
             <span>
               Ich habe die{" "}
               <Link
-                className="font-semibold text-foreground underline decoration-primary underline-offset-4"
+                className="font-medium text-foreground underline decoration-border underline-offset-4 transition-colors hover:decoration-primary"
                 href="/datenschutz"
               >
                 Datenschutzerklärung
@@ -205,83 +232,35 @@ export function RegisterForm({ options }: { options: RegistrationOptions }) {
 
           <p
             aria-live="polite"
-            className="min-h-5 text-sm leading-5 text-destructive"
+            className="text-xs leading-5 text-destructive empty:hidden"
           >
             {state.message}
           </p>
-          <div className="grid grid-cols-[auto_1fr] gap-3">
+
+          <div className="grid grid-cols-[2.75rem_1fr] gap-2">
             <Button
               aria-label="Zurück zu den Zugangsdaten"
+              className="rounded-lg px-0"
               disabled={pending}
               onClick={() => setStep("account")}
-              size="lg"
               type="button"
               variant="outline"
             >
-              <ArrowLeft className="size-4" />
+              <ArrowLeft aria-hidden="true" className="size-4" />
             </Button>
             <Button
-              className="w-full justify-between font-bold disabled:cursor-wait"
+              className="w-full justify-between rounded-lg bg-foreground text-background hover:bg-foreground/85 disabled:cursor-wait"
               disabled={pending}
-              size="lg"
               type="submit"
             >
               {pending ? "Konto wird erstellt …" : "Konto erstellen"}
-              <ArrowRight className="size-4" />
+              <span className="grid size-6 place-items-center rounded-full bg-background/10">
+                <ArrowRight aria-hidden="true" className="size-3.5" />
+              </span>
             </Button>
           </div>
         </div>
       </div>
-      <p className="border-t border-border pt-5 text-center text-sm text-muted-foreground">
-        Bereits registriert?{" "}
-        <Link
-          className="font-semibold text-foreground underline decoration-primary underline-offset-4"
-          href="/kundenkonto/anmelden"
-        >
-          Zur Anmeldung
-        </Link>
-      </p>
     </form>
-  );
-}
-
-type FieldProps = Readonly<{
-  autoComplete: string;
-  className?: string;
-  id: string;
-  invalid?: true;
-  label: string;
-  minLength?: number;
-  type?: "email" | "password" | "text";
-}>;
-
-function Field({
-  autoComplete,
-  className,
-  id,
-  invalid,
-  label,
-  minLength,
-  type = "text",
-}: FieldProps) {
-  return (
-    <div className={`space-y-2 ${className ?? ""}`}>
-      <label
-        className="text-[0.68rem] font-bold tracking-[0.12em] uppercase"
-        htmlFor={id}
-      >
-        {label}
-      </label>
-      <Input
-        aria-invalid={invalid}
-        autoComplete={autoComplete}
-        className="h-12 rounded-xl bg-background px-4"
-        id={id}
-        minLength={minLength}
-        name={id}
-        required
-        type={type}
-      />
-    </div>
   );
 }

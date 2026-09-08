@@ -48,25 +48,25 @@ export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
         <MobileHeaderSearch />
         <div className="ml-auto flex items-center justify-end xl:ml-0">
           <Link
-            aria-label="Kundenkonto"
+            aria-label="Konto erstellen"
             className="hidden min-h-10 items-center gap-2 rounded-full p-1 pr-3 transition-[background,transform,box-shadow] hover:bg-muted focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-[.975] xl:flex"
-            href="/kundenkonto"
+            href="/kundenkonto/registrieren"
           >
             <span className="flex size-8.5 shrink-0 items-center justify-center rounded-full border border-foreground/15">
               <UserRound className="size-4" />
             </span>
             <span className="flex min-w-12 flex-col leading-none">
               <span className="mb-1 text-[0.5rem] tracking-[0.09em] text-muted-foreground uppercase">
-                Kundenkonto
+                Profil
               </span>
-              <strong className="text-xs font-semibold">Anmelden</strong>
+              <strong className="text-xs font-semibold">Registrieren</strong>
             </span>
           </Link>
           <div className="flex items-center gap-1 sm:ml-2 sm:border-l sm:border-foreground/10 sm:pl-2">
             <Link
-              aria-label="Kundenkonto"
+              aria-label="Konto erstellen"
               className="flex size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-90 xl:hidden"
-              href="/kundenkonto"
+              href="/kundenkonto/registrieren"
             >
               <UserRound className="size-4.5" />
             </Link>

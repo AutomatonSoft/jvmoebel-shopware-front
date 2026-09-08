@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 
-import { AccountPageShell } from "@/features/customer-account/components/account-page-shell";
 import { RegisterForm } from "@/features/customer-account/components/register-form";
 import { getRegistrationOptions } from "@/features/customer-account/server/account";
 
@@ -17,11 +16,21 @@ export default async function CustomerRegistrationPage() {
   }
 
   return (
-    <AccountPageShell
-      description="Einmal registrieren, bei der nächsten Bestellung Zeit sparen."
-      title="Konto erstellen"
-    >
-      <RegisterForm options={options} />
-    </AccountPageShell>
+    <>
+      <header>
+        <p className="text-[0.65rem] font-medium tracking-[0.16em] text-muted-foreground uppercase">
+          Kundenkonto
+        </p>
+        <h1 className="mt-3 text-2xl leading-tight font-medium tracking-[-0.035em] sm:text-3xl">
+          Konto erstellen
+        </h1>
+        <p className="mt-3 max-w-sm text-sm leading-6 text-muted-foreground">
+          Einmal registrieren, bei der nächsten Bestellung Zeit sparen.
+        </p>
+      </header>
+      <section className="mt-7">
+        <RegisterForm options={options} />
+      </section>
+    </>
   );
 }
