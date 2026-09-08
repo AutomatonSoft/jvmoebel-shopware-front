@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, test } from "bun:test";
 
+import { aboutCmsPageMock } from "@/features/about/fixtures/about-page";
+import { getAboutCmsPage } from "@/features/about/server/about-page";
 import { shopProductListingMock } from "@/features/catalog/fixtures/product-listing";
 import { getShopProductListing } from "@/features/catalog/server/product-listing";
 import { homeCmsPageMock } from "@/features/cms/fixtures/home-page";
@@ -48,6 +50,7 @@ describe("Shopware mock sources", () => {
     const [
       listing,
       page,
+      aboutPage,
       offersPage,
       branding,
       footerContent,
@@ -57,6 +60,7 @@ describe("Shopware mock sources", () => {
     ] = await Promise.all([
       getShopProductListing(),
       getHomeCmsPage(),
+      getAboutCmsPage(),
       getDiscountOffersCmsPage(),
       getStorefrontBranding(),
       getStorefrontFooterContent(),
@@ -67,6 +71,7 @@ describe("Shopware mock sources", () => {
 
     expect(listing).toBe(shopProductListingMock);
     expect(page).toBe(homeCmsPageMock);
+    expect(aboutPage).toBe(aboutCmsPageMock);
     expect(offersPage).toBe(discountOffersCmsPageMock);
     expect(branding).toBe(defaultStorefrontBranding);
     expect(footerContent).toBe(defaultStorefrontFooterContent);

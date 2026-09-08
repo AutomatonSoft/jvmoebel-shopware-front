@@ -8,6 +8,7 @@
 | [`navigation.md`](storefront/navigation.md)           | Header and footer navigation       |
 | [`product-listing.md`](storefront/product-listing.md) | Product listing model and behavior |
 | [`discount-offers.md`](storefront/discount-offers.md) | Discount offers page composition   |
+| [`about-page.md`](storefront/about-page.md)           | About page composition             |
 
 ## Shopware CMS components
 
