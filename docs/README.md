@@ -33,6 +33,7 @@ fields that should be editable in Shopware Administration.
 | `jv-home-editorial` | [`jv-home-editorial.md`](components/jv-home-editorial.md) | Expandable editorial content |
 | `jv-newsletter`     | [`jv-newsletter.md`](components/jv-newsletter.md)         | Newsletter subscription form |
 | `jv-footer`         | [`jv-footer.md`](components/jv-footer.md)                 | Global footer content        |
+| `image`             | [`image.md`](components/image.md)                         | Standard image content       |
 | `text`              | [`text.md`](components/text.md)                           | Standard rich-text content   |
 
 ### Common Store API structure
