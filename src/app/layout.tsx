@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 
+import { getCustomerAccount } from "@/features/customer-account/server/account";
 import { StoreFooter } from "@/features/storefront-shell/components/store-footer";
 import { StoreHeader } from "@/features/storefront-shell/components/store-header";
 import { getStorefrontBranding } from "@/features/storefront-shell/server/branding";
@@ -25,9 +26,13 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const [branding, footerContent, navigation, serviceNavigation] =
+  const [branding, customer, footerContent, navigation, serviceNavigation] =
     await Promise.all([
       getStorefrontBranding(),
+      getCustomerAccount().catch((error: unknown) => {
+        console.error("Header customer account lookup failed.", error);
+        return null;
+      }),
       getStorefrontFooterContent(),
       getMainNavigation(),
       getServiceNavigation(),
@@ -36,7 +41,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="de" className={`${montserrat.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
-        <StoreHeader branding={branding} navigation={navigation} />
+        <StoreHeader
+          branding={branding}
+          customer={customer}
+          navigation={navigation}
+        />
         {children}
         <StoreFooter
           branding={branding}

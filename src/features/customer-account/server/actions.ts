@@ -55,7 +55,7 @@ export async function loginCustomer(
     };
   }
 
-  redirect("/kundenkonto");
+  redirect("/kundenkonto?angemeldet=1");
 }
 
 export async function registerCustomer(

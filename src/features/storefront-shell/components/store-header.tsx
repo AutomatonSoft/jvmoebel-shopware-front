@@ -5,17 +5,28 @@ import { CategoryMenu } from "@/features/storefront-shell/components/category-me
 import { HeaderSearch } from "@/features/storefront-shell/components/header-search";
 import { MobileHeaderSearch } from "@/features/storefront-shell/components/mobile-header-search";
 import { StoreLogo } from "@/features/storefront-shell/components/store-logo";
+import type { CustomerAccountSummary } from "@/features/customer-account/model/account";
 import type { StorefrontBranding } from "@/features/storefront-shell/model/branding";
 import type { MainNavigation } from "@/features/storefront-shell/model/navigation";
 
 export type StoreHeaderProps = {
   branding: StorefrontBranding;
+  customer: CustomerAccountSummary | null;
   navigation: MainNavigation;
 };
 
 const MAX_VISIBLE_CATEGORIES = 6;
 
-export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
+export function StoreHeader({
+  branding,
+  customer,
+  navigation,
+}: StoreHeaderProps) {
+  const accountHref = customer ? "/kundenkonto" : "/kundenkonto/registrieren";
+  const accountLabel = customer
+    ? `${customer.firstName} ${customer.lastName}`.trim()
+    : "Registrieren";
+
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
       <div className="relative mx-auto flex h-18 max-w-360 items-center gap-1 px-4 sm:px-8 lg:gap-6">
@@ -48,9 +59,11 @@ export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
         <MobileHeaderSearch />
         <div className="ml-auto flex items-center justify-end xl:ml-0">
           <Link
-            aria-label="Konto erstellen"
+            aria-label={
+              customer ? `Kundenkonto von ${accountLabel}` : "Konto erstellen"
+            }
             className="hidden min-h-10 items-center gap-2 rounded-full p-1 pr-3 transition-[background,transform,box-shadow] hover:bg-muted focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-[.975] xl:flex"
-            href="/kundenkonto/registrieren"
+            href={accountHref}
           >
             <span className="flex size-8.5 shrink-0 items-center justify-center rounded-full border border-foreground/15">
               <UserRound className="size-4" />
@@ -59,14 +72,18 @@ export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
               <span className="mb-1 text-[0.5rem] tracking-[0.09em] text-muted-foreground uppercase">
                 Profil
               </span>
-              <strong className="text-xs font-semibold">Registrieren</strong>
+              <strong className="max-w-28 truncate text-xs font-semibold">
+                {accountLabel}
+              </strong>
             </span>
           </Link>
           <div className="flex items-center gap-1 sm:ml-2 sm:border-l sm:border-foreground/10 sm:pl-2">
             <Link
-              aria-label="Konto erstellen"
+              aria-label={
+                customer ? `Kundenkonto von ${accountLabel}` : "Konto erstellen"
+              }
               className="flex size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-90 xl:hidden"
-              href="/kundenkonto/registrieren"
+              href={accountHref}
             >
               <UserRound className="size-4.5" />
             </Link>
