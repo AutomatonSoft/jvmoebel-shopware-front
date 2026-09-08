@@ -243,4 +243,10 @@ export const serviceNavigationMock = [
     href: "/ueber-uns",
     children: [],
   },
+  {
+    id: "video-shop",
+    label: "Video Shop",
+    href: "/video-shop",
+    children: [],
+  },
 ] satisfies StoreNavigationItem[];

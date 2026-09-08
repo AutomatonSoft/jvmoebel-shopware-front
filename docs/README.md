@@ -9,6 +9,7 @@
 | [`product-listing.md`](storefront/product-listing.md) | Product listing model and behavior |
 | [`discount-offers.md`](storefront/discount-offers.md) | Discount offers page composition   |
 | [`about-page.md`](storefront/about-page.md)           | About page composition             |
+| [`video-shop.md`](storefront/video-shop.md)           | Video Shop page composition        |
 
 ## Shopware CMS components
 
@@ -36,6 +37,7 @@ fields that should be editable in Shopware Administration.
 | `jv-footer`         | [`jv-footer.md`](components/jv-footer.md)                 | Global footer content        |
 | `image`             | [`image.md`](components/image.md)                         | Standard image content       |
 | `text`              | [`text.md`](components/text.md)                           | Standard rich-text content   |
+| `youtube-video`     | [`youtube-video.md`](components/youtube-video.md)         | Standard YouTube video       |
 
 ### Common Store API structure
 

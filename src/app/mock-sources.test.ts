@@ -22,6 +22,8 @@ import {
   getMainNavigation,
   getServiceNavigation,
 } from "@/features/storefront-shell/server/navigation";
+import { videoShopCmsPageMock } from "@/features/video-shop/fixtures/video-shop-page";
+import { getVideoShopCmsPage } from "@/features/video-shop/server/video-shop-page";
 
 const originalShopwareEndpoint = process.env.SHOPWARE_ENDPOINT;
 const originalShopwareAccessToken = process.env.SHOPWARE_ACCESS_TOKEN;
@@ -52,6 +54,7 @@ describe("Shopware mock sources", () => {
       page,
       aboutPage,
       offersPage,
+      videoShopPage,
       branding,
       footerContent,
       main,
@@ -62,6 +65,7 @@ describe("Shopware mock sources", () => {
       getHomeCmsPage(),
       getAboutCmsPage(),
       getDiscountOffersCmsPage(),
+      getVideoShopCmsPage(),
       getStorefrontBranding(),
       getStorefrontFooterContent(),
       getMainNavigation(),
@@ -73,6 +77,7 @@ describe("Shopware mock sources", () => {
     expect(page).toBe(homeCmsPageMock);
     expect(aboutPage).toBe(aboutCmsPageMock);
     expect(offersPage).toBe(discountOffersCmsPageMock);
+    expect(videoShopPage).toBe(videoShopCmsPageMock);
     expect(branding).toBe(defaultStorefrontBranding);
     expect(footerContent).toBe(defaultStorefrontFooterContent);
     expect(main).toBe(mainNavigationMock);

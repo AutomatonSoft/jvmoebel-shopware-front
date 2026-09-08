@@ -14,6 +14,7 @@ import { CmsRoomGrid } from "@/features/cms/components/elements/cms-room-grid";
 import { CmsShopTheLook } from "@/features/cms/components/elements/cms-shop-the-look";
 import { CmsText } from "@/features/cms/components/elements/cms-text";
 import { CmsWhyJvmoebel } from "@/features/cms/components/elements/cms-why-jvmoebel";
+import { CmsYoutubeVideo } from "@/features/cms/components/elements/cms-youtube-video";
 import type {
   CmsBlock,
   CmsPage,
@@ -44,6 +45,7 @@ const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {
   "jv-why-jvmoebel": CmsWhyJvmoebel,
   image: CmsImage,
   text: CmsText,
+  "youtube-video": CmsYoutubeVideo,
 };
 
 function CmsSlotRenderer({ slot }: CmsSlotComponentProps) {
