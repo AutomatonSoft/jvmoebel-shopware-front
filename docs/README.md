@@ -1,30 +1,41 @@
-# Shopware CMS components
+# Project documentation
 
-This directory documents only CMS elements rendered by the Next.js
+## Storefront and page contracts
+
+| Documentation                                         | Purpose                            |
+| ----------------------------------------------------- | ---------------------------------- |
+| [`branding.md`](storefront/branding.md)               | Global storefront branding         |
+| [`navigation.md`](storefront/navigation.md)           | Header and footer navigation       |
+| [`product-listing.md`](storefront/product-listing.md) | Product listing model and behavior |
+| [`discount-offers.md`](storefront/discount-offers.md) | Discount offers page composition   |
+
+## Shopware CMS components
+
+The following files document CMS elements rendered by the Next.js
 storefront. Each file defines the element's `slot.type`, the resolved
 `slot.data` expected from Shopware, validation and fallback behavior, and the
 fields that should be editable in Shopware Administration.
 
-## Supported elements
+### Supported elements
 
-| `slot.type`         | Documentation                                  | Purpose                      |
-| ------------------- | ---------------------------------------------- | ---------------------------- |
-| `jv-page-header`    | [`jv-page-header.md`](jv-page-header.md)       | Internal page heading        |
-| `jv-hero`           | [`jv-hero.md`](jv-hero.md)                     | Hero banner carousel         |
-| `jv-category-rail`  | [`jv-category-rail.md`](jv-category-rail.md)   | Category cards               |
-| `jv-room-grid`      | [`jv-room-grid.md`](jv-room-grid.md)           | Editorial room grid          |
-| `jv-product-grid`   | [`jv-product-grid.md`](jv-product-grid.md)     | Curated product cards        |
-| `jv-promo-banner`   | [`jv-promo-banner.md`](jv-promo-banner.md)     | Image and promotional copy   |
-| `jv-benefit-strip`  | [`jv-benefit-strip.md`](jv-benefit-strip.md)   | Service benefits             |
-| `jv-faq`            | [`jv-faq.md`](jv-faq.md)                       | Expandable questions         |
-| `jv-shop-the-look`  | [`jv-shop-the-look.md`](jv-shop-the-look.md)   | Image with product hotspots  |
-| `jv-why-jvmoebel`   | [`jv-why-jvmoebel.md`](jv-why-jvmoebel.md)     | Brand benefits section       |
-| `jv-home-editorial` | [`jv-home-editorial.md`](jv-home-editorial.md) | Expandable editorial content |
-| `jv-newsletter`     | [`jv-newsletter.md`](jv-newsletter.md)         | Newsletter subscription form |
-| `jv-footer`         | [`jv-footer.md`](jv-footer.md)                 | Global footer content        |
-| `text`              | [`text.md`](text.md)                           | Standard rich-text content   |
+| `slot.type`         | Documentation                                             | Purpose                      |
+| ------------------- | --------------------------------------------------------- | ---------------------------- |
+| `jv-page-header`    | [`jv-page-header.md`](components/jv-page-header.md)       | Internal page heading        |
+| `jv-hero`           | [`jv-hero.md`](components/jv-hero.md)                     | Hero banner carousel         |
+| `jv-category-rail`  | [`jv-category-rail.md`](components/jv-category-rail.md)   | Category cards               |
+| `jv-room-grid`      | [`jv-room-grid.md`](components/jv-room-grid.md)           | Editorial room grid          |
+| `jv-product-grid`   | [`jv-product-grid.md`](components/jv-product-grid.md)     | Curated product cards        |
+| `jv-promo-banner`   | [`jv-promo-banner.md`](components/jv-promo-banner.md)     | Image and promotional copy   |
+| `jv-benefit-strip`  | [`jv-benefit-strip.md`](components/jv-benefit-strip.md)   | Service benefits             |
+| `jv-faq`            | [`jv-faq.md`](components/jv-faq.md)                       | Expandable questions         |
+| `jv-shop-the-look`  | [`jv-shop-the-look.md`](components/jv-shop-the-look.md)   | Image with product hotspots  |
+| `jv-why-jvmoebel`   | [`jv-why-jvmoebel.md`](components/jv-why-jvmoebel.md)     | Brand benefits section       |
+| `jv-home-editorial` | [`jv-home-editorial.md`](components/jv-home-editorial.md) | Expandable editorial content |
+| `jv-newsletter`     | [`jv-newsletter.md`](components/jv-newsletter.md)         | Newsletter subscription form |
+| `jv-footer`         | [`jv-footer.md`](components/jv-footer.md)                 | Global footer content        |
+| `text`              | [`text.md`](components/text.md)                           | Standard rich-text content   |
 
-## Common Store API structure
+### Common Store API structure
 
 Page-body elements are read from the standard Shopware CMS hierarchy:
 
@@ -49,7 +60,7 @@ Arrays are the canonical representation for repeatable fields. Some elements
 also accept keyed objects for fixture and Administration compatibility; this
 is stated in the relevant component file.
 
-## Shopware Administration responsibility
+### Shopware Administration responsibility
 
 The frontend renderer does not register custom CMS elements, blocks, or
 Administration controls. A Shopware extension must register every custom

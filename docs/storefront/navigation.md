@@ -4,7 +4,7 @@ The header and footer share the sales channel main navigation, while the footer
 service links remain a separate Shopware navigation source.
 
 Editable footer copy, payment methods and social links are defined separately
-in [`docs/jv-footer.md`](docs/jv-footer.md). They must
+in [`jv-footer.md`](../components/jv-footer.md). They must
 not duplicate navigation entries.
 
 ## Navigation sources

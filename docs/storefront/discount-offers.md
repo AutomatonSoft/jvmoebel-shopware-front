@@ -47,4 +47,4 @@ product set does not contain that category. Live links may instead point to
 the canonical Shopware category route once that routing is available.
 
 All custom element payloads and Administration responsibilities are documented
-separately in [`docs/`](docs/README.md).
+separately in the [CMS component index](../README.md#supported-elements).

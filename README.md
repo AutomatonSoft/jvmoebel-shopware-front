@@ -25,21 +25,21 @@ See [docs/README.md](docs/README.md) for the supported CMS elements, their
 `slot.data` contracts, and the fields managed through Shopware Administration.
 
 Storefront branding contract:
-See [STOREFRONT_BRANDING_CONTRACT.md](STOREFRONT_BRANDING_CONTRACT.md)
+See [docs/storefront/branding.md](docs/storefront/branding.md)
 for the sales channel logo configuration expected from the backend.
 
 Storefront navigation contract:
-See [STOREFRONT_NAVIGATION_CONTRACT.md](STOREFRONT_NAVIGATION_CONTRACT.md)
+See [docs/storefront/navigation.md](docs/storefront/navigation.md)
 for the header and footer navigation sources, link resolution, and required
 Shopware sales channel entry points.
 
 Product listing contract:
-See [PRODUCT_LISTING_CONTRACT.md](PRODUCT_LISTING_CONTRACT.md) for the
+See [docs/storefront/product-listing.md](docs/storefront/product-listing.md) for the
 normalized `/shop` product model, filter and sorting behavior, and Shopware
 Administration responsibility boundary.
 
 Discount offers page:
-See [DISCOUNT_OFFERS_PAGE.md](DISCOUNT_OFFERS_PAGE.md) for the sale overview
+See [docs/storefront/discount-offers.md](docs/storefront/discount-offers.md) for the sale overview
 behavior and its catalog integration.
 
 Development:

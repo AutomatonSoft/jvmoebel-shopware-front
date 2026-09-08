@@ -3,7 +3,7 @@
 The header and footer use one global branding configuration. This is separate
 from page CMS content because the logo belongs to the whole sales channel.
 Editable footer content is supplied by the dedicated CMS contract described in
-[`docs/jv-footer.md`](docs/jv-footer.md).
+[`jv-footer.md`](../components/jv-footer.md).
 
 Shopware's standard Administration can store storefront logos as theme media,
 but a headless Store API does not expose resolved theme media to this Next.js
