@@ -7,7 +7,7 @@ import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-
 import { cn } from "@/lib/utils";
 
 function EditorialParagraph({ content }: { content: string }) {
-  return <p dangerouslySetInnerHTML={{ __html: sanitizeCmsHtml(content) }} />;
+  return <div dangerouslySetInnerHTML={{ __html: sanitizeCmsHtml(content) }} />;
 }
 
 export function CmsHomeEditorial({ slot }: CmsSlotComponentProps) {
