@@ -14,8 +14,10 @@ import {
   Wrench,
 } from "lucide-react";
 import { useState, type FormEvent } from "react";
+import { useFormStatus } from "react-dom";
 
 import { Button } from "@/components/ui/button";
+import { addProductToCart } from "@/features/cart/server/actions";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import type { ShopProductDetail } from "@/features/catalog/model/product-detail";
@@ -33,6 +35,22 @@ type ProductPurchasePanelProps = Readonly<{
   locale: string;
   product: ShopProductDetail;
 }>;
+
+function AddToCartButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button
+      className="h-12 w-full rounded-xl text-base shadow-sm disabled:cursor-wait"
+      disabled={pending}
+      size="lg"
+      type="submit"
+    >
+      {pending ? "Wird hinzugefügt …" : "In den Warenkorb"}
+      <ShoppingBag className="size-4" />
+    </Button>
+  );
+}
 
 export function ProductPurchasePanel({
   currency,
@@ -428,21 +446,17 @@ export function ProductPurchasePanel({
       )}
 
       <div className="sticky bottom-0 z-10 -mx-1 bg-background/95 px-1 pt-5 pb-1 backdrop-blur">
-        <Button
-          className="h-12 w-full rounded-xl text-base shadow-sm"
-          nativeButton={false}
-          render={
-            <a href={`mailto:info@jvmoebel.de?subject=${inquirySubject}`} />
-          }
-          size="lg"
+        <form action={addProductToCart}>
+          <input name="productId" type="hidden" value={product.id} />
+          <AddToCartButton />
+        </form>
+        <a
+          className="mt-3 flex items-center justify-center gap-2 text-xs text-muted-foreground hover:text-foreground"
+          href={`mailto:info@jvmoebel.de?subject=${inquirySubject}`}
         >
-          In den Warenkorb
-          <ShoppingBag className="size-4" />
-        </Button>
-        <p className="mt-3 flex items-center justify-center gap-2 text-xs text-muted-foreground">
           <ShieldCheck className="size-3.5" />
           Persönliche Beratung vor der Bestellung
-        </p>
+        </a>
       </div>
     </aside>
   );
