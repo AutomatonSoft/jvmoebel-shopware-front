@@ -7,6 +7,18 @@ import {
   getShopwareConfig,
   type ShopwareConfig,
 } from "@/integrations/shopware/config";
+import type { ShopwareStorefrontConfigResponse } from "@/integrations/shopware/storefront-config-types";
+
+type StorefrontConfigOperations = {
+  "readStorefrontConfig get /storefront-config": {
+    accept?: "application/json";
+    contentType?: "application/json";
+    response: ShopwareStorefrontConfigResponse;
+    responseCode: 200;
+  };
+};
+
+type ShopwareOperations = operations & StorefrontConfigOperations;
 
 export type CreateShopwareClientOptions = {
   config?: ShopwareConfig;
@@ -19,7 +31,7 @@ export function createShopwareClient(
 ) {
   const { endpoint, accessToken } = options.config ?? getShopwareConfig();
 
-  const client = createAPIClient<operations>({
+  const client = createAPIClient<ShopwareOperations>({
     baseURL: endpoint,
     accessToken,
     contextToken: options.contextToken,
