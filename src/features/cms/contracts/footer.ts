@@ -174,7 +174,7 @@ function parseSocialLinks(
     }
 
     ids.add(id);
-    result.push({ id, label, media, url });
+    result.push({ id, label, media, openInNewTab: true, url });
   });
 
   return result;
@@ -328,6 +328,7 @@ export function parseCmsFooterData(
         buttonLabel: revocationButtonLabel,
         description: revocationDescription,
         disclaimer: revocationDisclaimer,
+        enabled: true,
         recipient: revocationRecipient,
         submitLabel: revocationSubmitLabel,
         title: revocationTitle,

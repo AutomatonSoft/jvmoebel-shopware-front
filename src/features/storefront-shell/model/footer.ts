@@ -7,6 +7,7 @@ export type StorefrontFooterLink = Readonly<{
   id: string;
   label: string;
   media: StorefrontFooterMedia;
+  openInNewTab: boolean;
   url: string;
 }>;
 
@@ -34,6 +35,7 @@ export type StorefrontFooterContent = Readonly<{
     buttonLabel: string;
     description: string;
     disclaimer: string;
+    enabled: boolean;
     recipient: string;
     submitLabel: string;
     title: string;

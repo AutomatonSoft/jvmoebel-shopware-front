@@ -55,15 +55,17 @@ export function FooterTrustSection({
             {headings.socialLinks}
           </h2>
           <div className="mt-4 flex flex-wrap gap-2">
-            {socialLinks.map(({ id, label, media, url }) => (
+            {socialLinks.map(({ id, label, media, openInNewTab, url }) => (
               <a
-                aria-label={`${label} (öffnet in einem neuen Tab)`}
+                aria-label={
+                  openInNewTab ? `${label} (öffnet in einem neuen Tab)` : label
+                }
                 className="border-footer-border bg-footer-control text-footer-foreground hover:border-footer-accent hover:bg-footer-control-hover hover:text-footer-accent-hover focus-visible:ring-footer-accent/30 flex size-10 items-center justify-center rounded-full border transition-[background,border-color,color,transform] focus-visible:ring-3 motion-safe:active:translate-y-px"
                 href={url}
                 key={id}
-                rel="noreferrer"
+                rel={openInNewTab ? "noreferrer" : undefined}
                 title={label}
-                target="_blank"
+                target={openInNewTab ? "_blank" : undefined}
               >
                 {/* CMS media hosts are resolved by Shopware at runtime. */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}

@@ -26,7 +26,7 @@ export function FooterAbout({
       <p className="text-footer-body mt-6 max-w-2xl text-sm leading-7">
         {content.description}
       </p>
-      <ContractRevocationDialog content={revocation} />
+      {revocation.enabled && <ContractRevocationDialog content={revocation} />}
     </section>
   );
 }
