@@ -5,6 +5,7 @@ import { useActionState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { AccountField } from "@/features/customer-account/components/account-field";
+import { AccountToast } from "@/features/customer-account/components/account-toast";
 import type { AccountActionState } from "@/features/customer-account/model/account";
 import { loginCustomer } from "@/features/customer-account/server/actions";
 
@@ -18,6 +19,20 @@ export function LoginForm() {
 
   return (
     <form action={formAction} className="space-y-3">
+      <AccountToast
+        description={state.message}
+        id={`login-${state.status}`}
+        title={
+          state.status === "invalid"
+            ? "Anmeldedaten prüfen"
+            : state.status === "error"
+              ? "Anmeldung nicht möglich"
+              : undefined
+        }
+        trigger={state}
+        type="error"
+      />
+
       <AccountField
         autoComplete="email"
         id="login-email"
@@ -34,13 +49,6 @@ export function LoginForm() {
         name="password"
         type="password"
       />
-
-      <p
-        aria-live="polite"
-        className="text-xs leading-5 text-destructive empty:hidden"
-      >
-        {state.message}
-      </p>
 
       <Button
         className="mt-3 w-full justify-between rounded-lg bg-foreground text-background hover:bg-foreground/85 disabled:cursor-wait"

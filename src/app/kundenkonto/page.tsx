@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { AccountPageShell } from "@/features/customer-account/components/account-page-shell";
-import { AccountSuccessToast } from "@/features/customer-account/components/account-success-toast";
+import { AccountToast } from "@/features/customer-account/components/account-toast";
 import { logoutCustomer } from "@/features/customer-account/server/actions";
 import { getCustomerAccount } from "@/features/customer-account/server/account";
 
@@ -66,7 +66,17 @@ export default async function CustomerAccountPage({
           </form>
         </section>
       </AccountPageShell>
-      {successToast && <AccountSuccessToast {...successToast} />}
+      {successToast && (
+        <AccountToast
+          {...successToast}
+          id={
+            params.registriert === "1"
+              ? "registration-success"
+              : "login-success"
+          }
+          type="success"
+        />
+      )}
     </>
   );
 }

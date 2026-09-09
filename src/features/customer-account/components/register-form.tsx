@@ -15,6 +15,7 @@ import { useActionState, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { AccountField } from "@/features/customer-account/components/account-field";
+import { AccountToast } from "@/features/customer-account/components/account-toast";
 import type {
   AccountActionState,
   RegistrationOptions,
@@ -52,6 +53,20 @@ export function RegisterForm({ options }: { options: RegistrationOptions }) {
 
   return (
     <form ref={formRef} action={formAction} className="space-y-6">
+      <AccountToast
+        description={state.message}
+        id={`registration-${state.status}`}
+        title={
+          state.status === "invalid"
+            ? "Angaben prüfen"
+            : state.status === "error"
+              ? "Registrierung nicht möglich"
+              : undefined
+        }
+        trigger={state}
+        type="error"
+      />
+
       <ol
         aria-label="Registrierungsfortschritt"
         className="flex items-center gap-4 text-xs"
@@ -229,13 +244,6 @@ export function RegisterForm({ options }: { options: RegistrationOptions }) {
               gelesen und stimme der Verarbeitung meiner Daten zu.
             </span>
           </label>
-
-          <p
-            aria-live="polite"
-            className="text-xs leading-5 text-destructive empty:hidden"
-          >
-            {state.message}
-          </p>
 
           <div className="grid grid-cols-[2.75rem_1fr] gap-2">
             <Button
