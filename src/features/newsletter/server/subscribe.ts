@@ -1,5 +1,3 @@
-"use server";
-
 import type { NewsletterActionState } from "@/features/newsletter/model/subscription";
 import { parseNewsletterSubscription } from "@/features/newsletter/model/validation";
 import { reportNewsletterSubscriptionIssue } from "@/features/newsletter/server/report-subscription-issue";
@@ -8,14 +6,9 @@ import { subscribeToShopwareNewsletter } from "@/integrations/shopware/newslette
 import { createShopwareSession } from "@/integrations/shopware/session";
 
 export async function subscribeToNewsletter(
-  storefrontUrlValue: string,
-  _previousState: NewsletterActionState,
   formData: FormData,
 ): Promise<NewsletterActionState> {
-  const subscription = parseNewsletterSubscription(
-    storefrontUrlValue,
-    formData,
-  );
+  const subscription = parseNewsletterSubscription(formData);
 
   if (!subscription) {
     return { status: "invalid" };

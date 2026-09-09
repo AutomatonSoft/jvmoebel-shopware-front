@@ -10,7 +10,6 @@ const validNewsletterData = {
   eyebrow: "Newsletter",
   invalidEmailMessage: "Enter a valid email address.",
   placeholder: "Your email address",
-  storefrontUrl: "http://localhost:3000",
   successMessage: "You are subscribed.",
   title: "Useful ideas, occasionally.",
 } as const;
@@ -37,15 +36,6 @@ describe("parseCmsNewsletterData", () => {
       parseCmsNewsletterData({
         ...validNewsletterData,
         successMessage: "",
-      }).data,
-    ).toBeNull();
-  });
-
-  test("rejects a non-HTTP storefront URL", () => {
-    expect(
-      parseCmsNewsletterData({
-        ...validNewsletterData,
-        storefrontUrl: "javascript:alert(1)",
       }).data,
     ).toBeNull();
   });

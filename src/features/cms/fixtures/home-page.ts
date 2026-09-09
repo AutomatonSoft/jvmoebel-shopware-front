@@ -542,7 +542,6 @@ export const homeCmsPageMock = {
                 invalidEmailMessage:
                   "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
                 placeholder: "Ihre E-Mail-Adresse",
-                storefrontUrl: "http://localhost:3000",
                 successMessage: "Sie sind dabei. Willkommen zu Hause.",
                 title: "Gute Ideen, gelegentlich.",
               },

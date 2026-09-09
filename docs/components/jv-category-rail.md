@@ -8,7 +8,8 @@ Linked category cards displayed as a horizontal rail or a responsive grid.
 {
   "eyebrow": "Räume entdecken",
   "title": "Möbel für jeden Raum",
-  "description": "Finden Sie passende Möbel nach Wohnbereich.",
+  "description": "Finden Sie passende Möbel nach
+  bereich.",
   "layout": "grid",
   "categories": [
     {

@@ -21,7 +21,6 @@ export function CmsNewsletter({ slot }: CmsSlotComponentProps) {
     eyebrow,
     invalidEmailMessage,
     placeholder,
-    storefrontUrl,
     successMessage,
     title,
   } = data;
@@ -52,7 +51,6 @@ export function CmsNewsletter({ slot }: CmsSlotComponentProps) {
             errorMessage={errorMessage}
             invalidEmailMessage={invalidEmailMessage}
             placeholder={placeholder}
-            storefrontUrl={storefrontUrl}
             successMessage={successMessage}
           />
         </div>
