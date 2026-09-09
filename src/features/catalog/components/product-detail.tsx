@@ -83,6 +83,7 @@ export function ProductDetail({
               {relatedProducts.map((relatedProduct) => (
                 <ShopProductCard
                   currency={currency}
+                  headingLevel="h3"
                   key={relatedProduct.id}
                   locale={locale}
                   product={relatedProduct}
