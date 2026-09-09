@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 
+import { Toaster } from "@/components/ui/sonner";
 import { getCustomerAccount } from "@/features/customer-account/server/account";
 import { StoreFooter } from "@/features/storefront-shell/components/store-footer";
 import { StoreHeader } from "@/features/storefront-shell/components/store-header";
@@ -44,6 +45,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           footerNavigation={storefront.footerNavigation}
           serviceNavigation={storefront.serviceNavigation}
         />
+        <Toaster />
       </body>
     </html>
   );

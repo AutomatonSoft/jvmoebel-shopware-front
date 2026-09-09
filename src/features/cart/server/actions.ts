@@ -65,12 +65,13 @@ export async function updateCartItem(formData: FormData) {
 
   if (shouldUseShopwareMocks()) {
     await runMockCartMutation(() => updateMockCartItem(id, quantity));
-    return;
+  } else {
+    await runCartMutation((session) =>
+      updateShopwareCartItem(session.client, id, quantity),
+    );
   }
 
-  await runCartMutation((session) =>
-    updateShopwareCartItem(session.client, id, quantity),
-  );
+  redirect("/warenkorb?meldung=menge");
 }
 
 export async function removeCartItem(formData: FormData) {
@@ -82,12 +83,13 @@ export async function removeCartItem(formData: FormData) {
 
   if (shouldUseShopwareMocks()) {
     await runMockCartMutation(() => removeMockCartItem(id));
-    return;
+  } else {
+    await runCartMutation((session) =>
+      removeShopwareCartItem(session.client, id),
+    );
   }
 
-  await runCartMutation((session) =>
-    removeShopwareCartItem(session.client, id),
-  );
+  redirect("/warenkorb?meldung=entfernt");
 }
 
 export async function applyPromotionCode(formData: FormData) {
@@ -99,12 +101,13 @@ export async function applyPromotionCode(formData: FormData) {
 
   if (shouldUseShopwareMocks()) {
     await runMockCartMutation(() => applyMockPromotionCode(code));
-    return;
+  } else {
+    await runCartMutation((session) =>
+      addShopwarePromotion(session.client, code),
+    );
   }
 
-  await runCartMutation((session) =>
-    addShopwarePromotion(session.client, code),
-  );
+  redirect("/warenkorb?meldung=gutschein");
 }
 
 export async function addProductToCart(formData: FormData) {
@@ -122,5 +125,5 @@ export async function addProductToCart(formData: FormData) {
     );
   }
 
-  redirect("/warenkorb");
+  redirect("/warenkorb?meldung=hinzugefuegt");
 }

@@ -24,7 +24,6 @@ import {
 
 type CartPageProps = Readonly<{
   cart: ShopCart;
-  error?: string;
 }>;
 
 function QuantityControl({ item }: Readonly<{ item: ShopCartItem }>) {
@@ -231,7 +230,7 @@ function EmptyCart() {
   );
 }
 
-export function CartPage({ cart, error }: CartPageProps) {
+export function CartPage({ cart }: CartPageProps) {
   const formatter = new Intl.NumberFormat(cart.locale, {
     currency: cart.currency,
     minimumFractionDigits: 2,
@@ -305,23 +304,6 @@ export function CartPage({ cart, error }: CartPageProps) {
                 </li>
               </ol>
             </header>
-
-            {(error || cart.messages.length > 0) && (
-              <div
-                className="mt-6 rounded-xl border border-destructive/25 bg-destructive/5 px-4 py-3 text-sm text-destructive"
-                role="alert"
-              >
-                {error && (
-                  <p>
-                    Der Warenkorb konnte nicht aktualisiert werden. Bitte
-                    versuchen Sie es erneut.
-                  </p>
-                )}
-                {cart.messages.map((message) => (
-                  <p key={message}>{message}</p>
-                ))}
-              </div>
-            )}
 
             <div className="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_23rem] xl:gap-12">
               <div>

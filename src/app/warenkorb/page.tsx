@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { CartNotifications } from "@/features/cart/components/cart-notifications";
 import { CartPage } from "@/features/cart/components/cart-page";
 import { getShopCart } from "@/features/cart/server/cart";
 import { ErrorExperience } from "@/features/storefront-shell/components/error-experience";
@@ -11,7 +12,10 @@ export const metadata: Metadata = {
 };
 
 type CartRouteProps = Readonly<{
-  searchParams: Promise<{ fehler?: string | string[] }>;
+  searchParams: Promise<{
+    fehler?: string | string[];
+    meldung?: string | string[];
+  }>;
 }>;
 
 export default async function CartRoute({ searchParams }: CartRouteProps) {
@@ -39,6 +43,21 @@ export default async function CartRoute({ searchParams }: CartRouteProps) {
         ? parameters.value.fehler[0]
         : parameters.value.fehler
       : undefined;
+  const success =
+    parameters.status === "fulfilled"
+      ? Array.isArray(parameters.value.meldung)
+        ? parameters.value.meldung[0]
+        : parameters.value.meldung
+      : undefined;
 
-  return <CartPage cart={cartResult.value} error={error} />;
+  return (
+    <>
+      <CartNotifications
+        error={error}
+        messages={cartResult.value.messages}
+        success={success}
+      />
+      <CartPage cart={cartResult.value} />
+    </>
+  );
 }
