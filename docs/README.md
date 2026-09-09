@@ -2,14 +2,13 @@
 
 ## Storefront and page contracts
 
-| Documentation                                         | Purpose                            |
-| ----------------------------------------------------- | ---------------------------------- |
-| [`branding.md`](storefront/branding.md)               | Global storefront branding         |
-| [`navigation.md`](storefront/navigation.md)           | Header and footer navigation       |
-| [`product-listing.md`](storefront/product-listing.md) | Product listing model and behavior |
-| [`discount-offers.md`](storefront/discount-offers.md) | Discount offers page composition   |
-| [`about-page.md`](storefront/about-page.md)           | About page composition             |
-| [`video-shop.md`](storefront/video-shop.md)           | Video Shop page composition        |
+| Documentation                                             | Purpose                                |
+| --------------------------------------------------------- | -------------------------------------- |
+| [`storefront-config.md`](storefront/storefront-config.md) | Global header and footer configuration |
+| [`product-listing.md`](storefront/product-listing.md)     | Product listing model and behavior     |
+| [`discount-offers.md`](storefront/discount-offers.md)     | Discount offers page composition       |
+| [`about-page.md`](storefront/about-page.md)               | About page composition                 |
+| [`video-shop.md`](storefront/video-shop.md)               | Video Shop page composition            |
 
 ## Shopware CMS components
 
@@ -34,7 +33,6 @@ fields that should be editable in Shopware Administration.
 | `jv-why-jvmoebel`   | [`jv-why-jvmoebel.md`](components/jv-why-jvmoebel.md)     | Brand benefits section       |
 | `jv-home-editorial` | [`jv-home-editorial.md`](components/jv-home-editorial.md) | Expandable editorial content |
 | `jv-newsletter`     | [`jv-newsletter.md`](components/jv-newsletter.md)         | Newsletter subscription form |
-| `jv-footer`         | [`jv-footer.md`](components/jv-footer.md)                 | Global footer content        |
 | `image`             | [`image.md`](components/image.md)                         | Standard image content       |
 | `text`              | [`text.md`](components/text.md)                           | Standard rich-text content   |
 | `youtube-video`     | [`youtube-video.md`](components/youtube-video.md)         | Standard YouTube video       |

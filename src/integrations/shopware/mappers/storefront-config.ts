@@ -373,11 +373,14 @@ export function parseShopwareStorefrontConfig(
   const defaultAbout = defaultStorefrontFooterContent.about;
   const defaultHeadings = defaultStorefrontFooterContent.headings;
   const defaultRevocation = defaultStorefrontFooterContent.revocation;
+  const revocationEnabled =
+    getBoolean(footerRevocation, "enabled") ?? defaultRevocation.enabled;
   const recipientEmail = getString(footerRevocation, "recipientEmail");
   const validRecipient =
-    recipientEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipientEmail);
+    typeof recipientEmail === "string" &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipientEmail);
 
-  if (!validRecipient) {
+  if (revocationEnabled && !validRecipient) {
     issues.push({
       message: "Revocation recipientEmail must be a valid email address.",
       path: "footer.revocation.recipientEmail",
@@ -442,13 +445,19 @@ export function parseShopwareStorefrontConfig(
         },
         paymentMethods: parsePaymentMethods(footer?.paymentBadges, issues),
         revocation: {
-          buttonLabel: getRequiredString(
-            footerRevocation,
-            "buttonLabel",
-            defaultRevocation.buttonLabel,
-            "footer.revocation.buttonLabel",
-            issues,
-          ),
+          buttonLabel: revocationEnabled
+            ? getRequiredString(
+                footerRevocation,
+                "buttonLabel",
+                defaultRevocation.buttonLabel,
+                "footer.revocation.buttonLabel",
+                issues,
+              )
+            : getOptionalString(
+                footerRevocation,
+                "buttonLabel",
+                defaultRevocation.buttonLabel,
+              ),
           description: getOptionalString(
             footerRevocation,
             "description",
@@ -459,9 +468,7 @@ export function parseShopwareStorefrontConfig(
             "disclaimer",
             defaultRevocation.disclaimer,
           ),
-          enabled:
-            getBoolean(footerRevocation, "enabled") ??
-            defaultRevocation.enabled,
+          enabled: revocationEnabled,
           recipient: validRecipient
             ? recipientEmail
             : defaultRevocation.recipient,

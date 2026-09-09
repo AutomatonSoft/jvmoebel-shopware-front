@@ -9,19 +9,12 @@ import { getHomeCmsPage } from "@/features/cms/server/home-page";
 import { discountOffersCmsPageMock } from "@/features/offers/fixtures/discount-offers-page";
 import { getDiscountOffersCmsPage } from "@/features/offers/server/discount-offers-page";
 import {
-  footerNavigationMock,
   mainNavigationMock,
   serviceNavigationMock,
 } from "@/features/storefront-shell/fixtures/navigation";
 import { defaultStorefrontBranding } from "@/features/storefront-shell/model/branding";
 import { defaultStorefrontFooterContent } from "@/features/storefront-shell/fixtures/footer";
-import { getStorefrontBranding } from "@/features/storefront-shell/server/branding";
-import { getStorefrontFooterContent } from "@/features/storefront-shell/server/footer";
-import {
-  getFooterNavigation,
-  getMainNavigation,
-  getServiceNavigation,
-} from "@/features/storefront-shell/server/navigation";
+import { getStorefrontShellData } from "@/features/storefront-shell/server/storefront-config";
 import { videoShopCmsPageMock } from "@/features/video-shop/fixtures/video-shop-page";
 import { getVideoShopCmsPage } from "@/features/video-shop/server/video-shop-page";
 
@@ -49,39 +42,27 @@ describe("Shopware mock sources", () => {
     delete process.env.SHOPWARE_ENDPOINT;
     delete process.env.SHOPWARE_ACCESS_TOKEN;
 
-    const [
-      listing,
-      page,
-      aboutPage,
-      offersPage,
-      videoShopPage,
-      branding,
-      footerContent,
-      main,
-      footer,
-      service,
-    ] = await Promise.all([
-      getShopProductListing(),
-      getHomeCmsPage(),
-      getAboutCmsPage(),
-      getDiscountOffersCmsPage(),
-      getVideoShopCmsPage(),
-      getStorefrontBranding(),
-      getStorefrontFooterContent(),
-      getMainNavigation(),
-      getFooterNavigation(),
-      getServiceNavigation(),
-    ]);
+    const [listing, page, aboutPage, offersPage, videoShopPage, storefront] =
+      await Promise.all([
+        getShopProductListing(),
+        getHomeCmsPage(),
+        getAboutCmsPage(),
+        getDiscountOffersCmsPage(),
+        getVideoShopCmsPage(),
+        getStorefrontShellData(),
+      ]);
 
     expect(listing).toBe(shopProductListingMock);
     expect(page).toBe(homeCmsPageMock);
     expect(aboutPage).toBe(aboutCmsPageMock);
     expect(offersPage).toBe(discountOffersCmsPageMock);
     expect(videoShopPage).toBe(videoShopCmsPageMock);
-    expect(branding).toBe(defaultStorefrontBranding);
-    expect(footerContent).toBe(defaultStorefrontFooterContent);
-    expect(main).toBe(mainNavigationMock);
-    expect(footer).toBe(footerNavigationMock);
-    expect(service).toBe(serviceNavigationMock);
+    expect(storefront).toEqual({
+      branding: defaultStorefrontBranding,
+      footerContent: defaultStorefrontFooterContent,
+      footerNavigation: mainNavigationMock,
+      navigation: mainNavigationMock,
+      serviceNavigation: serviceNavigationMock,
+    });
   });
 });

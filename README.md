@@ -24,14 +24,10 @@ CMS component contracts:
 See [docs/README.md](docs/README.md) for the supported CMS elements, their
 `slot.data` contracts, and the fields managed through Shopware Administration.
 
-Storefront branding contract:
-See [docs/storefront/branding.md](docs/storefront/branding.md)
-for the sales channel logo configuration expected from the backend.
-
-Storefront navigation contract:
-See [docs/storefront/navigation.md](docs/storefront/navigation.md)
-for the header and footer navigation sources, link resolution, and required
-Shopware sales channel entry points.
+Storefront shell contract:
+See [docs/storefront/storefront-config.md](docs/storefront/storefront-config.md)
+for the aggregated Shopware header and footer response, normalization, and
+fallback behavior.
 
 Product listing contract:
 See [docs/storefront/product-listing.md](docs/storefront/product-listing.md) for the

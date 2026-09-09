@@ -176,6 +176,43 @@ describe("parseShopwareStorefrontConfig", () => {
     });
   });
 
+  test("requires revocation contact fields only when revocation is enabled", () => {
+    const revocationWithoutContact = {
+      ...storefrontConfigResponse,
+      footer: {
+        ...storefrontConfigResponse.footer,
+        revocation: {
+          ...storefrontConfigResponse.footer.revocation,
+          buttonLabel: null,
+          recipientEmail: null,
+        },
+      },
+    } satisfies ShopwareStorefrontConfigResponse;
+
+    const disabledResult = parseShopwareStorefrontConfig(
+      revocationWithoutContact,
+    );
+    const enabledResult = parseShopwareStorefrontConfig({
+      ...revocationWithoutContact,
+      footer: {
+        ...revocationWithoutContact.footer,
+        revocation: {
+          ...revocationWithoutContact.footer.revocation,
+          enabled: true,
+        },
+      },
+    });
+
+    expect(disabledResult.issues).toEqual([]);
+    expect(disabledResult.data.footerContent.revocation.enabled).toBe(false);
+    expect(enabledResult.issues.map(({ path }) => path)).toEqual(
+      expect.arrayContaining([
+        "footer.revocation.buttonLabel",
+        "footer.revocation.recipientEmail",
+      ]),
+    );
+  });
+
   test("falls back safely and reports an invalid response", () => {
     const result = parseShopwareStorefrontConfig(null);
 

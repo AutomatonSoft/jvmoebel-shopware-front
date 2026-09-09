@@ -37,11 +37,11 @@ export type ShopwareStorefrontConfigResponse = Readonly<{
     }>[];
     revocation: Readonly<{
       apiAlias?: string;
-      buttonLabel: string;
+      buttonLabel: string | null;
       description?: string;
       disclaimer?: string;
       enabled: boolean;
-      recipientEmail: string;
+      recipientEmail: string | null;
       submitLabel?: string;
       title?: string;
     }>;
