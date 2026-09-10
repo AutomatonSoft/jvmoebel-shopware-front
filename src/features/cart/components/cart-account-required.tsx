@@ -37,7 +37,14 @@ export function CartAccountRequired() {
             <Button
               className="justify-between"
               nativeButton={false}
-              render={<Link href="/kundenkonto/anmelden" />}
+              render={
+                <Link
+                  href={{
+                    pathname: "/kundenkonto/anmelden",
+                    query: { weiter: "/warenkorb" },
+                  }}
+                />
+              }
               size="lg"
             >
               Anmelden
@@ -45,7 +52,14 @@ export function CartAccountRequired() {
             </Button>
             <Button
               nativeButton={false}
-              render={<Link href="/kundenkonto/registrieren" />}
+              render={
+                <Link
+                  href={{
+                    pathname: "/kundenkonto/registrieren",
+                    query: { weiter: "/warenkorb" },
+                  }}
+                />
+              }
               size="lg"
               variant="outline"
             >

@@ -11,7 +11,7 @@ import { loginCustomer } from "@/features/customer-account/server/actions";
 
 const initialState: AccountActionState = { status: "idle" };
 
-export function LoginForm() {
+export function LoginForm({ redirectTo }: Readonly<{ redirectTo?: string }>) {
   const [state, formAction, pending] = useActionState(
     loginCustomer,
     initialState,
@@ -19,6 +19,9 @@ export function LoginForm() {
 
   return (
     <form action={formAction} className="space-y-3">
+      {redirectTo && (
+        <input name="redirectTo" type="hidden" value={redirectTo} />
+      )}
       <AccountToast
         description={state.message}
         id={`login-${state.status}`}

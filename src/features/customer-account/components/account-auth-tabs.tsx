@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 
@@ -12,6 +12,8 @@ const tabs = [
 
 export function AccountAuthTabs() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("weiter");
 
   return (
     <nav
@@ -30,7 +32,11 @@ export function AccountAuthTabs() {
                 ? "border-primary text-foreground"
                 : "border-transparent text-muted-foreground hover:border-border hover:text-foreground",
             )}
-            href={tab.href}
+            href={
+              redirectTo
+                ? { pathname: tab.href, query: { weiter: redirectTo } }
+                : tab.href
+            }
             key={tab.href}
             scroll={false}
           >

@@ -8,8 +8,20 @@ export const metadata: Metadata = {
   title: "Konto erstellen | JVMöbel",
 };
 
-export default async function CustomerRegistrationPage() {
-  const options = await getRegistrationOptions();
+type CustomerRegistrationPageProps = Readonly<{
+  searchParams: Promise<{ weiter?: string | string[] }>;
+}>;
+
+export default async function CustomerRegistrationPage({
+  searchParams,
+}: CustomerRegistrationPageProps) {
+  const [options, parameters] = await Promise.all([
+    getRegistrationOptions(),
+    searchParams,
+  ]);
+  const redirectTo = Array.isArray(parameters.weiter)
+    ? parameters.weiter[0]
+    : parameters.weiter;
 
   if (options.countries.length === 0) {
     throw new Error("Shopware registration options are not configured.");
@@ -29,7 +41,7 @@ export default async function CustomerRegistrationPage() {
         </p>
       </header>
       <section className="mt-7">
-        <RegisterForm options={options} />
+        <RegisterForm options={options} redirectTo={redirectTo} />
       </section>
     </>
   );

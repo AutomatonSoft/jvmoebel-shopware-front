@@ -21,6 +21,13 @@ type CartRouteProps = Readonly<{
 }>;
 
 export default async function CartRoute({ searchParams }: CartRouteProps) {
+  const parameters = await searchParams;
+  const error = Array.isArray(parameters.fehler)
+    ? parameters.fehler[0]
+    : parameters.fehler;
+  const success = Array.isArray(parameters.meldung)
+    ? parameters.meldung[0]
+    : parameters.meldung;
   let account: Awaited<ReturnType<typeof getCustomerAccount>>;
 
   try {
@@ -39,16 +46,20 @@ export default async function CartRoute({ searchParams }: CartRouteProps) {
   }
 
   if (!account) {
-    return <CartAccountRequired />;
+    return (
+      <>
+        <CartNotifications error={error} messages={[]} success={success} />
+        <CartAccountRequired />
+      </>
+    );
   }
 
-  const [cartResult, parameters] = await Promise.allSettled([
-    getShopCart(),
-    searchParams,
-  ]);
+  let cart: Awaited<ReturnType<typeof getShopCart>>;
 
-  if (cartResult.status === "rejected") {
-    console.error("Cart loading failed.", cartResult.reason);
+  try {
+    cart = await getShopCart();
+  } catch (cartError) {
+    console.error("Cart loading failed.", cartError);
 
     return (
       <ErrorExperience
@@ -60,27 +71,14 @@ export default async function CartRoute({ searchParams }: CartRouteProps) {
     );
   }
 
-  const error =
-    parameters.status === "fulfilled"
-      ? Array.isArray(parameters.value.fehler)
-        ? parameters.value.fehler[0]
-        : parameters.value.fehler
-      : undefined;
-  const success =
-    parameters.status === "fulfilled"
-      ? Array.isArray(parameters.value.meldung)
-        ? parameters.value.meldung[0]
-        : parameters.value.meldung
-      : undefined;
-
   return (
     <>
       <CartNotifications
         error={error}
-        messages={cartResult.value.messages}
+        messages={cart.messages}
         success={success}
       />
-      <CartPage cart={cartResult.value} />
+      <CartPage cart={cart} />
     </>
   );
 }

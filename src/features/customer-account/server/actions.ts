@@ -19,11 +19,16 @@ import {
   registerShopwareCustomer,
 } from "@/integrations/shopware/customer-account";
 
+function getRedirectPath(formData: FormData) {
+  return formData.get("redirectTo") === "/warenkorb" ? "/warenkorb" : null;
+}
+
 export async function loginCustomer(
   _previousState: AccountActionState,
   formData: FormData,
 ): Promise<AccountActionState> {
   const login = parseCustomerLogin(formData);
+  const redirectPath = getRedirectPath(formData);
 
   if (!login) {
     return {
@@ -55,7 +60,7 @@ export async function loginCustomer(
     };
   }
 
-  redirect("/kundenkonto?angemeldet=1");
+  redirect(redirectPath ?? "/kundenkonto?angemeldet=1");
 }
 
 export async function registerCustomer(
@@ -63,6 +68,7 @@ export async function registerCustomer(
   formData: FormData,
 ): Promise<AccountActionState> {
   const registration = parseCustomerRegistration(formData);
+  const redirectPath = getRedirectPath(formData);
 
   if (!registration) {
     return {
@@ -94,7 +100,7 @@ export async function registerCustomer(
     };
   }
 
-  redirect("/kundenkonto?registriert=1");
+  redirect(redirectPath ?? "/kundenkonto?registriert=1");
 }
 
 export async function logoutCustomer() {

@@ -24,7 +24,10 @@ import { registerCustomer } from "@/features/customer-account/server/actions";
 
 const initialState: AccountActionState = { status: "idle" };
 
-export function RegisterForm({ options }: { options: RegistrationOptions }) {
+export function RegisterForm({
+  options,
+  redirectTo,
+}: Readonly<{ options: RegistrationOptions; redirectTo?: string }>) {
   const formRef = useRef<HTMLFormElement>(null);
   const [step, setStep] = useState<"account" | "address">("account");
   const [state, formAction, pending] = useActionState(
@@ -53,6 +56,9 @@ export function RegisterForm({ options }: { options: RegistrationOptions }) {
 
   return (
     <form ref={formRef} action={formAction} className="space-y-6">
+      {redirectTo && (
+        <input name="redirectTo" type="hidden" value={redirectTo} />
+      )}
       <AccountToast
         description={state.message}
         id={`registration-${state.status}`}

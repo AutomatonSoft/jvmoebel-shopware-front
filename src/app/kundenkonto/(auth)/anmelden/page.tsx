@@ -7,7 +7,18 @@ export const metadata: Metadata = {
   title: "Anmelden | JVMöbel",
 };
 
-export default function CustomerLoginPage() {
+type CustomerLoginPageProps = Readonly<{
+  searchParams: Promise<{ weiter?: string | string[] }>;
+}>;
+
+export default async function CustomerLoginPage({
+  searchParams,
+}: CustomerLoginPageProps) {
+  const parameters = await searchParams;
+  const redirectTo = Array.isArray(parameters.weiter)
+    ? parameters.weiter[0]
+    : parameters.weiter;
+
   return (
     <>
       <header>
@@ -22,7 +33,7 @@ export default function CustomerLoginPage() {
         </p>
       </header>
       <section className="mt-7">
-        <LoginForm />
+        <LoginForm redirectTo={redirectTo} />
       </section>
     </>
   );
