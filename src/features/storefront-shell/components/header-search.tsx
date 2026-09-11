@@ -17,6 +17,11 @@ const headerSearchLayoutTransition = {
   type: "spring" as const,
 };
 
+const headerSearchOverlayVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
+};
+
 export type HeaderSearchProps = {
   className: string;
 };
@@ -122,15 +127,29 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
           <AnimatePresence initial={false}>
             {isOpen && (
               <motion.div
-                animate={{ opacity: 1 }}
+                animate="visible"
                 className="fixed inset-0 z-100 flex items-start justify-center bg-foreground/20 px-4 pt-[max(5.5rem,10vh)] backdrop-blur-sm"
-                exit={{ opacity: 0 }}
-                initial={{ opacity: 0 }}
+                exit="hidden"
+                initial="hidden"
                 key="header-search-overlay"
+                layoutRoot
+                onAnimationComplete={(phase) => {
+                  if (
+                    phase !== "visible" ||
+                    isCloseRequested ||
+                    isSearchSettledRef.current
+                  ) {
+                    return;
+                  }
+
+                  isSearchSettledRef.current = true;
+                  setIsSearchSettled(true);
+                }}
                 onMouseDown={(event) => {
                   if (event.target === event.currentTarget) requestClose();
                 }}
                 transition={{ duration: 0.35, ease: "easeOut" }}
+                variants={headerSearchOverlayVariants}
               >
                 <section
                   aria-label="Produktsuche"
@@ -142,12 +161,6 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
                     action="/moebel-sortiment"
                     className={`relative z-10 flex h-11 items-center rounded-[1.375rem] border bg-muted/80 p-1 pl-4 transition-[border-color,box-shadow] duration-300 ${isSearchSettled ? "border-transparent shadow-none" : "shadow-lg"}`}
                     layoutId="header-product-search"
-                    onLayoutAnimationComplete={() => {
-                      if (isOpen && !isCloseRequested) {
-                        isSearchSettledRef.current = true;
-                        setIsSearchSettled(true);
-                      }
-                    }}
                     role="search"
                     style={{ borderRadius: 22 }}
                     transition={{ layout: headerSearchLayoutTransition }}
