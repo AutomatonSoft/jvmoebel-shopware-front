@@ -22,6 +22,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import type { ShopProductDetail } from "@/features/catalog/model/product-detail";
 import type { ShopProductSize } from "@/features/catalog/model/product-listing";
+import { WishlistToggleButton } from "@/features/wishlist/components/wishlist-toggle-button";
 
 const sizeLabels: Record<ShopProductSize, string> = {
   small: "Kompakt",
@@ -450,6 +451,12 @@ export function ProductPurchasePanel({
           <input name="productId" type="hidden" value={product.id} />
           <AddToCartButton />
         </form>
+        <WishlistToggleButton
+          className="mt-2"
+          productId={product.id}
+          productName={product.name}
+          variant="detail"
+        />
         <a
           className="mt-3 flex items-center justify-center gap-2 text-xs text-muted-foreground hover:text-foreground"
           href={`mailto:info@jvmoebel.de?subject=${inquirySubject}`}

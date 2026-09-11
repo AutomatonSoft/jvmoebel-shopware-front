@@ -2,6 +2,7 @@ import { ArrowUpRight, Star } from "lucide-react";
 import Image from "next/image";
 
 import type { ShopProduct } from "@/features/catalog/model/product-listing";
+import { WishlistToggleButton } from "@/features/wishlist/components/wishlist-toggle-button";
 
 export type ProductCardProduct = Pick<
   ShopProduct,
@@ -48,6 +49,7 @@ export function ShopProductCard({
 
   return (
     <article className="group relative flex min-w-0 flex-col overflow-hidden rounded-[1.4rem] border border-foreground/10 bg-card shadow-[0_16px_45px_-34px_rgba(21,21,19,0.7)] transition-[border-color,box-shadow] duration-300 hover:border-foreground/20 hover:shadow-[0_24px_55px_-34px_rgba(21,21,19,0.62)]">
+      <WishlistToggleButton productId={product.id} productName={product.name} />
       <a
         aria-label={product.name}
         className="relative isolate block aspect-[4/5] overflow-hidden bg-gradient-to-br from-muted/80 via-muted/40 to-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
@@ -74,7 +76,7 @@ export function ShopProductCard({
           </span>
         )}
         {discount && (
-          <span className="absolute top-3 right-3 rounded-full bg-primary px-2.5 py-1.5 text-[0.625rem] font-bold text-primary-foreground shadow-sm sm:top-4 sm:right-4">
+          <span className="absolute top-14 right-3 rounded-full bg-primary px-2.5 py-1.5 text-[0.625rem] font-bold text-primary-foreground shadow-sm sm:top-15 sm:right-4">
             −{discount}%
           </span>
         )}

@@ -90,7 +90,7 @@ export function StoreHeader({
             <Link
               aria-label="Wunschliste"
               className="hidden size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:scale-90 sm:flex"
-              href="/moebel-sortiment"
+              href="/wunschliste"
             >
               <Heart className="size-4.5" />
             </Link>
