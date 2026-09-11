@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowRight, Search } from "lucide-react";
-import { AnimatePresence, LayoutGroup, motion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -10,16 +10,14 @@ import { Input } from "@/components/ui/input";
 import { SearchResults } from "@/features/search/components/search-results";
 import { useProductSearch } from "@/features/search/hooks/use-product-search";
 
-const headerSearchLayoutTransition = {
-  damping: 28,
-  mass: 0.9,
-  stiffness: 210,
-  type: "spring" as const,
-};
-
 const headerSearchOverlayVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1 },
+};
+
+const headerSearchPanelVariants = {
+  hidden: { opacity: 0, scale: 0.98, y: -12 },
+  visible: { opacity: 1, scale: 1, y: 0 },
 };
 
 export type HeaderSearchProps = {
@@ -27,22 +25,13 @@ export type HeaderSearchProps = {
 };
 
 export function HeaderSearch({ className }: HeaderSearchProps) {
-  const [isCloseRequested, setIsCloseRequested] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [isSearchSettled, setIsSearchSettled] = useState(false);
   const [query, setQuery] = useState("");
-  const isSearchSettledRef = useRef(false);
   const overlayInputRef = useRef<HTMLInputElement>(null);
+  const shouldReduceMotion = useReducedMotion();
   const search = useProductSearch(query, isOpen);
 
   const requestClose = useCallback(() => {
-    if (isSearchSettledRef.current) {
-      isSearchSettledRef.current = false;
-      setIsCloseRequested(true);
-      setIsSearchSettled(false);
-      return;
-    }
-
     setIsOpen(false);
   }, []);
 
@@ -80,20 +69,14 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
   }, [isOpen, requestClose]);
 
   return (
-    <LayoutGroup id="header-search">
-      <motion.form
+    <>
+      <form
         action="/moebel-sortiment"
         className={`group/search h-11 items-center rounded-full border bg-muted/80 p-1 pl-4 transition-[background,border-color,box-shadow] hover:border-foreground/15 hover:bg-card/70 focus-within:border-foreground/25 focus-within:bg-card focus-within:ring-3 focus-within:ring-primary/15 ${className}`}
-        layoutId="header-product-search"
         onFocus={() => {
-          isSearchSettledRef.current = false;
-          setIsCloseRequested(false);
-          setIsSearchSettled(false);
           setIsOpen(true);
         }}
         role="search"
-        style={{ borderRadius: 22 }}
-        transition={{ layout: headerSearchLayoutTransition }}
       >
         <Search className="mr-2 size-4.5 shrink-0 text-muted-foreground transition-colors group-focus-within/search:text-foreground" />
         <Input
@@ -105,12 +88,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
           type="search"
           value={query}
         />
-        <motion.div
-          className="flex shrink-0"
-          layoutId="header-search-submit"
-          style={{ borderRadius: 999 }}
-          transition={{ layout: headerSearchLayoutTransition }}
-        >
+        <div className="flex shrink-0">
           <Button
             aria-label="Suche starten"
             className="shrink-0 rounded-full hover:bg-destructive motion-safe:hover:translate-x-px motion-safe:active:scale-90"
@@ -119,8 +97,8 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
           >
             <ArrowRight className="size-4" />
           </Button>
-        </motion.div>
-      </motion.form>
+        </div>
+      </form>
 
       {typeof document !== "undefined" &&
         createPortal(
@@ -132,40 +110,32 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
                 exit="hidden"
                 initial="hidden"
                 key="header-search-overlay"
-                layoutRoot
-                onAnimationComplete={(phase) => {
-                  if (
-                    phase !== "visible" ||
-                    isCloseRequested ||
-                    isSearchSettledRef.current
-                  ) {
-                    return;
-                  }
-
-                  isSearchSettledRef.current = true;
-                  setIsSearchSettled(true);
-                }}
                 onMouseDown={(event) => {
                   if (event.target === event.currentTarget) requestClose();
                 }}
-                transition={{ duration: 0.35, ease: "easeOut" }}
+                transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
                 variants={headerSearchOverlayVariants}
               >
-                <section
+                <motion.section
+                  animate="visible"
                   aria-label="Produktsuche"
                   aria-modal="true"
-                  className="w-[min(50vw,48rem)]"
+                  className="w-[min(50vw,48rem)] overflow-hidden rounded-[1.375rem] border bg-background shadow-2xl"
+                  exit={shouldReduceMotion ? { opacity: 0 } : "hidden"}
+                  initial={shouldReduceMotion ? false : "hidden"}
                   role="dialog"
+                  transition={{
+                    duration: shouldReduceMotion ? 0 : 0.24,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                  variants={headerSearchPanelVariants}
                 >
-                  <motion.form
+                  <form
                     action="/moebel-sortiment"
-                    className={`relative z-10 flex h-11 items-center rounded-[1.375rem] border bg-muted/80 p-1 pl-4 transition-[border-color,box-shadow] duration-300 ${isSearchSettled ? "border-transparent shadow-none" : "shadow-lg"}`}
-                    layoutId="header-product-search"
+                    className="group/search flex h-11 items-center border-b bg-muted/80 p-1 pl-4"
                     role="search"
-                    style={{ borderRadius: 22 }}
-                    transition={{ layout: headerSearchLayoutTransition }}
                   >
-                    <Search className="mr-2 size-4.5 shrink-0 text-muted-foreground" />
+                    <Search className="mr-2 size-4.5 shrink-0 text-muted-foreground transition-colors group-focus-within/search:text-foreground" />
                     <Input
                       aria-label="Produkte suchen"
                       className="h-auto min-w-0 flex-1 rounded-none border-0 bg-transparent px-0 py-0 text-sm shadow-none focus-visible:border-0 focus-visible:ring-0 [&::-webkit-search-cancel-button]:hidden"
@@ -176,12 +146,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
                       type="search"
                       value={query}
                     />
-                    <motion.div
-                      className="flex shrink-0"
-                      layoutId="header-search-submit"
-                      style={{ borderRadius: 999 }}
-                      transition={{ layout: headerSearchLayoutTransition }}
-                    >
+                    <div className="flex shrink-0">
                       <Button
                         aria-label="Suche starten"
                         className="shrink-0 rounded-full"
@@ -190,49 +155,29 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
                       >
                         <ArrowRight className="size-4" />
                       </Button>
-                    </motion.div>
-                  </motion.form>
+                    </div>
+                  </form>
 
-                  <AnimatePresence
-                    initial={false}
-                    onExitComplete={() => {
-                      if (isCloseRequested) {
-                        setIsCloseRequested(false);
-                        setIsOpen(false);
-                      }
-                    }}
+                  <div
+                    aria-live="polite"
+                    className="max-h-[min(30rem,70dvh)] min-h-18 overflow-y-auto px-5 pt-3 pb-4"
                   >
-                    {isSearchSettled && (
-                      <motion.div
-                        animate={{ height: "auto", opacity: 1 }}
-                        className="-mt-11 overflow-hidden rounded-[1.375rem] border bg-background pt-11 shadow-2xl"
-                        exit={{ height: 44, opacity: 0 }}
-                        initial={{ height: 44, opacity: 0 }}
-                        transition={{ duration: 0.3, ease: "easeOut" }}
-                      >
-                        <div
-                          aria-live="polite"
-                          className="max-h-[min(30rem,70dvh)] min-h-18 overflow-y-auto px-5 pt-3 pb-4"
-                        >
-                          <SearchResults
-                            currency={search.currency}
-                            debouncedQuery={search.debouncedQuery}
-                            errorMessage={search.errorMessage}
-                            isSearching={search.isSearching}
-                            locale={search.locale}
-                            query={query}
-                            results={search.results}
-                          />
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </section>
+                    <SearchResults
+                      currency={search.currency}
+                      debouncedQuery={search.debouncedQuery}
+                      errorMessage={search.errorMessage}
+                      isSearching={search.isSearching}
+                      locale={search.locale}
+                      query={query}
+                      results={search.results}
+                    />
+                  </div>
+                </motion.section>
               </motion.div>
             )}
           </AnimatePresence>,
           document.body,
         )}
-    </LayoutGroup>
+    </>
   );
 }
