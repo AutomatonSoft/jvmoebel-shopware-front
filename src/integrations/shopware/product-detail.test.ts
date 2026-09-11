@@ -1,12 +1,15 @@
 import { describe, expect, test } from "bun:test";
 import type { components } from "@shopware/api-client/store-api-types";
 
-import { getShopwareProductDetail } from "@/integrations/shopware/product-detail";
+import {
+  findShopwareProductVariant,
+  getShopwareProductDetail,
+} from "@/integrations/shopware/product-detail";
 
 type ShopwareProduct = components["schemas"]["Product"];
 
 describe("getShopwareProductDetail", () => {
-  test("loads a product while explicitly skipping CMS data", async () => {
+  test("loads a product with configurator data while skipping CMS data", async () => {
     const requests: Array<{ operation: string; request: unknown }> = [];
     const product = {
       calculatedPrice: { listPrice: null, unitPrice: 799 },
@@ -41,7 +44,43 @@ describe("getShopwareProductDetail", () => {
     ]);
     expect(requests[1]?.request).toMatchObject({
       pathParams: { productId: "product-id" },
-      query: { skipCmsPage: true, skipConfigurator: true },
+      query: { skipCmsPage: true, skipConfigurator: false },
     });
+  });
+
+  test("resolves a variant from the selected Shopware options", async () => {
+    const requests: Array<{ operation: string; request: unknown }> = [];
+    const client = {
+      invoke: async (operation: string, request: unknown) => {
+        requests.push({ operation, request });
+
+        return {
+          data: { variantId: "variant-product-id" },
+        };
+      },
+    } as unknown as Parameters<typeof findShopwareProductVariant>[0];
+
+    const variantId = await findShopwareProductVariant(
+      client,
+      "parent-product-id",
+      ["black-option-id", "width-220-option-id"],
+      "width-group-id",
+    );
+
+    expect(variantId).toBe("variant-product-id");
+    expect(requests).toEqual([
+      {
+        operation:
+          "searchProductVariantIds post /product/{productId}/find-variant",
+        request: {
+          body: {
+            options: ["black-option-id", "width-220-option-id"],
+            switchedGroup: "width-group-id",
+          },
+          fetchOptions: { cache: "no-store" },
+          pathParams: { productId: "parent-product-id" },
+        },
+      },
+    ]);
   });
 });

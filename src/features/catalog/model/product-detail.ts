@@ -20,6 +20,21 @@ export type ShopProductSpecification = Readonly<{
   value: string;
 }>;
 
+export type ShopProductVariantOption = Readonly<{
+  available: boolean;
+  hex?: string;
+  id: string;
+  label: string;
+  selected: boolean;
+  selection: readonly string[];
+}>;
+
+export type ShopProductVariantGroup = Readonly<{
+  id: string;
+  label: string;
+  options: readonly ShopProductVariantOption[];
+}>;
+
 export type ShopProductService = Readonly<{
   available: boolean;
   description: string;
@@ -33,6 +48,7 @@ export type ShopProductDetail = ShopProduct &
     accessories: readonly ShopProductAccessory[];
     articleNumber: string;
     availability: string;
+    colorVariantGroups: readonly ShopProductVariantGroup[];
     deliveryEstimate: string;
     deliveryMethod?: string;
     dimensions: ShopProductDimensions;
@@ -41,7 +57,9 @@ export type ShopProductDetail = ShopProduct &
     longDescription: string;
     services: readonly ShopProductService[];
     shippingFree?: boolean;
+    sizeVariantGroups: readonly ShopProductVariantGroup[];
     specifications: readonly ShopProductSpecification[];
+    variantParentId: string;
   }>;
 
 export type ShopProductPageData = Readonly<{

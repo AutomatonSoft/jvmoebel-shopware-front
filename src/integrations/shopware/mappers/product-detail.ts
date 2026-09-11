@@ -5,6 +5,7 @@ import type {
   ShopProductDimensions,
   ShopProductPageData,
   ShopProductSpecification,
+  ShopProductVariantGroup,
 } from "@/features/catalog/model/product-detail";
 import type { ShopProduct } from "@/features/catalog/model/product-listing";
 import {
@@ -15,10 +16,20 @@ import {
 type ShopwareProduct = components["schemas"]["Product"];
 
 type ShopwareProductDetailInput = Readonly<{
+  configurator?: readonly components["schemas"]["PropertyGroup"][];
   currency: string;
   locale: string;
   product: ShopwareProduct;
 }>;
+
+function normalizePropertyGroupName(value: string) {
+  return getShopwarePlainText(value)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/ß/g, "ss")
+    .trim()
+    .toLocaleLowerCase("de-DE");
+}
 
 function getGallery(
   product: ShopwareProduct,
@@ -81,10 +92,7 @@ function getDimensions(product: ShopwareProduct): ShopProductDimensions {
       property.group?.translated?.name?.trim() ||
         property.group?.name?.trim() ||
         "",
-    )
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLocaleLowerCase("de-DE");
+    );
     const propertyValue = getShopwarePlainText(
       property.translated?.name?.trim() || property.name?.trim() || "",
     );
@@ -92,11 +100,14 @@ function getDimensions(product: ShopwareProduct): ShopProductDimensions {
 
     if (
       groupName &&
-      !propertyDimensions.has(groupName) &&
+      !propertyDimensions.has(normalizePropertyGroupName(groupName)) &&
       Number.isFinite(numericValue) &&
       numericValue > 0
     ) {
-      propertyDimensions.set(groupName, numericValue);
+      propertyDimensions.set(
+        normalizePropertyGroupName(groupName),
+        numericValue,
+      );
     }
   }
 
@@ -107,6 +118,133 @@ function getDimensions(product: ShopwareProduct): ShopProductDimensions {
     unit: "cm",
     width: propertyDimensions.get("breite") ?? 0,
   };
+}
+
+const sizeVariantGroupNames = new Set([
+  "breite",
+  "breite liegeflache",
+  "grosse",
+  "groesse",
+  "hohe",
+  "lange",
+  "lange liegeflache",
+  "size",
+  "tiefe",
+]);
+
+const colorVariantGroupNames = new Set([
+  "color",
+  "colour",
+  "farbe",
+  "grundfarbe",
+]);
+
+function getConfiguratorOptionHex(
+  option: components["schemas"]["PropertyGroupOption"],
+) {
+  const hex =
+    option.translated?.colorHexCode?.trim() || option.colorHexCode?.trim();
+
+  return hex && /^#[0-9a-f]{3,8}$/i.test(hex) ? hex : undefined;
+}
+
+function getColorVariantGroups(
+  product: ShopwareProduct,
+  configurator: ShopwareProductDetailInput["configurator"],
+): ShopProductVariantGroup[] {
+  const selectedOptionIds = new Set(product.optionIds ?? []);
+
+  return (configurator ?? []).flatMap((group) => {
+    const groupLabel = getShopwarePlainText(
+      group.translated?.name?.trim() || group.name?.trim() || "",
+    );
+    const options = group.options ?? [];
+
+    if (
+      !groupLabel ||
+      !colorVariantGroupNames.has(normalizePropertyGroupName(groupLabel)) ||
+      options.length < 2
+    ) {
+      return [];
+    }
+
+    const groupOptionIds = new Set(options.map((option) => option.id));
+    const otherSelectedOptionIds = Array.from(selectedOptionIds).filter(
+      (optionId) => !groupOptionIds.has(optionId),
+    );
+    const mappedOptions = options
+      .map((option) => ({
+        available: option.combinable !== false,
+        hex: getConfiguratorOptionHex(option),
+        id: option.id,
+        label: getShopwarePlainText(
+          option.translated?.name?.trim() || option.name?.trim() || "",
+        ),
+        selected: selectedOptionIds.has(option.id),
+        selection: [...otherSelectedOptionIds, option.id],
+      }))
+      .filter((option) => option.label);
+
+    return mappedOptions.length > 1
+      ? [{ id: group.id, label: groupLabel, options: mappedOptions }]
+      : [];
+  });
+}
+
+function getSizeVariantGroups(
+  product: ShopwareProduct,
+  configurator: ShopwareProductDetailInput["configurator"],
+): ShopProductVariantGroup[] {
+  const selectedOptionIds = new Set(product.optionIds ?? []);
+
+  return (configurator ?? []).flatMap((group) => {
+    const groupLabel = getShopwarePlainText(
+      group.translated?.name?.trim() || group.name?.trim() || "",
+    );
+    const options = group.options ?? [];
+
+    if (
+      !groupLabel ||
+      !sizeVariantGroupNames.has(normalizePropertyGroupName(groupLabel)) ||
+      options.length < 2
+    ) {
+      return [];
+    }
+
+    const groupOptionIds = new Set(options.map((option) => option.id));
+    const otherSelectedOptionIds = Array.from(selectedOptionIds).filter(
+      (optionId) => !groupOptionIds.has(optionId),
+    );
+    const isNumericDimension = !["grosse", "groesse", "size"].includes(
+      normalizePropertyGroupName(groupLabel),
+    );
+    const mappedOptions = options
+      .map((option) => {
+        const optionLabel = getShopwarePlainText(
+          option.translated?.name?.trim() || option.name?.trim() || "",
+        );
+        const label =
+          isNumericDimension && /^\d+(?:[.,]\d+)?$/.test(optionLabel)
+            ? `${optionLabel} cm`
+            : optionLabel;
+
+        return {
+          available: option.combinable !== false,
+          id: option.id,
+          label,
+          selected: selectedOptionIds.has(option.id),
+          selection: [...otherSelectedOptionIds, option.id],
+        };
+      })
+      .filter((option) => option.label)
+      .toSorted((first, second) =>
+        first.label.localeCompare(second.label, "de-DE", { numeric: true }),
+      );
+
+    return mappedOptions.length > 1
+      ? [{ id: group.id, label: groupLabel, options: mappedOptions }]
+      : [];
+  });
 }
 
 function getDeliveryEstimate(product: ShopwareProduct) {
@@ -254,6 +392,7 @@ function getAvailability(product: ShopwareProduct) {
 }
 
 export function mapShopwareProductDetail({
+  configurator,
   currency,
   locale,
   product,
@@ -272,6 +411,7 @@ export function mapShopwareProductDetail({
       accessories: [],
       articleNumber: product.productNumber,
       availability: getAvailability(product),
+      colorVariantGroups: getColorVariantGroups(product, configurator),
       deliveryEstimate: getDeliveryEstimate(product),
       dimensions: getDimensions(product),
       gallery: getGallery(product, listingProduct),
@@ -279,7 +419,9 @@ export function mapShopwareProductDetail({
       longDescription,
       services: [],
       shippingFree: product.shippingFree,
+      sizeVariantGroups: getSizeVariantGroups(product, configurator),
       specifications: getSpecifications(product, listingProduct),
+      variantParentId: product.parentId ?? product.id,
     },
     relatedProducts: [],
   };

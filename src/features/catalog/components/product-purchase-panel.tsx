@@ -18,6 +18,7 @@ import { useFormStatus } from "react-dom";
 
 import { Button } from "@/components/ui/button";
 import { addProductToCart } from "@/features/cart/server/actions";
+import { selectProductVariant } from "@/features/catalog/server/actions";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import type { ShopProductDetail } from "@/features/catalog/model/product-detail";
@@ -89,11 +90,24 @@ export function ProductPurchasePanel({
   const selectedColorLabel = product.colors.find(
     (color) => color.value === selectedColor,
   )?.label;
+  const selectedColorVariant = product.colorVariantGroups
+    .flatMap((group) => group.options)
+    .find((option) => option.selected);
+  const selectedVariantLabels = product.sizeVariantGroups.flatMap((group) => {
+    const selectedOption = group.options.find((option) => option.selected);
+
+    return selectedOption ? [`${group.label}: ${selectedOption.label}`] : [];
+  });
   const postalCodeIsConfirmed =
     postalCode.length === 5 && confirmedPostalCode === postalCode;
   const inquiryDetails = [
-    selectedColorLabel ? `Farbe: ${selectedColorLabel}` : undefined,
-    selectedSize ? `Größe: ${sizeLabels[selectedSize]}` : undefined,
+    selectedColorVariant?.label || selectedColorLabel
+      ? `Farbe: ${selectedColorVariant?.label ?? selectedColorLabel}`
+      : undefined,
+    product.sizeVariantGroups.length === 0 && selectedSize
+      ? `Größe: ${sizeLabels[selectedSize]}`
+      : undefined,
+    ...selectedVariantLabels,
     confirmedPostalCode ? `Postleitzahl: ${confirmedPostalCode}` : undefined,
     ...product.services
       .filter(
@@ -203,59 +217,203 @@ export function ProductPurchasePanel({
 
       <div
         className={
-          product.colors.length > 0 || product.sizes.length > 0
+          product.colors.length > 0 ||
+          product.colorVariantGroups.length > 0 ||
+          product.sizes.length > 0 ||
+          product.sizeVariantGroups.length > 0
             ? "space-y-2 border-b py-5"
             : "hidden"
         }
       >
-        {product.colors.length > 0 && (
-          <details className="group overflow-hidden rounded-xl border bg-card">
-            <summary className="flex min-h-20 cursor-pointer list-none items-center gap-4 px-4 py-3 [&::-webkit-details-marker]:hidden">
-              <span className="min-w-0 flex-1">
-                <strong className="block text-sm font-semibold">
-                  Farbe{" "}
-                  <span className="font-normal">
-                    ({product.colors.length} Optionen)
+        {product.colorVariantGroups.map((group) => {
+          const selectedOption = group.options.find(
+            (option) => option.selected,
+          );
+
+          return (
+            <details
+              className="group overflow-hidden rounded-xl border bg-card"
+              key={group.id}
+            >
+              <summary className="flex min-h-20 cursor-pointer list-none items-center gap-4 px-4 py-3 [&::-webkit-details-marker]:hidden">
+                <span className="min-w-0 flex-1">
+                  <strong className="block text-sm font-semibold">
+                    {group.label}{" "}
+                    <span className="font-normal">
+                      ({group.options.length} Optionen)
+                    </span>
+                  </strong>
+                  <span className="mt-1 block truncate text-sm text-muted-foreground">
+                    {selectedOption?.label ?? "Bitte auswählen"}
                   </span>
-                </strong>
-                <span className="mt-1 block truncate text-sm text-muted-foreground">
-                  {selectedColorLabel}
                 </span>
-              </span>
-              <span
-                aria-hidden="true"
-                className="size-12 shrink-0 rounded-full border-2 border-background shadow-[0_0_0_1px_var(--color-border)]"
-                style={{
-                  backgroundColor:
-                    product.colors.find(
-                      (color) => color.value === selectedColor,
-                    )?.hex ?? "transparent",
-                }}
-              />
-              <ChevronRight className="size-5 shrink-0 text-muted-foreground transition-transform group-open:rotate-90" />
-            </summary>
-            <div className="flex flex-wrap gap-3 border-t bg-muted/20 px-4 py-4">
-              {product.colors.map((color) => {
-                const isSelected = color.value === selectedColor;
+                <span
+                  aria-hidden="true"
+                  className="size-12 shrink-0 rounded-full border-2 border-background bg-muted shadow-[0_0_0_1px_var(--color-border)]"
+                  style={{ backgroundColor: selectedOption?.hex }}
+                />
+                <ChevronRight className="size-5 shrink-0 text-muted-foreground transition-transform group-open:rotate-90" />
+              </summary>
+              <div className="grid gap-2 border-t bg-muted/20 px-4 py-4 sm:grid-cols-2">
+                {group.options.map((option) => (
+                  <form action={selectProductVariant} key={option.id}>
+                    <input
+                      name="currentProductId"
+                      type="hidden"
+                      value={product.id}
+                    />
+                    <input
+                      name="parentProductId"
+                      type="hidden"
+                      value={product.variantParentId}
+                    />
+                    <input
+                      name="switchedGroupId"
+                      type="hidden"
+                      value={group.id}
+                    />
+                    {option.selection.map((optionId) => (
+                      <input
+                        key={optionId}
+                        name="optionId"
+                        type="hidden"
+                        value={optionId}
+                      />
+                    ))}
+                    <button
+                      aria-pressed={option.selected}
+                      className={`flex min-h-12 w-full items-center gap-3 rounded-xl border px-3 py-2 text-left text-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-45 ${option.selected ? "border-foreground bg-foreground text-background" : "bg-card hover:border-foreground/40"}`}
+                      disabled={option.selected || !option.available}
+                      type="submit"
+                    >
+                      <span
+                        aria-hidden="true"
+                        className="size-7 shrink-0 rounded-full border-2 border-background bg-muted shadow-[0_0_0_1px_var(--color-border)]"
+                        style={{ backgroundColor: option.hex }}
+                      />
+                      <strong className="font-semibold">{option.label}</strong>
+                    </button>
+                  </form>
+                ))}
+              </div>
+            </details>
+          );
+        })}
 
-                return (
-                  <button
-                    aria-label={`${color.label}${isSelected ? ", ausgewählt" : ""}`}
-                    aria-pressed={isSelected}
-                    className={`size-10 cursor-pointer rounded-full border-2 border-background shadow-[0_0_0_1px_var(--color-border)] transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${isSelected ? "shadow-[0_0_0_2px_var(--color-foreground)]" : ""}`}
-                    key={color.value}
-                    onClick={() => setSelectedColor(color.value)}
-                    style={{ backgroundColor: color.hex }}
-                    title={color.label}
-                    type="button"
-                  />
-                );
-              })}
-            </div>
-          </details>
-        )}
+        {product.colorVariantGroups.length === 0 &&
+          product.colors.length > 0 && (
+            <details className="group overflow-hidden rounded-xl border bg-card">
+              <summary className="flex min-h-20 cursor-pointer list-none items-center gap-4 px-4 py-3 [&::-webkit-details-marker]:hidden">
+                <span className="min-w-0 flex-1">
+                  <strong className="block text-sm font-semibold">
+                    Farbe{" "}
+                    <span className="font-normal">
+                      ({product.colors.length} Optionen)
+                    </span>
+                  </strong>
+                  <span className="mt-1 block truncate text-sm text-muted-foreground">
+                    {selectedColorLabel}
+                  </span>
+                </span>
+                <span
+                  aria-hidden="true"
+                  className="size-12 shrink-0 rounded-full border-2 border-background shadow-[0_0_0_1px_var(--color-border)]"
+                  style={{
+                    backgroundColor:
+                      product.colors.find(
+                        (color) => color.value === selectedColor,
+                      )?.hex ?? "transparent",
+                  }}
+                />
+                <ChevronRight className="size-5 shrink-0 text-muted-foreground transition-transform group-open:rotate-90" />
+              </summary>
+              <div className="flex flex-wrap gap-3 border-t bg-muted/20 px-4 py-4">
+                {product.colors.map((color) => {
+                  const isSelected = color.value === selectedColor;
 
-        {product.sizes.length > 0 && (
+                  return (
+                    <button
+                      aria-label={`${color.label}${isSelected ? ", ausgewählt" : ""}`}
+                      aria-pressed={isSelected}
+                      className={`size-10 cursor-pointer rounded-full border-2 border-background shadow-[0_0_0_1px_var(--color-border)] transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${isSelected ? "shadow-[0_0_0_2px_var(--color-foreground)]" : ""}`}
+                      key={color.value}
+                      onClick={() => setSelectedColor(color.value)}
+                      style={{ backgroundColor: color.hex }}
+                      title={color.label}
+                      type="button"
+                    />
+                  );
+                })}
+              </div>
+            </details>
+          )}
+
+        {product.sizeVariantGroups.map((group) => {
+          const selectedOption = group.options.find(
+            (option) => option.selected,
+          );
+
+          return (
+            <details
+              className="group overflow-hidden rounded-xl border bg-card"
+              key={group.id}
+            >
+              <summary className="flex min-h-20 cursor-pointer list-none items-center gap-4 px-4 py-3 [&::-webkit-details-marker]:hidden">
+                <span className="min-w-0 flex-1">
+                  <strong className="block text-sm font-semibold">
+                    {group.label}{" "}
+                    <span className="font-normal">
+                      ({group.options.length} Optionen)
+                    </span>
+                  </strong>
+                  <span className="mt-1 block truncate text-sm text-muted-foreground">
+                    {selectedOption?.label ?? "Bitte auswählen"}
+                  </span>
+                </span>
+                <ChevronRight className="size-5 shrink-0 text-muted-foreground transition-transform group-open:rotate-90" />
+              </summary>
+              <div className="grid gap-2 border-t bg-muted/20 px-4 py-4 sm:grid-cols-2">
+                {group.options.map((option) => (
+                  <form action={selectProductVariant} key={option.id}>
+                    <input
+                      name="currentProductId"
+                      type="hidden"
+                      value={product.id}
+                    />
+                    <input
+                      name="parentProductId"
+                      type="hidden"
+                      value={product.variantParentId}
+                    />
+                    <input
+                      name="switchedGroupId"
+                      type="hidden"
+                      value={group.id}
+                    />
+                    {option.selection.map((optionId) => (
+                      <input
+                        key={optionId}
+                        name="optionId"
+                        type="hidden"
+                        value={optionId}
+                      />
+                    ))}
+                    <button
+                      aria-pressed={option.selected}
+                      className={`flex min-h-12 w-full items-center rounded-xl border px-4 py-3 text-left text-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-45 ${option.selected ? "border-foreground bg-foreground text-background" : "bg-card hover:border-foreground/40"}`}
+                      disabled={option.selected || !option.available}
+                      type="submit"
+                    >
+                      <strong className="font-semibold">{option.label}</strong>
+                    </button>
+                  </form>
+                ))}
+              </div>
+            </details>
+          );
+        })}
+
+        {product.sizeVariantGroups.length === 0 && product.sizes.length > 0 && (
           <details className="group overflow-hidden rounded-xl border bg-card">
             <summary className="flex min-h-20 cursor-pointer list-none items-center gap-4 px-4 py-3 [&::-webkit-details-marker]:hidden">
               <span className="min-w-0 flex-1">

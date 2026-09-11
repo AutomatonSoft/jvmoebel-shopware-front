@@ -166,4 +166,116 @@ describe("mapShopwareProductDetail", () => {
       width: 258,
     });
   });
+
+  test("maps selectable numeric dimensions from the Shopware configurator", () => {
+    const product = {
+      calculatedPrice: { listPrice: null, unitPrice: 999 },
+      id: "variant-180",
+      name: "Variables Sofa",
+      optionIds: ["black", "width-180"],
+      parentId: "parent-product-id",
+      productNumber: "VARIANT-180",
+      translated: { description: "", name: "Variables Sofa" },
+    } as ShopwareProduct;
+
+    const pageData = mapShopwareProductDetail({
+      configurator: [
+        {
+          id: "width-group",
+          name: "Breite",
+          options: [
+            {
+              combinable: true,
+              groupId: "width-group",
+              id: "width-220",
+              name: "220",
+              translated: { name: "220" },
+            },
+            {
+              combinable: true,
+              groupId: "width-group",
+              id: "width-180",
+              name: "180",
+              translated: { name: "180" },
+            },
+          ],
+          translated: { name: "Breite" },
+        },
+        {
+          id: "color-group",
+          name: "Farbe",
+          options: [
+            {
+              colorHexCode: "#111111",
+              groupId: "color-group",
+              id: "black",
+              name: "Schwarz",
+              translated: { colorHexCode: null, name: "Schwarz" },
+            },
+            {
+              colorHexCode: "#f5f5f5",
+              groupId: "color-group",
+              id: "white",
+              name: "Weiß",
+              translated: { colorHexCode: null, name: "Weiß" },
+            },
+          ],
+          translated: { name: "Farbe" },
+        },
+      ] as components["schemas"]["PropertyGroup"][],
+      currency: "EUR",
+      locale: "de-DE",
+      product,
+    });
+
+    expect(pageData.product).toMatchObject({
+      colorVariantGroups: [
+        {
+          id: "color-group",
+          label: "Farbe",
+          options: [
+            {
+              available: true,
+              hex: "#111111",
+              id: "black",
+              label: "Schwarz",
+              selected: true,
+              selection: ["width-180", "black"],
+            },
+            {
+              available: true,
+              hex: "#f5f5f5",
+              id: "white",
+              label: "Weiß",
+              selected: false,
+              selection: ["width-180", "white"],
+            },
+          ],
+        },
+      ],
+      sizeVariantGroups: [
+        {
+          id: "width-group",
+          label: "Breite",
+          options: [
+            {
+              available: true,
+              id: "width-180",
+              label: "180 cm",
+              selected: true,
+              selection: ["black", "width-180"],
+            },
+            {
+              available: true,
+              id: "width-220",
+              label: "220 cm",
+              selected: false,
+              selection: ["black", "width-220"],
+            },
+          ],
+        },
+      ],
+      variantParentId: "parent-product-id",
+    });
+  });
 });

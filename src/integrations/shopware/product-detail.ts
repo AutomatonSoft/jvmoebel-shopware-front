@@ -27,7 +27,7 @@ export async function getShopwareProductDetail(
       body: { associations: productDetailAssociations },
       fetchOptions: { cache: "no-store" },
       pathParams: { productId },
-      query: { skipCmsPage: true, skipConfigurator: true },
+      query: { skipCmsPage: true, skipConfigurator: false },
     }),
   ]);
   const product = response.data.product;
@@ -37,8 +37,31 @@ export async function getShopwareProductDetail(
   }
 
   return mapShopwareProductDetail({
+    configurator: response.data.configurator,
     currency: context.currency?.isoCode || "EUR",
     locale: context.languageInfo.localeCode || "de-DE",
     product,
   });
+}
+
+export async function findShopwareProductVariant(
+  client: ShopwareClient,
+  parentProductId: string,
+  optionIds: readonly string[],
+  switchedGroupId: string,
+) {
+  const response = await client.invoke(
+    "searchProductVariantIds post /product/{productId}/find-variant",
+    {
+      body: { options: [...optionIds], switchedGroup: switchedGroupId },
+      fetchOptions: { cache: "no-store" },
+      pathParams: { productId: parentProductId },
+    },
+  );
+  const data =
+    response.data as components["schemas"]["FindProductVariantRouteResponse"] & {
+      variantId?: string;
+    };
+
+  return data.foundCombination?.variantId ?? data.variantId ?? null;
 }

@@ -82,6 +82,7 @@ function createProductDetail(product: ShopProduct): ShopProductDetail {
       product.badge === "Low stock"
         ? "Nur noch wenige verfügbar"
         : "Auf Bestellung verfügbar",
+    colorVariantGroups: [],
     deliveryEstimate:
       product.badge === "Low stock" ? "2–4 Wochen" : "4–8 Wochen",
     deliveryMethod: "Möbelspedition bis zum Wunschort",
@@ -113,6 +114,7 @@ function createProductDetail(product: ShopProduct): ShopProductDetail {
       },
     ],
     shippingFree: false,
+    sizeVariantGroups: [],
     specifications: [
       {
         id: "article-number",
@@ -133,6 +135,7 @@ function createProductDetail(product: ShopProduct): ShopProductDetail {
         value: product.sizes.map((size) => sizeLabels[size]).join(", "),
       },
     ],
+    variantParentId: product.id,
   };
 }
 
