@@ -18,6 +18,7 @@ type ShopwareProduct = components["schemas"]["Product"];
 
 type ShopwareProductDetailInput = Readonly<{
   configurator?: readonly components["schemas"]["PropertyGroup"][];
+  crossSellings?: components["schemas"]["CrossSellingElementCollection"];
   currency: string;
   locale: string;
   product: ShopwareProduct;
@@ -436,8 +437,29 @@ function getAvailability(product: ShopwareProduct) {
   return "Verfügbarkeit auf Anfrage";
 }
 
+function getRelatedProducts(
+  productId: string,
+  crossSellings: ShopwareProductDetailInput["crossSellings"],
+) {
+  const products = new Map<string, ShopwareProduct>();
+
+  for (const crossSelling of (crossSellings ?? []).toSorted(
+    (first, second) =>
+      (first.crossSelling.position ?? 0) - (second.crossSelling.position ?? 0),
+  )) {
+    for (const product of crossSelling.products) {
+      if (product.id !== productId && !products.has(product.id)) {
+        products.set(product.id, product);
+      }
+    }
+  }
+
+  return Array.from(products.values(), mapShopwareProduct);
+}
+
 export function mapShopwareProductDetail({
   configurator,
+  crossSellings,
   currency,
   locale,
   product,
@@ -475,6 +497,6 @@ export function mapShopwareProductDetail({
       specifications: getSpecifications(product, listingProduct),
       variantParentId: product.parentId ?? product.id,
     },
-    relatedProducts: [],
+    relatedProducts: getRelatedProducts(product.id, crossSellings),
   };
 }

@@ -17,11 +17,35 @@ const productDetailAssociations = {
   unit: {},
 } satisfies components["schemas"]["Associations"];
 
+async function getShopwareProductCrossSellings(
+  client: ShopwareClient,
+  productId: string,
+) {
+  try {
+    const response = await client.invoke(
+      "readProductCrossSellings post /product/{productId}/cross-selling",
+      {
+        fetchOptions: { cache: "no-store" },
+        pathParams: { productId },
+      },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(
+      `Could not load Shopware cross-selling for product ${productId}.`,
+      error,
+    );
+
+    return [];
+  }
+}
+
 export async function getShopwareProductDetail(
   client: ShopwareClient,
   productId: string,
 ): Promise<ShopProductPageData | null> {
-  const [context, response] = await Promise.all([
+  const [context, response, productCrossSellings] = await Promise.all([
     getShopwareContext(client),
     client.invoke("readProductDetail post /product/{productId}", {
       body: { associations: productDetailAssociations },
@@ -29,6 +53,7 @@ export async function getShopwareProductDetail(
       pathParams: { productId },
       query: { skipCmsPage: true, skipConfigurator: false },
     }),
+    getShopwareProductCrossSellings(client, productId),
   ]);
   const product = response.data.product;
 
@@ -36,8 +61,16 @@ export async function getShopwareProductDetail(
     return null;
   }
 
+  const crossSellings =
+    productCrossSellings.length === 0 &&
+    product.parentId &&
+    product.parentId !== productId
+      ? await getShopwareProductCrossSellings(client, product.parentId)
+      : productCrossSellings;
+
   return mapShopwareProductDetail({
     configurator: response.data.configurator,
+    crossSellings,
     currency: context.currency?.isoCode || "EUR",
     locale: context.languageInfo.localeCode || "de-DE",
     product,
