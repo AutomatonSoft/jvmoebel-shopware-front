@@ -72,6 +72,6 @@ export function mapShopwareProductSearchResult(
     image: getImage(product, name),
     name,
     unitPrice: product.calculatedPrice.unitPrice,
-    url: `/product/${encodeURIComponent(product.id)}`,
+    url: `/produkt/${encodeURIComponent(product.id)}`,
   };
 }

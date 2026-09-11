@@ -3,112 +3,166 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
 
 import { buildShopProductFilterOptions } from "@/features/catalog/model/filter-options";
+import type { ProductFilterOption } from "@/features/catalog/model/filter-options";
 import {
   filterAndSortShopProducts,
   type ShopProductSort,
 } from "@/features/catalog/model/filter-products";
-import type {
-  ShopProduct,
-  ShopProductSize,
-} from "@/features/catalog/model/product-listing";
+import {
+  paginateProducts,
+  productsPerPage,
+} from "@/features/catalog/model/paginate-products";
+import type { ShopProduct } from "@/features/catalog/model/product-listing";
 
 function toggleValue<TValue extends string>(
   value: TValue,
   setValues: Dispatch<SetStateAction<TValue[]>>,
+  resetPage: () => void,
 ) {
   setValues((values) =>
     values.includes(value)
       ? values.filter((selectedValue) => selectedValue !== value)
       : [...values, value],
   );
+  resetPage();
 }
 
-export function useCatalogState(products: readonly ShopProduct[]) {
+export function useCatalogState(
+  products: readonly ShopProduct[],
+  initialCategory?: Pick<ProductFilterOption, "label" | "value">,
+) {
   const prices = products.map((product) => product.unitPrice);
   const minimumPriceBound = Math.floor(Math.min(...prices) / 10) * 10;
   const maximumPriceBound = Math.ceil(Math.max(...prices) / 10) * 10;
-  const { categories, colors, companies, materials, sizes } =
-    buildShopProductFilterOptions(products);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedColors, setSelectedColors] = useState<string[]>([]);
+  const {
+    attributeGroups,
+    categories: productCategories,
+    companies,
+  } = buildShopProductFilterOptions(products);
+  const categoryCount =
+    productCategories.find(
+      (category) => category.value === initialCategory?.value,
+    )?.count ?? 0;
+  const categories = initialCategory
+    ? [
+        { ...initialCategory, count: categoryCount },
+        ...productCategories.filter(
+          (category) => category.value !== initialCategory.value,
+        ),
+      ]
+    : productCategories;
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(() =>
+    initialCategory ? [initialCategory.value] : [],
+  );
+  const [selectedAttributes, setSelectedAttributes] = useState<
+    Record<string, string[]>
+  >({});
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
-  const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);
-  const [selectedSizes, setSelectedSizes] = useState<ShopProductSize[]>([]);
   const [minimumPrice, setMinimumPrice] = useState(minimumPriceBound);
   const [maximumPrice, setMaximumPrice] = useState(maximumPriceBound);
   const [sort, setSort] = useState<ShopProductSort>("featured");
+  const [currentPage, setCurrentPage] = useState(1);
   const activeFilterCount =
     selectedCategories.length +
-    selectedColors.length +
     selectedCompanies.length +
-    selectedMaterials.length +
-    selectedSizes.length +
+    Object.values(selectedAttributes).reduce(
+      (count, values) => count + values.length,
+      0,
+    ) +
     (minimumPrice !== minimumPriceBound || maximumPrice !== maximumPriceBound
       ? 1
       : 0);
   const filteredProducts = filterAndSortShopProducts(
     products,
     {
+      attributes: selectedAttributes,
       categories: selectedCategories,
-      colors: selectedColors,
       companies: selectedCompanies,
-      materials: selectedMaterials,
       maximumPrice,
       minimumPrice,
-      sizes: selectedSizes,
     },
     sort,
   );
+  const pagination = paginateProducts(filteredProducts, currentPage);
+
+  function resetPage() {
+    setCurrentPage(1);
+  }
 
   function clearFilters() {
     setSelectedCategories([]);
-    setSelectedColors([]);
+    setSelectedAttributes({});
     setSelectedCompanies([]);
-    setSelectedMaterials([]);
-    setSelectedSizes([]);
     setMinimumPrice(minimumPriceBound);
     setMaximumPrice(maximumPriceBound);
+    resetPage();
+  }
+
+  function changeSort(value: ShopProductSort) {
+    setSort(value);
+    resetPage();
   }
 
   return {
     clearFilters,
     filterPanelProps: {
       activeFilterCount,
+      attributeGroups,
       categories,
-      colors,
       companies,
-      materials,
       maximumPrice,
       maximumPriceBound,
       minimumPrice,
       minimumPriceBound,
       onClear: clearFilters,
-      onMaximumPriceChange: (value: number) =>
+      onMaximumPriceChange: (value: number) => {
         setMaximumPrice(
           Math.max(minimumPrice, Math.min(value, maximumPriceBound)),
-        ),
-      onMinimumPriceChange: (value: number) =>
+        );
+        resetPage();
+      },
+      onMinimumPriceChange: (value: number) => {
         setMinimumPrice(
           Math.min(maximumPrice, Math.max(value, minimumPriceBound)),
-        ),
+        );
+        resetPage();
+      },
       onToggleCategory: (value: string) =>
-        toggleValue(value, setSelectedCategories),
-      onToggleColor: (value: string) => toggleValue(value, setSelectedColors),
+        toggleValue(value, setSelectedCategories, resetPage),
+      onToggleAttribute: (groupId: string, value: string) => {
+        setSelectedAttributes((attributes) => {
+          const groupValues = attributes[groupId] ?? [];
+          const nextGroupValues = groupValues.includes(value)
+            ? groupValues.filter((selectedValue) => selectedValue !== value)
+            : [...groupValues, value];
+
+          if (nextGroupValues.length === 0) {
+            const { [groupId]: removedGroup, ...remainingAttributes } =
+              attributes;
+            void removedGroup;
+
+            return remainingAttributes;
+          }
+
+          return { ...attributes, [groupId]: nextGroupValues };
+        });
+        resetPage();
+      },
       onToggleCompany: (value: string) =>
-        toggleValue(value, setSelectedCompanies),
-      onToggleMaterial: (value: string) =>
-        toggleValue(value, setSelectedMaterials),
-      onToggleSize: (value: ShopProductSize) =>
-        toggleValue(value, setSelectedSizes),
+        toggleValue(value, setSelectedCompanies, resetPage),
+      selectedAttributes,
       selectedCategories,
-      selectedColors,
       selectedCompanies,
-      selectedMaterials,
-      selectedSizes,
-      sizes,
     },
-    products: filteredProducts,
-    setSort,
+    paginationProps: {
+      currentPage: pagination.currentPage,
+      onPageChange: setCurrentPage,
+      pageSize: productsPerPage,
+      totalPages: pagination.totalPages,
+      totalProducts: pagination.totalProducts,
+    },
+    products: pagination.products,
+    setSort: changeSort,
     sort,
   };
 }

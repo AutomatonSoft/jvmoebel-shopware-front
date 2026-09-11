@@ -1,6 +1,7 @@
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 
+import { CmsLink } from "@/features/cms/components/cms-link";
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import { parseCmsShopTheLookData } from "@/features/cms/contracts/shop-the-look";
 import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
@@ -40,7 +41,7 @@ export function CmsShopTheLook({ slot }: CmsSlotComponentProps) {
           </div>
 
           {viewAll && (
-            <a
+            <CmsLink
               className="group hidden shrink-0 items-center gap-2 text-sm font-semibold underline underline-offset-4 transition-colors hover:text-primary md:inline-flex"
               href={viewAll.url}
             >
@@ -49,7 +50,7 @@ export function CmsShopTheLook({ slot }: CmsSlotComponentProps) {
                 aria-hidden="true"
                 className="size-4 transition-transform motion-safe:group-hover:translate-x-1"
               />
-            </a>
+            </CmsLink>
           )}
         </div>
 
@@ -64,7 +65,7 @@ export function CmsShopTheLook({ slot }: CmsSlotComponentProps) {
             />
 
             {items.map((item, index) => (
-              <a
+              <CmsLink
                 aria-label={`${index + 1}. ${item.name}`}
                 className="group/hotspot absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full focus-visible:ring-3 focus-visible:ring-primary/30 focus-visible:ring-offset-3 focus-visible:outline-none"
                 href={item.url}
@@ -77,7 +78,7 @@ export function CmsShopTheLook({ slot }: CmsSlotComponentProps) {
                 <span className="flex size-10 items-center justify-center rounded-full border border-white/70 bg-background/95 text-xs font-bold text-foreground shadow-[0_8px_24px_-10px_rgba(91,65,43,0.65)] backdrop-blur transition-[background-color,border-color,box-shadow,color,transform] group-hover/hotspot:border-primary group-hover/hotspot:bg-primary/10 group-hover/hotspot:text-primary group-hover/hotspot:shadow-[0_12px_28px_-10px_rgba(91,65,43,0.75)] motion-safe:group-hover/hotspot:scale-110 sm:size-11">
                   {String(index + 1).padStart(2, "0")}
                 </span>
-              </a>
+              </CmsLink>
             ))}
           </div>
 
@@ -87,7 +88,7 @@ export function CmsShopTheLook({ slot }: CmsSlotComponentProps) {
           >
             {items.map((item, index) => (
               <li key={item.id}>
-                <a
+                <CmsLink
                   className="group flex h-full min-h-24 items-center gap-4 rounded-2xl border border-foreground/10 bg-background/75 p-4 transition-[border-color,background-color,box-shadow,transform] hover:border-primary/30 hover:bg-background hover:shadow-[0_14px_30px_-22px_rgba(139,96,63,0.6)] focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:outline-none motion-safe:hover:-translate-y-0.5 sm:p-5"
                   href={item.url}
                 >
@@ -108,20 +109,20 @@ export function CmsShopTheLook({ slot }: CmsSlotComponentProps) {
                     aria-hidden="true"
                     className="size-4.5 shrink-0 text-muted-foreground transition-[color,transform] group-hover:text-primary motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
                   />
-                </a>
+                </CmsLink>
               </li>
             ))}
           </ol>
         </div>
 
         {viewAll && (
-          <a
+          <CmsLink
             className="mt-6 flex h-11 items-center justify-center gap-2 rounded-xl border border-foreground/20 bg-background/60 text-sm font-semibold transition-[border-color,background-color] hover:border-primary/35 hover:bg-background md:hidden"
             href={viewAll.url}
           >
             {viewAll.label}
             <ArrowRight aria-hidden="true" className="size-4" />
-          </a>
+          </CmsLink>
         )}
       </div>
     </section>

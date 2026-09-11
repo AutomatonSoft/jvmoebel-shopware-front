@@ -6,6 +6,7 @@ import {
   Sparkles,
 } from "lucide-react";
 
+import { CmsLink } from "@/features/cms/components/cms-link";
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import {
   parseCmsWhyJvmoebelData,
@@ -94,7 +95,7 @@ export function CmsWhyJvmoebel({ slot }: CmsSlotComponentProps) {
 
               return (
                 <li className="border-b border-foreground/15" key={benefit.id}>
-                  <a
+                  <CmsLink
                     className="group -mx-3 grid grid-cols-[2.5rem_1fr_auto] items-center gap-3 px-3 py-5 transition-colors hover:bg-white/40 focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:outline-none sm:grid-cols-[3.5rem_1fr_auto] sm:gap-5 sm:py-6"
                     href={benefit.url}
                   >
@@ -119,14 +120,14 @@ export function CmsWhyJvmoebel({ slot }: CmsSlotComponentProps) {
                       aria-hidden="true"
                       className="size-5 text-muted-foreground transition-[color,transform] group-hover:text-primary motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
                     />
-                  </a>
+                  </CmsLink>
                 </li>
               );
             })}
           </ol>
 
           {viewAll && (
-            <a
+            <CmsLink
               className="group mt-7 inline-flex items-center gap-3 text-sm font-semibold underline underline-offset-4 transition-colors hover:text-primary"
               href={viewAll.url}
             >
@@ -135,7 +136,7 @@ export function CmsWhyJvmoebel({ slot }: CmsSlotComponentProps) {
                 aria-hidden="true"
                 className="size-4 transition-transform motion-safe:group-hover:translate-x-1"
               />
-            </a>
+            </CmsLink>
           )}
         </div>
       </div>

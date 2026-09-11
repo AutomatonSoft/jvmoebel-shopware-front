@@ -1,14 +1,21 @@
 import type { ComponentType } from "react";
 
+import { CmsBenefitStrip } from "@/features/cms/components/elements/cms-benefit-strip";
 import { CmsCategoryRail } from "@/features/cms/components/elements/cms-category-rail";
+import { CmsFaq } from "@/features/cms/components/elements/cms-faq";
 import { CmsHero } from "@/features/cms/components/elements/cms-hero";
 import { CmsHomeEditorial } from "@/features/cms/components/elements/cms-home-editorial";
+import { CmsImage } from "@/features/cms/components/elements/cms-image";
 import { CmsNewsletter } from "@/features/cms/components/elements/cms-newsletter";
+import { CmsOfferRail } from "@/features/cms/components/elements/cms-offer-rail";
+import { CmsPageHeader } from "@/features/cms/components/elements/cms-page-header";
 import { CmsProductGrid } from "@/features/cms/components/elements/cms-product-grid";
+import { CmsPromoBanner } from "@/features/cms/components/elements/cms-promo-banner";
 import { CmsRoomGrid } from "@/features/cms/components/elements/cms-room-grid";
 import { CmsShopTheLook } from "@/features/cms/components/elements/cms-shop-the-look";
 import { CmsText } from "@/features/cms/components/elements/cms-text";
 import { CmsWhyJvmoebel } from "@/features/cms/components/elements/cms-why-jvmoebel";
+import { CmsYoutubeVideo } from "@/features/cms/components/elements/cms-youtube-video";
 import type {
   CmsBlock,
   CmsPage,
@@ -25,15 +32,22 @@ export type CmsSlotComponentProps = {
 type CmsSlotComponent = ComponentType<CmsSlotComponentProps>;
 
 const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {
+  "jv-benefit-strip": CmsBenefitStrip,
   "jv-category-rail": CmsCategoryRail,
+  "jv-faq": CmsFaq,
   "jv-hero": CmsHero,
   "jv-home-editorial": CmsHomeEditorial,
   "jv-newsletter": CmsNewsletter,
+  "jv-offer-rail": CmsOfferRail,
+  "jv-page-header": CmsPageHeader,
   "jv-product-grid": CmsProductGrid,
+  "jv-promo-banner": CmsPromoBanner,
   "jv-room-grid": CmsRoomGrid,
   "jv-shop-the-look": CmsShopTheLook,
   "jv-why-jvmoebel": CmsWhyJvmoebel,
+  image: CmsImage,
   text: CmsText,
+  "youtube-video": CmsYoutubeVideo,
 };
 
 function CmsSlotRenderer({ slot }: CmsSlotComponentProps) {

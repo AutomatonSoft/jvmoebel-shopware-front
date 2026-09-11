@@ -16,9 +16,10 @@ describe("mapShopwareCategory", () => {
     expect(mapShopwareCategory(category)).toEqual({
       childCount: 0,
       children: [],
-      href: "/navigation/footer-category",
+      href: "/kategorie/footer-category",
       id: "footer-category",
       label: "Information",
+      type: undefined,
     });
   });
 

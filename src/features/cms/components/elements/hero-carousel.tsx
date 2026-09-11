@@ -9,6 +9,7 @@ import {
 } from "react";
 
 import { CmsButton } from "@/features/cms/components/cms-button";
+import { CmsLink } from "@/features/cms/components/cms-link";
 import type {
   CmsHeroData,
   CmsHeroLink,
@@ -41,7 +42,7 @@ function getServerReducedMotionSnapshot() {
 
 function CaptionPrimaryLink({ link }: { link: CmsHeroLink }) {
   return (
-    <a
+    <CmsLink
       className={cn(
         "inline-flex items-center justify-center rounded-full border border-white/75 bg-black/10 font-medium text-white backdrop-blur-sm transition-[background-color,border-color,color,transform] duration-300 hover:border-white hover:bg-white hover:text-foreground focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none motion-safe:active:scale-[0.98]",
         captionLinkSizeClasses[link.size],
@@ -49,22 +50,24 @@ function CaptionPrimaryLink({ link }: { link: CmsHeroLink }) {
       href={link.url}
     >
       {link.label}
-    </a>
+    </CmsLink>
   );
 }
 
 function HeroSlide({
   active,
+  headingLevel,
   index,
   slide,
   total,
 }: {
   active: boolean;
+  headingLevel: CmsHeroData["headingLevel"];
   index: number;
   slide: CmsHeroSlide;
   total: number;
 }) {
-  const Heading = index === 0 ? "h1" : "h2";
+  const Heading = index === 0 ? headingLevel : "h2";
 
   return (
     <li
@@ -96,7 +99,7 @@ function HeroSlide({
       />
 
       {slide.url && (
-        <a
+        <CmsLink
           aria-label={slide.title}
           className="absolute inset-0 z-10 cursor-pointer rounded-3xl focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset focus-visible:outline-none"
           href={slide.url}
@@ -200,7 +203,8 @@ function HeroSlide({
 }
 
 export function HeroCarousel({ data }: { data: CmsHeroData }) {
-  const { ariaLabel, autoplay, autoplayIntervalMs, slides } = data;
+  const { ariaLabel, autoplay, autoplayIntervalMs, headingLevel, slides } =
+    data;
   const [activeIndex, setActiveIndex] = useState(0);
   const [isInteracting, setIsInteracting] = useState(false);
   const prefersReducedMotion = useSyncExternalStore(
@@ -245,6 +249,7 @@ export function HeroCarousel({ data }: { data: CmsHeroData }) {
         {slides.map((slide, index) => (
           <HeroSlide
             active={index === activeIndex}
+            headingLevel={headingLevel}
             index={index}
             key={slide.id}
             slide={slide}

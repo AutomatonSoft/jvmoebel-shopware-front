@@ -1,16 +1,11 @@
-import type {
-  ShopProduct,
-  ShopProductSize,
-} from "@/features/catalog/model/product-listing";
+import type { ShopProduct } from "@/features/catalog/model/product-listing";
 
 export type ShopProductFilters = Readonly<{
+  attributes?: Readonly<Record<string, readonly string[]>>;
   categories: readonly string[];
-  colors: readonly string[];
   companies?: readonly string[];
-  materials: readonly string[];
   maximumPrice: number;
   minimumPrice: number;
-  sizes?: readonly ShopProductSize[];
 }>;
 
 export type ShopProductSort =
@@ -25,28 +20,25 @@ export function filterAndSortShopProducts(
     const matchesCategory =
       filters.categories.length === 0 ||
       filters.categories.includes(product.category);
-    const matchesColor =
-      filters.colors.length === 0 ||
-      product.colors.some((color) => filters.colors.includes(color.value));
+    const matchesAttributes = Object.entries(filters.attributes ?? {}).every(
+      ([groupId, selectedOptions]) =>
+        selectedOptions.length === 0 ||
+        product.attributes.some(
+          (group) =>
+            group.id === groupId &&
+            group.options.some((option) =>
+              selectedOptions.includes(option.value),
+            ),
+        ),
+    );
     const matchesCompany =
       !filters.companies?.length || filters.companies.includes(product.company);
-    const matchesMaterial =
-      filters.materials.length === 0 ||
-      filters.materials.includes(product.material);
     const matchesPrice =
       product.unitPrice >= filters.minimumPrice &&
       product.unitPrice <= filters.maximumPrice;
-    const matchesSize =
-      !filters.sizes?.length ||
-      product.sizes.some((size) => filters.sizes?.includes(size));
 
     return (
-      matchesCategory &&
-      matchesColor &&
-      matchesCompany &&
-      matchesMaterial &&
-      matchesPrice &&
-      matchesSize
+      matchesAttributes && matchesCategory && matchesCompany && matchesPrice
     );
   });
 

@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
+import { CmsLink } from "@/features/cms/components/cms-link";
 import { resolveCmsButtonSize } from "@/features/cms/model/button-size";
 
 const buttonSizeMap = {
@@ -25,7 +26,7 @@ export function CmsButton({
   const isLink = variant === "link";
 
   return (
-    <a
+    <CmsLink
       className={buttonVariants({
         className: isLink
           ? "group px-0 text-white hover:text-primary"
@@ -37,6 +38,6 @@ export function CmsButton({
     >
       {label}
       <ArrowRight className="transition-transform motion-safe:group-hover:translate-x-1" />
-    </a>
+    </CmsLink>
   );
 }

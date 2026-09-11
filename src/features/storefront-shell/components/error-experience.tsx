@@ -93,7 +93,7 @@ export function ErrorExperience({
 
             {showShopLink && (
               <Link
-                href="/shop"
+                href="/moebel-sortiment"
                 className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-border bg-transparent px-6 text-sm font-semibold text-foreground transition hover:-translate-y-0.5 hover:bg-secondary focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/30"
               >
                 <ShoppingBag className="size-4" />

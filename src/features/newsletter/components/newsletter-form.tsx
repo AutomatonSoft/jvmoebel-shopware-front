@@ -1,9 +1,8 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
-import { useActionState } from "react";
+import { useState, type FormEvent } from "react";
 
-import { subscribeToNewsletter } from "@/features/newsletter/server/subscribe";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { NewsletterActionState } from "@/features/newsletter/model/subscription";
@@ -20,7 +19,6 @@ export type NewsletterFormProps = {
   errorMessage: string;
   invalidEmailMessage: string;
   placeholder: string;
-  storefrontUrl: string;
   successMessage: string;
 };
 
@@ -32,11 +30,34 @@ export function NewsletterForm({
   errorMessage,
   invalidEmailMessage,
   placeholder,
-  storefrontUrl,
   successMessage,
 }: NewsletterFormProps) {
-  const action = subscribeToNewsletter.bind(null, storefrontUrl);
-  const [state, formAction, pending] = useActionState(action, initialState);
+  const [state, setState] = useState(initialState);
+  const [pending, setPending] = useState(false);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setPending(true);
+
+    try {
+      const response = await fetch("/store-api/newsletter/subscribe", {
+        body: new FormData(event.currentTarget),
+        method: "POST",
+      });
+
+      if (response.ok) {
+        setState({ status: "success" });
+      } else if (response.status === 400) {
+        setState({ status: "invalid" });
+      } else {
+        setState({ status: "error" });
+      }
+    } catch {
+      setState({ status: "error" });
+    } finally {
+      setPending(false);
+    }
+  }
 
   if (state.status === "success") {
     return (
@@ -49,8 +70,9 @@ export function NewsletterForm({
   return (
     <div>
       <form
-        action={formAction}
+        aria-busy={pending}
         className="flex max-w-xl flex-col gap-2 sm:flex-row"
+        onSubmit={handleSubmit}
       >
         <Input
           aria-label={placeholder}

@@ -1,33 +1,19 @@
 ---
 name: refactoring
-description: Use only when explicitly asked to refactor existing code or architecture.
+description: Use only when the user explicitly asks to refactor existing code or architecture while preserving behavior.
 ---
 
 # Refactoring
 
-- Refactor one logical concern at a time.
+Before working, read the repository root `AGENTS.md` completely and follow its project architecture.
+
+- Identify the single responsibility being improved and the behavior that must remain unchanged.
+- Inspect only the callers, tests, and neighboring patterns needed to understand that responsibility.
 - Prefer the smallest change that meaningfully improves the code.
-- Preserve existing behavior unless behavior changes are explicitly requested.
-- Do not combine unrelated cleanup with the current refactor.
-- Do not rename, move, or rewrite unrelated files.
-- Do not introduce abstractions without a concrete benefit.
-- Prefer clear separation of concerns over generic abstractions.
-- Keep UI, domain logic, API access, and transformations separate.
-- Reuse existing project patterns where they are good enough.
-- Avoid opportunistic refactoring.
+- Preserve behavior unless the user explicitly requests a behavior change.
+- Keep server access, domain logic, client state, and presentation in their existing layers.
+- Do not combine unrelated cleanup, renaming, moving, or abstraction work with the refactor.
+- Introduce an abstraction only when it removes a concrete duplication or clarifies an existing boundary.
+- Run focused validation for the changed responsibility.
 
-Before changing code:
-
-- inspect only the files needed to understand the current concern;
-- identify the single responsibility being improved;
-- keep the expected diff small.
-
-If another issue is discovered, mention it as a possible next step instead of fixing it now.
-
-After the change:
-
-- run only relevant validation;
-- summarize briefly;
-- stop.
-
-Do not create branches, switch branches, commit, push, merge, or rebase.
+If another issue appears, report it as a possible next step instead of expanding the refactor.

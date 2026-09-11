@@ -1,4 +1,4 @@
-const revocationRecipient = "info@jvmoebel.de";
+const defaultRevocationRecipient = "info@jvmoebel.de";
 
 export type ContractRevocationData = {
   contractId: string;
@@ -7,12 +7,10 @@ export type ContractRevocationData = {
   reason?: string;
 };
 
-export function buildContractRevocationMailto({
-  contractId,
-  email,
-  name,
-  reason,
-}: ContractRevocationData) {
+export function buildContractRevocationMailto(
+  { contractId, email, name, reason }: ContractRevocationData,
+  recipient = defaultRevocationRecipient,
+) {
   const subject = `Widerruf – ${contractId}`;
   const body = [
     "Hiermit widerrufe ich den folgenden Vertrag:",
@@ -23,5 +21,5 @@ export function buildContractRevocationMailto({
     ...(reason ? [`Widerrufsgrund: ${reason}`] : []),
   ].join("\n");
 
-  return `mailto:${revocationRecipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  return `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }

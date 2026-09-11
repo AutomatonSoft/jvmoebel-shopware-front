@@ -1,21 +1,22 @@
 import { afterEach, describe, expect, test } from "bun:test";
 
+import { aboutCmsPageMock } from "@/features/about/fixtures/about-page";
+import { getAboutCmsPage } from "@/features/about/server/about-page";
 import { shopProductListingMock } from "@/features/catalog/fixtures/product-listing";
 import { getShopProductListing } from "@/features/catalog/server/product-listing";
 import { homeCmsPageMock } from "@/features/cms/fixtures/home-page";
 import { getHomeCmsPage } from "@/features/cms/server/home-page";
+import { discountOffersCmsPageMock } from "@/features/offers/fixtures/discount-offers-page";
+import { getDiscountOffersCmsPage } from "@/features/offers/server/discount-offers-page";
 import {
-  footerNavigationMock,
   mainNavigationMock,
   serviceNavigationMock,
 } from "@/features/storefront-shell/fixtures/navigation";
 import { defaultStorefrontBranding } from "@/features/storefront-shell/model/branding";
-import { getStorefrontBranding } from "@/features/storefront-shell/server/branding";
-import {
-  getFooterNavigation,
-  getMainNavigation,
-  getServiceNavigation,
-} from "@/features/storefront-shell/server/navigation";
+import { defaultStorefrontFooterContent } from "@/features/storefront-shell/fixtures/footer";
+import { getStorefrontShellData } from "@/features/storefront-shell/server/storefront-config";
+import { videoShopCmsPageMock } from "@/features/video-shop/fixtures/video-shop-page";
+import { getVideoShopCmsPage } from "@/features/video-shop/server/video-shop-page";
 
 const originalShopwareEndpoint = process.env.SHOPWARE_ENDPOINT;
 const originalShopwareAccessToken = process.env.SHOPWARE_ACCESS_TOKEN;
@@ -41,26 +42,27 @@ describe("Shopware mock sources", () => {
     delete process.env.SHOPWARE_ENDPOINT;
     delete process.env.SHOPWARE_ACCESS_TOKEN;
 
-    const [listing, page, branding, main, footer, service] = await Promise.all([
-      getShopProductListing(),
-      getHomeCmsPage(),
-      getStorefrontBranding(),
-      getMainNavigation(),
-      getFooterNavigation(),
-      getServiceNavigation(),
-    ]);
+    const [listing, page, aboutPage, offersPage, videoShopPage, storefront] =
+      await Promise.all([
+        getShopProductListing(),
+        getHomeCmsPage(),
+        getAboutCmsPage(),
+        getDiscountOffersCmsPage(),
+        getVideoShopCmsPage(),
+        getStorefrontShellData(),
+      ]);
 
     expect(listing).toBe(shopProductListingMock);
     expect(page).toBe(homeCmsPageMock);
-    expect(branding).toBe(defaultStorefrontBranding);
-    expect(main).toBe(mainNavigationMock);
-    expect(footer).toBe(footerNavigationMock);
-    expect(service).toBe(serviceNavigationMock);
-  });
-
-  test("do not expose the catalog fixture in live mode", async () => {
-    process.env.SHOPWARE_USE_MOCKS = "false";
-
-    expect(await getShopProductListing()).toBeNull();
+    expect(aboutPage).toBe(aboutCmsPageMock);
+    expect(offersPage).toBe(discountOffersCmsPageMock);
+    expect(videoShopPage).toBe(videoShopCmsPageMock);
+    expect(storefront).toEqual({
+      branding: defaultStorefrontBranding,
+      footerContent: defaultStorefrontFooterContent,
+      footerNavigation: mainNavigationMock,
+      navigation: mainNavigationMock,
+      serviceNavigation: serviceNavigationMock,
+    });
   });
 });

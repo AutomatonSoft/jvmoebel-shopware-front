@@ -4,9 +4,10 @@ import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-r
 import { parseCmsHomeEditorialData } from "@/features/cms/contracts/home-editorial";
 import { sanitizeCmsHtml } from "@/features/cms/lib/sanitize-html";
 import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import { cn } from "@/lib/utils";
 
 function EditorialParagraph({ content }: { content: string }) {
-  return <p dangerouslySetInnerHTML={{ __html: sanitizeCmsHtml(content) }} />;
+  return <div dangerouslySetInnerHTML={{ __html: sanitizeCmsHtml(content) }} />;
 }
 
 export function CmsHomeEditorial({ slot }: CmsSlotComponentProps) {
@@ -19,6 +20,7 @@ export function CmsHomeEditorial({ slot }: CmsSlotComponentProps) {
   }
 
   const {
+    appearance,
     introduction,
     sections,
     showLessLabel,
@@ -29,12 +31,36 @@ export function CmsHomeEditorial({ slot }: CmsSlotComponentProps) {
 
   return (
     <section
-      className="mx-2 my-2 overflow-hidden rounded-3xl border border-foreground/10 bg-secondary/60 sm:mx-6 sm:my-4"
+      className={cn(
+        appearance === "card"
+          ? "mx-2 my-2 overflow-hidden rounded-3xl border border-foreground/10 bg-secondary/60 sm:mx-6 sm:my-4"
+          : "mx-auto w-full max-w-360 px-4 py-16 sm:px-8 sm:py-24",
+      )}
       data-cms-element="jv-home-editorial"
     >
-      <div className="mx-auto w-full max-w-320 px-5 py-10 sm:px-8 sm:py-12 lg:px-10 lg:py-14">
-        <div className="grid gap-8 lg:grid-cols-[minmax(14rem,0.58fr)_minmax(0,1.42fr)] lg:gap-10">
-          <p className="self-start text-sm leading-7 text-muted-foreground sm:text-base">
+      <div
+        className={cn(
+          "mx-auto w-full max-w-320",
+          appearance === "card" &&
+            "px-5 py-10 sm:px-8 sm:py-12 lg:px-10 lg:py-14",
+        )}
+      >
+        <div
+          className={cn(
+            "grid gap-8 lg:grid-cols-[minmax(14rem,0.58fr)_minmax(0,1.42fr)]",
+            appearance === "card"
+              ? "lg:gap-10"
+              : "border-t border-foreground/15 pt-10 lg:gap-16",
+          )}
+        >
+          <p
+            className={cn(
+              "self-start",
+              appearance === "card"
+                ? "text-sm leading-7 text-muted-foreground sm:text-base"
+                : "flex items-center gap-3 text-xs font-semibold tracking-[0.14em] text-primary uppercase before:block before:size-2 before:bg-primary",
+            )}
+          >
             {statement}
           </p>
 
@@ -53,7 +79,12 @@ export function CmsHomeEditorial({ slot }: CmsSlotComponentProps) {
           </div>
         </div>
 
-        <details className="group mt-8 border-t border-foreground/10 sm:mt-10">
+        <details
+          className={cn(
+            "group border-t border-foreground/10",
+            appearance === "card" ? "mt-8 sm:mt-10" : "mt-12 sm:mt-16",
+          )}
+        >
           <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-sm font-semibold outline-none transition-colors hover:text-primary focus-visible:text-primary [&::-webkit-details-marker]:hidden">
             <span className="group-open:hidden">{showMoreLabel}</span>
             <span className="hidden group-open:inline">{showLessLabel}</span>
@@ -64,7 +95,13 @@ export function CmsHomeEditorial({ slot }: CmsSlotComponentProps) {
 
           <div className="grid gap-x-10 gap-y-8 border-t border-foreground/10 pt-8 md:grid-cols-2">
             {sections.map((section) => (
-              <article key={section.id}>
+              <article
+                className={cn(
+                  appearance === "plain" &&
+                    "border-t border-foreground/15 pt-6",
+                )}
+                key={section.id}
+              >
                 {section.title && (
                   <h3 className="mb-3 text-lg leading-tight font-semibold tracking-[-0.03em] text-balance sm:text-xl">
                     {section.title}

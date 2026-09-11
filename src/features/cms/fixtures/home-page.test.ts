@@ -7,6 +7,7 @@ import { parseCmsCategoryRailData } from "@/features/cms/contracts/category-rail
 import { parseCmsHeroData } from "@/features/cms/contracts/hero";
 import { parseCmsHomeEditorialData } from "@/features/cms/contracts/home-editorial";
 import { parseCmsNewsletterData } from "@/features/cms/contracts/newsletter";
+import { parseCmsOfferRailData } from "@/features/cms/contracts/offer-rail";
 import { parseCmsProductGridData } from "@/features/cms/contracts/product-grid";
 import type { CmsContractResult } from "@/features/cms/contracts/result";
 import { parseCmsRoomGridData } from "@/features/cms/contracts/room-grid";
@@ -22,6 +23,7 @@ const fixtureParsers: Record<string, CmsFixtureParser | undefined> = {
   "jv-hero": parseCmsHeroData,
   "jv-home-editorial": parseCmsHomeEditorialData,
   "jv-newsletter": parseCmsNewsletterData,
+  "jv-offer-rail": parseCmsOfferRailData,
   "jv-product-grid": parseCmsProductGridData,
   "jv-room-grid": parseCmsRoomGridData,
   "jv-shop-the-look": parseCmsShopTheLookData,
@@ -100,6 +102,17 @@ describe("homeCmsPageMock", () => {
 
     for (const href of hrefs) {
       expect(href.startsWith("/")).toBe(true);
+    }
+  });
+
+  test("provides a destination for every hero campaign", () => {
+    const heroSlot = slots.find((slot) => slot.type === "jv-hero");
+    const hero = parseCmsHeroData(heroSlot?.data);
+
+    expect(hero.data?.slides).not.toHaveLength(0);
+
+    for (const slide of hero.data?.slides ?? []) {
+      expect(Boolean(slide.url || slide.primaryLink)).toBe(true);
     }
   });
 });

@@ -4,24 +4,24 @@ export const mainNavigationMock = [
   {
     id: "new-in",
     label: "Neuheiten",
-    href: "/new-in",
+    href: "/neuheiten",
     children: [],
   },
   {
     id: "living",
     label: "Wohnzimmer",
-    href: "/living",
+    href: "/wohnzimmer",
     children: [
       {
         id: "sofas",
         label: "Sofas",
-        href: "/living/sofas",
+        href: "/wohnzimmer/sofas",
         children: [],
       },
       {
         id: "armchairs",
         label: "Sessel",
-        href: "/living/armchairs",
+        href: "/wohnzimmer/sessel",
         children: [],
       },
     ],
@@ -29,25 +29,19 @@ export const mainNavigationMock = [
   {
     id: "dining",
     label: "Esszimmer",
-    href: "/dining",
+    href: "/esszimmer",
     children: [],
   },
   {
     id: "bedroom",
     label: "Schlafzimmer",
-    href: "/bedroom",
+    href: "/schlafzimmer",
     children: [],
   },
   {
     id: "storage",
     label: "Stauraum",
-    href: "/storage",
-    children: [],
-  },
-  {
-    id: "sale",
-    label: "Angebote",
-    href: "/sale",
+    href: "/stauraum",
     children: [],
   },
 ] satisfies StoreNavigationItem[];
@@ -56,12 +50,12 @@ export const footerNavigationMock = [
   {
     id: "footer-categories",
     label: "Kategorien",
-    href: "/shop",
+    href: "/moebel-sortiment",
     children: [
       {
         id: "footer-special-offers",
         label: "Sonderangebote",
-        href: "/sale",
+        href: "/rabatt-angebote",
         children: [],
       },
       {
@@ -73,13 +67,13 @@ export const footerNavigationMock = [
       {
         id: "footer-sofas",
         label: "Sofas & Couches",
-        href: "/living/sofas",
+        href: "/wohnzimmer/sofas",
         children: [],
       },
       {
         id: "footer-ready-to-ship",
         label: "Möbel sofort lieferbar",
-        href: "/new-in",
+        href: "/neuheiten",
         children: [],
       },
       {
@@ -91,31 +85,31 @@ export const footerNavigationMock = [
       {
         id: "footer-living",
         label: "Wohnzimmer",
-        href: "/living",
+        href: "/wohnzimmer",
         children: [],
       },
       {
         id: "footer-dining",
         label: "Esszimmer",
-        href: "/dining",
+        href: "/esszimmer",
         children: [],
       },
       {
         id: "footer-office",
         label: "Büro",
-        href: "/office",
+        href: "/buero",
         children: [],
       },
       {
         id: "footer-bedroom",
         label: "Schlafzimmer",
-        href: "/bedroom",
+        href: "/schlafzimmer",
         children: [],
       },
       {
         id: "footer-kids",
         label: "Kinder",
-        href: "/kids",
+        href: "/kinder",
         children: [],
       },
       {
@@ -222,13 +216,13 @@ export const serviceNavigationMock = [
   {
     id: "privacy",
     label: "Datenschutz",
-    href: "/privacy",
+    href: "/datenschutz",
     children: [],
   },
   {
     id: "imprint",
     label: "Impressum",
-    href: "/imprint",
+    href: "/impressum",
     children: [],
   },
   {
@@ -240,13 +234,19 @@ export const serviceNavigationMock = [
   {
     id: "terms",
     label: "AGB",
-    href: "/terms",
+    href: "/agb",
     children: [],
   },
   {
     id: "jvmoebel",
-    label: "JVMöbel",
-    href: "/",
+    label: "Über uns",
+    href: "/ueber-uns",
+    children: [],
+  },
+  {
+    id: "video-shop",
+    label: "Video Shop",
+    href: "/video-shop",
     children: [],
   },
 ] satisfies StoreNavigationItem[];

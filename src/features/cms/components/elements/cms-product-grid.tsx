@@ -1,12 +1,14 @@
-import { ArrowRight, Star } from "lucide-react";
-import Image from "next/image";
+import { ArrowRight } from "lucide-react";
 
+import { ShopProductCard } from "@/features/catalog/components/shop-product-card";
+import { CmsLink } from "@/features/cms/components/cms-link";
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import { parseCmsProductGridData } from "@/features/cms/contracts/product-grid";
 import {
   reportCmsContractIssues,
   reportCmsRenderingIssue,
 } from "@/features/cms/server/report-rendering-issue";
+import { cn } from "@/lib/utils";
 
 export function CmsProductGrid({ slot }: CmsSlotComponentProps) {
   const result = parseCmsProductGridData(slot.data);
@@ -18,12 +20,19 @@ export function CmsProductGrid({ slot }: CmsSlotComponentProps) {
   }
 
   const data = result.data;
-  const { currency, eyebrow, locale, products, title, viewAll } = data;
-
-  let priceFormatter: Intl.NumberFormat;
+  const {
+    anchorId,
+    currency,
+    eyebrow,
+    layout,
+    locale,
+    products,
+    title,
+    viewAll,
+  } = data;
 
   try {
-    priceFormatter = new Intl.NumberFormat(locale, {
+    new Intl.NumberFormat(locale, {
       currency,
       maximumFractionDigits: 0,
       style: "currency",
@@ -44,10 +53,21 @@ export function CmsProductGrid({ slot }: CmsSlotComponentProps) {
 
   return (
     <section
-      className="mx-2 overflow-hidden rounded-3xl bg-muted sm:mx-6"
+      className={cn(
+        layout === "grid"
+          ? "mx-2 overflow-hidden rounded-3xl bg-muted sm:mx-6"
+          : "mx-auto w-full max-w-360 px-4 sm:px-8",
+      )}
       data-cms-element="jv-product-grid"
+      id={anchorId}
     >
-      <div className="mx-auto w-full max-w-360 px-4 py-20 sm:px-8 sm:py-28">
+      <div
+        className={cn(
+          layout === "grid"
+            ? "mx-auto w-full max-w-360 px-4 py-20 sm:px-8 sm:py-28"
+            : "py-16 sm:py-20",
+        )}
+      >
         <div className="mb-10 flex items-end justify-between gap-6">
           <div>
             {eyebrow && (
@@ -60,99 +80,42 @@ export function CmsProductGrid({ slot }: CmsSlotComponentProps) {
             </h2>
           </div>
           {viewAll && (
-            <a
+            <CmsLink
               className="group hidden items-center gap-2 text-sm font-semibold underline underline-offset-4 transition-colors hover:text-primary sm:inline-flex"
               href={viewAll.url}
             >
               {viewAll.label}
               <ArrowRight className="size-4 transition-transform motion-safe:group-hover:translate-x-1" />
-            </a>
+            </CmsLink>
           )}
         </div>
 
-        <div className="grid grid-cols-2 gap-x-3 gap-y-9 lg:grid-cols-4 lg:gap-x-4">
-          {products.map((product) => {
-            const discount =
-              product.previousPrice && product.previousPrice > product.unitPrice
-                ? Math.round(
-                    (1 - product.unitPrice / product.previousPrice) * 100,
-                  )
-                : undefined;
-
-            return (
-              <article
-                className="group min-w-0 transition-transform motion-safe:hover:-translate-y-1.5"
-                key={product.id}
-              >
-                <a
-                  className="relative block aspect-[0.84] overflow-hidden rounded-2xl bg-background shadow-[0_0_0_1px_rgba(21,21,19,0.04)]"
-                  href={product.url}
-                >
-                  <Image
-                    alt={product.image.alt}
-                    className="object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.035]"
-                    fill
-                    sizes="(max-width: 1024px) 50vw, 25vw"
-                    src={product.image.url}
-                  />
-                  {product.badge && (
-                    <span className="absolute top-3 left-3 rounded-full bg-white/90 px-3 py-1.5 text-[0.625rem] font-semibold tracking-wide text-foreground uppercase backdrop-blur">
-                      {product.badge}
-                    </span>
-                  )}
-                  {discount && (
-                    <span className="absolute top-3 right-3 rounded-full bg-primary px-2.5 py-1.5 text-[0.625rem] font-bold text-primary-foreground">
-                      −{discount}%
-                    </span>
-                  )}
-                </a>
-
-                <div className="px-1 pt-4">
-                  {product.rating !== undefined && (
-                    <p className="mb-2 flex items-center gap-1.5 text-xs text-muted-foreground">
-                      <Star className="size-3.5 fill-primary text-primary" />
-                      <span className="font-semibold text-foreground">
-                        {product.rating.toFixed(1)}
-                      </span>
-                      {product.reviewCount !== undefined && (
-                        <span>({product.reviewCount})</span>
-                      )}
-                    </p>
-                  )}
-                  <h3 className="text-sm font-semibold tracking-[-0.02em] sm:text-base">
-                    <a className="hover:text-primary" href={product.url}>
-                      {product.name}
-                    </a>
-                  </h3>
-                  {product.description && (
-                    <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                      {product.description}
-                    </p>
-                  )}
-                  <p className="mt-3 flex flex-wrap items-center gap-2">
-                    <strong className="text-base font-semibold sm:text-lg">
-                      {priceFormatter.format(product.unitPrice)}
-                    </strong>
-                    {product.previousPrice && (
-                      <del className="text-xs text-muted-foreground sm:text-sm">
-                        {priceFormatter.format(product.previousPrice)}
-                      </del>
-                    )}
-                  </p>
-                </div>
-              </article>
-            );
-          })}
+        <div
+          className={cn(
+            layout === "grid"
+              ? "grid grid-cols-2 gap-x-3 gap-y-9 lg:grid-cols-4 lg:gap-x-4"
+              : "grid grid-flow-col auto-cols-[minmax(15rem,18rem)] gap-3 overflow-x-auto pb-4 sm:gap-4",
+          )}
+        >
+          {products.map((product) => (
+            <ShopProductCard
+              currency={currency}
+              headingLevel="h3"
+              key={product.id}
+              locale={locale}
+              product={product}
+            />
+          ))}
         </div>
 
         {viewAll && (
-          <a
+          <CmsLink
             className="mt-10 flex h-11 items-center justify-center gap-2 rounded-xl border border-foreground text-sm font-semibold transition-colors hover:bg-foreground hover:text-background sm:hidden"
             href={viewAll.url}
           >
             {viewAll.label}
             <ArrowRight className="size-4" />
-          </a>
+          </CmsLink>
         )}
       </div>
     </section>

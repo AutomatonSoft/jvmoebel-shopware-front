@@ -4,6 +4,10 @@ import { LoaderCircle, Sparkles } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 import { Button } from "@/components/ui/button";
+import {
+  ProductPagination,
+  type ProductPaginationProps,
+} from "@/features/catalog/components/product-pagination";
 import { ShopProductCard } from "@/features/catalog/components/shop-product-card";
 import type { ShopProduct } from "@/features/catalog/model/product-listing";
 
@@ -14,6 +18,7 @@ export type ShopProductResultsProps = {
   isLoading: boolean;
   locale: string;
   onClearFilters: () => void;
+  paginationProps: ProductPaginationProps;
   products: readonly ShopProduct[];
 };
 
@@ -22,6 +27,7 @@ export function ShopProductResults({
   isLoading,
   locale,
   onClearFilters,
+  paginationProps,
   products,
 }: ShopProductResultsProps) {
   const previousLoadingRef = useRef(isLoading);
@@ -68,6 +74,16 @@ export function ShopProductResults({
     [],
   );
 
+  function changePage(page: number) {
+    paginationProps.onPageChange(page);
+    window.requestAnimationFrame(() => {
+      productResultsRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+  }
+
   return (
     <div
       aria-busy={isLoading}
@@ -75,19 +91,23 @@ export function ShopProductResults({
       ref={productResultsRef}
     >
       {products.length > 0 ? (
-        <div
-          className={`grid grid-cols-2 gap-x-3 gap-y-9 transition-[opacity,filter] duration-200 md:grid-cols-3 md:gap-x-4 xl:grid-cols-4 ${isLoading ? "pointer-events-none opacity-35 saturate-50" : ""}`}
-        >
-          {products.map((product, index) => (
-            <ShopProductCard
-              currency={currency}
-              eagerImage={index < 4}
-              key={product.id}
-              locale={locale}
-              product={product}
-            />
-          ))}
-        </div>
+        <>
+          <div
+            className={`grid grid-cols-2 gap-x-3 gap-y-9 transition-[opacity,filter] duration-200 md:grid-cols-3 md:gap-x-4 xl:grid-cols-4 ${isLoading ? "pointer-events-none opacity-35 saturate-50" : ""}`}
+          >
+            {products.map((product, index) => (
+              <ShopProductCard
+                currency={currency}
+                eagerImage={index < 4}
+                key={product.id}
+                locale={locale}
+                product={product}
+              />
+            ))}
+          </div>
+
+          <ProductPagination {...paginationProps} onPageChange={changePage} />
+        </>
       ) : (
         <div
           className={`flex min-h-96 flex-col items-center justify-center rounded-2xl border border-dashed bg-card/40 px-6 text-center transition-opacity duration-200 ${isLoading ? "pointer-events-none opacity-35" : ""}`}

@@ -12,31 +12,15 @@ function createFormData(email: string): FormData {
 describe("parseNewsletterSubscription", () => {
   test("normalizes valid subscription input", () => {
     expect(
-      parseNewsletterSubscription(
-        "https://jvmoebel.de/newsletter?source=footer",
-        createFormData(" reader@example.com "),
-      ),
+      parseNewsletterSubscription(createFormData(" reader@example.com ")),
     ).toEqual({
       email: "reader@example.com",
-      storefrontUrl: "https://jvmoebel.de",
     });
   });
 
   test("rejects an invalid email address", () => {
     expect(
-      parseNewsletterSubscription(
-        "https://jvmoebel.de",
-        createFormData("not-an-email"),
-      ),
-    ).toBeNull();
-  });
-
-  test("rejects a non-HTTP storefront URL", () => {
-    expect(
-      parseNewsletterSubscription(
-        "javascript:alert(1)",
-        createFormData("reader@example.com"),
-      ),
+      parseNewsletterSubscription(createFormData("not-an-email")),
     ).toBeNull();
   });
 });

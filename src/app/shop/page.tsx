@@ -5,12 +5,22 @@ import { getShopProductListing } from "@/features/catalog/server/product-listing
 import { ErrorExperience } from "@/features/storefront-shell/components/error-experience";
 
 export const metadata: Metadata = {
-  description: "Browse the JVMöbel furniture collection.",
-  title: "Shop | JVMöbel",
+  description: "Entdecken Sie das Möbelsortiment von JVMöbel.",
+  title: "Möbel-Sortiment | JVMöbel",
 };
 
-export default async function ShopPage() {
-  const listing = await getShopProductListing();
+type ShopPageProps = Readonly<{
+  searchParams: Promise<{
+    category?: string | string[];
+    categoryLabel?: string | string[];
+  }>;
+}>;
+
+export default async function ShopPage({ searchParams }: ShopPageProps) {
+  const [listing, parameters] = await Promise.all([
+    getShopProductListing(),
+    searchParams,
+  ]);
 
   if (!listing) {
     return (
@@ -24,9 +34,30 @@ export default async function ShopPage() {
     );
   }
 
+  const requestedCategory = Array.isArray(parameters.category)
+    ? parameters.category[0]
+    : parameters.category;
+  const requestedCategoryLabel = Array.isArray(parameters.categoryLabel)
+    ? parameters.categoryLabel[0]
+    : parameters.categoryLabel;
+  const listingCategory = requestedCategory
+    ? listing.products.find((product) => product.category === requestedCategory)
+    : undefined;
+  const initialCategory =
+    requestedCategory && (requestedCategoryLabel || listingCategory)
+      ? {
+          label: requestedCategoryLabel || listingCategory?.categoryLabel || "",
+          value: requestedCategory,
+        }
+      : undefined;
+
   return (
     <main className="flex-1">
-      <ShopCatalog listing={listing} />
+      <ShopCatalog
+        initialCategory={initialCategory}
+        key={initialCategory?.value ?? "all-products"}
+        listing={listing}
+      />
     </main>
   );
 }

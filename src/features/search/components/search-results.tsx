@@ -74,19 +74,21 @@ export function SearchResults({
           transition={{ duration: 0.2 }}
         >
           <a
-            className="flex items-center gap-3 py-3 text-left transition-colors hover:text-primary"
+            className="flex min-h-28 items-center gap-4 py-4 text-left transition-colors hover:text-primary"
             href={product.url}
           >
-            <Image
-              alt=""
-              className="size-14 rounded-lg object-cover"
-              height={56}
-              src={product.image.url}
-              unoptimized
-              width={56}
-            />
+            <span className="relative h-20 w-24 shrink-0 overflow-hidden rounded-xl bg-muted/60 sm:h-24 sm:w-32">
+              <Image
+                alt=""
+                className="object-contain p-2"
+                fill
+                sizes="(max-width: 639px) 96px, 128px"
+                src={product.image.url}
+                unoptimized
+              />
+            </span>
             <span className="min-w-0 flex-1">
-              <span className="block truncate text-sm font-semibold">
+              <span className="line-clamp-2 block text-sm leading-5 font-semibold sm:text-base">
                 {product.name}
               </span>
               <span className="mt-1 block truncate text-xs text-muted-foreground">

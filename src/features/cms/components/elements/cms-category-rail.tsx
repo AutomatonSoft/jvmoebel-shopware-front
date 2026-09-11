@@ -1,9 +1,11 @@
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 
+import { CmsLink } from "@/features/cms/components/cms-link";
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import { parseCmsCategoryRailData } from "@/features/cms/contracts/category-rail";
 import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import { cn } from "@/lib/utils";
 
 export function CmsCategoryRail({ slot }: CmsSlotComponentProps) {
   const result = parseCmsCategoryRailData(slot.data);
@@ -14,7 +16,8 @@ export function CmsCategoryRail({ slot }: CmsSlotComponentProps) {
     return null;
   }
 
-  const { categories, description, eyebrow, title, viewAll } = result.data;
+  const { categories, description, eyebrow, layout, title, viewAll } =
+    result.data;
 
   return (
     <section
@@ -39,7 +42,7 @@ export function CmsCategoryRail({ slot }: CmsSlotComponentProps) {
         </div>
 
         {viewAll && (
-          <a
+          <CmsLink
             className="group hidden shrink-0 items-center gap-2 text-sm font-semibold underline underline-offset-4 transition-colors hover:text-primary sm:inline-flex"
             href={viewAll.url}
           >
@@ -48,44 +51,72 @@ export function CmsCategoryRail({ slot }: CmsSlotComponentProps) {
               aria-hidden="true"
               className="size-4 transition-transform motion-safe:group-hover:translate-x-1"
             />
-          </a>
+          </CmsLink>
         )}
       </div>
 
       <nav aria-label={title}>
-        <ul className="-mx-4 -my-6 grid snap-x snap-mandatory scroll-px-4 auto-cols-[8.5rem] grid-flow-col gap-4 overflow-x-auto overscroll-x-contain px-4 py-6 [scrollbar-width:none] sm:-mx-8 sm:scroll-px-8 sm:auto-cols-[10rem] sm:gap-5 sm:px-8 lg:mx-0 lg:scroll-px-0 lg:auto-cols-[calc((100%-6.25rem)/6)] lg:px-0 [&::-webkit-scrollbar]:hidden">
+        <ul
+          className={cn(
+            layout === "grid"
+              ? "grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8"
+              : "-mx-4 -my-6 grid snap-x snap-mandatory scroll-px-4 auto-cols-[8.5rem] grid-flow-col gap-4 overflow-x-auto overscroll-x-contain px-4 py-6 [scrollbar-width:none] sm:-mx-8 sm:scroll-px-8 sm:auto-cols-[10rem] sm:gap-5 sm:px-8 lg:mx-0 lg:scroll-px-0 lg:auto-cols-[calc((100%-6.25rem)/6)] lg:px-0 [&::-webkit-scrollbar]:hidden",
+          )}
+        >
           {categories.map((category) => (
-            <li className="snap-start" key={category.id}>
-              <a
-                className="group block rounded-2xl text-center focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:ring-offset-4 focus-visible:outline-none motion-safe:transition-transform motion-safe:ease-out motion-safe:hover:-translate-y-1"
+            <li
+              className={cn(layout === "rail" && "snap-start")}
+              key={category.id}
+            >
+              <CmsLink
+                className={cn(
+                  "group block rounded-2xl text-center focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:ring-offset-4 focus-visible:outline-none motion-safe:transition-transform motion-safe:ease-out motion-safe:hover:-translate-y-1",
+                  layout === "grid" &&
+                    "border bg-card p-2 shadow-[0_10px_30px_-26px_rgba(21,21,19,0.6)] hover:border-foreground/25",
+                )}
                 href={category.url}
               >
-                <span className="relative block aspect-square overflow-hidden rounded-full border border-foreground/10 bg-muted shadow-[0_6px_18px_-10px_rgba(139,96,63,0.24)] transition-[border-color,box-shadow] group-hover:border-primary/35 group-hover:shadow-[0_18px_36px_-12px_rgba(139,96,63,0.45)]">
+                <span
+                  className={cn(
+                    "relative block aspect-square overflow-hidden bg-muted transition-[border-color,box-shadow]",
+                    layout === "grid"
+                      ? "rounded-xl bg-muted/60"
+                      : "rounded-full border border-foreground/10 shadow-[0_6px_18px_-10px_rgba(139,96,63,0.24)] group-hover:border-primary/35 group-hover:shadow-[0_18px_36px_-12px_rgba(139,96,63,0.45)]",
+                  )}
+                >
                   <Image
                     alt={category.image.alt}
-                    className="object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.05]"
+                    className={cn(
+                      "transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.05]",
+                      layout === "grid" ? "object-contain p-2" : "object-cover",
+                    )}
                     fill
                     sizes="(max-width: 640px) 136px, (max-width: 1024px) 160px, 220px"
                     src={category.image.url}
                   />
                 </span>
-                <strong className="mt-3 block text-sm leading-tight font-semibold tracking-[-0.02em] sm:text-base">
+                <strong
+                  className={cn(
+                    "block text-sm leading-tight font-semibold tracking-[-0.02em] sm:text-base",
+                    layout === "grid" ? "min-h-12 px-1 py-3" : "mt-3",
+                  )}
+                >
                   {category.label}
                 </strong>
-              </a>
+              </CmsLink>
             </li>
           ))}
         </ul>
       </nav>
 
       {viewAll && (
-        <a
+        <CmsLink
           className="mt-6 flex h-11 items-center justify-center gap-2 rounded-xl border border-foreground text-sm font-semibold transition-colors hover:bg-foreground hover:text-background sm:hidden"
           href={viewAll.url}
         >
           {viewAll.label}
           <ArrowRight aria-hidden="true" className="size-4" />
-        </a>
+        </CmsLink>
       )}
     </section>
   );
