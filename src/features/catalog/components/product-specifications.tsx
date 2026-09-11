@@ -1,26 +1,22 @@
 import {
   CalendarDays,
-  ChevronDown,
   ChevronRight,
+  FileText,
   Info,
+  ListChecks,
   Megaphone,
+  Ruler,
   ShieldCheck,
   Star,
   SwatchBook,
   Undo2,
   Video,
 } from "lucide-react";
-import type { ReactNode } from "react";
 
 import type { ShopProductDetail } from "@/features/catalog/model/product-detail";
 
 type ProductSpecificationsProps = Readonly<{
   product: ShopProductDetail;
-}>;
-
-type ProductDetailSection = Readonly<{
-  content: ReactNode;
-  title: string;
 }>;
 
 export function ProductSpecifications({ product }: ProductSpecificationsProps) {
@@ -29,69 +25,6 @@ export function ProductSpecifications({ product }: ProductSpecificationsProps) {
     { label: "Höhe", value: product.dimensions.height },
     { label: "Tiefe", value: product.dimensions.length },
   ].filter((dimension) => dimension.value > 0);
-  const sections: readonly ProductDetailSection[] = [
-    ...(dimensions.length > 0
-      ? [
-          {
-            content: (
-              <dl className="grid gap-3 sm:grid-cols-3">
-                {dimensions.map((dimension) => (
-                  <div
-                    className="rounded-xl border bg-background p-4"
-                    key={dimension.label}
-                  >
-                    <dt className="text-xs text-muted-foreground">
-                      {dimension.label}
-                    </dt>
-                    <dd className="mt-1 text-lg font-semibold">
-                      {dimension.value} {product.dimensions.unit}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            ),
-            title: "Produktabmessungen",
-          },
-        ]
-      : []),
-    {
-      content: (
-        <dl className="grid gap-x-8 gap-y-4 sm:grid-cols-2">
-          {product.specifications.map((specification) => (
-            <div className="border-b pb-3" key={specification.id}>
-              <dt className="text-xs text-muted-foreground">
-                {specification.label}
-              </dt>
-              <dd className="mt-1 text-sm font-semibold">
-                {specification.value}
-              </dd>
-            </div>
-          ))}
-        </dl>
-      ),
-      title: "Produktdetails",
-    },
-    {
-      content: (
-        <p className="max-w-4xl text-sm leading-7 text-muted-foreground">
-          {product.longDescription}
-        </p>
-      ),
-      title: "Beschreibung",
-    },
-    {
-      content: (
-        <div className="max-w-4xl">
-          <h3 className="font-semibold">{product.company}</h3>
-          <p className="mt-2 text-sm leading-7 text-muted-foreground">
-            Weitere Informationen zur Marke und zu diesem Produkt erhalten Sie
-            in unserer persönlichen Beratung.
-          </p>
-        </div>
-      ),
-      title: "Über die Marke",
-    },
-  ];
   const rating = product.rating;
   const filledStars = Math.round(rating ?? 0);
   const adviceSubject = encodeURIComponent(
@@ -102,22 +35,117 @@ export function ProductSpecifications({ product }: ProductSpecificationsProps) {
   );
 
   return (
-    <section className="space-y-3 py-12 sm:py-16" id="product-details">
-      <div className="overflow-hidden rounded-2xl border bg-card">
-        {sections.map((section) => (
-          <details
-            className="group border-b last:border-b-0"
-            key={section.title}
+    <section className="space-y-4 py-12 sm:py-16" id="product-details">
+      <header className="mb-8 max-w-3xl">
+        <p className="text-xs font-semibold tracking-[0.14em] text-primary uppercase">
+          Produktdetails
+        </p>
+        <h2 className="mt-3 text-3xl leading-tight font-semibold tracking-[-0.04em] text-balance sm:text-4xl">
+          Alles Wichtige auf einen Blick.
+        </h2>
+      </header>
+
+      <div className="grid gap-4 lg:grid-cols-12">
+        {dimensions.length > 0 && (
+          <section
+            aria-labelledby="product-dimensions-title"
+            className="rounded-2xl border bg-card p-5 sm:p-7 lg:col-span-5"
           >
-            <summary className="flex min-h-20 cursor-pointer list-none items-center justify-between gap-4 px-5 py-5 text-lg font-semibold [&::-webkit-details-marker]:hidden sm:px-7">
-              {section.title}
-              <ChevronDown className="size-5 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
-            </summary>
-            <div className="border-t bg-muted/20 px-5 py-6 sm:px-7">
-              {section.content}
+            <div className="flex items-center gap-3">
+              <span className="flex size-10 items-center justify-center rounded-xl bg-muted text-foreground">
+                <Ruler aria-hidden="true" className="size-5" />
+              </span>
+              <h3
+                className="text-lg font-semibold"
+                id="product-dimensions-title"
+              >
+                Produktabmessungen
+              </h3>
             </div>
-          </details>
-        ))}
+            <dl className="mt-6 grid gap-3 sm:grid-cols-3">
+              {dimensions.map((dimension) => (
+                <div
+                  className="rounded-xl border bg-muted/25 p-4"
+                  key={dimension.label}
+                >
+                  <dt className="text-xs text-muted-foreground">
+                    {dimension.label}
+                  </dt>
+                  <dd className="mt-1 text-lg font-semibold">
+                    {dimension.value} {product.dimensions.unit}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        )}
+
+        <section
+          aria-labelledby="product-facts-title"
+          className={`rounded-2xl border bg-card p-5 sm:p-7 ${dimensions.length > 0 ? "lg:col-span-7" : "lg:col-span-12"}`}
+        >
+          <div className="flex items-center gap-3">
+            <span className="flex size-10 items-center justify-center rounded-xl bg-muted text-foreground">
+              <ListChecks aria-hidden="true" className="size-5" />
+            </span>
+            <h3 className="text-lg font-semibold" id="product-facts-title">
+              Produktinformationen
+            </h3>
+          </div>
+          <dl className="mt-6 grid gap-x-8 sm:grid-cols-2">
+            {product.specifications.map((specification) => (
+              <div
+                className="border-t py-3 first:border-t-0 sm:[&:nth-child(2)]:border-t-0"
+                key={specification.id}
+              >
+                <dt className="text-xs text-muted-foreground">
+                  {specification.label}
+                </dt>
+                <dd className="mt-1 text-sm font-semibold wrap-break-word">
+                  {specification.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+
+        {product.longDescription && (
+          <section
+            aria-labelledby="product-description-title"
+            className="rounded-2xl border bg-card p-5 sm:p-7 lg:col-span-8"
+          >
+            <div className="flex items-center gap-3">
+              <span className="flex size-10 items-center justify-center rounded-xl bg-muted text-foreground">
+                <FileText aria-hidden="true" className="size-5" />
+              </span>
+              <h3
+                className="text-lg font-semibold"
+                id="product-description-title"
+              >
+                Beschreibung
+              </h3>
+            </div>
+            <p className="mt-6 text-sm leading-7 text-muted-foreground">
+              {product.longDescription}
+            </p>
+          </section>
+        )}
+
+        <section
+          aria-labelledby="product-brand-title"
+          className={`rounded-2xl border bg-card p-5 sm:p-7 ${product.longDescription ? "lg:col-span-4" : "lg:col-span-12"}`}
+        >
+          <p className="text-xs font-semibold tracking-[0.14em] text-primary uppercase">
+            Marke
+          </p>
+          <h3 className="mt-3 text-xl font-semibold" id="product-brand-title">
+            {product.company}
+          </h3>
+          <p className="mt-3 text-sm leading-7 text-muted-foreground">
+            Weitere Informationen zur Marke und zu diesem Produkt erhalten Sie
+            in unserer persönlichen Beratung.
+          </p>
+        </section>
       </div>
 
       {rating !== undefined && (
