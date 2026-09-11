@@ -55,4 +55,13 @@ describe("shopProductListingMock", () => {
       expect(existsSync(publicPath)).toBe(true);
     }
   });
+
+  test("provides reduced products for the offers page", () => {
+    expect(
+      shopProductListingMock.products.every(
+        (product) =>
+          product.previousPrice && product.previousPrice > product.unitPrice,
+      ),
+    ).toBe(true);
+  });
 });

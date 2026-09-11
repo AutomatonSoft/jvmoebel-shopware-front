@@ -1,7 +1,6 @@
 import type {
   ShopProduct,
-  ShopProductColor,
-  ShopProductSize,
+  ShopProductAttributeOption,
 } from "@/features/catalog/model/product-listing";
 
 export type ProductFilterOption<TValue extends string = string> = {
@@ -10,25 +9,21 @@ export type ProductFilterOption<TValue extends string = string> = {
   value: TValue;
 };
 
-export type ProductColorFilterOption = ShopProductColor & { count: number };
-
-export type ShopProductFilterOptions = {
-  categories: ProductFilterOption[];
-  colors: ProductColorFilterOption[];
-  companies: ProductFilterOption[];
-  materials: ProductFilterOption[];
-  sizes: ProductFilterOption<ShopProductSize>[];
+export type ProductAttributeFilterOption = ShopProductAttributeOption & {
+  count: number;
 };
 
-const shopProductSizes = [
-  { label: "Small", value: "small" },
-  { label: "Medium", value: "medium" },
-  { label: "Large", value: "large" },
-  { label: "Extra large", value: "extra-large" },
-] as const satisfies readonly Omit<
-  ProductFilterOption<ShopProductSize>,
-  "count"
->[];
+export type ProductAttributeFilterGroup = {
+  id: string;
+  label: string;
+  options: ProductAttributeFilterOption[];
+};
+
+export type ShopProductFilterOptions = {
+  attributeGroups: ProductAttributeFilterGroup[];
+  categories: ProductFilterOption[];
+  companies: ProductFilterOption[];
+};
 
 function getCategoryOptions(products: readonly ShopProduct[]) {
   const options = new Map<string, ProductFilterOption>();
@@ -45,20 +40,42 @@ function getCategoryOptions(products: readonly ShopProduct[]) {
   return Array.from(options.values());
 }
 
-function getColorOptions(products: readonly ShopProduct[]) {
-  const options = new Map<string, ProductColorFilterOption>();
+function getAttributeGroups(products: readonly ShopProduct[]) {
+  const groups = new Map<string, ProductAttributeFilterGroup>();
 
   for (const product of products) {
-    for (const color of product.colors) {
-      const option = options.get(color.value);
-      options.set(color.value, {
-        ...color,
-        count: (option?.count ?? 0) + 1,
-      });
+    for (const productGroup of product.attributes) {
+      const group = groups.get(productGroup.id) ?? {
+        id: productGroup.id,
+        label: productGroup.label,
+        options: [],
+      };
+      const countedOptions = new Set<string>();
+
+      for (const productOption of productGroup.options) {
+        if (countedOptions.has(productOption.value)) {
+          continue;
+        }
+
+        countedOptions.add(productOption.value);
+        const option = group.options.find(
+          (candidate) => candidate.value === productOption.value,
+        );
+
+        if (option) {
+          option.count += 1;
+        } else {
+          group.options.push({ ...productOption, count: 1 });
+        }
+      }
+
+      if (group.options.length > 0) {
+        groups.set(group.id, group);
+      }
     }
   }
 
-  return Array.from(options.values());
+  return Array.from(groups.values());
 }
 
 function getCompanyOptions(products: readonly ShopProduct[]) {
@@ -76,37 +93,12 @@ function getCompanyOptions(products: readonly ShopProduct[]) {
   return Array.from(options.values());
 }
 
-function getMaterialOptions(products: readonly ShopProduct[]) {
-  const options = new Map<string, ProductFilterOption>();
-
-  for (const product of products) {
-    const option = options.get(product.material);
-    options.set(product.material, {
-      count: (option?.count ?? 0) + 1,
-      label: product.material,
-      value: product.material,
-    });
-  }
-
-  return Array.from(options.values());
-}
-
-function getSizeOptions(products: readonly ShopProduct[]) {
-  return shopProductSizes.map((size) => ({
-    ...size,
-    count: products.filter((product) => product.sizes.includes(size.value))
-      .length,
-  }));
-}
-
 export function buildShopProductFilterOptions(
   products: readonly ShopProduct[],
 ): ShopProductFilterOptions {
   return {
+    attributeGroups: getAttributeGroups(products),
     categories: getCategoryOptions(products),
-    colors: getColorOptions(products),
     companies: getCompanyOptions(products),
-    materials: getMaterialOptions(products),
-    sizes: getSizeOptions(products),
   };
 }

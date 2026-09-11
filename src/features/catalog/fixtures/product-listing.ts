@@ -1,10 +1,42 @@
-import type { ShopProductListing } from "@/features/catalog/model/product-listing";
+import type {
+  ShopProductAttributeGroup,
+  ShopProductColor,
+  ShopProductListing,
+  ShopProductSize,
+} from "@/features/catalog/model/product-listing";
 
 const cream = { hex: "#ded6c8", label: "Cream", value: "cream" };
 const charcoal = { hex: "#292a29", label: "Charcoal", value: "charcoal" };
 const rust = { hex: "#a5452a", label: "Rust", value: "rust" };
 const olive = { hex: "#4e5347", label: "Olive", value: "olive" };
 const blue = { hex: "#445265", label: "Blue", value: "blue" };
+
+const sizeLabels = {
+  "extra-large": "Extra large",
+  large: "Large",
+  medium: "Medium",
+  small: "Small",
+} satisfies Record<ShopProductSize, string>;
+
+function getMockAttributes(
+  colors: readonly ShopProductColor[],
+  material: string,
+  sizes: readonly ShopProductSize[],
+): ShopProductAttributeGroup[] {
+  return [
+    { id: "color", label: "Colour", options: colors },
+    {
+      id: "material",
+      label: "Material",
+      options: [{ label: material, value: material }],
+    },
+    {
+      id: "size",
+      label: "Size",
+      options: sizes.map((size) => ({ label: sizeLabels[size], value: size })),
+    },
+  ];
+}
 
 export const shopProductListingMock = {
   currency: "EUR",
@@ -13,6 +45,10 @@ export const shopProductListingMock = {
   locale: "de-DE",
   products: [
     {
+      attributes: getMockAttributes([cream, rust, olive], "Bouclé", [
+        "large",
+        "extra-large",
+      ]),
       badge: "Bestseller",
       category: "sofas",
       categoryLabel: "Sofas",
@@ -33,9 +69,13 @@ export const shopProductListingMock = {
       reviewCount: 128,
       sizes: ["large", "extra-large"],
       unitPrice: 2490,
-      url: "/product/alba",
+      url: "/produkt/alba",
     },
     {
+      attributes: getMockAttributes([rust, cream], "Bouclé", [
+        "small",
+        "medium",
+      ]),
       badge: "New",
       category: "armchairs",
       categoryLabel: "Armchairs",
@@ -51,13 +91,18 @@ export const shopProductListingMock = {
       },
       material: "Bouclé",
       name: "Noma Lounge Chair",
+      previousPrice: 1095,
       rating: 4.8,
       reviewCount: 64,
       sizes: ["small", "medium"],
       unitPrice: 895,
-      url: "/product/noma",
+      url: "/produkt/noma",
     },
     {
+      attributes: getMockAttributes([charcoal, rust], "Walnut", [
+        "medium",
+        "large",
+      ]),
       badge: "Low stock",
       category: "storage",
       categoryLabel: "Storage",
@@ -73,13 +118,15 @@ export const shopProductListingMock = {
       },
       material: "Walnut",
       name: "Forma Media Console",
+      previousPrice: 1490,
       rating: 4.7,
       reviewCount: 39,
       sizes: ["medium", "large"],
       unitPrice: 1290,
-      url: "/product/forma",
+      url: "/produkt/forma",
     },
     {
+      attributes: getMockAttributes([rust, charcoal], "Oak", ["large"]),
       badge: "Sale",
       category: "tables",
       categoryLabel: "Tables",
@@ -100,9 +147,13 @@ export const shopProductListingMock = {
       reviewCount: 81,
       sizes: ["large"],
       unitPrice: 1650,
-      url: "/product/mira",
+      url: "/produkt/mira",
     },
     {
+      attributes: getMockAttributes([cream, olive, blue], "Linen", [
+        "medium",
+        "large",
+      ]),
       badge: "New",
       category: "sofas",
       categoryLabel: "Sofas",
@@ -118,13 +169,15 @@ export const shopProductListingMock = {
       },
       material: "Linen",
       name: "Aura Deep Sofa",
+      previousPrice: 2490,
       rating: 4.8,
       reviewCount: 52,
       sizes: ["medium", "large"],
       unitPrice: 2180,
-      url: "/product/aura",
+      url: "/produkt/aura",
     },
     {
+      attributes: getMockAttributes([cream, blue], "Bouclé", ["small"]),
       badge: "Online only",
       category: "armchairs",
       categoryLabel: "Armchairs",
@@ -140,13 +193,18 @@ export const shopProductListingMock = {
       },
       material: "Bouclé",
       name: "Luma Lounge Chair",
+      previousPrice: 890,
       rating: 4.6,
       reviewCount: 31,
       sizes: ["small"],
       unitPrice: 760,
-      url: "/product/luma",
+      url: "/produkt/luma",
     },
     {
+      attributes: getMockAttributes([charcoal, cream], "Linen", [
+        "large",
+        "extra-large",
+      ]),
       badge: "Bestseller",
       category: "sofas",
       categoryLabel: "Sofas",
@@ -162,13 +220,18 @@ export const shopProductListingMock = {
       },
       material: "Linen",
       name: "Koto Corner Sofa",
+      previousPrice: 3590,
       rating: 4.9,
       reviewCount: 93,
       sizes: ["large", "extra-large"],
       unitPrice: 3190,
-      url: "/product/koto",
+      url: "/produkt/koto",
     },
     {
+      attributes: getMockAttributes([charcoal, rust, olive], "Walnut", [
+        "medium",
+        "large",
+      ]),
       badge: "Sale",
       category: "storage",
       categoryLabel: "Storage",
@@ -189,9 +252,13 @@ export const shopProductListingMock = {
       reviewCount: 44,
       sizes: ["medium", "large"],
       unitPrice: 1190,
-      url: "/product/linea",
+      url: "/produkt/linea",
     },
     {
+      attributes: getMockAttributes([rust, charcoal, olive], "Wool", [
+        "small",
+        "medium",
+      ]),
       badge: "New",
       category: "armchairs",
       categoryLabel: "Armchairs",
@@ -207,11 +274,12 @@ export const shopProductListingMock = {
       },
       material: "Wool",
       name: "Nara Occasional Chair",
+      previousPrice: 1090,
       rating: 4.9,
       reviewCount: 28,
       sizes: ["small", "medium"],
       unitPrice: 940,
-      url: "/product/nara",
+      url: "/produkt/nara",
     },
   ],
   title: "Furniture collection",

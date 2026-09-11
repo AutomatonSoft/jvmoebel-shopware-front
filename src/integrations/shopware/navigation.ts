@@ -30,18 +30,6 @@ async function getNavigation(
   return (response.data ?? []).map(mapShopwareCategory);
 }
 
-export function getShopwareMainNavigation(client: ShopwareClient) {
-  return getNavigation(client, "main-navigation", 1);
-}
-
-export function getShopwareFooterNavigation(client: ShopwareClient) {
-  return getNavigation(client, "footer-navigation");
-}
-
-export function getShopwareServiceNavigation(client: ShopwareClient) {
-  return getNavigation(client, "service-navigation");
-}
-
 export function getShopwareCategoryChildren(
   client: ShopwareClient,
   categoryId: string,

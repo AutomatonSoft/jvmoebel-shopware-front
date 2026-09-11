@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 
+import { CmsLink } from "@/features/cms/components/cms-link";
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import { parseCmsRoomGridData } from "@/features/cms/contracts/room-grid";
 import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
@@ -42,7 +43,7 @@ export function CmsRoomGrid({ slot }: CmsSlotComponentProps) {
 
       <div className="grid gap-4 md:grid-cols-[1.44fr_1fr] md:grid-rows-[repeat(2,20.625rem)]">
         {rooms.map((room, index) => (
-          <a
+          <CmsLink
             className={`group relative min-h-96 overflow-hidden rounded-2xl bg-foreground text-white shadow-[0_0_0_1px_rgba(21,21,19,0.04)] md:min-h-0 ${room.featured ? "md:row-span-2" : ""}`}
             href={room.url}
             key={room.id}
@@ -70,7 +71,7 @@ export function CmsRoomGrid({ slot }: CmsSlotComponentProps) {
                 <ArrowRight className="size-5" />
               </span>
             </span>
-          </a>
+          </CmsLink>
         ))}
       </div>
     </section>

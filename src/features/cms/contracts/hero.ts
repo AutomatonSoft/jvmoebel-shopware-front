@@ -48,6 +48,7 @@ export type CmsHeroData = Readonly<{
   ariaLabel?: string;
   autoplay: boolean;
   autoplayIntervalMs: number;
+  headingLevel: "h1" | "h2";
   slides: readonly CmsHeroSlide[];
 }>;
 
@@ -301,6 +302,7 @@ export function parseCmsHeroData(
       ariaLabel: getCmsString(data, "ariaLabel"),
       autoplay: resolveAutoplay(data?.autoplay),
       autoplayIntervalMs: resolveAutoplayInterval(data?.autoplayIntervalMs),
+      headingLevel: data?.headingLevel === "h2" ? "h2" : "h1",
       slides: parsedSlides.data,
     },
     issues,

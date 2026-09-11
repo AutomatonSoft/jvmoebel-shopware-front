@@ -5,8 +5,10 @@ import { parseCmsProductGridData } from "@/features/cms/contracts/product-grid";
 describe("parseCmsProductGridData", () => {
   test("parses and sorts products from an object", () => {
     const data = parseCmsProductGridData({
+      anchorId: "sale-products",
       currency: "EUR",
       locale: "de-DE",
+      layout: "rail",
       products: {
         chair: {
           calculatedPrice: { unitPrice: 895 },
@@ -47,6 +49,8 @@ describe("parseCmsProductGridData", () => {
       "sofa",
       "chair",
     ]);
+    expect(data.data?.anchorId).toBe("sale-products");
+    expect(data.data?.layout).toBe("rail");
     expect(data.data?.products[0]).toEqual({
       badge: "Sale",
       description: "Natural boucle",
@@ -97,11 +101,33 @@ describe("parseCmsProductGridData", () => {
 
     expect(data.data?.products).toHaveLength(1);
     expect(data.data?.products[0]?.position).toBe(1);
+    expect(data.data?.layout).toBe("grid");
     expect(data.data?.viewAll).toBeUndefined();
     expect(data.issues.map((issue) => issue.path)).toEqual([
       "products.0",
       "viewAll",
     ]);
+  });
+
+  test("reports and omits an invalid optional anchor", () => {
+    const data = parseCmsProductGridData({
+      anchorId: "invalid anchor",
+      currency: "EUR",
+      locale: "de-DE",
+      products: [
+        {
+          calculatedPrice: { unitPrice: 100 },
+          cover: { media: { url: "/images/product.webp" } },
+          id: "product",
+          name: "Product",
+          url: "/produkt/product",
+        },
+      ],
+      title: "Products",
+    });
+
+    expect(data.data?.anchorId).toBeUndefined();
+    expect(data.issues.map((issue) => issue.path)).toEqual(["anchorId"]);
   });
 
   test("rejects a grid without metadata or valid products", () => {

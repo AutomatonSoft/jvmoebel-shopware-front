@@ -43,7 +43,7 @@ export function HomePreparationState() {
 
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
-              href="/shop"
+              href="/moebel-sortiment"
               className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/15 transition hover:-translate-y-0.5 hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/40"
             >
               <ShoppingBag className="size-4" />

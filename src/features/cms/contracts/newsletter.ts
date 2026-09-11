@@ -2,11 +2,7 @@ import {
   resolveCmsButtonSize,
   type CmsButtonSize,
 } from "@/features/cms/model/button-size";
-import {
-  getCmsRecord,
-  getCmsString,
-  type CmsDataRecord,
-} from "@/features/cms/contracts/parsing";
+import { getCmsRecord, getCmsString } from "@/features/cms/contracts/parsing";
 import type {
   CmsContractIssue,
   CmsContractResult,
@@ -20,28 +16,9 @@ export type CmsNewsletterData = Readonly<{
   eyebrow?: string;
   invalidEmailMessage: string;
   placeholder: string;
-  storefrontUrl: string;
   successMessage: string;
   title: string;
 }>;
-
-function getHttpUrl(record: CmsDataRecord | undefined, key: string) {
-  const value = getCmsString(record, key);
-
-  if (!value) {
-    return undefined;
-  }
-
-  try {
-    const url = new URL(value);
-
-    return url.protocol === "http:" || url.protocol === "https:"
-      ? value
-      : undefined;
-  } catch {
-    return undefined;
-  }
-}
 
 export function parseCmsNewsletterData(
   value: unknown,
@@ -52,8 +29,6 @@ export function parseCmsNewsletterData(
   const errorMessage = getCmsString(data, "errorMessage");
   const invalidEmailMessage = getCmsString(data, "invalidEmailMessage");
   const placeholder = getCmsString(data, "placeholder");
-  const storefrontUrlValue = getCmsString(data, "storefrontUrl");
-  const storefrontUrl = getHttpUrl(data, "storefrontUrl");
   const successMessage = getCmsString(data, "successMessage");
   const title = getCmsString(data, "title");
   const issues: CmsContractIssue[] = [];
@@ -77,22 +52,12 @@ export function parseCmsNewsletterData(
     }
   }
 
-  if (!storefrontUrl) {
-    issues.push({
-      message: storefrontUrlValue
-        ? "Storefront URL must be an absolute HTTP or HTTPS URL."
-        : "Storefront URL is missing or empty.",
-      path: "storefrontUrl",
-    });
-  }
-
   if (
     !buttonLabel ||
     !description ||
     !errorMessage ||
     !invalidEmailMessage ||
     !placeholder ||
-    !storefrontUrl ||
     !successMessage ||
     !title
   ) {
@@ -108,7 +73,6 @@ export function parseCmsNewsletterData(
       eyebrow: getCmsString(data, "eyebrow"),
       invalidEmailMessage,
       placeholder,
-      storefrontUrl,
       successMessage,
       title,
     },

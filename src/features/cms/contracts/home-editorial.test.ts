@@ -5,6 +5,7 @@ import { parseCmsHomeEditorialData } from "@/features/cms/contracts/home-editori
 describe("parseCmsHomeEditorialData", () => {
   test("parses paragraphs and sorts editorial sections", () => {
     const result = parseCmsHomeEditorialData({
+      appearance: "plain",
       introduction: ["First introduction.", "Second introduction."],
       sections: {
         second: {
@@ -26,6 +27,7 @@ describe("parseCmsHomeEditorialData", () => {
     });
 
     expect(result.issues).toEqual([]);
+    expect(result.data?.appearance).toBe("plain");
     expect(result.data?.sections.map((section) => section.id)).toEqual([
       "first-section",
       "second",
@@ -47,6 +49,7 @@ describe("parseCmsHomeEditorialData", () => {
     });
 
     expect(result.data?.sections).toHaveLength(1);
+    expect(result.data?.appearance).toBe("card");
     expect(result.data?.introduction).toEqual(["Valid introduction."]);
     expect(result.issues.map((issue) => issue.path)).toEqual([
       "introduction.1",

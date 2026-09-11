@@ -32,14 +32,20 @@ export type CmsProductGridLink = Readonly<{
   url: string;
 }>;
 
+export type CmsProductGridLayout = "grid" | "rail";
+
 export type CmsProductGridData = Readonly<{
+  anchorId?: string;
   currency: string;
   eyebrow?: string;
+  layout: CmsProductGridLayout;
   locale: string;
   products: readonly CmsProductGridProduct[];
   title: string;
   viewAll?: CmsProductGridLink;
 }>;
+
+const anchorIdPattern = /^[A-Za-z][A-Za-z0-9:._-]*$/;
 
 function parseProducts(value: unknown): Readonly<{
   data: CmsProductGridProduct[];
@@ -151,11 +157,24 @@ export function parseCmsProductGridData(
 ): CmsContractResult<CmsProductGridData> {
   const data = getCmsRecord(value);
   const currency = getCmsString(data, "currency");
+  const anchorIdValue = data?.anchorId;
+  const configuredAnchorId = getCmsString(data, "anchorId");
+  const anchorId =
+    configuredAnchorId && anchorIdPattern.test(configuredAnchorId)
+      ? configuredAnchorId
+      : undefined;
   const locale = getCmsString(data, "locale");
   const products = parseProducts(data?.products);
   const title = getCmsString(data, "title");
   const viewAll = parseLink(data?.viewAll);
   const issues: CmsContractIssue[] = [...products.issues, ...viewAll.issues];
+
+  if (anchorIdValue !== undefined && !anchorId) {
+    issues.push({
+      message: "Anchor ID must be a valid HTML identifier.",
+      path: "anchorId",
+    });
+  }
 
   if (!currency) {
     issues.push({
@@ -185,8 +204,10 @@ export function parseCmsProductGridData(
 
   return {
     data: {
+      anchorId,
       currency,
       eyebrow: getCmsString(data, "eyebrow"),
+      layout: data?.layout === "rail" ? "rail" : "grid",
       locale,
       products: products.data,
       title,

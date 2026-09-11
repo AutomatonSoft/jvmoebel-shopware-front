@@ -14,24 +14,10 @@ function parseEmail(formData: FormData): string | undefined {
     : undefined;
 }
 
-function parseStorefrontUrl(value: string): string | undefined {
-  try {
-    const url = new URL(value);
-
-    return url.protocol === "http:" || url.protocol === "https:"
-      ? url.origin
-      : undefined;
-  } catch {
-    return undefined;
-  }
-}
-
 export function parseNewsletterSubscription(
-  storefrontUrlValue: string,
   formData: FormData,
 ): NewsletterSubscription | null {
   const email = parseEmail(formData);
-  const storefrontUrl = parseStorefrontUrl(storefrontUrlValue);
 
-  return email && storefrontUrl ? { email, storefrontUrl } : null;
+  return email ? { email } : null;
 }

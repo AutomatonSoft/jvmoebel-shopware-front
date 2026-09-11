@@ -6,6 +6,7 @@ import type { FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { buildContractRevocationMailto } from "@/features/storefront-shell/model/contract-revocation";
+import type { StorefrontFooterContent } from "@/features/storefront-shell/model/footer";
 
 function getFormValue(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -13,7 +14,11 @@ function getFormValue(formData: FormData, key: string) {
   return typeof value === "string" ? value.trim() : "";
 }
 
-export function ContractRevocationDialog() {
+export function ContractRevocationDialog({
+  content,
+}: {
+  content: StorefrontFooterContent["revocation"];
+}) {
   function prepareRevocationEmail(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -24,14 +29,17 @@ export function ContractRevocationDialog() {
     const reason = getFormValue(formData, "reason");
 
     window.location.assign(
-      buildContractRevocationMailto({ contractId, email, name, reason }),
+      buildContractRevocationMailto(
+        { contractId, email, name, reason },
+        content.recipient,
+      ),
     );
   }
 
   return (
     <Dialog.Root>
       <Dialog.Trigger className="bg-footer-accent text-footer-on-accent hover:bg-footer-accent-hover focus-visible:ring-footer-accent/30 mt-8 inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full px-5 text-sm font-semibold transition-[background,transform] focus-visible:ring-3 focus-visible:outline-none motion-safe:active:translate-y-px">
-        Vertrag widerrufen
+        {content.buttonLabel}
         <ArrowUpRight className="size-4" aria-hidden="true" />
       </Dialog.Trigger>
 
@@ -41,11 +49,10 @@ export function ContractRevocationDialog() {
           <Dialog.Popup className="border-footer-border bg-footer-surface text-footer-foreground shadow-footer-dialog relative my-auto w-full max-w-lg overflow-hidden rounded-3xl border transition-[transform,opacity] duration-200 ease-out data-ending-style:scale-[0.98] data-ending-style:opacity-0 data-starting-style:scale-[0.98] data-starting-style:opacity-0">
             <header className="border-footer-border bg-footer-panel border-b px-5 py-3 pr-16 sm:px-6 sm:py-4">
               <Dialog.Title className="text-xl font-semibold tracking-[-0.035em] sm:text-2xl">
-                Vertrag widerrufen
+                {content.title}
               </Dialog.Title>
               <Dialog.Description className="text-footer-secondary mt-1 max-w-lg text-xs leading-4 sm:text-sm sm:leading-5">
-                Geben Sie Ihre Vertragsdaten ein. Wir bereiten daraus eine
-                E-Mail an JVMöbel vor.
+                {content.description}
               </Dialog.Description>
             </header>
 
@@ -130,13 +137,12 @@ export function ContractRevocationDialog() {
                 className="bg-footer-accent text-footer-on-accent hover:bg-footer-accent-hover h-10 w-full rounded-xl text-sm font-semibold"
                 type="submit"
               >
-                Widerruf per E-Mail vorbereiten
+                {content.submitLabel}
                 <Send className="size-4" aria-hidden="true" />
               </Button>
 
               <p className="text-footer-muted text-[11px] leading-4">
-                Der Widerruf wird erst versendet, wenn Sie die vorbereitete
-                E-Mail in Ihrem E-Mail-Programm abschicken.
+                {content.disclaimer}
               </p>
             </form>
           </Dialog.Popup>

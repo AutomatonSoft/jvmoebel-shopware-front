@@ -12,6 +12,7 @@ export type CmsHomeEditorialSection = Readonly<{
 }>;
 
 export type CmsHomeEditorialData = Readonly<{
+  appearance: "card" | "plain";
   introduction: readonly string[];
   sections: readonly CmsHomeEditorialSection[];
   showLessLabel: string;
@@ -156,6 +157,7 @@ export function parseCmsHomeEditorialData(
 
   return {
     data: {
+      appearance: data?.appearance === "plain" ? "plain" : "card",
       introduction: introduction.data,
       sections: sections.data,
       showLessLabel,

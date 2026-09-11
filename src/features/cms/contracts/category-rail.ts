@@ -22,10 +22,13 @@ export type CmsCategoryRailLink = Readonly<{
   url: string;
 }>;
 
+export type CmsCategoryRailLayout = "grid" | "rail";
+
 export type CmsCategoryRailData = Readonly<{
   categories: readonly CmsCategoryRailItem[];
   description?: string;
   eyebrow?: string;
+  layout: CmsCategoryRailLayout;
   title: string;
   viewAll?: CmsCategoryRailLink;
 }>;
@@ -147,6 +150,7 @@ export function parseCmsCategoryRailData(
       categories: categories.data,
       description: getCmsString(data, "description"),
       eyebrow: getCmsString(data, "eyebrow"),
+      layout: data?.layout === "grid" ? "grid" : "rail",
       title,
       viewAll: viewAll.data,
     },

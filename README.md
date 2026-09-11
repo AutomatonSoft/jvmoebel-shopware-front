@@ -20,18 +20,23 @@ requires the Store API endpoint and access key, and explicitly disables mocks.
 Starting the application with `SHOPWARE_USE_MOCKS=true` and
 `NODE_ENV=production` is treated as a configuration error.
 
-CMS integration contract:
-See [docs/cms-contract.md](docs/cms-contract.md) for the supported CMS elements
-and the JSON data expected from the Shopware backend.
+CMS component contracts:
+See [docs/README.md](docs/README.md) for the supported CMS elements, their
+`slot.data` contracts, and the fields managed through Shopware Administration.
 
-Storefront branding contract:
-See [docs/storefront-branding-contract.md](docs/storefront-branding-contract.md)
-for the sales channel logo configuration expected from the backend.
+Storefront shell contract:
+See [docs/storefront/storefront-config.md](docs/storefront/storefront-config.md)
+for the aggregated Shopware header and footer response, normalization, and
+fallback behavior.
 
 Product listing contract:
-See [docs/product-listing-contract.md](docs/product-listing-contract.md) for the
+See [docs/storefront/product-listing.md](docs/storefront/product-listing.md) for the
 normalized `/shop` product model, filter and sorting behavior, and Shopware
 Administration responsibility boundary.
+
+Discount offers page:
+See [docs/storefront/discount-offers.md](docs/storefront/discount-offers.md) for the sale overview
+behavior and its catalog integration.
 
 Development:
 bun dev

@@ -77,7 +77,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
   return (
     <LayoutGroup id="header-search">
       <motion.form
-        action="/shop"
+        action="/moebel-sortiment"
         className={`group/search h-11 items-center rounded-full border bg-muted/80 p-1 pl-4 transition-[background,border-color,box-shadow] hover:border-foreground/15 hover:bg-card/70 focus-within:border-foreground/25 focus-within:bg-card focus-within:ring-3 focus-within:ring-primary/15 ${className}`}
         layoutId="header-product-search"
         onFocus={() => {
@@ -139,7 +139,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
                   role="dialog"
                 >
                   <motion.form
-                    action="/shop"
+                    action="/moebel-sortiment"
                     className={`relative z-10 flex h-11 items-center rounded-[1.375rem] border bg-muted/80 p-1 pl-4 transition-[border-color,box-shadow] duration-300 ${isSearchSettled ? "border-transparent shadow-none" : "shadow-lg"}`}
                     layoutId="header-product-search"
                     onLayoutAnimationComplete={() => {
