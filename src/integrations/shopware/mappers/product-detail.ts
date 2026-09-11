@@ -54,16 +54,58 @@ function getGallery(
 
 function getDimensions(product: ShopwareProduct): ShopProductDimensions {
   const measurements = product.measurements;
-
-  return {
+  const nativeDimensions = {
     height: measurements?.height?.value ?? product.height ?? 0,
     length: measurements?.length?.value ?? product.length ?? 0,
-    unit:
-      measurements?.height?.unit ||
-      measurements?.length?.unit ||
-      measurements?.width?.unit ||
-      "mm",
     width: measurements?.width?.value ?? product.width ?? 0,
+  };
+  const hasNativeDimensions = Object.values(nativeDimensions).some(
+    (value) => typeof value === "number" && Number.isFinite(value) && value > 0,
+  );
+
+  if (hasNativeDimensions) {
+    return {
+      ...nativeDimensions,
+      unit:
+        measurements?.height?.unit ||
+        measurements?.length?.unit ||
+        measurements?.width?.unit ||
+        "mm",
+    };
+  }
+
+  const propertyDimensions = new Map<string, number>();
+
+  for (const property of product.properties ?? []) {
+    const groupName = getShopwarePlainText(
+      property.group?.translated?.name?.trim() ||
+        property.group?.name?.trim() ||
+        "",
+    )
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLocaleLowerCase("de-DE");
+    const propertyValue = getShopwarePlainText(
+      property.translated?.name?.trim() || property.name?.trim() || "",
+    );
+    const numericValue = Number.parseFloat(propertyValue.replace(",", "."));
+
+    if (
+      groupName &&
+      !propertyDimensions.has(groupName) &&
+      Number.isFinite(numericValue) &&
+      numericValue > 0
+    ) {
+      propertyDimensions.set(groupName, numericValue);
+    }
+  }
+
+  return {
+    height: propertyDimensions.get("hohe") ?? 0,
+    length:
+      propertyDimensions.get("tiefe") ?? propertyDimensions.get("lange") ?? 0,
+    unit: "cm",
+    width: propertyDimensions.get("breite") ?? 0,
   };
 }
 

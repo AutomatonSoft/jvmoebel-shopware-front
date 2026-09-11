@@ -113,4 +113,57 @@ describe("mapShopwareProductDetail", () => {
       { id: "material", label: "Material", value: "Samt" },
     ]);
   });
+
+  test("uses imported dimension properties when native measurements are empty", () => {
+    const product = {
+      calculatedPrice: { listPrice: null, unitPrice: 999 },
+      id: "imported-product-id",
+      name: "Importiertes Sofa",
+      productNumber: "IMPORT-10001",
+      properties: [
+        {
+          group: { id: "width", name: "Breite" },
+          groupId: "width",
+          id: "width-258",
+          name: "258",
+          translated: { name: "258" },
+        },
+        {
+          group: { id: "height", name: "Höhe" },
+          groupId: "height",
+          id: "height-95",
+          name: "95",
+          translated: { name: "95" },
+        },
+        {
+          group: { id: "depth", name: "Tiefe" },
+          groupId: "depth",
+          id: "depth-182-5",
+          name: "182,5",
+          translated: { name: "182,5" },
+        },
+        {
+          group: { id: "length", name: "Länge" },
+          groupId: "length",
+          id: "length-240",
+          name: "240",
+          translated: { name: "240" },
+        },
+      ],
+      translated: { description: "", name: "Importiertes Sofa" },
+    } as ShopwareProduct;
+
+    const pageData = mapShopwareProductDetail({
+      currency: "EUR",
+      locale: "de-DE",
+      product,
+    });
+
+    expect(pageData.product.dimensions).toEqual({
+      height: 95,
+      length: 182.5,
+      unit: "cm",
+      width: 258,
+    });
+  });
 });
