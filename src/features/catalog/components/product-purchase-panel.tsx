@@ -143,9 +143,6 @@ export function ProductPurchasePanel({
         <h1 className="text-3xl leading-[1.08] font-semibold tracking-[-0.04em] text-pretty [overflow-wrap:anywhere] sm:text-4xl">
           {product.name}
         </h1>
-        <p className="mt-2 text-sm leading-6 text-muted-foreground">
-          {product.description}
-        </p>
 
         <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
           <span className="font-semibold underline decoration-foreground/30 underline-offset-4">
