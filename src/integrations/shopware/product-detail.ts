@@ -14,6 +14,7 @@ const productDetailAssociations = {
   manufacturer: {},
   media: { associations: { media: {} } },
   properties: { associations: { group: {} } },
+  seoUrls: {},
   unit: {},
 } satisfies components["schemas"]["Associations"];
 
@@ -25,6 +26,7 @@ async function getShopwareProductCrossSellings(
     const response = await client.invoke(
       "readProductCrossSellings post /product/{productId}/cross-selling",
       {
+        headers: { "sw-include-seo-urls": true },
         fetchOptions: { cache: "no-store" },
         pathParams: { productId },
       },
@@ -50,6 +52,7 @@ export async function getShopwareProductDetail(
     client.invoke("readProductDetail post /product/{productId}", {
       body: { associations: productDetailAssociations },
       fetchOptions: { cache: "no-store" },
+      headers: { "sw-include-seo-urls": true },
       pathParams: { productId },
       query: { skipCmsPage: true, skipConfigurator: false },
     }),

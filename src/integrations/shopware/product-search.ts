@@ -10,6 +10,7 @@ import { mapShopwareProductSearchResult } from "@/integrations/shopware/mappers/
 const productSearchAssociations = {
   categories: {},
   cover: { associations: { media: {} } },
+  seoUrls: {},
 } satisfies components["schemas"]["Associations"];
 
 export async function getShopwareProductSearch(

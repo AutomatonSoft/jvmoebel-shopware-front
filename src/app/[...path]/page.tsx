@@ -3,27 +3,36 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { cache } from "react";
 
 import { CategoryPage } from "@/features/catalog/components/category-page";
-import { getCategoryPageByPath } from "@/features/catalog/server/category-page";
+import { ProductDetail } from "@/features/catalog/components/product-detail";
+import { getStorefrontPageByPath } from "@/features/catalog/server/storefront-page";
 
 type CategoryRoutePageProps = Readonly<{
   params: Promise<{ path: string[] }>;
 }>;
 
-const loadCategoryPage = cache(getCategoryPageByPath);
+const loadStorefrontPage = cache(getStorefrontPageByPath);
 
 async function getPath(params: CategoryRoutePageProps["params"]) {
   const { path } = await params;
 
-  return `/${path.join("/")}/`;
+  return `/${path.join("/")}`;
 }
 
 export async function generateMetadata({
   params,
 }: CategoryRoutePageProps): Promise<Metadata> {
-  const result = await loadCategoryPage(await getPath(params));
+  const result = await loadStorefrontPage(await getPath(params));
 
   if (!result) {
     return {};
+  }
+
+  if (result.kind === "product") {
+    return {
+      alternates: { canonical: result.route.canonicalPath },
+      description: result.page.product.longDescription,
+      title: `${result.page.product.name} | JVMöbel`,
+    };
   }
 
   const { category } = result.page;
@@ -38,7 +47,7 @@ export async function generateMetadata({
 export default async function CategoryRoutePage({
   params,
 }: CategoryRoutePageProps) {
-  const result = await loadCategoryPage(await getPath(params));
+  const result = await loadStorefrontPage(await getPath(params));
 
   if (!result) {
     notFound();
@@ -48,5 +57,9 @@ export default async function CategoryRoutePage({
     permanentRedirect(result.route.canonicalPath as Route);
   }
 
-  return <CategoryPage page={result.page} />;
+  return result.kind === "product" ? (
+    <ProductDetail {...result.page} />
+  ) : (
+    <CategoryPage page={result.page} />
+  );
 }

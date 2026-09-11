@@ -2,6 +2,7 @@ import type { components } from "@shopware/api-client/store-api-types";
 import sanitizeHtml from "sanitize-html";
 
 import type { ProductSearchResult } from "@/features/search/model/product-search";
+import { getShopwareProductUrl } from "@/integrations/shopware/mappers/product-listing";
 
 type ShopwareProduct = components["schemas"]["Product"];
 
@@ -72,6 +73,6 @@ export function mapShopwareProductSearchResult(
     image: getImage(product, name),
     name,
     unitPrice: product.calculatedPrice.unitPrice,
-    url: `/produkt/${encodeURIComponent(product.id)}`,
+    url: getShopwareProductUrl(product),
   };
 }
