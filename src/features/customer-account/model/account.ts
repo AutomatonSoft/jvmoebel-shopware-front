@@ -1,4 +1,15 @@
+export type CustomerAddressSummary = Readonly<{
+  city: string;
+  country?: string;
+  firstName: string;
+  lastName: string;
+  street: string;
+  zipcode?: string;
+}>;
+
 export type CustomerAccountSummary = Readonly<{
+  billingAddress?: CustomerAddressSummary;
+  customerNumber: string;
   email: string;
   firstName: string;
   lastName: string;

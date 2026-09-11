@@ -10,6 +10,7 @@ import type {
 } from "@/features/customer-account/model/account";
 import type { ShopwareClient } from "@/integrations/shopware/client";
 import { getShopwareContext } from "@/integrations/shopware/context";
+import { mapShopwareCustomerAccount } from "@/integrations/shopware/mappers/customer-account";
 
 export async function getShopwareRegistrationOptions(
   client: ShopwareClient,
@@ -85,15 +86,8 @@ export async function getShopwareCustomerAccount(
   client: ShopwareClient,
 ): Promise<CustomerAccountSummary | null> {
   const context = await getShopwareContext(client);
-  const customer = context.customer;
 
-  return customer
-    ? {
-        email: customer.email,
-        firstName: customer.firstName,
-        lastName: customer.lastName,
-      }
-    : null;
+  return mapShopwareCustomerAccount(context.customer);
 }
 
 export async function logoutShopwareCustomer(client: ShopwareClient) {
