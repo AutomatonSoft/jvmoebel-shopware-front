@@ -44,6 +44,9 @@ Each offer requires non-empty `title`, `ctaLabel`, `url`, and `image.url`.
 `id` is optional and generated from the title and index when omitted.
 `image.alt` defaults to the offer title. A finite numeric `position` controls
 order; otherwise input order is used. `subtitle` and `legalText` are optional.
+There is no fixed offer count: editors can add, remove, and reorder cards. The
+frontend shows carousel controls only when the cards overflow the available
+width.
 
 `endsAt` is optional. When present, it must be a complete ISO timestamp with a
 timezone, for example `2026-09-30T23:59:59+02:00`. Invalid values are reported

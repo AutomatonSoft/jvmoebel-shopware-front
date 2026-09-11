@@ -118,6 +118,8 @@ export function OfferRailCarousel({ data }: { data: CmsOfferRailData }) {
   const activeOffers = data.offers.filter(
     (offer) => !offer.endsAt || now === null || Date.parse(offer.endsAt) > now,
   );
+  const showControls =
+    scrollState.canScrollBack || scrollState.canScrollForward;
 
   useEffect(() => {
     if (latestDeadline === null) {
@@ -214,7 +216,7 @@ export function OfferRailCarousel({ data }: { data: CmsOfferRailData }) {
           )}
         </div>
 
-        {activeOffers.length > 1 && (
+        {showControls && (
           <div className="hidden shrink-0 items-center gap-2 sm:flex">
             <button
               aria-label="Vorherige Aktionen anzeigen"
