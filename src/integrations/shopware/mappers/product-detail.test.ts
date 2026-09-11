@@ -86,13 +86,18 @@ describe("mapShopwareProductDetail", () => {
         articleNumber: "SW-10001",
         availability: "Auf Lager",
         deliveryEstimate: "2–6 Wochen",
-        dimensions: { height: 82, length: 95, unit: "cm", width: 220 },
+        dimensions: [
+          { id: "width", label: "Breite", value: "220 cm" },
+          { id: "height", label: "Höhe", value: "82 cm" },
+          { id: "depth", label: "Tiefe", value: "95 cm" },
+        ],
         gallery: [
           { url: "https://shop.example.com/media/front.webp" },
           { url: "https://shop.example.com/media/detail.webp" },
         ],
         isAvailable: true,
         longDescription: "Ausführliche Produktbeschreibung.",
+        longDescriptionHtml: "<p>Ausführliche Produktbeschreibung.</p>",
         services: [],
         shippingFree: true,
       },
@@ -105,11 +110,6 @@ describe("mapShopwareProductDetail", () => {
       { id: "category", label: "Kategorie", value: "Sofas" },
       { id: "purchase-unit", label: "Verkaufseinheit", value: "1 Stück" },
       { id: "weight", label: "Gewicht", value: "42 kg" },
-      {
-        id: "available-stock",
-        label: "Verfügbarer Bestand",
-        value: "7 Stück",
-      },
       { id: "material", label: "Material", value: "Samt" },
     ]);
   });
@@ -159,12 +159,43 @@ describe("mapShopwareProductDetail", () => {
       product,
     });
 
-    expect(pageData.product.dimensions).toEqual({
-      height: 95,
-      length: 182.5,
-      unit: "cm",
-      width: 258,
+    expect(pageData.product.dimensions).toEqual([
+      { id: "width", label: "Breite", value: "258 cm" },
+      { id: "height", label: "Höhe", value: "95 cm" },
+      { id: "depth", label: "Tiefe", value: "182,5 cm" },
+    ]);
+  });
+
+  test("does not derive product specifications from the description", () => {
+    const product = {
+      calculatedPrice: { listPrice: null, unitPrice: 2999 },
+      description: "<p>EAN: 4260174429632</p><p>Höhe: 90 cm</p>",
+      ean: null,
+      id: "product-with-description-data",
+      name: "Ecksofa",
+      productNumber: "SOFA-1",
+      translated: {
+        description: "<p>EAN: 4260174429632</p><p>Höhe: 90 cm</p>",
+        name: "Ecksofa",
+      },
+    } as unknown as ShopwareProduct;
+
+    const pageData = mapShopwareProductDetail({
+      currency: "EUR",
+      locale: "de-DE",
+      product,
     });
+
+    expect(pageData.product.dimensions).toEqual([]);
+    expect(pageData.product.specifications).not.toContainEqual(
+      expect.objectContaining({ label: "EAN" }),
+    );
+    expect(pageData.product.longDescription).toBe(
+      "EAN: 4260174429632 Höhe: 90 cm",
+    );
+    expect(pageData.product.longDescriptionHtml).toBe(
+      "<p>EAN: 4260174429632</p><p>Höhe: 90 cm</p>",
+    );
   });
 
   test("maps selectable numeric dimensions from the Shopware configurator", () => {

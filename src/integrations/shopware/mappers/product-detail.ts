@@ -1,4 +1,5 @@
 import type { components } from "@shopware/api-client/store-api-types";
+import sanitizeHtml from "sanitize-html";
 
 import type {
   ShopProductDetail,
@@ -29,6 +30,35 @@ function normalizePropertyGroupName(value: string) {
     .replace(/ß/g, "ss")
     .trim()
     .toLocaleLowerCase("de-DE");
+}
+
+function getDescriptionHtml(value: string) {
+  return sanitizeHtml(value, {
+    allowedAttributes: {},
+    allowedTags: [
+      "b",
+      "blockquote",
+      "br",
+      "div",
+      "em",
+      "h2",
+      "h3",
+      "h4",
+      "i",
+      "li",
+      "ol",
+      "p",
+      "strong",
+      "ul",
+    ],
+    transformTags: {
+      b: "strong",
+      i: "em",
+    },
+  })
+    .replace(/<p>\s*(?:(?:&nbsp;|\u00a0)|<br\s*\/?>)*\s*<\/p>/gi, "")
+    .replace(/(?:<br\s*\/?>\s*){2,}/gi, "<br>")
+    .trim();
 }
 
 function getGallery(
@@ -63,26 +93,39 @@ function getGallery(
   return [firstImage ?? listingProduct.image, ...remainingImages];
 }
 
+function formatMeasurement(value: number, unit: string) {
+  return `${value.toLocaleString("de-DE", { maximumFractionDigits: 2 })} ${unit}`;
+}
+
 function getDimensions(product: ShopwareProduct): ShopProductDimensions {
   const measurements = product.measurements;
-  const nativeDimensions = {
-    height: measurements?.height?.value ?? product.height ?? 0,
-    length: measurements?.length?.value ?? product.length ?? 0,
-    width: measurements?.width?.value ?? product.width ?? 0,
-  };
-  const hasNativeDimensions = Object.values(nativeDimensions).some(
-    (value) => typeof value === "number" && Number.isFinite(value) && value > 0,
+  const nativeDimensions = [
+    {
+      id: "width",
+      label: "Breite",
+      unit: measurements?.width?.unit || "mm",
+      value: measurements?.width?.value ?? product.width,
+    },
+    {
+      id: "height",
+      label: "Höhe",
+      unit: measurements?.height?.unit || "mm",
+      value: measurements?.height?.value ?? product.height,
+    },
+    {
+      id: "depth",
+      label: "Tiefe",
+      unit: measurements?.length?.unit || "mm",
+      value: measurements?.length?.value ?? product.length,
+    },
+  ].flatMap(({ id, label, unit, value }) =>
+    typeof value === "number" && Number.isFinite(value) && value > 0
+      ? [{ id, label, value: formatMeasurement(value, unit) }]
+      : [],
   );
 
-  if (hasNativeDimensions) {
-    return {
-      ...nativeDimensions,
-      unit:
-        measurements?.height?.unit ||
-        measurements?.length?.unit ||
-        measurements?.width?.unit ||
-        "mm",
-    };
+  if (nativeDimensions.length > 0) {
+    return nativeDimensions;
   }
 
   const propertyDimensions = new Map<string, number>();
@@ -111,13 +154,19 @@ function getDimensions(product: ShopwareProduct): ShopProductDimensions {
     }
   }
 
-  return {
-    height: propertyDimensions.get("hohe") ?? 0,
-    length:
-      propertyDimensions.get("tiefe") ?? propertyDimensions.get("lange") ?? 0,
-    unit: "cm",
-    width: propertyDimensions.get("breite") ?? 0,
-  };
+  return [
+    { id: "width", key: "breite", label: "Breite" },
+    { id: "height", key: "hohe", label: "Höhe" },
+    {
+      id: "depth",
+      key: propertyDimensions.has("tiefe") ? "tiefe" : "lange",
+      label: "Tiefe",
+    },
+  ].flatMap(({ id, key, label }) => {
+    const value = propertyDimensions.get(key);
+
+    return value ? [{ id, label, value: formatMeasurement(value, "cm") }] : [];
+  });
 }
 
 const sizeVariantGroupNames = new Set([
@@ -313,7 +362,6 @@ function getSpecifications(
   const weight =
     product.measurements?.weight?.value ?? product.weight ?? undefined;
   const weightUnit = product.measurements?.weight?.unit || "kg";
-  const availableStock = product.availableStock ?? product.stock;
 
   addSpecification("article-number", "Artikelnummer", product.productNumber);
   addSpecification("ean", "EAN", product.ean);
@@ -328,16 +376,13 @@ function getSpecifications(
     );
   }
 
-  if (typeof weight === "number" && weight > 0) {
+  if (
+    typeof weight === "number" &&
+    Number.isFinite(weight) &&
+    weight > 0 &&
+    weight <= 2000
+  ) {
     addSpecification("weight", "Gewicht", `${weight} ${weightUnit}`);
-  }
-
-  if (typeof availableStock === "number" && availableStock >= 0) {
-    addSpecification(
-      "available-stock",
-      "Verfügbarer Bestand",
-      `${availableStock}${unit ? ` ${unit}` : ""}`,
-    );
   }
 
   for (const property of product.properties ?? []) {
@@ -402,6 +447,12 @@ export function mapShopwareProductDetail({
     product.translated.description?.trim() || product.description?.trim() || "";
   const longDescription =
     getShopwarePlainText(longDescriptionSource) || listingProduct.description;
+  const longDescriptionHtml =
+    getDescriptionHtml(longDescriptionSource) ||
+    sanitizeHtml(listingProduct.description, {
+      allowedAttributes: {},
+      allowedTags: [],
+    });
 
   return {
     currency,
@@ -417,6 +468,7 @@ export function mapShopwareProductDetail({
       gallery: getGallery(product, listingProduct),
       isAvailable: product.available,
       longDescription,
+      longDescriptionHtml,
       services: [],
       shippingFree: product.shippingFree,
       sizeVariantGroups: getSizeVariantGroups(product, configurator),

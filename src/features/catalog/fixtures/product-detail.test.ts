@@ -18,8 +18,6 @@ describe("shop product detail fixtures", () => {
 
   test("provides dimensions and specifications", () => {
     for (const product of shopProductDetailsMock) {
-      expect(product.dimensions.width).toBeGreaterThan(0);
-      expect(product.dimensions.height).toBeGreaterThan(0);
       expect(product.dimensions.length).toBeGreaterThan(0);
       expect(product.specifications.length).toBeGreaterThan(0);
     }

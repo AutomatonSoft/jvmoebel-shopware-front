@@ -20,11 +20,7 @@ type ProductSpecificationsProps = Readonly<{
 }>;
 
 export function ProductSpecifications({ product }: ProductSpecificationsProps) {
-  const dimensions = [
-    { label: "Breite", value: product.dimensions.width },
-    { label: "Höhe", value: product.dimensions.height },
-    { label: "Tiefe", value: product.dimensions.length },
-  ].filter((dimension) => dimension.value > 0);
+  const dimensions = product.dimensions;
   const rating = product.rating;
   const filledStars = Math.round(rating ?? 0);
   const adviceSubject = encodeURIComponent(
@@ -45,11 +41,11 @@ export function ProductSpecifications({ product }: ProductSpecificationsProps) {
         </h2>
       </header>
 
-      <div className="grid gap-4 lg:grid-cols-12">
+      <div className="overflow-hidden rounded-2xl border bg-card">
         {dimensions.length > 0 && (
           <section
             aria-labelledby="product-dimensions-title"
-            className="rounded-2xl border bg-card p-5 sm:p-7 lg:col-span-5"
+            className="border-b p-5 sm:p-7"
           >
             <div className="flex items-center gap-3">
               <span className="flex size-10 items-center justify-center rounded-xl bg-muted text-foreground">
@@ -62,17 +58,17 @@ export function ProductSpecifications({ product }: ProductSpecificationsProps) {
                 Produktabmessungen
               </h3>
             </div>
-            <dl className="mt-6 grid gap-3 sm:grid-cols-3">
+            <dl className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {dimensions.map((dimension) => (
                 <div
                   className="rounded-xl border bg-muted/25 p-4"
-                  key={dimension.label}
+                  key={dimension.id}
                 >
                   <dt className="text-xs text-muted-foreground">
                     {dimension.label}
                   </dt>
                   <dd className="mt-1 text-lg font-semibold">
-                    {dimension.value} {product.dimensions.unit}
+                    {dimension.value}
                   </dd>
                 </div>
               ))}
@@ -82,7 +78,7 @@ export function ProductSpecifications({ product }: ProductSpecificationsProps) {
 
         <section
           aria-labelledby="product-facts-title"
-          className={`rounded-2xl border bg-card p-5 sm:p-7 ${dimensions.length > 0 ? "lg:col-span-7" : "lg:col-span-12"}`}
+          className="border-b p-5 sm:p-7"
         >
           <div className="flex items-center gap-3">
             <span className="flex size-10 items-center justify-center rounded-xl bg-muted text-foreground">
@@ -92,10 +88,10 @@ export function ProductSpecifications({ product }: ProductSpecificationsProps) {
               Produktinformationen
             </h3>
           </div>
-          <dl className="mt-6 grid gap-x-8 sm:grid-cols-2">
+          <dl className="mt-6 grid gap-x-8 sm:grid-cols-2 lg:grid-cols-4">
             {product.specifications.map((specification) => (
               <div
-                className="border-t py-3 first:border-t-0 sm:[&:nth-child(2)]:border-t-0"
+                className="border-t py-3 first:border-t-0 sm:[&:nth-child(2)]:border-t-0 lg:[&:nth-child(3)]:border-t-0 lg:[&:nth-child(4)]:border-t-0"
                 key={specification.id}
               >
                 <dt className="text-xs text-muted-foreground">
@@ -109,12 +105,12 @@ export function ProductSpecifications({ product }: ProductSpecificationsProps) {
           </dl>
         </section>
 
-        {product.longDescription && (
+        {product.longDescriptionHtml && (
           <section
             aria-labelledby="product-description-title"
-            className="rounded-2xl border bg-card p-5 sm:p-7 lg:col-span-8"
+            className="border-b"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 border-b bg-muted/20 px-5 py-5 sm:px-7">
               <span className="flex size-10 items-center justify-center rounded-xl bg-muted text-foreground">
                 <FileText aria-hidden="true" className="size-5" />
               </span>
@@ -125,23 +121,28 @@ export function ProductSpecifications({ product }: ProductSpecificationsProps) {
                 Beschreibung
               </h3>
             </div>
-            <p className="mt-6 text-sm leading-7 text-muted-foreground">
-              {product.longDescription}
-            </p>
+            <div
+              className="px-5 py-6 text-sm leading-7 text-muted-foreground sm:px-7 [&_blockquote]:my-5 [&_blockquote]:border-l-2 [&_blockquote]:border-primary [&_blockquote]:pl-4 [&_h2]:mt-7 [&_h2]:mb-3 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:text-foreground [&_h3]:mt-6 [&_h3]:mb-2 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:text-foreground [&_h4]:mt-5 [&_h4]:mb-2 [&_h4]:font-semibold [&_h4]:text-foreground [&_li]:my-1 [&_ol]:my-4 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:my-3 [&_p:first-child]:mt-0 [&_p:last-child]:mb-0 [&_strong]:font-semibold [&_strong]:text-foreground [&_ul]:my-4 [&_ul]:list-disc [&_ul]:pl-5"
+              dangerouslySetInnerHTML={{
+                __html: product.longDescriptionHtml,
+              }}
+            />
           </section>
         )}
 
         <section
           aria-labelledby="product-brand-title"
-          className={`rounded-2xl border bg-card p-5 sm:p-7 ${product.longDescription ? "lg:col-span-4" : "lg:col-span-12"}`}
+          className="bg-muted/15 p-5 sm:flex sm:items-start sm:justify-between sm:gap-10 sm:p-7"
         >
-          <p className="text-xs font-semibold tracking-[0.14em] text-primary uppercase">
-            Marke
-          </p>
-          <h3 className="mt-3 text-xl font-semibold" id="product-brand-title">
-            {product.company}
-          </h3>
-          <p className="mt-3 text-sm leading-7 text-muted-foreground">
+          <div className="shrink-0">
+            <p className="text-xs font-semibold tracking-[0.14em] text-primary uppercase">
+              Marke
+            </p>
+            <h3 className="mt-3 text-xl font-semibold" id="product-brand-title">
+              {product.company}
+            </h3>
+          </div>
+          <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground sm:mt-0">
             Weitere Informationen zur Marke und zu diesem Produkt erhalten Sie
             in unserer persönlichen Beratung.
           </p>

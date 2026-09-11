@@ -7,12 +7,13 @@ export type ShopProductAccessory = Readonly<{
   price: number;
 }>;
 
-export type ShopProductDimensions = Readonly<{
-  height: number;
-  length: number;
-  unit: string;
-  width: number;
+export type ShopProductDimension = Readonly<{
+  id: string;
+  label: string;
+  value: string;
 }>;
+
+export type ShopProductDimensions = readonly ShopProductDimension[];
 
 export type ShopProductSpecification = Readonly<{
   id: string;
@@ -55,6 +56,7 @@ export type ShopProductDetail = ShopProduct &
     gallery: readonly [ShopProduct["image"], ...ShopProduct["image"][]];
     isAvailable?: boolean;
     longDescription: string;
+    longDescriptionHtml: string;
     services: readonly ShopProductService[];
     shippingFree?: boolean;
     sizeVariantGroups: readonly ShopProductVariantGroup[];
