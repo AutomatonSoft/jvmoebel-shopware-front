@@ -3,6 +3,7 @@ import type { CmsPage } from "@/features/cms/model/page";
 const pageId = "mock-home-page";
 const sectionId = "mock-home-section";
 const heroBlockId = "mock-home-hero-block";
+const offerRailBlockId = "mock-home-offer-rail-block";
 const categoryRailBlockId = "mock-home-category-rail-block";
 const shopTheLookBlockId = "mock-home-shop-the-look-block";
 const roomGridBlockId = "mock-home-room-grid-block";
@@ -106,8 +107,81 @@ export const homeCmsPageMock = {
           ],
         },
         {
-          id: categoryRailBlockId,
+          id: offerRailBlockId,
           position: 1,
+          type: "jv-offer-rail",
+          slots: [
+            {
+              id: "mock-home-offer-rail-slot",
+              slot: "content",
+              type: "jv-offer-rail",
+              data: {
+                ariaLabel: "Aktuelle Möbelaktionen",
+                description:
+                  "Zeitlich begrenzte Preisvorteile und ausgewählte Kollektionen für Ihr Zuhause.",
+                eyebrow: "Nur für kurze Zeit",
+                offers: [
+                  {
+                    ctaLabel: "Wohnzimmer-Angebote",
+                    endsAt: "2026-09-30T23:59:59+02:00",
+                    id: "living-room-weeks",
+                    image: {
+                      alt: "Helles Wohnzimmer mit großzügigem Sofa",
+                      url: "/images/main/hero-living.webp",
+                    },
+                    legalText: "*Gültig für ausgewählte Artikel.",
+                    position: 0,
+                    subtitle: "Bis zu 20 % auf ausgewählte Wohnzimmermöbel",
+                    title: "Wohnwochen",
+                    url: "/rabatt-angebote",
+                  },
+                  {
+                    ctaLabel: "Esszimmer entdecken",
+                    id: "dining-room-special",
+                    image: {
+                      alt: "Esszimmer mit rundem Holztisch und Polsterstühlen",
+                      url: "/images/main/dining-room.webp",
+                    },
+                    position: 1,
+                    subtitle: "Tische und Stühle zum Vorteilspreis",
+                    title: "Gemeinsam genießen",
+                    url: "/esszimmer",
+                  },
+                  {
+                    ctaLabel: "Jetzt sparen",
+                    endsAt: "2026-10-05T23:59:59+02:00",
+                    id: "bedroom-special",
+                    image: {
+                      alt: "Ruhiges Schlafzimmer in hellen Naturtönen",
+                      url: "/images/main/bedroom.webp",
+                    },
+                    legalText: "*Solange der Vorrat reicht.",
+                    position: 2,
+                    subtitle: "Betten und Stauraum für erholsame Nächte",
+                    title: "Schlafzimmer-Special",
+                    url: "/schlafzimmer",
+                  },
+                  {
+                    ctaLabel: "Alle Angebote",
+                    id: "selected-sale",
+                    image: {
+                      alt: "Wohnbereich mit ausgewählten Designmöbeln",
+                      url: "/images/main/hero-editorial.webp",
+                    },
+                    position: 3,
+                    subtitle: "Reduzierte Möbel für jeden Raum",
+                    title: "Lieblingsstücke im Sale",
+                    url: "/rabatt-angebote",
+                  },
+                ],
+                title: "Aktuelle Aktionen",
+              },
+            },
+          ],
+        },
+        {
+          id: categoryRailBlockId,
+          position: 2,
           type: "jv-category-rail",
           slots: [
             {
@@ -191,7 +265,7 @@ export const homeCmsPageMock = {
         },
         {
           id: shopTheLookBlockId,
-          position: 2,
+          position: 3,
           type: "jv-shop-the-look",
           slots: [
             {
@@ -243,7 +317,7 @@ export const homeCmsPageMock = {
         },
         {
           id: roomGridBlockId,
-          position: 3,
+          position: 4,
           type: "jv-room-grid",
           slots: [
             {
@@ -299,7 +373,7 @@ export const homeCmsPageMock = {
         },
         {
           id: productGridBlockId,
-          position: 4,
+          position: 5,
           type: "jv-product-grid",
           slots: [
             {
@@ -413,7 +487,7 @@ export const homeCmsPageMock = {
         },
         {
           id: whyJvmoebelBlockId,
-          position: 5,
+          position: 6,
           type: "jv-why-jvmoebel",
           slots: [
             {
@@ -466,7 +540,7 @@ export const homeCmsPageMock = {
         },
         {
           id: homeEditorialBlockId,
-          position: 6,
+          position: 7,
           type: "jv-home-editorial",
           slots: [
             {
@@ -524,7 +598,7 @@ export const homeCmsPageMock = {
         },
         {
           id: newsletterBlockId,
-          position: 7,
+          position: 8,
           type: "jv-newsletter",
           slots: [
             {

@@ -33,6 +33,7 @@ fields that should be editable in Shopware Administration.
 | `jv-why-jvmoebel`   | [`jv-why-jvmoebel.md`](components/jv-why-jvmoebel.md)     | Brand benefits section       |
 | `jv-home-editorial` | [`jv-home-editorial.md`](components/jv-home-editorial.md) | Expandable editorial content |
 | `jv-newsletter`     | [`jv-newsletter.md`](components/jv-newsletter.md)         | Newsletter subscription form |
+| `jv-offer-rail`     | [`jv-offer-rail.md`](components/jv-offer-rail.md)         | Timed promotional cards      |
 | `image`             | [`image.md`](components/image.md)                         | Standard image content       |
 | `text`              | [`text.md`](components/text.md)                           | Standard rich-text content   |
 | `youtube-video`     | [`youtube-video.md`](components/youtube-video.md)         | Standard YouTube video       |

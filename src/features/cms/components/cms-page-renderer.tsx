@@ -7,6 +7,7 @@ import { CmsHero } from "@/features/cms/components/elements/cms-hero";
 import { CmsHomeEditorial } from "@/features/cms/components/elements/cms-home-editorial";
 import { CmsImage } from "@/features/cms/components/elements/cms-image";
 import { CmsNewsletter } from "@/features/cms/components/elements/cms-newsletter";
+import { CmsOfferRail } from "@/features/cms/components/elements/cms-offer-rail";
 import { CmsPageHeader } from "@/features/cms/components/elements/cms-page-header";
 import { CmsProductGrid } from "@/features/cms/components/elements/cms-product-grid";
 import { CmsPromoBanner } from "@/features/cms/components/elements/cms-promo-banner";
@@ -37,6 +38,7 @@ const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {
   "jv-hero": CmsHero,
   "jv-home-editorial": CmsHomeEditorial,
   "jv-newsletter": CmsNewsletter,
+  "jv-offer-rail": CmsOfferRail,
   "jv-page-header": CmsPageHeader,
   "jv-product-grid": CmsProductGrid,
   "jv-promo-banner": CmsPromoBanner,
