@@ -11,12 +11,11 @@ export type ShopProductFilters = Readonly<{
 export type ShopProductSort =
   "featured" | "newest" | "price-ascending" | "price-descending" | "rating";
 
-export function filterAndSortShopProducts(
+export function filterShopProducts(
   products: readonly ShopProduct[],
   filters: ShopProductFilters,
-  sort: ShopProductSort,
 ) {
-  const filteredProducts = products.filter((product) => {
+  return products.filter((product) => {
     const matchesCategory =
       filters.categories.length === 0 ||
       filters.categories.includes(product.category);
@@ -41,6 +40,14 @@ export function filterAndSortShopProducts(
       matchesAttributes && matchesCategory && matchesCompany && matchesPrice
     );
   });
+}
+
+export function filterAndSortShopProducts(
+  products: readonly ShopProduct[],
+  filters: ShopProductFilters,
+  sort: ShopProductSort,
+) {
+  const filteredProducts = filterShopProducts(products, filters);
 
   return filteredProducts.toSorted((first, second) => {
     switch (sort) {

@@ -2,6 +2,10 @@ import type {
   ShopProduct,
   ShopProductAttributeOption,
 } from "@/features/catalog/model/product-listing";
+import {
+  filterShopProducts,
+  type ShopProductFilters,
+} from "@/features/catalog/model/filter-products";
 
 export type ProductFilterOption<TValue extends string = string> = {
   count: number;
@@ -93,12 +97,81 @@ function getCompanyOptions(products: readonly ShopProduct[]) {
   return Array.from(options.values());
 }
 
+function updateOptionCounts<
+  TOption extends Readonly<{ count: number; value: string }>,
+>(
+  options: readonly TOption[],
+  countedOptions: readonly Readonly<{ count: number; value: string }>[],
+) {
+  const counts = new Map(
+    countedOptions.map((option) => [option.value, option.count]),
+  );
+
+  return options.map((option) => ({
+    ...option,
+    count: counts.get(option.value) ?? 0,
+  }));
+}
+
+function getFiltersWithoutAttributeGroup(
+  filters: ShopProductFilters,
+  groupId: string,
+): ShopProductFilters {
+  return {
+    ...filters,
+    attributes: Object.fromEntries(
+      Object.entries(filters.attributes ?? {}).filter(
+        ([candidateId]) => candidateId !== groupId,
+      ),
+    ),
+  };
+}
+
 export function buildShopProductFilterOptions(
   products: readonly ShopProduct[],
+  filters?: ShopProductFilters,
 ): ShopProductFilterOptions {
-  return {
+  const options = {
     attributeGroups: getAttributeGroups(products),
     categories: getCategoryOptions(products),
     companies: getCompanyOptions(products),
+  };
+
+  if (!filters) {
+    return options;
+  }
+
+  const categoryProducts = filterShopProducts(products, {
+    ...filters,
+    categories: [],
+  });
+  const companyProducts = filterShopProducts(products, {
+    ...filters,
+    companies: [],
+  });
+
+  return {
+    attributeGroups: options.attributeGroups.map((group) => {
+      const groupProducts = filterShopProducts(
+        products,
+        getFiltersWithoutAttributeGroup(filters, group.id),
+      );
+      const countedGroup = getAttributeGroups(groupProducts).find(
+        (candidate) => candidate.id === group.id,
+      );
+
+      return {
+        ...group,
+        options: updateOptionCounts(group.options, countedGroup?.options ?? []),
+      };
+    }),
+    categories: updateOptionCounts(
+      options.categories,
+      getCategoryOptions(categoryProducts),
+    ),
+    companies: updateOptionCounts(
+      options.companies,
+      getCompanyOptions(companyProducts),
+    ),
   };
 }

@@ -107,4 +107,62 @@ describe("shop catalog filter options", () => {
       ],
     });
   });
+
+  test("recalculates other facets from the active filters", () => {
+    const products = [
+      createProduct({ id: "sofa" }),
+      createProduct({
+        attributes: [
+          {
+            id: "color",
+            label: "Colour",
+            options: [{ hex: "#292a29", label: "Charcoal", value: "charcoal" }],
+          },
+          {
+            id: "material",
+            label: "Material",
+            options: [{ label: "Wool", value: "wool" }],
+          },
+        ],
+        category: "chairs",
+        categoryLabel: "Chairs",
+        colors: [{ hex: "#292a29", label: "Charcoal", value: "charcoal" }],
+        company: "Noma Living",
+        id: "chair",
+        material: "Wool",
+      }),
+    ];
+    const options = buildShopProductFilterOptions(products, {
+      attributes: { color: ["cream"] },
+      categories: [],
+      companies: [],
+      maximumPrice: 3000,
+      minimumPrice: 0,
+    });
+
+    expect(options.categories).toEqual([
+      { count: 1, label: "Sofas", value: "sofas" },
+      { count: 0, label: "Chairs", value: "chairs" },
+    ]);
+    expect(options.companies).toEqual([
+      { count: 1, label: "JV Studio", value: "JV Studio" },
+      { count: 0, label: "Noma Living", value: "Noma Living" },
+    ]);
+    expect(
+      options.attributeGroups
+        .find((group) => group.id === "material")
+        ?.options.map(({ count, value }) => ({ count, value })),
+    ).toEqual([
+      { count: 1, value: "linen" },
+      { count: 0, value: "wool" },
+    ]);
+    expect(
+      options.attributeGroups
+        .find((group) => group.id === "color")
+        ?.options.map(({ count, value }) => ({ count, value })),
+    ).toEqual([
+      { count: 1, value: "cream" },
+      { count: 1, value: "charcoal" },
+    ]);
+  });
 });

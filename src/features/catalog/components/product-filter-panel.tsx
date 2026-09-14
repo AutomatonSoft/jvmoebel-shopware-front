@@ -55,21 +55,26 @@ function FilterGroup({
 function CheckboxOption({
   checked,
   count,
+  disabled,
   label,
   onChange,
   swatch,
 }: {
   checked: boolean;
   count: number;
+  disabled?: boolean;
   label: string;
   onChange: () => void;
   swatch?: string;
 }) {
   return (
-    <label className="group/option -mx-1 grid cursor-pointer grid-cols-[1.125rem_1fr_auto] items-center gap-2.5 rounded-md px-1 py-0.5 text-sm transition-colors hover:bg-muted/60">
+    <label
+      className={`group/option -mx-1 grid grid-cols-[1.125rem_1fr_auto] items-center gap-2.5 rounded-md px-1 py-0.5 text-sm transition-colors ${disabled ? "cursor-not-allowed opacity-45" : "cursor-pointer hover:bg-muted/60"}`}
+    >
       <Checkbox
         checked={checked}
         className="size-4.5 rounded-[5px] border-muted-foreground/40 bg-background shadow-xs group-hover/option:border-primary/70"
+        disabled={disabled}
         onCheckedChange={onChange}
       />
       <span className="flex min-w-0 items-center gap-2 transition-colors group-hover/option:text-foreground">
@@ -250,6 +255,9 @@ export function ProductFilterPanel({
             <CheckboxOption
               checked={selectedCompanies.includes(option.value)}
               count={option.count}
+              disabled={
+                option.count === 0 && !selectedCompanies.includes(option.value)
+              }
               label={option.label}
               onChange={() => onToggleCompany(option.value)}
             />
@@ -267,6 +275,9 @@ export function ProductFilterPanel({
             <CheckboxOption
               checked={selectedCategories.includes(option.value)}
               count={option.count}
+              disabled={
+                option.count === 0 && !selectedCategories.includes(option.value)
+              }
               label={option.label}
               onChange={() => onToggleCategory(option.value)}
             />
@@ -287,6 +298,10 @@ export function ProductFilterPanel({
                   option.value,
                 )}
                 count={option.count}
+                disabled={
+                  option.count === 0 &&
+                  !(selectedAttributes[group.id] ?? []).includes(option.value)
+                }
                 label={option.label}
                 onChange={() => onToggleAttribute(group.id, option.value)}
                 swatch={option.hex}
