@@ -12,6 +12,7 @@ import { CmsExpertTip } from "@/features/cms/components/elements/cms-expert-tip"
 import { CmsExpertQuote } from "@/features/cms/components/elements/cms-expert-quote";
 import { CmsExpertProfile } from "@/features/cms/components/elements/cms-expert-profile";
 import { CmsFaq } from "@/features/cms/components/elements/cms-faq";
+import { CmsGuideHubCards } from "@/features/cms/components/elements/cms-guide-hub-cards";
 import { CmsHero } from "@/features/cms/components/elements/cms-hero";
 import { CmsHomeEditorial } from "@/features/cms/components/elements/cms-home-editorial";
 import { CmsImage } from "@/features/cms/components/elements/cms-image";
@@ -56,6 +57,7 @@ const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {
   "jv-expert-quote": CmsExpertQuote,
   "jv-expert-profile": CmsExpertProfile,
   "jv-faq": CmsFaq,
+  "jv-guide-hub-cards": CmsGuideHubCards,
   "jv-hero": CmsHero,
   "jv-home-editorial": CmsHomeEditorial,
   "jv-look-scene": CmsLookScene,
