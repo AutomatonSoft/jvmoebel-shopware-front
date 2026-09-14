@@ -3,6 +3,7 @@ import type { ComponentType } from "react";
 import { Container } from "@/components/ui/container";
 import { CmsBenefitStrip } from "@/features/cms/components/elements/cms-benefit-strip";
 import { CmsCategoryRail } from "@/features/cms/components/elements/cms-category-rail";
+import { CmsChipRail } from "@/features/cms/components/elements/cms-chip-rail";
 import { CmsCountdownPromo } from "@/features/cms/components/elements/cms-countdown-promo";
 import { CmsFaq } from "@/features/cms/components/elements/cms-faq";
 import { CmsHero } from "@/features/cms/components/elements/cms-hero";
@@ -37,6 +38,7 @@ type CmsSlotComponent = ComponentType<CmsSlotComponentProps>;
 const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {
   "jv-benefit-strip": CmsBenefitStrip,
   "jv-category-rail": CmsCategoryRail,
+  "jv-chip-rail": CmsChipRail,
   "jv-countdown-promo": CmsCountdownPromo,
   "jv-faq": CmsFaq,
   "jv-hero": CmsHero,
