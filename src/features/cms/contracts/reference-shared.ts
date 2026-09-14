@@ -20,6 +20,15 @@ export type CmsReferenceImage = Readonly<{
   url: string;
 }>;
 
+export type CmsReferenceCard = Readonly<{
+  description?: string;
+  id: string;
+  image: CmsReferenceImage;
+  position: number;
+  title: string;
+  url: string;
+}>;
+
 export function addRequiredString(
   record: ReturnType<typeof getCmsRecord>,
   key: string,
@@ -100,4 +109,45 @@ export function parseReferenceImage(
     alt: getCmsString(image, "alt") || fallbackAlt,
     url,
   };
+}
+
+export function parseReferenceCards(
+  value: unknown,
+  path: string,
+  issues: CmsContractIssue[],
+): CmsReferenceCard[] {
+  return getCmsEntries(value)
+    .flatMap(([key, itemValue], index) => {
+      const item = getCmsRecord(itemValue);
+      const itemPath = `${path}.${key}`;
+      const title = addRequiredString(
+        item,
+        "title",
+        `${itemPath}.title`,
+        issues,
+      );
+      const url = addRequiredString(item, "url", `${itemPath}.url`, issues);
+      const image = parseReferenceImage(
+        item?.image,
+        `${itemPath}.image`,
+        title || "",
+        issues,
+      );
+
+      if (!title || !url || !image) {
+        return [];
+      }
+
+      return [
+        {
+          description: getCmsString(item, "description"),
+          id: getCmsString(item, "id") || `${title}-${index}`,
+          image,
+          position: getCmsPosition(item, index),
+          title,
+          url,
+        },
+      ];
+    })
+    .sort((first, second) => first.position - second.position);
 }
