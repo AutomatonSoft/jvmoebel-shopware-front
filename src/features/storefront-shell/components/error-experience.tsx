@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import { ArrowRight, Home, RefreshCw, Search, ShoppingBag } from "lucide-react";
+import { Container } from "@/components/ui/container";
 
 type ErrorExperienceProps = {
   code: string;
@@ -24,7 +25,7 @@ export function ErrorExperience({
   showShopLink = true,
 }: ErrorExperienceProps) {
   return (
-    <main className="relative isolate flex min-h-[72vh] flex-1 items-center overflow-hidden bg-background px-5 py-16 sm:px-8 lg:px-12">
+    <main className="relative isolate flex min-h-[72vh] flex-1 items-center overflow-hidden bg-background py-16">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 overflow-hidden"
@@ -39,7 +40,7 @@ export function ErrorExperience({
         <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
       </div>
 
-      <div className="relative mx-auto grid w-full max-w-6xl items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
+      <Container className="relative grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
         <section className="max-w-2xl">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground shadow-sm backdrop-blur-xl">
             <span className="size-2 rounded-full bg-primary motion-safe:animate-pulse" />
@@ -134,7 +135,7 @@ export function ErrorExperience({
             <ArrowRight className="size-5" />
           </div>
         </section>
-      </div>
+      </Container>
     </main>
   );
 }

@@ -1,5 +1,6 @@
 import { ChevronDown } from "lucide-react";
 
+import { Container } from "@/components/ui/container";
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import { parseCmsHomeEditorialData } from "@/features/cms/contracts/home-editorial";
 import { sanitizeCmsHtml } from "@/features/cms/lib/sanitize-html";
@@ -30,19 +31,21 @@ export function CmsHomeEditorial({ slot }: CmsSlotComponentProps) {
   } = result.data;
 
   return (
-    <section
+    <Container
+      as="section"
       className={cn(
         appearance === "card"
-          ? "mx-2 my-2 overflow-hidden rounded-3xl border border-foreground/10 bg-secondary/60 sm:mx-6 sm:my-4"
-          : "mx-auto w-full max-w-360 px-4 py-16 sm:px-8 sm:py-24",
+          ? "my-2 overflow-hidden rounded-3xl border border-foreground/10 bg-secondary/60 sm:my-4"
+          : "",
       )}
       data-cms-element="jv-home-editorial"
     >
       <div
         className={cn(
           "mx-auto w-full max-w-320",
-          appearance === "card" &&
-            "px-5 py-10 sm:px-8 sm:py-12 lg:px-10 lg:py-14",
+          appearance === "card"
+            ? "px-5 py-10 sm:px-8 sm:py-12 lg:px-10 lg:py-14"
+            : "py-16 sm:py-24",
         )}
       >
         <div
@@ -120,6 +123,6 @@ export function CmsHomeEditorial({ slot }: CmsSlotComponentProps) {
           </div>
         </details>
       </div>
-    </section>
+    </Container>
   );
 }

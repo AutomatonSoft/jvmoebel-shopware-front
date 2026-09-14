@@ -132,7 +132,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
                 >
                   <form
                     action="/moebel-sortiment"
-                    className="group/search flex h-11 items-center border-b bg-muted/80 p-1 pl-4"
+                    className="group/search flex h-11 items-center border-b bg-muted/80 px-4 py-1"
                     role="search"
                   >
                     <Search className="mr-2 size-4.5 shrink-0 text-muted-foreground transition-colors group-focus-within/search:text-foreground" />
@@ -160,7 +160,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
 
                   <div
                     aria-live="polite"
-                    className="max-h-[min(30rem,70dvh)] min-h-18 overflow-y-auto px-5 pt-3 pb-4"
+                    className="max-h-[min(30rem,70dvh)] min-h-18 overflow-y-auto px-4 pt-3 pb-4"
                   >
                     <SearchResults
                       currency={search.currency}

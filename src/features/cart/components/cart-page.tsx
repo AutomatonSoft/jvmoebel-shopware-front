@@ -14,6 +14,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { Container } from "@/components/ui/container";
 import { Input } from "@/components/ui/input";
 import type { ShopCart, ShopCartItem } from "@/features/cart/model/cart";
 import {
@@ -247,7 +248,7 @@ export function CartPage({ cart }: CartPageProps) {
 
   return (
     <main className="flex-1 bg-[#faf7f2]">
-      <div className="mx-auto w-full max-w-360 px-4 py-8 sm:px-8 sm:py-12">
+      <Container className="py-8 sm:py-12">
         <nav
           aria-label="Breadcrumb"
           className="flex items-center gap-2 text-xs text-muted-foreground"
@@ -428,7 +429,7 @@ export function CartPage({ cart }: CartPageProps) {
             </div>
           </>
         )}
-      </div>
+      </Container>
     </main>
   );
 }

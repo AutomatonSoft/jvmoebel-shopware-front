@@ -1,5 +1,6 @@
 import { ChevronDown } from "lucide-react";
 
+import { Container } from "@/components/ui/container";
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import { parseCmsFaqData } from "@/features/cms/contracts/faq";
 import { sanitizeCmsHtml } from "@/features/cms/lib/sanitize-html";
@@ -18,9 +19,10 @@ export function CmsFaq({ slot }: CmsSlotComponentProps) {
   const headingId = `faq-${slot.id}`;
 
   return (
-    <section
+    <Container
+      as="section"
       aria-labelledby={headingId}
-      className="mx-auto w-full max-w-360 px-4 py-16 sm:px-8 sm:py-20"
+      className="py-16 sm:py-20"
       data-cms-element="jv-faq"
     >
       <div className="grid gap-8 lg:grid-cols-[minmax(16rem,0.7fr)_minmax(0,1.3fr)] lg:gap-16">
@@ -63,6 +65,6 @@ export function CmsFaq({ slot }: CmsSlotComponentProps) {
           ))}
         </div>
       </div>
-    </section>
+    </Container>
   );
 }

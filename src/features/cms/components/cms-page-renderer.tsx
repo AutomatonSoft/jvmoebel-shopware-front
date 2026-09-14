@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 
+import { Container } from "@/components/ui/container";
 import { CmsBenefitStrip } from "@/features/cms/components/elements/cms-benefit-strip";
 import { CmsCategoryRail } from "@/features/cms/components/elements/cms-category-rail";
 import { CmsFaq } from "@/features/cms/components/elements/cms-faq";
@@ -23,7 +24,6 @@ import type {
   CmsSlot,
 } from "@/features/cms/model/page";
 import { reportCmsRenderingIssue } from "@/features/cms/server/report-rendering-issue";
-import { cn } from "@/lib/utils";
 
 export type CmsSlotComponentProps = {
   slot: CmsSlot;
@@ -98,21 +98,32 @@ function CmsSectionRenderer({ section }: { section: CmsSection }) {
   const blocks = [...section.blocks].sort(
     (first, second) => first.position - second.position,
   );
+  const content = blocks.map((block) => (
+    <CmsBlockRenderer block={block} key={block.id} />
+  ));
+
+  if (section.sizingMode === "boxed") {
+    return (
+      <Container
+        as="section"
+        className={section.cssClass || undefined}
+        data-cms-section-id={section.id}
+        data-cms-section-sizing={section.sizingMode}
+        data-cms-section-type={section.type}
+      >
+        {content}
+      </Container>
+    );
+  }
 
   return (
     <section
-      className={cn(
-        section.sizingMode === "boxed" &&
-          "mx-auto w-full max-w-360 px-4 sm:px-8",
-        section.cssClass,
-      )}
+      className={section.cssClass || undefined}
       data-cms-section-id={section.id}
       data-cms-section-sizing={section.sizingMode}
       data-cms-section-type={section.type}
     >
-      {blocks.map((block) => (
-        <CmsBlockRenderer block={block} key={block.id} />
-      ))}
+      {content}
     </section>
   );
 }

@@ -1,5 +1,6 @@
 import { BadgeEuro, RefreshCcw, Truck } from "lucide-react";
 
+import { Container } from "@/components/ui/container";
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import {
   parseCmsBenefitStripData,
@@ -23,8 +24,8 @@ export function CmsBenefitStrip({ slot }: CmsSlotComponentProps) {
   }
 
   return (
-    <div
-      className="mx-auto grid w-[calc(100%_-_2rem)] max-w-360 overflow-hidden rounded-3xl border bg-card sm:w-[calc(100%_-_4rem)] md:grid-cols-3"
+    <Container
+      className="grid overflow-hidden rounded-3xl border bg-card px-0 sm:px-0 md:grid-cols-3"
       data-cms-element="jv-benefit-strip"
     >
       {result.data.items.map((item) => {
@@ -47,6 +48,6 @@ export function CmsBenefitStrip({ slot }: CmsSlotComponentProps) {
           </article>
         );
       })}
-    </div>
+    </Container>
   );
 }

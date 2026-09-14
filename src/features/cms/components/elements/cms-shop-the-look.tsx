@@ -1,6 +1,7 @@
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 
+import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import { parseCmsShopTheLookData } from "@/features/cms/contracts/shop-the-look";
@@ -18,11 +19,12 @@ export function CmsShopTheLook({ slot }: CmsSlotComponentProps) {
   const { description, eyebrow, image, items, title, viewAll } = result.data;
 
   return (
-    <section
-      className="mx-2 mt-12 rounded-3xl bg-muted sm:mx-4 sm:mt-16 lg:mx-6"
+    <Container
+      as="section"
+      className="mt-12 rounded-3xl bg-muted sm:mt-16"
       data-cms-element="jv-shop-the-look"
     >
-      <div className="mx-auto w-full max-w-360 px-4 py-10 sm:px-8 sm:py-12 lg:py-14">
+      <div className="py-10 sm:py-12 lg:py-14">
         <div className="mb-6 grid gap-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-end sm:mb-8">
           <div>
             {eyebrow && (
@@ -125,6 +127,6 @@ export function CmsShopTheLook({ slot }: CmsSlotComponentProps) {
           </CmsLink>
         )}
       </div>
-    </section>
+    </Container>
   );
 }

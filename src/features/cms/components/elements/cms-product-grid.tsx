@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 
 import { ShopProductCard } from "@/features/catalog/components/shop-product-card";
+import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import { parseCmsProductGridData } from "@/features/cms/contracts/product-grid";
@@ -52,21 +53,16 @@ export function CmsProductGrid({ slot }: CmsSlotComponentProps) {
   }
 
   return (
-    <section
+    <Container
+      as="section"
       className={cn(
-        layout === "grid"
-          ? "mx-2 overflow-hidden rounded-3xl bg-muted sm:mx-6"
-          : "mx-auto w-full max-w-360 px-4 sm:px-8",
+        layout === "grid" && "overflow-hidden rounded-3xl bg-muted",
       )}
       data-cms-element="jv-product-grid"
       id={anchorId}
     >
       <div
-        className={cn(
-          layout === "grid"
-            ? "mx-auto w-full max-w-360 px-4 py-20 sm:px-8 sm:py-28"
-            : "py-16 sm:py-20",
-        )}
+        className={cn(layout === "grid" ? "py-20 sm:py-28" : "py-16 sm:py-20")}
       >
         <div className="mb-10 flex items-end justify-between gap-6">
           <div>
@@ -118,6 +114,6 @@ export function CmsProductGrid({ slot }: CmsSlotComponentProps) {
           </CmsLink>
         )}
       </div>
-    </section>
+    </Container>
   );
 }

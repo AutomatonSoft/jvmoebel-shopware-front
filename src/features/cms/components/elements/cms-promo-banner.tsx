@@ -1,5 +1,6 @@
 import Image from "next/image";
 
+import { Container } from "@/components/ui/container";
 import { CmsButton } from "@/features/cms/components/cms-button";
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import {
@@ -56,8 +57,9 @@ export function CmsPromoBanner({ slot }: CmsSlotComponentProps) {
   const data = result.data;
 
   return (
-    <section
-      className="mx-2 mt-16 overflow-hidden rounded-3xl border bg-card shadow-[0_24px_60px_-42px_rgba(21,21,19,0.7)] sm:mx-6 sm:mt-20"
+    <Container
+      as="section"
+      className="mt-16 overflow-hidden rounded-3xl border bg-card px-0 shadow-[0_24px_60px_-42px_rgba(21,21,19,0.7)] sm:mt-20 sm:px-0"
       data-cms-element="jv-promo-banner"
     >
       <div className="relative min-h-72 sm:min-h-96">
@@ -78,6 +80,6 @@ export function CmsPromoBanner({ slot }: CmsSlotComponentProps) {
         </div>
       </div>
       <PromoBannerCopy data={data} mobile />
-    </section>
+    </Container>
   );
 }

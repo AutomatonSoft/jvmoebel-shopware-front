@@ -9,6 +9,7 @@ import {
 } from "react";
 
 import { CmsButton } from "@/features/cms/components/cms-button";
+import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
 import type {
   CmsHeroData,
@@ -235,10 +236,11 @@ export function HeroCarousel({ data }: { data: CmsHeroData }) {
   }
 
   return (
-    <section
+    <Container
+      as="section"
       aria-label={ariaLabel || "Aktuelle Angebote und Kollektionen"}
       aria-roledescription="Karussell"
-      className="relative isolate mx-2 mt-2 min-h-136 overflow-hidden rounded-3xl bg-muted text-background sm:mx-6 sm:min-h-168"
+      className="relative isolate mt-2 min-h-136 overflow-hidden rounded-3xl bg-muted text-background sm:min-h-168"
       data-cms-element="jv-hero"
       onBlurCapture={handleBlur}
       onFocusCapture={() => setIsInteracting(true)}
@@ -289,6 +291,6 @@ export function HeroCarousel({ data }: { data: CmsHeroData }) {
           ))}
         </div>
       )}
-    </section>
+    </Container>
   );
 }

@@ -1,3 +1,4 @@
+import { Container } from "@/components/ui/container";
 import { FooterAbout } from "@/features/storefront-shell/components/footer-about";
 import { FooterNavigation } from "@/features/storefront-shell/components/footer-navigation";
 import { FooterTrustSection } from "@/features/storefront-shell/components/footer-trust-section";
@@ -20,7 +21,7 @@ export function StoreFooter({
 }: StoreFooterProps) {
   return (
     <footer className="mt-auto bg-background">
-      <div className="mx-auto grid w-full max-w-360 grid-cols-2 gap-x-5 gap-y-10 px-6 py-16 sm:px-8 xl:grid-cols-5 xl:gap-10 xl:py-20">
+      <Container className="grid grid-cols-2 gap-x-5 gap-y-10 py-16 xl:grid-cols-5 xl:gap-10 xl:py-20">
         <FooterAbout
           branding={branding}
           content={content.about}
@@ -39,15 +40,15 @@ export function StoreFooter({
             socialLinks={content.socialLinks}
           />
         </div>
-      </div>
+      </Container>
 
-      <div className="mx-auto w-full max-w-360 border-t px-6 py-6 text-xs text-muted-foreground sm:px-8">
+      <Container className="border-t py-6 text-xs text-muted-foreground">
         <span>
           {content.copyright
             .replaceAll("{year}", String(new Date().getFullYear()))
             .replaceAll("{storeName}", branding.name)}
         </span>
-      </div>
+      </Container>
     </footer>
   );
 }

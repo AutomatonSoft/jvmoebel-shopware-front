@@ -1,6 +1,7 @@
 import { Heart, ShoppingBag, UserRound } from "lucide-react";
 import Link from "next/link";
 
+import { Container } from "@/components/ui/container";
 import { CategoryMenu } from "@/features/storefront-shell/components/category-menu";
 import { HeaderSearch } from "@/features/storefront-shell/components/header-search";
 import { MobileHeaderSearch } from "@/features/storefront-shell/components/mobile-header-search";
@@ -29,7 +30,7 @@ export function StoreHeader({
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
-      <div className="relative mx-auto flex h-18 max-w-360 items-center gap-1 px-4 sm:px-8 lg:gap-6">
+      <Container className="relative flex h-18 items-center gap-1 lg:gap-6">
         <StoreLogo
           branding={branding}
           className="absolute left-1/2 flex -translate-x-1/2 items-center gap-2 lg:static lg:translate-x-0"
@@ -103,7 +104,7 @@ export function StoreHeader({
             </Link>
           </div>
         </div>
-      </div>
+      </Container>
     </header>
   );
 }

@@ -1,3 +1,4 @@
+import { Container } from "@/components/ui/container";
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import { parseCmsNewsletterData } from "@/features/cms/contracts/newsletter";
 import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
@@ -26,11 +27,12 @@ export function CmsNewsletter({ slot }: CmsSlotComponentProps) {
   } = data;
 
   return (
-    <section
-      className="mx-2 my-2 overflow-hidden rounded-3xl border border-[#cbbdad] bg-[#ded2c4] sm:mx-6 sm:my-6"
+    <Container
+      as="section"
+      className="my-2 overflow-hidden rounded-3xl border border-[#cbbdad] bg-[#ded2c4] sm:my-6"
       data-cms-element="jv-newsletter"
     >
-      <div className="mx-auto grid w-full max-w-360 items-center gap-10 px-6 py-16 sm:px-10 lg:grid-cols-2 lg:gap-20">
+      <div className="grid items-center gap-10 py-16 lg:grid-cols-2 lg:gap-20">
         <div>
           {eyebrow && (
             <p className="mb-5 flex items-center gap-3 text-xs font-semibold tracking-[0.16em] uppercase before:block before:size-2 before:bg-primary">
@@ -55,6 +57,6 @@ export function CmsNewsletter({ slot }: CmsSlotComponentProps) {
           />
         </div>
       </div>
-    </section>
+    </Container>
   );
 }
