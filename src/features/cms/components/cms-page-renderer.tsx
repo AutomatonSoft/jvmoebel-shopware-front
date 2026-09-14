@@ -8,14 +8,20 @@ import { CmsCategoryRail } from "@/features/cms/components/elements/cms-category
 import { CmsChipRail } from "@/features/cms/components/elements/cms-chip-rail";
 import { CmsColorWorldPicker } from "@/features/cms/components/elements/cms-color-world-picker";
 import { CmsCountdownPromo } from "@/features/cms/components/elements/cms-countdown-promo";
+import { CmsCrossRoomSection } from "@/features/cms/components/elements/cms-cross-room-section";
+import { CmsEditorialTeamGrid } from "@/features/cms/components/elements/cms-editorial-team-grid";
 import { CmsExpertTip } from "@/features/cms/components/elements/cms-expert-tip";
 import { CmsExpertQuote } from "@/features/cms/components/elements/cms-expert-quote";
 import { CmsExpertProfile } from "@/features/cms/components/elements/cms-expert-profile";
 import { CmsFaq } from "@/features/cms/components/elements/cms-faq";
+import { CmsGuideHubCards } from "@/features/cms/components/elements/cms-guide-hub-cards";
 import { CmsHero } from "@/features/cms/components/elements/cms-hero";
 import { CmsHomeEditorial } from "@/features/cms/components/elements/cms-home-editorial";
 import { CmsImage } from "@/features/cms/components/elements/cms-image";
+import { CmsInlineProductTeaser } from "@/features/cms/components/elements/cms-inline-product-teaser";
+import { CmsInstagramStyle } from "@/features/cms/components/elements/cms-instagram-style";
 import { CmsLookScene } from "@/features/cms/components/elements/cms-look-scene";
+import { CmsLoyaltyPromo } from "@/features/cms/components/elements/cms-loyalty-promo";
 import { CmsNewsletter } from "@/features/cms/components/elements/cms-newsletter";
 import { CmsOfferRail } from "@/features/cms/components/elements/cms-offer-rail";
 import { CmsPageHeader } from "@/features/cms/components/elements/cms-page-header";
@@ -23,10 +29,13 @@ import { CmsProductGrid } from "@/features/cms/components/elements/cms-product-g
 import { CmsPromoBanner } from "@/features/cms/components/elements/cms-promo-banner";
 import { CmsPromoDealTiles } from "@/features/cms/components/elements/cms-promo-deal-tiles";
 import { CmsRelatedLookCards } from "@/features/cms/components/elements/cms-related-look-cards";
+import { CmsReviewSummary } from "@/features/cms/components/elements/cms-review-summary";
 import { CmsRoomGrid } from "@/features/cms/components/elements/cms-room-grid";
 import { CmsShopTheLook } from "@/features/cms/components/elements/cms-shop-the-look";
+import { CmsSubcategoryLinks } from "@/features/cms/components/elements/cms-subcategory-links";
 import { CmsTableOfContents } from "@/features/cms/components/elements/cms-table-of-contents";
 import { CmsTrendLookGrid } from "@/features/cms/components/elements/cms-trend-look-grid";
+import { CmsTrustRating } from "@/features/cms/components/elements/cms-trust-rating";
 import { CmsText } from "@/features/cms/components/elements/cms-text";
 import { CmsWhyJvmoebel } from "@/features/cms/components/elements/cms-why-jvmoebel";
 import { CmsYoutubeVideo } from "@/features/cms/components/elements/cms-youtube-video";
@@ -52,13 +61,19 @@ const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {
   "jv-chip-rail": CmsChipRail,
   "jv-color-world-picker": CmsColorWorldPicker,
   "jv-countdown-promo": CmsCountdownPromo,
+  "jv-cross-room-section": CmsCrossRoomSection,
+  "jv-editorial-team-grid": CmsEditorialTeamGrid,
   "jv-expert-tip": CmsExpertTip,
   "jv-expert-quote": CmsExpertQuote,
   "jv-expert-profile": CmsExpertProfile,
   "jv-faq": CmsFaq,
+  "jv-guide-hub-cards": CmsGuideHubCards,
   "jv-hero": CmsHero,
   "jv-home-editorial": CmsHomeEditorial,
+  "jv-inline-product-teaser": CmsInlineProductTeaser,
+  "jv-instagram-style": CmsInstagramStyle,
   "jv-look-scene": CmsLookScene,
+  "jv-loyalty-promo": CmsLoyaltyPromo,
   "jv-newsletter": CmsNewsletter,
   "jv-offer-rail": CmsOfferRail,
   "jv-page-header": CmsPageHeader,
@@ -66,10 +81,13 @@ const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {
   "jv-promo-banner": CmsPromoBanner,
   "jv-promo-deal-tiles": CmsPromoDealTiles,
   "jv-related-look-cards": CmsRelatedLookCards,
+  "jv-review-summary": CmsReviewSummary,
   "jv-room-grid": CmsRoomGrid,
   "jv-shop-the-look": CmsShopTheLook,
+  "jv-subcategory-links": CmsSubcategoryLinks,
   "jv-table-of-contents": CmsTableOfContents,
   "jv-trend-look-grid": CmsTrendLookGrid,
+  "jv-trust-rating": CmsTrustRating,
   "jv-why-jvmoebel": CmsWhyJvmoebel,
   image: CmsImage,
   text: CmsText,

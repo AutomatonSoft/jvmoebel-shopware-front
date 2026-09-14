@@ -28,6 +28,16 @@ export type ShopwareStorefrontConfigResponse = Readonly<{
     apiAlias?: string;
     categoryNavigation: readonly ShopwareStorefrontNavigationItem[];
     copyrightText: string;
+    internationalLinks: readonly Readonly<{
+      apiAlias?: string;
+      icon: ShopwareStorefrontMedia;
+      id: string;
+      label: string;
+      openInNewTab: boolean;
+      position: number;
+      targetSalesChannelId: string;
+      url: string;
+    }>[];
     paymentBadges: readonly Readonly<{
       apiAlias?: string;
       icon: ShopwareStorefrontMedia;
@@ -46,6 +56,13 @@ export type ShopwareStorefrontConfigResponse = Readonly<{
       title?: string;
     }>;
     serviceNavigation: readonly ShopwareStorefrontNavigationItem[];
+    shippingBadges: readonly Readonly<{
+      apiAlias?: string;
+      icon: ShopwareStorefrontMedia;
+      id: string;
+      label: string | null;
+      position: number;
+    }>[];
     socialLinks: readonly Readonly<{
       apiAlias?: string;
       icon: ShopwareStorefrontMedia;
@@ -60,11 +77,13 @@ export type ShopwareStorefrontConfigResponse = Readonly<{
     apiAlias?: string;
     branding: Readonly<{
       apiAlias?: string;
-      logo?: ShopwareStorefrontMedia &
-        Readonly<{
-          height: number;
-          width: number;
-        }>;
+      logo?:
+        | (ShopwareStorefrontMedia &
+            Readonly<{
+              height: number;
+              width: number;
+            }>)
+        | null;
       name: string;
     }>;
     navigation: readonly ShopwareStorefrontNavigationItem[];

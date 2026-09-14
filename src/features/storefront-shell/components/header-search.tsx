@@ -35,6 +35,11 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
     setIsOpen(false);
   }, []);
 
+  const handleResultSelect = useCallback(() => {
+    setIsOpen(false);
+    setQuery("");
+  }, []);
+
   useEffect(() => {
     if (!isOpen) return;
 
@@ -168,6 +173,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
                       errorMessage={search.errorMessage}
                       isSearching={search.isSearching}
                       locale={search.locale}
+                      onResultSelect={handleResultSelect}
                       query={query}
                       results={search.results}
                     />

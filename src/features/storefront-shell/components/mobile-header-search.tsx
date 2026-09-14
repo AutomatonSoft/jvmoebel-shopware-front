@@ -19,6 +19,11 @@ export function MobileHeaderSearch() {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const search = useProductSearch(query, isOpen);
 
+  function handleResultSelect() {
+    setIsOpen(false);
+    setQuery("");
+  }
+
   useEffect(() => {
     if (!isOpen) return;
 
@@ -114,6 +119,7 @@ export function MobileHeaderSearch() {
                 errorMessage={search.errorMessage}
                 isSearching={search.isSearching}
                 locale={search.locale}
+                onResultSelect={handleResultSelect}
                 query={query}
                 results={search.results}
               />

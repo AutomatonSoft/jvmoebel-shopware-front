@@ -17,6 +17,21 @@ export type StorefrontFooterPaymentMethod = Readonly<{
   media: StorefrontFooterMedia;
 }>;
 
+export type StorefrontFooterShippingBadge = Readonly<{
+  id: string;
+  label: string;
+  media: StorefrontFooterMedia;
+}>;
+
+export type StorefrontFooterInternationalLink = Readonly<{
+  id: string;
+  label: string;
+  media: StorefrontFooterMedia;
+  openInNewTab: boolean;
+  targetSalesChannelId: string;
+  url: string;
+}>;
+
 export type StorefrontFooterContent = Readonly<{
   about: Readonly<{
     description: string;
@@ -26,10 +41,13 @@ export type StorefrontFooterContent = Readonly<{
   copyright: string;
   headings: Readonly<{
     categories: string;
+    internationalLinks: string;
     paymentMethods: string;
     service: string;
+    shippingBadges: string;
     socialLinks: string;
   }>;
+  internationalLinks: readonly StorefrontFooterInternationalLink[];
   paymentMethods: readonly StorefrontFooterPaymentMethod[];
   revocation: Readonly<{
     buttonLabel: string;
@@ -40,5 +58,6 @@ export type StorefrontFooterContent = Readonly<{
     submitLabel: string;
     title: string;
   }>;
+  shippingBadges: readonly StorefrontFooterShippingBadge[];
   socialLinks: readonly StorefrontFooterLink[];
 }>;

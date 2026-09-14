@@ -34,11 +34,29 @@ export function useCatalogState(
   const prices = products.map((product) => product.unitPrice);
   const minimumPriceBound = Math.floor(Math.min(...prices) / 10) * 10;
   const maximumPriceBound = Math.ceil(Math.max(...prices) / 10) * 10;
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(() =>
+    initialCategory ? [initialCategory.value] : [],
+  );
+  const [selectedAttributes, setSelectedAttributes] = useState<
+    Record<string, string[]>
+  >({});
+  const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
+  const [minimumPrice, setMinimumPrice] = useState(minimumPriceBound);
+  const [maximumPrice, setMaximumPrice] = useState(maximumPriceBound);
+  const [sort, setSort] = useState<ShopProductSort>("featured");
+  const [currentPage, setCurrentPage] = useState(1);
+  const filters = {
+    attributes: selectedAttributes,
+    categories: selectedCategories,
+    companies: selectedCompanies,
+    maximumPrice,
+    minimumPrice,
+  };
   const {
     attributeGroups,
     categories: productCategories,
     companies,
-  } = buildShopProductFilterOptions(products);
+  } = buildShopProductFilterOptions(products, filters);
   const categoryCount =
     productCategories.find(
       (category) => category.value === initialCategory?.value,
@@ -51,17 +69,6 @@ export function useCatalogState(
         ),
       ]
     : productCategories;
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(() =>
-    initialCategory ? [initialCategory.value] : [],
-  );
-  const [selectedAttributes, setSelectedAttributes] = useState<
-    Record<string, string[]>
-  >({});
-  const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
-  const [minimumPrice, setMinimumPrice] = useState(minimumPriceBound);
-  const [maximumPrice, setMaximumPrice] = useState(maximumPriceBound);
-  const [sort, setSort] = useState<ShopProductSort>("featured");
-  const [currentPage, setCurrentPage] = useState(1);
   const activeFilterCount =
     selectedCategories.length +
     selectedCompanies.length +
@@ -72,17 +79,7 @@ export function useCatalogState(
     (minimumPrice !== minimumPriceBound || maximumPrice !== maximumPriceBound
       ? 1
       : 0);
-  const filteredProducts = filterAndSortShopProducts(
-    products,
-    {
-      attributes: selectedAttributes,
-      categories: selectedCategories,
-      companies: selectedCompanies,
-      maximumPrice,
-      minimumPrice,
-    },
-    sort,
-  );
+  const filteredProducts = filterAndSortShopProducts(products, filters, sort);
   const pagination = paginateProducts(filteredProducts, currentPage);
 
   function resetPage() {
