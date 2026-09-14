@@ -38,7 +38,7 @@ export function ContractRevocationDialog({
 
   return (
     <Dialog.Root>
-      <Dialog.Trigger className="bg-footer-accent text-footer-on-accent hover:bg-footer-accent-hover focus-visible:ring-footer-accent/30 mt-8 inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full px-5 text-sm font-semibold transition-[background,transform] focus-visible:ring-3 focus-visible:outline-none motion-safe:active:translate-y-px">
+      <Dialog.Trigger className="bg-footer-accent text-footer-on-accent hover:bg-footer-accent-hover focus-visible:ring-footer-accent/30 mt-6 inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full px-5 text-sm font-semibold transition-[background,transform] focus-visible:ring-3 focus-visible:outline-none motion-safe:active:translate-y-px">
         {content.buttonLabel}
         <ArrowUpRight className="size-4" aria-hidden="true" />
       </Dialog.Trigger>

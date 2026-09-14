@@ -15,15 +15,15 @@ export function FooterAbout({
   revocation,
 }: FooterAboutProps) {
   return (
-    <section className="border-footer-border bg-footer-panel text-footer-foreground col-span-2 rounded-3xl border p-7 sm:p-10">
+    <section className="border-footer-border bg-footer-panel text-footer-foreground col-span-2 rounded-3xl border p-6 sm:p-8">
       <StoreLogo branding={branding} variant="footer" />
-      <p className="text-footer-muted mt-9 flex items-center gap-3 text-xs font-semibold tracking-[0.16em] uppercase before:block before:size-2 before:bg-primary">
+      <p className="text-footer-muted mt-7 flex items-center gap-3 text-xs font-semibold tracking-[0.16em] uppercase before:block before:size-2 before:bg-primary">
         {content.eyebrow}
       </p>
-      <h2 className="mt-4 max-w-lg text-3xl leading-tight font-semibold tracking-[-0.04em] text-balance sm:text-4xl">
+      <h2 className="mt-3 max-w-lg text-2xl leading-tight font-semibold tracking-[-0.04em] text-balance sm:text-3xl">
         {content.title}
       </h2>
-      <p className="text-footer-body mt-6 max-w-2xl text-sm leading-7">
+      <p className="text-footer-body mt-4 max-w-2xl text-sm leading-6">
         {content.description}
       </p>
       {revocation.enabled && <ContractRevocationDialog content={revocation} />}
