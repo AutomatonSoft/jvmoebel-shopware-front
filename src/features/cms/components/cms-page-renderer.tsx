@@ -8,6 +8,7 @@ import { CmsChipRail } from "@/features/cms/components/elements/cms-chip-rail";
 import { CmsColorWorldPicker } from "@/features/cms/components/elements/cms-color-world-picker";
 import { CmsCountdownPromo } from "@/features/cms/components/elements/cms-countdown-promo";
 import { CmsExpertTip } from "@/features/cms/components/elements/cms-expert-tip";
+import { CmsExpertQuote } from "@/features/cms/components/elements/cms-expert-quote";
 import { CmsFaq } from "@/features/cms/components/elements/cms-faq";
 import { CmsHero } from "@/features/cms/components/elements/cms-hero";
 import { CmsHomeEditorial } from "@/features/cms/components/elements/cms-home-editorial";
@@ -49,6 +50,7 @@ const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {
   "jv-color-world-picker": CmsColorWorldPicker,
   "jv-countdown-promo": CmsCountdownPromo,
   "jv-expert-tip": CmsExpertTip,
+  "jv-expert-quote": CmsExpertQuote,
   "jv-faq": CmsFaq,
   "jv-hero": CmsHero,
   "jv-home-editorial": CmsHomeEditorial,
