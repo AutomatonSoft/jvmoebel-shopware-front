@@ -2,6 +2,7 @@ import type { ComponentType } from "react";
 
 import { Container } from "@/components/ui/container";
 import { CmsArticleHero } from "@/features/cms/components/elements/cms-article-hero";
+import { CmsAuthorFooter } from "@/features/cms/components/elements/cms-author-footer";
 import { CmsBenefitStrip } from "@/features/cms/components/elements/cms-benefit-strip";
 import { CmsCategoryRail } from "@/features/cms/components/elements/cms-category-rail";
 import { CmsChipRail } from "@/features/cms/components/elements/cms-chip-rail";
@@ -45,6 +46,7 @@ type CmsSlotComponent = ComponentType<CmsSlotComponentProps>;
 
 const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {
   "jv-article-hero": CmsArticleHero,
+  "jv-author-footer": CmsAuthorFooter,
   "jv-benefit-strip": CmsBenefitStrip,
   "jv-category-rail": CmsCategoryRail,
   "jv-chip-rail": CmsChipRail,
