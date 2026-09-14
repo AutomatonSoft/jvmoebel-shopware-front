@@ -47,6 +47,24 @@ export function addRequiredString(
   return value;
 }
 
+export function addRequiredNumber(
+  record: ReturnType<typeof getCmsRecord>,
+  key: string,
+  path: string,
+  issues: CmsContractIssue[],
+): number | undefined {
+  const value = getCmsNumber(record, key);
+
+  if (value === undefined) {
+    issues.push({
+      message: `${key} must be a finite number.`,
+      path,
+    });
+  }
+
+  return value;
+}
+
 export function parseReferenceLink(
   value: unknown,
   path: string,
