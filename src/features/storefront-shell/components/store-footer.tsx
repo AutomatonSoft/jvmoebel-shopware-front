@@ -43,7 +43,9 @@ export function StoreFooter({
             <div className="mt-12 border-t pt-8 sm:mt-14">
               <FooterTrustSection
                 headings={content.headings}
+                internationalLinks={content.internationalLinks}
                 paymentMethods={content.paymentMethods}
+                shippingBadges={content.shippingBadges}
                 socialLinks={content.socialLinks}
               />
             </div>

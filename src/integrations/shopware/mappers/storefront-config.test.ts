@@ -32,6 +32,18 @@ const storefrontConfigResponse = {
       },
     ],
     copyrightText: "Copyright",
+    internationalLinks: [
+      {
+        apiAlias: "jv_storefront_footer_international_link",
+        icon: { alt: "Austria", url: "/austria.png" },
+        id: "austria",
+        label: "AT",
+        openInNewTab: true,
+        position: 1,
+        targetSalesChannelId: "austria-sales-channel",
+        url: "https://example.at",
+      },
+    ],
     paymentBadges: [
       {
         apiAlias: "jv_storefront_footer_payment_badge",
@@ -61,6 +73,15 @@ const storefrontConfigResponse = {
         href: "/contact/",
         id: "contact",
         label: "Contact",
+      },
+    ],
+    shippingBadges: [
+      {
+        apiAlias: "jv_storefront_footer_shipping_badge",
+        icon: { alt: "Freight delivery", url: "/freight.png" },
+        id: "freight",
+        label: null,
+        position: 1,
       },
     ],
     socialLinks: [
@@ -139,6 +160,16 @@ describe("parseShopwareStorefrontConfig", () => {
         title: "Footer title",
       },
       copyright: "Copyright",
+      internationalLinks: [
+        {
+          id: "austria",
+          label: "AT",
+          media: { alt: "Austria", url: "/austria.png" },
+          openInNewTab: true,
+          targetSalesChannelId: "austria-sales-channel",
+          url: "https://example.at",
+        },
+      ],
       paymentMethods: [
         {
           id: "first",
@@ -157,6 +188,13 @@ describe("parseShopwareStorefrontConfig", () => {
         enabled: false,
         recipient: "shop@example.com",
       },
+      shippingBadges: [
+        {
+          id: "freight",
+          label: "Freight delivery",
+          media: { alt: "Freight delivery", url: "/freight.png" },
+        },
+      ],
       socialLinks: [
         {
           id: "first-social",
