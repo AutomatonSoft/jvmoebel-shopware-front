@@ -13,7 +13,7 @@ export function StoreLogo({ branding, className, variant }: StoreLogoProps) {
   return (
     <Link
       aria-label={`${branding.name} Startseite`}
-      className={cn("inline-flex items-center gap-2", className)}
+      className={cn("inline-flex w-fit shrink-0 items-center gap-2", className)}
       href="/"
     >
       {branding.logo ? (
@@ -21,7 +21,10 @@ export function StoreLogo({ branding, className, variant }: StoreLogoProps) {
         // eslint-disable-next-line @next/next/no-img-element
         <img
           alt={branding.logo.alt}
-          className="max-h-10 max-w-44 object-contain"
+          className={cn(
+            "h-auto w-auto object-contain",
+            variant === "header" ? "max-h-8 max-w-36" : "max-h-10 max-w-44",
+          )}
           height={branding.logo.height}
           src={branding.logo.url}
           width={branding.logo.width}

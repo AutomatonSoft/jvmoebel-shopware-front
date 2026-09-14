@@ -2,6 +2,7 @@ import { ListFilter, PackageOpen } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 
+import { Container } from "@/components/ui/container";
 import { ShopCatalog } from "@/features/catalog/components/shop-catalog";
 import type { ShopCategoryPage } from "@/features/catalog/model/category-page";
 
@@ -10,7 +11,7 @@ export function CategoryPage({ page }: { page: ShopCategoryPage }) {
 
   return (
     <main className="flex-1">
-      <div className="mx-auto w-full max-w-360 px-4 pt-6 sm:px-8">
+      <Container className="pt-6">
         <nav
           aria-label="Breadcrumb"
           className="flex flex-wrap items-center gap-2.5 text-[0.625rem] text-muted-foreground"
@@ -78,12 +79,12 @@ export function CategoryPage({ page }: { page: ShopCategoryPage }) {
             </div>
           </section>
         )}
-      </div>
+      </Container>
 
       {listing ? (
         <ShopCatalog hideHeader listing={listing} />
       ) : (
-        <section className="mx-auto w-full max-w-360 px-4 py-12 sm:px-8 sm:py-16">
+        <Container as="section" className="py-12 sm:py-16">
           <div className="flex min-h-64 flex-col items-center justify-center rounded-2xl border border-dashed bg-card/40 px-6 text-center">
             <span className="mb-4 flex size-12 items-center justify-center rounded-full bg-muted">
               <PackageOpen className="size-5 text-primary" />
@@ -95,7 +96,7 @@ export function CategoryPage({ page }: { page: ShopCategoryPage }) {
               Wählen Sie eine Unterkategorie, um passende Produkte zu sehen.
             </p>
           </div>
-        </section>
+        </Container>
       )}
     </main>
   );

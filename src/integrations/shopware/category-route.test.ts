@@ -52,8 +52,8 @@ describe("resolveShopwareCategoryRoute", () => {
         filter: [
           {
             field: "seoPathInfo",
-            type: "equals",
-            value: "Moebel-Wohnen/Wohnzimmer/",
+            type: "equalsAny",
+            value: ["Moebel-Wohnen/Wohnzimmer", "Moebel-Wohnen/Wohnzimmer/"],
           },
         ],
       },

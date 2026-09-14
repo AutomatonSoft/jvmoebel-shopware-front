@@ -16,23 +16,30 @@ const sizeLabels = {
 } satisfies Record<ShopProductSize, string>;
 
 const productDimensions: Record<string, ShopProductDimensions> = {
-  alba: { height: 82, length: 178, unit: "cm", width: 286 },
-  aura: { height: 80, length: 102, unit: "cm", width: 228 },
-  forma: { height: 62, length: 45, unit: "cm", width: 180 },
-  koto: { height: 83, length: 210, unit: "cm", width: 305 },
-  linea: { height: 58, length: 42, unit: "cm", width: 160 },
-  luma: { height: 82, length: 80, unit: "cm", width: 76 },
-  mira: { height: 76, length: 140, unit: "cm", width: 140 },
-  nara: { height: 79, length: 77, unit: "cm", width: 74 },
-  noma: { height: 84, length: 82, unit: "cm", width: 78 },
+  alba: createDimensions(286, 82, 178),
+  aura: createDimensions(228, 80, 102),
+  forma: createDimensions(180, 62, 45),
+  koto: createDimensions(305, 83, 210),
+  linea: createDimensions(160, 58, 42),
+  luma: createDimensions(76, 82, 80),
+  mira: createDimensions(140, 76, 140),
+  nara: createDimensions(74, 79, 77),
+  noma: createDimensions(78, 84, 82),
 };
 
-const fallbackDimensions = {
-  height: 0,
-  length: 0,
-  unit: "cm",
-  width: 0,
-} satisfies ShopProductDimensions;
+function createDimensions(
+  width: number,
+  height: number,
+  length: number,
+): ShopProductDimensions {
+  return [
+    { id: "width", label: "Breite", value: `${width} cm` },
+    { id: "height", label: "Höhe", value: `${height} cm` },
+    { id: "depth", label: "Tiefe", value: `${length} cm` },
+  ];
+}
+
+const fallbackDimensions = [] satisfies ShopProductDimensions;
 
 function createProductGallery(product: ShopProduct) {
   const imagesByUrl = new Map<string, ShopProduct["image"]>();
@@ -82,6 +89,7 @@ function createProductDetail(product: ShopProduct): ShopProductDetail {
       product.badge === "Low stock"
         ? "Nur noch wenige verfügbar"
         : "Auf Bestellung verfügbar",
+    colorVariantGroups: [],
     deliveryEstimate:
       product.badge === "Low stock" ? "2–4 Wochen" : "4–8 Wochen",
     deliveryMethod: "Möbelspedition bis zum Wunschort",
@@ -89,6 +97,7 @@ function createProductDetail(product: ShopProduct): ShopProductDetail {
     gallery: createProductGallery(product),
     isAvailable: true,
     longDescription: `${product.name} verbindet eine klare Formensprache mit dem charakteristischen Material ${product.material}. Das Möbelstück ist für moderne Wohnräume gestaltet und lässt sich durch die verfügbaren Farben und Größen auf das persönliche Einrichtungskonzept abstimmen.`,
+    longDescriptionHtml: `<p>${product.name} verbindet eine klare Formensprache mit dem charakteristischen Material ${product.material}. Das Möbelstück ist für moderne Wohnräume gestaltet und lässt sich durch die verfügbaren Farben und Größen auf das persönliche Einrichtungskonzept abstimmen.</p>`,
     services: [
       {
         available: true,
@@ -113,6 +122,7 @@ function createProductDetail(product: ShopProduct): ShopProductDetail {
       },
     ],
     shippingFree: false,
+    sizeVariantGroups: [],
     specifications: [
       {
         id: "article-number",
@@ -133,6 +143,7 @@ function createProductDetail(product: ShopProduct): ShopProductDetail {
         value: product.sizes.map((size) => sizeLabels[size]).join(", "),
       },
     ],
+    variantParentId: product.id,
   };
 }
 

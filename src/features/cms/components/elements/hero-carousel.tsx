@@ -9,6 +9,7 @@ import {
 } from "react";
 
 import { CmsButton } from "@/features/cms/components/cms-button";
+import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
 import type {
   CmsHeroData,
@@ -235,60 +236,63 @@ export function HeroCarousel({ data }: { data: CmsHeroData }) {
   }
 
   return (
-    <section
+    <Container
+      as="section"
       aria-label={ariaLabel || "Aktuelle Angebote und Kollektionen"}
       aria-roledescription="Karussell"
-      className="relative isolate mx-2 mt-2 min-h-136 overflow-hidden rounded-3xl bg-muted text-background sm:mx-6 sm:min-h-168"
+      className="mt-2"
       data-cms-element="jv-hero"
       onBlurCapture={handleBlur}
       onFocusCapture={() => setIsInteracting(true)}
       onPointerEnter={() => setIsInteracting(true)}
       onPointerLeave={() => setIsInteracting(false)}
     >
-      <ul>
-        {slides.map((slide, index) => (
-          <HeroSlide
-            active={index === activeIndex}
-            headingLevel={headingLevel}
-            index={index}
-            key={slide.id}
-            slide={slide}
-            total={slides.length}
-          />
-        ))}
-      </ul>
-
-      <p
-        aria-atomic="true"
-        aria-live={isAutoplayRunning ? "off" : "polite"}
-        className="sr-only"
-      >
-        {slides[activeIndex]?.title}
-      </p>
-
-      {hasMultipleSlides && (
-        <div
-          aria-label="Folie auswählen"
-          className="absolute bottom-5 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/20 bg-black/20 px-4 py-3 backdrop-blur-sm sm:bottom-7"
-          role="group"
-        >
+      <div className="relative isolate min-h-136 overflow-hidden rounded-3xl bg-muted text-background sm:min-h-168">
+        <ul>
           {slides.map((slide, index) => (
-            <button
-              aria-current={index === activeIndex ? "true" : undefined}
-              aria-label={`Folie ${index + 1} anzeigen`}
-              className={cn(
-                "h-2.5 rounded-full transition-[background-color,width] duration-300 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none",
-                index === activeIndex
-                  ? "w-8 bg-white"
-                  : "w-2.5 bg-white/45 hover:bg-white/75",
-              )}
+            <HeroSlide
+              active={index === activeIndex}
+              headingLevel={headingLevel}
+              index={index}
               key={slide.id}
-              onClick={() => setActiveIndex(index)}
-              type="button"
+              slide={slide}
+              total={slides.length}
             />
           ))}
-        </div>
-      )}
-    </section>
+        </ul>
+
+        <p
+          aria-atomic="true"
+          aria-live={isAutoplayRunning ? "off" : "polite"}
+          className="sr-only"
+        >
+          {slides[activeIndex]?.title}
+        </p>
+
+        {hasMultipleSlides && (
+          <div
+            aria-label="Folie auswählen"
+            className="absolute bottom-5 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full border border-white/20 bg-black/20 px-4 py-3 backdrop-blur-sm sm:bottom-7"
+            role="group"
+          >
+            {slides.map((slide, index) => (
+              <button
+                aria-current={index === activeIndex ? "true" : undefined}
+                aria-label={`Folie ${index + 1} anzeigen`}
+                className={cn(
+                  "h-2.5 rounded-full transition-[background-color,width] duration-300 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-transparent focus-visible:outline-none",
+                  index === activeIndex
+                    ? "w-8 bg-white"
+                    : "w-2.5 bg-white/45 hover:bg-white/75",
+                )}
+                key={slide.id}
+                onClick={() => setActiveIndex(index)}
+                type="button"
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </Container>
   );
 }

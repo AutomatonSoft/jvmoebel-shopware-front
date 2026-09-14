@@ -1,6 +1,8 @@
 import { Heart, ShoppingBag, UserRound } from "lucide-react";
+import type { Route } from "next";
 import Link from "next/link";
 
+import { Container } from "@/components/ui/container";
 import { CategoryMenu } from "@/features/storefront-shell/components/category-menu";
 import { HeaderSearch } from "@/features/storefront-shell/components/header-search";
 import { MobileHeaderSearch } from "@/features/storefront-shell/components/mobile-header-search";
@@ -29,7 +31,7 @@ export function StoreHeader({
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
-      <div className="relative mx-auto flex h-18 max-w-360 items-center gap-1 px-4 sm:px-8 lg:gap-6">
+      <Container className="relative flex h-18 items-center gap-1 lg:gap-6">
         <StoreLogo
           branding={branding}
           className="absolute left-1/2 flex -translate-x-1/2 items-center gap-2 lg:static lg:translate-x-0"
@@ -45,13 +47,13 @@ export function StoreHeader({
               Angebote
             </Link>
             {navigation.slice(0, MAX_VISIBLE_CATEGORIES).map((item) => (
-              <a
+              <Link
                 className="relative hidden py-7 text-xs font-semibold tracking-wide transition-colors after:absolute after:inset-x-0 after:bottom-5 after:h-px after:origin-right after:scale-x-0 after:bg-primary after:transition-transform hover:text-primary hover:after:origin-left hover:after:scale-x-100 motion-reduce:after:hidden lg:block"
-                href={item.href}
+                href={item.href as Route}
                 key={item.id}
               >
                 {item.label.replace(" & ", "\u00a0& ")}
-              </a>
+              </Link>
             ))}
           </nav>
         )}
@@ -103,7 +105,7 @@ export function StoreHeader({
             </Link>
           </div>
         </div>
-      </div>
+      </Container>
     </header>
   );
 }

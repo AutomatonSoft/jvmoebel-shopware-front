@@ -1,10 +1,12 @@
 import type { components } from "@shopware/api-client/store-api-types";
+import sanitizeHtml from "sanitize-html";
 
 import type {
   ShopProductDetail,
   ShopProductDimensions,
   ShopProductPageData,
   ShopProductSpecification,
+  ShopProductVariantGroup,
 } from "@/features/catalog/model/product-detail";
 import type { ShopProduct } from "@/features/catalog/model/product-listing";
 import {
@@ -15,10 +17,50 @@ import {
 type ShopwareProduct = components["schemas"]["Product"];
 
 type ShopwareProductDetailInput = Readonly<{
+  configurator?: readonly components["schemas"]["PropertyGroup"][];
+  crossSellings?: components["schemas"]["CrossSellingElementCollection"];
   currency: string;
   locale: string;
   product: ShopwareProduct;
 }>;
+
+function normalizePropertyGroupName(value: string) {
+  return getShopwarePlainText(value)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/ß/g, "ss")
+    .trim()
+    .toLocaleLowerCase("de-DE");
+}
+
+function getDescriptionHtml(value: string) {
+  return sanitizeHtml(value, {
+    allowedAttributes: {},
+    allowedTags: [
+      "b",
+      "blockquote",
+      "br",
+      "div",
+      "em",
+      "h2",
+      "h3",
+      "h4",
+      "i",
+      "li",
+      "ol",
+      "p",
+      "strong",
+      "ul",
+    ],
+    transformTags: {
+      b: "strong",
+      i: "em",
+    },
+  })
+    .replace(/<p>\s*(?:(?:&nbsp;|\u00a0)|<br\s*\/?>)*\s*<\/p>/gi, "")
+    .replace(/(?:<br\s*\/?>\s*){2,}/gi, "<br>")
+    .trim();
+}
 
 function getGallery(
   product: ShopwareProduct,
@@ -52,19 +94,207 @@ function getGallery(
   return [firstImage ?? listingProduct.image, ...remainingImages];
 }
 
+function formatMeasurement(value: number, unit: string) {
+  return `${value.toLocaleString("de-DE", { maximumFractionDigits: 2 })} ${unit}`;
+}
+
 function getDimensions(product: ShopwareProduct): ShopProductDimensions {
   const measurements = product.measurements;
+  const nativeDimensions = [
+    {
+      id: "width",
+      label: "Breite",
+      unit: measurements?.width?.unit || "mm",
+      value: measurements?.width?.value ?? product.width,
+    },
+    {
+      id: "height",
+      label: "Höhe",
+      unit: measurements?.height?.unit || "mm",
+      value: measurements?.height?.value ?? product.height,
+    },
+    {
+      id: "depth",
+      label: "Tiefe",
+      unit: measurements?.length?.unit || "mm",
+      value: measurements?.length?.value ?? product.length,
+    },
+  ].flatMap(({ id, label, unit, value }) =>
+    typeof value === "number" && Number.isFinite(value) && value > 0
+      ? [{ id, label, value: formatMeasurement(value, unit) }]
+      : [],
+  );
 
-  return {
-    height: measurements?.height?.value ?? product.height ?? 0,
-    length: measurements?.length?.value ?? product.length ?? 0,
-    unit:
-      measurements?.height?.unit ||
-      measurements?.length?.unit ||
-      measurements?.width?.unit ||
-      "mm",
-    width: measurements?.width?.value ?? product.width ?? 0,
-  };
+  if (nativeDimensions.length > 0) {
+    return nativeDimensions;
+  }
+
+  const propertyDimensions = new Map<string, number>();
+
+  for (const property of product.properties ?? []) {
+    const groupName = getShopwarePlainText(
+      property.group?.translated?.name?.trim() ||
+        property.group?.name?.trim() ||
+        "",
+    );
+    const propertyValue = getShopwarePlainText(
+      property.translated?.name?.trim() || property.name?.trim() || "",
+    );
+    const numericValue = Number.parseFloat(propertyValue.replace(",", "."));
+
+    if (
+      groupName &&
+      !propertyDimensions.has(normalizePropertyGroupName(groupName)) &&
+      Number.isFinite(numericValue) &&
+      numericValue > 0
+    ) {
+      propertyDimensions.set(
+        normalizePropertyGroupName(groupName),
+        numericValue,
+      );
+    }
+  }
+
+  return [
+    { id: "width", key: "breite", label: "Breite" },
+    { id: "height", key: "hohe", label: "Höhe" },
+    {
+      id: "depth",
+      key: propertyDimensions.has("tiefe") ? "tiefe" : "lange",
+      label: "Tiefe",
+    },
+  ].flatMap(({ id, key, label }) => {
+    const value = propertyDimensions.get(key);
+
+    return value ? [{ id, label, value: formatMeasurement(value, "cm") }] : [];
+  });
+}
+
+const sizeVariantGroupNames = new Set([
+  "breite",
+  "breite liegeflache",
+  "grosse",
+  "groesse",
+  "hohe",
+  "lange",
+  "lange liegeflache",
+  "size",
+  "tiefe",
+]);
+
+const colorVariantGroupNames = new Set([
+  "color",
+  "colour",
+  "farbe",
+  "grundfarbe",
+]);
+
+function getConfiguratorOptionHex(
+  option: components["schemas"]["PropertyGroupOption"],
+) {
+  const hex =
+    option.translated?.colorHexCode?.trim() || option.colorHexCode?.trim();
+
+  return hex && /^#[0-9a-f]{3,8}$/i.test(hex) ? hex : undefined;
+}
+
+function getColorVariantGroups(
+  product: ShopwareProduct,
+  configurator: ShopwareProductDetailInput["configurator"],
+): ShopProductVariantGroup[] {
+  const selectedOptionIds = new Set(product.optionIds ?? []);
+
+  return (configurator ?? []).flatMap((group) => {
+    const groupLabel = getShopwarePlainText(
+      group.translated?.name?.trim() || group.name?.trim() || "",
+    );
+    const options = group.options ?? [];
+
+    if (
+      !groupLabel ||
+      !colorVariantGroupNames.has(normalizePropertyGroupName(groupLabel)) ||
+      options.length < 2
+    ) {
+      return [];
+    }
+
+    const groupOptionIds = new Set(options.map((option) => option.id));
+    const otherSelectedOptionIds = Array.from(selectedOptionIds).filter(
+      (optionId) => !groupOptionIds.has(optionId),
+    );
+    const mappedOptions = options
+      .map((option) => ({
+        available: option.combinable !== false,
+        hex: getConfiguratorOptionHex(option),
+        id: option.id,
+        label: getShopwarePlainText(
+          option.translated?.name?.trim() || option.name?.trim() || "",
+        ),
+        selected: selectedOptionIds.has(option.id),
+        selection: [...otherSelectedOptionIds, option.id],
+      }))
+      .filter((option) => option.label);
+
+    return mappedOptions.length > 1
+      ? [{ id: group.id, label: groupLabel, options: mappedOptions }]
+      : [];
+  });
+}
+
+function getSizeVariantGroups(
+  product: ShopwareProduct,
+  configurator: ShopwareProductDetailInput["configurator"],
+): ShopProductVariantGroup[] {
+  const selectedOptionIds = new Set(product.optionIds ?? []);
+
+  return (configurator ?? []).flatMap((group) => {
+    const groupLabel = getShopwarePlainText(
+      group.translated?.name?.trim() || group.name?.trim() || "",
+    );
+    const options = group.options ?? [];
+
+    if (
+      !groupLabel ||
+      !sizeVariantGroupNames.has(normalizePropertyGroupName(groupLabel)) ||
+      options.length < 2
+    ) {
+      return [];
+    }
+
+    const groupOptionIds = new Set(options.map((option) => option.id));
+    const otherSelectedOptionIds = Array.from(selectedOptionIds).filter(
+      (optionId) => !groupOptionIds.has(optionId),
+    );
+    const isNumericDimension = !["grosse", "groesse", "size"].includes(
+      normalizePropertyGroupName(groupLabel),
+    );
+    const mappedOptions = options
+      .map((option) => {
+        const optionLabel = getShopwarePlainText(
+          option.translated?.name?.trim() || option.name?.trim() || "",
+        );
+        const label =
+          isNumericDimension && /^\d+(?:[.,]\d+)?$/.test(optionLabel)
+            ? `${optionLabel} cm`
+            : optionLabel;
+
+        return {
+          available: option.combinable !== false,
+          id: option.id,
+          label,
+          selected: selectedOptionIds.has(option.id),
+          selection: [...otherSelectedOptionIds, option.id],
+        };
+      })
+      .filter((option) => option.label)
+      .toSorted((first, second) =>
+        first.label.localeCompare(second.label, "de-DE", { numeric: true }),
+      );
+
+    return mappedOptions.length > 1
+      ? [{ id: group.id, label: groupLabel, options: mappedOptions }]
+      : [];
+  });
 }
 
 function getDeliveryEstimate(product: ShopwareProduct) {
@@ -133,7 +363,6 @@ function getSpecifications(
   const weight =
     product.measurements?.weight?.value ?? product.weight ?? undefined;
   const weightUnit = product.measurements?.weight?.unit || "kg";
-  const availableStock = product.availableStock ?? product.stock;
 
   addSpecification("article-number", "Artikelnummer", product.productNumber);
   addSpecification("ean", "EAN", product.ean);
@@ -148,16 +377,13 @@ function getSpecifications(
     );
   }
 
-  if (typeof weight === "number" && weight > 0) {
+  if (
+    typeof weight === "number" &&
+    Number.isFinite(weight) &&
+    weight > 0 &&
+    weight <= 2000
+  ) {
     addSpecification("weight", "Gewicht", `${weight} ${weightUnit}`);
-  }
-
-  if (typeof availableStock === "number" && availableStock >= 0) {
-    addSpecification(
-      "available-stock",
-      "Verfügbarer Bestand",
-      `${availableStock}${unit ? ` ${unit}` : ""}`,
-    );
   }
 
   for (const property of product.properties ?? []) {
@@ -211,7 +437,29 @@ function getAvailability(product: ShopwareProduct) {
   return "Verfügbarkeit auf Anfrage";
 }
 
+function getRelatedProducts(
+  productId: string,
+  crossSellings: ShopwareProductDetailInput["crossSellings"],
+) {
+  const products = new Map<string, ShopwareProduct>();
+
+  for (const crossSelling of (crossSellings ?? []).toSorted(
+    (first, second) =>
+      (first.crossSelling.position ?? 0) - (second.crossSelling.position ?? 0),
+  )) {
+    for (const product of crossSelling.products) {
+      if (product.id !== productId && !products.has(product.id)) {
+        products.set(product.id, product);
+      }
+    }
+  }
+
+  return Array.from(products.values(), mapShopwareProduct);
+}
+
 export function mapShopwareProductDetail({
+  configurator,
+  crossSellings,
   currency,
   locale,
   product,
@@ -221,6 +469,12 @@ export function mapShopwareProductDetail({
     product.translated.description?.trim() || product.description?.trim() || "";
   const longDescription =
     getShopwarePlainText(longDescriptionSource) || listingProduct.description;
+  const longDescriptionHtml =
+    getDescriptionHtml(longDescriptionSource) ||
+    sanitizeHtml(listingProduct.description, {
+      allowedAttributes: {},
+      allowedTags: [],
+    });
 
   return {
     currency,
@@ -230,15 +484,19 @@ export function mapShopwareProductDetail({
       accessories: [],
       articleNumber: product.productNumber,
       availability: getAvailability(product),
+      colorVariantGroups: getColorVariantGroups(product, configurator),
       deliveryEstimate: getDeliveryEstimate(product),
       dimensions: getDimensions(product),
       gallery: getGallery(product, listingProduct),
       isAvailable: product.available,
       longDescription,
+      longDescriptionHtml,
       services: [],
       shippingFree: product.shippingFree,
+      sizeVariantGroups: getSizeVariantGroups(product, configurator),
       specifications: getSpecifications(product, listingProduct),
+      variantParentId: product.parentId ?? product.id,
     },
-    relatedProducts: [],
+    relatedProducts: getRelatedProducts(product.id, crossSellings),
   };
 }

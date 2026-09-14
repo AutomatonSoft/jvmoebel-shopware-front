@@ -79,6 +79,15 @@ describe("mapShopwareProductListing", () => {
         },
       ],
       ratingAverage: 4.8,
+      seoUrls: [
+        {
+          foreignKey: "product-id",
+          isCanonical: true,
+          isDeleted: false,
+          routeName: "frontend.detail.page",
+          seoPathInfo: "Sofa-Alba/JV-100",
+        },
+      ],
       translated: {
         description: "<p>Ein bequemes Sofa.</p>",
         name: "Sofa Alba",
@@ -125,7 +134,7 @@ describe("mapShopwareProductListing", () => {
       rating: 4.8,
       sizes: ["large"],
       unitPrice: 999,
-      url: "/produkt/product-id",
+      url: "/Sofa-Alba/JV-100",
     });
   });
 

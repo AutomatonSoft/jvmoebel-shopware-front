@@ -13,6 +13,7 @@ const productListingAssociations = {
   cover: { associations: { media: {} } },
   manufacturer: {},
   properties: { associations: { group: {} } },
+  seoUrls: {},
 } satisfies components["schemas"]["Associations"];
 
 async function getShopwareProductListingPage(

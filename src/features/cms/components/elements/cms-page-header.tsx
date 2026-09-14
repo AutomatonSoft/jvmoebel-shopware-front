@@ -1,3 +1,4 @@
+import { Container } from "@/components/ui/container";
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import { parseCmsPageHeaderData } from "@/features/cms/contracts/page-header";
 import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
@@ -14,8 +15,9 @@ export function CmsPageHeader({ slot }: CmsSlotComponentProps) {
   const { description, eyebrow, title } = result.data;
 
   return (
-    <header
-      className="mx-auto w-full max-w-360 px-4 pt-9 pb-8 sm:px-8 sm:pt-12 sm:pb-10"
+    <Container
+      as="header"
+      className="pt-9 pb-8 sm:pt-12 sm:pb-10"
       data-cms-element="jv-page-header"
     >
       {eyebrow && (
@@ -33,6 +35,6 @@ export function CmsPageHeader({ slot }: CmsSlotComponentProps) {
           </p>
         )}
       </div>
-    </header>
+    </Container>
   );
 }

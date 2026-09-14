@@ -4,6 +4,7 @@ import { Heart, ShieldCheck, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { Container } from "@/components/ui/container";
 import { ShopProductCard } from "@/features/catalog/components/shop-product-card";
 import type { ShopProductListing } from "@/features/catalog/model/product-listing";
 import { useWishlist } from "@/features/wishlist/hooks/use-wishlist";
@@ -29,7 +30,7 @@ export function WishlistPage({ listing }: WishlistPageProps) {
 
   return (
     <main className="flex-1">
-      <div className="mx-auto w-full max-w-360 px-4 py-8 sm:px-8 sm:py-12">
+      <Container className="py-8 sm:py-12">
         <nav
           aria-label="Breadcrumb"
           className="flex items-center gap-2 text-xs text-muted-foreground"
@@ -125,7 +126,7 @@ export function WishlistPage({ listing }: WishlistPageProps) {
             </Button>
           </section>
         )}
-      </div>
+      </Container>
     </main>
   );
 }

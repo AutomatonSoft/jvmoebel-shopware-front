@@ -6,6 +6,7 @@ import {
   Sparkles,
 } from "lucide-react";
 
+import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import {
@@ -34,12 +35,13 @@ export function CmsWhyJvmoebel({ slot }: CmsSlotComponentProps) {
   const headingId = `why-jvmoebel-${slot.id}`;
 
   return (
-    <section
+    <Container
+      as="section"
       aria-labelledby={headingId}
       className="relative isolate mt-16 overflow-hidden border-y border-foreground/10 bg-[radial-gradient(circle_at_18%_45%,rgba(224,203,184,0.72),transparent_32%),linear-gradient(to_bottom,#fbfaf6,#f6f1ea)] sm:mt-20"
       data-cms-element="jv-why-jvmoebel"
     >
-      <div className="mx-auto grid w-full max-w-360 gap-12 px-5 py-14 sm:px-8 sm:py-18 lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:gap-20 lg:px-12 lg:py-24">
+      <div className="grid gap-12 py-14 sm:py-18 lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:gap-20 lg:py-24">
         <div className="relative mx-auto flex aspect-square w-full max-w-72 items-center justify-center sm:max-w-88 lg:max-w-104">
           <span
             aria-hidden="true"
@@ -140,6 +142,6 @@ export function CmsWhyJvmoebel({ slot }: CmsSlotComponentProps) {
           )}
         </div>
       </div>
-    </section>
+    </Container>
   );
 }

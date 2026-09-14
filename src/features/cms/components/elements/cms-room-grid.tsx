@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 
+import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import { parseCmsRoomGridData } from "@/features/cms/contracts/room-grid";
@@ -19,8 +20,9 @@ export function CmsRoomGrid({ slot }: CmsSlotComponentProps) {
   const { description, eyebrow, rooms, title } = data;
 
   return (
-    <section
-      className="mx-auto w-full max-w-360 px-4 py-20 sm:px-8 sm:py-28"
+    <Container
+      as="section"
+      className="py-20 sm:py-28"
       data-cms-element="jv-room-grid"
     >
       <div className="mb-10 grid gap-6 md:grid-cols-[1fr_minmax(16rem,28rem)] md:items-end">
@@ -74,6 +76,6 @@ export function CmsRoomGrid({ slot }: CmsSlotComponentProps) {
           </CmsLink>
         ))}
       </div>
-    </section>
+    </Container>
   );
 }

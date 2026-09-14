@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
+import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
 import type { CmsOfferRailData } from "@/features/cms/contracts/offer-rail";
 import {
@@ -194,9 +195,10 @@ export function OfferRailCarousel({ data }: { data: CmsOfferRailData }) {
   }
 
   return (
-    <section
+    <Container
+      as="section"
       aria-label={data.ariaLabel}
-      className="mx-auto w-full max-w-360 px-4 pt-16 sm:px-8 sm:pt-20"
+      className="pt-16 sm:pt-20"
       data-cms-element="jv-offer-rail"
     >
       <div className="mb-8 flex items-end justify-between gap-6 sm:mb-10">
@@ -251,6 +253,6 @@ export function OfferRailCarousel({ data }: { data: CmsOfferRailData }) {
           </li>
         ))}
       </ul>
-    </section>
+    </Container>
   );
 }

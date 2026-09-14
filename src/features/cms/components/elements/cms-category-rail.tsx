@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 
+import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import { parseCmsCategoryRailData } from "@/features/cms/contracts/category-rail";
@@ -20,8 +21,9 @@ export function CmsCategoryRail({ slot }: CmsSlotComponentProps) {
     result.data;
 
   return (
-    <section
-      className="mx-auto w-full max-w-360 px-4 pt-16 sm:px-8 sm:pt-20"
+    <Container
+      as="section"
+      className="pt-16 sm:pt-20"
       data-cms-element="jv-category-rail"
     >
       <div className="mb-8 flex items-end justify-between gap-6 sm:mb-10">
@@ -118,6 +120,6 @@ export function CmsCategoryRail({ slot }: CmsSlotComponentProps) {
           <ArrowRight aria-hidden="true" className="size-4" />
         </CmsLink>
       )}
-    </section>
+    </Container>
   );
 }

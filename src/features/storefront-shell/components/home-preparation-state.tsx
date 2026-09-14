@@ -4,12 +4,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { ArrowRight, Clock3, ShieldCheck, ShoppingBag } from "lucide-react";
+import { Container } from "@/components/ui/container";
 
 export function HomePreparationState() {
   const router = useRouter();
 
   return (
-    <main className="relative isolate flex min-h-[72vh] flex-1 items-center overflow-hidden bg-background px-5 py-16 sm:px-8 lg:px-12">
+    <main className="relative isolate flex min-h-[72vh] flex-1 items-center overflow-hidden bg-background py-16">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 overflow-hidden"
@@ -24,7 +25,7 @@ export function HomePreparationState() {
         <div className="absolute bottom-[13%] left-[13%] size-12 rotate-45 rounded-2xl bg-primary/90 shadow-xl motion-safe:animate-pulse" />
       </div>
 
-      <div className="relative mx-auto grid w-full max-w-6xl items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
+      <Container className="relative grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
         <section className="max-w-2xl">
           <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-border bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground shadow-sm backdrop-blur-xl">
             <span className="size-2 rounded-full bg-accent-foreground motion-safe:animate-pulse" />
@@ -124,7 +125,7 @@ export function HomePreparationState() {
             <Clock3 className="size-7 text-accent-foreground" />
           </div>
         </section>
-      </div>
+      </Container>
     </main>
   );
 }
