@@ -29,6 +29,7 @@ import { CmsProductGrid } from "@/features/cms/components/elements/cms-product-g
 import { CmsPromoBanner } from "@/features/cms/components/elements/cms-promo-banner";
 import { CmsPromoDealTiles } from "@/features/cms/components/elements/cms-promo-deal-tiles";
 import { CmsRelatedLookCards } from "@/features/cms/components/elements/cms-related-look-cards";
+import { CmsReviewSummary } from "@/features/cms/components/elements/cms-review-summary";
 import { CmsRoomGrid } from "@/features/cms/components/elements/cms-room-grid";
 import { CmsShopTheLook } from "@/features/cms/components/elements/cms-shop-the-look";
 import { CmsTableOfContents } from "@/features/cms/components/elements/cms-table-of-contents";
@@ -78,6 +79,7 @@ const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {
   "jv-promo-banner": CmsPromoBanner,
   "jv-promo-deal-tiles": CmsPromoDealTiles,
   "jv-related-look-cards": CmsRelatedLookCards,
+  "jv-review-summary": CmsReviewSummary,
   "jv-room-grid": CmsRoomGrid,
   "jv-shop-the-look": CmsShopTheLook,
   "jv-table-of-contents": CmsTableOfContents,
