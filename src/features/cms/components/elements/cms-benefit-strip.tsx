@@ -24,30 +24,29 @@ export function CmsBenefitStrip({ slot }: CmsSlotComponentProps) {
   }
 
   return (
-    <Container
-      className="grid overflow-hidden rounded-3xl border bg-card px-0 sm:px-0 md:grid-cols-3"
-      data-cms-element="jv-benefit-strip"
-    >
-      {result.data.items.map((item) => {
-        const Icon = benefitIcons[item.icon];
+    <Container data-cms-element="jv-benefit-strip">
+      <div className="grid overflow-hidden rounded-3xl border bg-card md:grid-cols-3">
+        {result.data.items.map((item) => {
+          const Icon = benefitIcons[item.icon];
 
-        return (
-          <article
-            className="flex gap-4 border-b p-6 last:border-b-0 sm:p-8 md:border-r md:border-b-0 md:last:border-r-0"
-            key={item.id}
-          >
-            <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <Icon aria-hidden="true" className="size-6" />
-            </span>
-            <div>
-              <h2 className="font-semibold">{item.title}</h2>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                {item.description}
-              </p>
-            </div>
-          </article>
-        );
-      })}
+          return (
+            <article
+              className="flex gap-4 border-b p-6 last:border-b-0 sm:p-8 md:border-r md:border-b-0 md:last:border-r-0"
+              key={item.id}
+            >
+              <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <Icon aria-hidden="true" className="size-6" />
+              </span>
+              <div>
+                <h2 className="font-semibold">{item.title}</h2>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                  {item.description}
+                </p>
+              </div>
+            </article>
+          );
+        })}
+      </div>
     </Container>
   );
 }

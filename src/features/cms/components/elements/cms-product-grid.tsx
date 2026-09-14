@@ -53,16 +53,13 @@ export function CmsProductGrid({ slot }: CmsSlotComponentProps) {
   }
 
   return (
-    <Container
-      as="section"
-      className={cn(
-        layout === "grid" && "overflow-hidden rounded-3xl bg-muted",
-      )}
-      data-cms-element="jv-product-grid"
-      id={anchorId}
-    >
+    <Container as="section" data-cms-element="jv-product-grid" id={anchorId}>
       <div
-        className={cn(layout === "grid" ? "py-20 sm:py-28" : "py-16 sm:py-20")}
+        className={cn(
+          layout === "grid"
+            ? "overflow-hidden rounded-3xl bg-muted px-4 py-20 sm:px-8 sm:py-28"
+            : "py-16 sm:py-20",
+        )}
       >
         <div className="mb-10 flex items-end justify-between gap-6">
           <div>
