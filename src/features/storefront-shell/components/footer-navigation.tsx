@@ -1,3 +1,6 @@
+import type { Route } from "next";
+import Link from "next/link";
+
 import type { StoreNavigationItem } from "@/features/storefront-shell/model/navigation";
 import type { StorefrontFooterContent } from "@/features/storefront-shell/model/footer";
 
@@ -29,13 +32,13 @@ export function FooterNavigation({
         </h2>
         <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3">
           {footerNavigation.map((item) => (
-            <a
+            <Link
               className="text-footer-link hover:text-footer-accent-hover w-fit text-sm leading-5 underline decoration-transparent underline-offset-4 transition-[color,text-decoration-color] hover:decoration-current"
-              href={item.href}
+              href={item.href as Route}
               key={item.id}
             >
               {item.label}
-            </a>
+            </Link>
           ))}
         </div>
       </nav>
@@ -46,13 +49,13 @@ export function FooterNavigation({
         </h2>
         <div className="mt-6 flex flex-col gap-3">
           {serviceLinks.map((item) => (
-            <a
+            <Link
               className="text-footer-link hover:text-footer-accent-hover w-fit text-sm leading-5 underline decoration-transparent underline-offset-4 transition-[color,text-decoration-color] hover:decoration-current"
-              href={item.href}
+              href={item.href as Route}
               key={item.id}
             >
               {item.label}
-            </a>
+            </Link>
           ))}
         </div>
       </nav>

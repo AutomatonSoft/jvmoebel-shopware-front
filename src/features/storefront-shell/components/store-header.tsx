@@ -1,4 +1,5 @@
 import { Heart, ShoppingBag, UserRound } from "lucide-react";
+import type { Route } from "next";
 import Link from "next/link";
 
 import { Container } from "@/components/ui/container";
@@ -46,13 +47,13 @@ export function StoreHeader({
               Angebote
             </Link>
             {navigation.slice(0, MAX_VISIBLE_CATEGORIES).map((item) => (
-              <a
+              <Link
                 className="relative hidden py-7 text-xs font-semibold tracking-wide transition-colors after:absolute after:inset-x-0 after:bottom-5 after:h-px after:origin-right after:scale-x-0 after:bg-primary after:transition-transform hover:text-primary hover:after:origin-left hover:after:scale-x-100 motion-reduce:after:hidden lg:block"
-                href={item.href}
+                href={item.href as Route}
                 key={item.id}
               >
                 {item.label.replace(" & ", "\u00a0& ")}
-              </a>
+              </Link>
             ))}
           </nav>
         )}

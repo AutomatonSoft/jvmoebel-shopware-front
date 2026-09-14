@@ -12,6 +12,7 @@ import {
   Undo2,
   Video,
 } from "lucide-react";
+import Link from "next/link";
 
 import type { ShopProductDetail } from "@/features/catalog/model/product-detail";
 
@@ -236,13 +237,13 @@ export function ProductSpecifications({ product }: ProductSpecificationsProps) {
           </p>
         </div>
         <div className="mt-6 space-y-4 border-t pt-6 text-sm sm:text-base">
-          <a
+          <Link
             className="flex w-fit items-center gap-3 underline decoration-foreground/35 underline-offset-4 hover:text-primary"
             href="#product-details"
           >
             <ShieldCheck className="size-5 shrink-0 text-muted-foreground" />
             Produkt- und Sicherheitsinformationen
-          </a>
+          </Link>
           <a
             className="flex w-fit items-center gap-3 underline decoration-foreground/35 underline-offset-4 hover:text-primary"
             href="mailto:info@jvmoebel.de?subject=Rechtliche%20Bedenken%20melden"

@@ -1,5 +1,7 @@
 import { ArrowUpRight, Star } from "lucide-react";
+import type { Route } from "next";
 import Image from "next/image";
+import Link from "next/link";
 
 import type { ShopProduct } from "@/features/catalog/model/product-listing";
 import { WishlistToggleButton } from "@/features/wishlist/components/wishlist-toggle-button";
@@ -50,10 +52,10 @@ export function ShopProductCard({
   return (
     <article className="group relative flex min-w-0 flex-col overflow-hidden rounded-[1.4rem] border border-foreground/10 bg-card shadow-[0_16px_45px_-34px_rgba(21,21,19,0.7)] transition-[border-color,box-shadow] duration-300 hover:border-foreground/20 hover:shadow-[0_24px_55px_-34px_rgba(21,21,19,0.62)]">
       <WishlistToggleButton productId={product.id} productName={product.name} />
-      <a
+      <Link
         aria-label={product.name}
         className="relative isolate block aspect-square overflow-hidden bg-gradient-to-br from-muted/80 via-muted/40 to-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-        href={product.url}
+        href={product.url as Route}
       >
         <span
           aria-hidden="true"
@@ -80,7 +82,7 @@ export function ShopProductCard({
             −{discount}%
           </span>
         )}
-      </a>
+      </Link>
 
       <div className="flex flex-1 flex-col p-3.5 sm:p-4">
         <div className="mb-2 flex min-h-4 items-center justify-between gap-2">
@@ -105,13 +107,13 @@ export function ShopProductCard({
         </div>
 
         <Heading className="line-clamp-2 min-h-10 text-sm leading-5 font-semibold tracking-[-0.02em] sm:text-base">
-          <a
+          <Link
             className="rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-            href={product.url}
+            href={product.url as Route}
             title={product.name}
           >
             {product.name}
-          </a>
+          </Link>
         </Heading>
 
         <p className="mt-10 flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
@@ -155,13 +157,13 @@ export function ShopProductCard({
             )}
           </div>
 
-          <a
+          <Link
             aria-label={`Produkt ansehen: ${product.name}`}
             className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[0_8px_18px_-10px_rgba(255,79,34,0.85)] transition-colors duration-300 group-hover:bg-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-            href={product.url}
+            href={product.url as Route}
           >
             <ArrowUpRight className="size-4 transition-transform duration-300 motion-safe:group-hover:rotate-45" />
-          </a>
+          </Link>
         </div>
       </div>
     </article>
