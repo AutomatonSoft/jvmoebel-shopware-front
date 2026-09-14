@@ -25,7 +25,7 @@ export async function selectProductVariant(formData: FormData) {
     !switchedGroupId ||
     optionIds.length === 0
   ) {
-    redirect("/shop");
+    redirect("/moebel-sortiment");
   }
 
   let variantId: string | null = null;
