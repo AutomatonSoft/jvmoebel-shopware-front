@@ -52,14 +52,14 @@ export function ShopProductCard({
       <WishlistToggleButton productId={product.id} productName={product.name} />
       <a
         aria-label={product.name}
-        className="relative isolate block aspect-[4/5] overflow-hidden bg-gradient-to-br from-muted/80 via-muted/40 to-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        className="relative isolate block aspect-square overflow-hidden bg-gradient-to-br from-muted/80 via-muted/40 to-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         href={product.url}
       >
         <span
           aria-hidden="true"
           className="absolute -top-1/4 -right-1/3 size-4/5 rounded-full bg-background/80 opacity-70 blur-3xl transition-[transform,opacity] duration-500 group-hover:opacity-100 motion-safe:group-hover:scale-125"
         />
-        <span className="absolute inset-4 sm:inset-5">
+        <span className="absolute inset-2 sm:inset-3">
           <Image
             alt={product.image.alt}
             className="object-contain drop-shadow-[0_18px_18px_rgba(21,21,19,0.13)] transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.035]"
