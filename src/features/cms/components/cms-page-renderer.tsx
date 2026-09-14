@@ -21,6 +21,7 @@ import { CmsPromoDealTiles } from "@/features/cms/components/elements/cms-promo-
 import { CmsRelatedLookCards } from "@/features/cms/components/elements/cms-related-look-cards";
 import { CmsRoomGrid } from "@/features/cms/components/elements/cms-room-grid";
 import { CmsShopTheLook } from "@/features/cms/components/elements/cms-shop-the-look";
+import { CmsTableOfContents } from "@/features/cms/components/elements/cms-table-of-contents";
 import { CmsTrendLookGrid } from "@/features/cms/components/elements/cms-trend-look-grid";
 import { CmsText } from "@/features/cms/components/elements/cms-text";
 import { CmsWhyJvmoebel } from "@/features/cms/components/elements/cms-why-jvmoebel";
@@ -59,6 +60,7 @@ const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {
   "jv-related-look-cards": CmsRelatedLookCards,
   "jv-room-grid": CmsRoomGrid,
   "jv-shop-the-look": CmsShopTheLook,
+  "jv-table-of-contents": CmsTableOfContents,
   "jv-trend-look-grid": CmsTrendLookGrid,
   "jv-why-jvmoebel": CmsWhyJvmoebel,
   image: CmsImage,
