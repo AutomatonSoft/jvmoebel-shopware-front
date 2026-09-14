@@ -10,6 +10,7 @@ import {
   Menu,
   X,
 } from "lucide-react";
+import type { Route } from "next";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -93,17 +94,17 @@ function CategoryItem({
   }
 
   return (
-    <a className={className} href={item.href}>
+    <Link className={className} href={item.href as Route}>
       <CategoryItemContent item={item} loading={false} />
-    </a>
+    </Link>
   );
 }
 
 function ViewAllCategoryItem({ item }: { item: StoreNavigationItem }) {
   return (
-    <a
+    <Link
       className="group/category-item flex min-h-14 w-full items-center justify-between gap-4 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2.5 text-foreground transition-[background,border-color,box-shadow,transform] hover:border-primary/40 hover:bg-primary/10 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:scale-[.99]"
-      href={item.href}
+      href={item.href as Route}
     >
       <span className="text-left text-sm font-semibold sm:text-[0.9375rem]">
         Alle {item.label}
@@ -111,7 +112,7 @@ function ViewAllCategoryItem({ item }: { item: StoreNavigationItem }) {
       <span className="grid size-8 place-items-center rounded-full bg-primary text-primary-foreground transition-transform group-hover/category-item:translate-x-0.5">
         <ArrowRight className="size-3.5" />
       </span>
-    </a>
+    </Link>
   );
 }
 

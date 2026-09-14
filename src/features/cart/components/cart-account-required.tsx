@@ -2,11 +2,12 @@ import { ArrowRight, LockKeyhole, UserRound } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { Container } from "@/components/ui/container";
 
 export function CartAccountRequired() {
   return (
     <main className="flex-1 bg-[#faf7f2]">
-      <div className="mx-auto w-full max-w-360 px-4 py-8 sm:px-8 sm:py-12">
+      <Container className="py-8 sm:py-12">
         <nav
           aria-label="Breadcrumb"
           className="flex items-center gap-2 text-xs text-muted-foreground"
@@ -72,7 +73,7 @@ export function CartAccountRequired() {
             Ihr Warenkorb wird Ihrem Kundenkonto zugeordnet.
           </p>
         </section>
-      </div>
+      </Container>
     </main>
   );
 }

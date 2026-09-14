@@ -2,6 +2,7 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 import { ProductGallery } from "@/features/catalog/components/product-gallery";
+import { Container } from "@/components/ui/container";
 import { ProductPurchasePanel } from "@/features/catalog/components/product-purchase-panel";
 import { ProductSpecifications } from "@/features/catalog/components/product-specifications";
 import { ShopProductCard } from "@/features/catalog/components/shop-product-card";
@@ -17,7 +18,7 @@ export function ProductDetail({
 }: ProductDetailProps) {
   return (
     <main className="flex-1">
-      <div className="mx-auto w-full max-w-360 px-4 py-6 sm:px-8">
+      <Container className="py-6">
         <nav
           aria-label="Breadcrumb"
           className="flex flex-wrap items-center gap-2.5 text-[0.625rem] text-muted-foreground"
@@ -100,7 +101,7 @@ export function ProductDetail({
             </Link>
           </section>
         )}
-      </div>
+      </Container>
     </main>
   );
 }

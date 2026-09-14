@@ -24,6 +24,15 @@ describe("mapShopwareProductSearchResult", () => {
       description: "<p>Rust wool</p>",
       id: "chair-id",
       name: "Chair",
+      seoUrls: [
+        {
+          foreignKey: "chair-id",
+          isCanonical: true,
+          isDeleted: false,
+          routeName: "frontend.detail.page",
+          seoPathInfo: "Nara-Chair/JV-200",
+        },
+      ],
       translated: {
         description: "<p>Rust wool · Black oak</p>",
         name: "Nara Chair",
@@ -40,7 +49,7 @@ describe("mapShopwareProductSearchResult", () => {
       },
       name: "Nara Chair",
       unitPrice: 895,
-      url: "/produkt/chair-id",
+      url: "/Nara-Chair/JV-200",
     });
   });
 });

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { Container } from "@/components/ui/container";
 import { AccountAuthTabs } from "@/features/customer-account/components/account-auth-tabs";
 import { cn } from "@/lib/utils";
 
@@ -21,7 +22,7 @@ export function AccountPageShell({
   title,
 }: AccountPageShellProps) {
   return (
-    <main className="flex-1 px-4 py-6 sm:px-8 sm:py-10 lg:py-12">
+    <Container as="main" className="flex-1 py-6 sm:py-10 lg:py-12">
       <div className="mx-auto max-w-6xl">
         <nav
           aria-label="Breadcrumb"
@@ -103,6 +104,6 @@ export function AccountPageShell({
           </div>
         </div>
       </div>
-    </main>
+    </Container>
   );
 }

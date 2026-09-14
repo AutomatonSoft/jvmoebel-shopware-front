@@ -15,11 +15,11 @@ export function FooterTrustSection({
   }
 
   return (
-    <div className="border-footer-border grid gap-8 border-t pt-7 sm:col-span-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+    <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
       {paymentMethods.length > 0 && (
         <section aria-labelledby="payment-methods-heading">
           <h2
-            className="text-footer-muted text-xs font-semibold tracking-[0.16em] uppercase"
+            className="text-xs font-semibold tracking-[0.16em] uppercase"
             id="payment-methods-heading"
           >
             {headings.paymentMethods}
@@ -27,7 +27,7 @@ export function FooterTrustSection({
           <ul className="mt-4 flex flex-wrap gap-2">
             {paymentMethods.map(({ id, label, media }) => (
               <li
-                className="border-footer-border bg-footer-tile flex h-10 w-18 items-center justify-center rounded-xl border p-1.5"
+                className="flex h-10 w-18 items-center justify-center rounded-lg border bg-background p-1.5"
                 key={id}
               >
                 {/* CMS media hosts are resolved by Shopware at runtime. */}
@@ -49,7 +49,7 @@ export function FooterTrustSection({
       {socialLinks.length > 0 && (
         <section aria-labelledby="social-networks-heading">
           <h2
-            className="text-footer-muted text-xs font-semibold tracking-[0.16em] uppercase"
+            className="text-xs font-semibold tracking-[0.16em] uppercase"
             id="social-networks-heading"
           >
             {headings.socialLinks}
@@ -60,7 +60,7 @@ export function FooterTrustSection({
                 aria-label={
                   openInNewTab ? `${label} (öffnet in einem neuen Tab)` : label
                 }
-                className="border-footer-border bg-footer-control text-footer-foreground hover:border-footer-accent hover:bg-footer-control-hover hover:text-footer-accent-hover focus-visible:ring-footer-accent/30 flex size-10 items-center justify-center rounded-full border transition-[background,border-color,color,transform] focus-visible:ring-3 motion-safe:active:translate-y-px"
+                className="flex size-10 items-center justify-center rounded-full border bg-background transition-[background,border-color,transform] hover:border-primary hover:bg-primary/5 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none motion-safe:active:translate-y-px"
                 href={url}
                 key={id}
                 rel={openInNewTab ? "noreferrer" : undefined}

@@ -14,6 +14,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
+import { Container } from "@/components/ui/container";
 import type { CustomerAccountSummary } from "@/features/customer-account/model/account";
 import { logoutCustomer } from "@/features/customer-account/server/actions";
 
@@ -105,7 +106,7 @@ export function CustomerProfilePage({ account }: CustomerProfilePageProps) {
 
   return (
     <main className="flex-1 bg-[#f8f8f6]">
-      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-8 sm:py-10">
+      <Container className="py-8 sm:py-10">
         <nav
           aria-label="Breadcrumb"
           className="flex items-center gap-2 text-[0.6875rem] text-muted-foreground"
@@ -265,7 +266,7 @@ export function CustomerProfilePage({ account }: CustomerProfilePageProps) {
             </div>
           </div>
         </div>
-      </div>
+      </Container>
     </main>
   );
 }

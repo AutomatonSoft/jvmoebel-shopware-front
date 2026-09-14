@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ProductFilterPanel } from "@/features/catalog/components/product-filter-panel";
 import { ShopProductResults } from "@/features/catalog/components/product-results";
 import { Button } from "@/components/ui/button";
+import { Container } from "@/components/ui/container";
 import {
   Select,
   SelectContent,
@@ -43,7 +44,7 @@ export function ShopCatalog({
   const { activeFilterCount } = filterPanelProps;
 
   return (
-    <div className="mx-auto w-full max-w-360 px-4 pb-20 sm:px-8 sm:pb-28">
+    <Container className="pb-20 sm:pb-28">
       {!hideHeader && (
         <>
           <nav
@@ -206,6 +207,6 @@ export function ShopCatalog({
           />
         </section>
       </div>
-    </div>
+    </Container>
   );
 }

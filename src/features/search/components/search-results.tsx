@@ -2,7 +2,9 @@
 
 import { LoaderCircle } from "lucide-react";
 import { motion } from "motion/react";
+import type { Route } from "next";
 import Image from "next/image";
+import Link from "next/link";
 
 import type { ProductSearchResult } from "@/features/search/model/product-search";
 
@@ -73,9 +75,9 @@ export function SearchResults({
           key={product.id}
           transition={{ duration: 0.2 }}
         >
-          <a
+          <Link
             className="flex min-h-28 items-center gap-4 py-4 text-left transition-colors hover:text-primary"
-            href={product.url}
+            href={product.url as Route}
           >
             <span className="relative h-20 w-24 shrink-0 overflow-hidden rounded-xl bg-muted/60 sm:h-24 sm:w-32">
               <Image
@@ -98,7 +100,7 @@ export function SearchResults({
             <span className="shrink-0 text-sm font-semibold">
               {priceFormatter.format(product.unitPrice)}
             </span>
-          </a>
+          </Link>
         </motion.li>
       ))}
     </ul>

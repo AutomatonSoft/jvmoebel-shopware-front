@@ -101,6 +101,19 @@ function getImage(product: ShopwareProduct, name: string) {
   };
 }
 
+export function getShopwareProductUrl(product: ShopwareProduct) {
+  const seoPath = product.seoUrls?.find(
+    (seoUrl) =>
+      seoUrl.routeName === "frontend.detail.page" &&
+      seoUrl.isCanonical &&
+      !seoUrl.isDeleted,
+  )?.seoPathInfo;
+
+  return seoPath
+    ? `/${seoPath.replace(/^\/+/, "")}`
+    : `/produkt/${encodeURIComponent(product.id)}`;
+}
+
 function getPropertyHex(property: ShopwareProperty) {
   const hex =
     property.translated?.colorHexCode?.trim() || property.colorHexCode?.trim();
@@ -253,7 +266,7 @@ export function mapShopwareProduct(
         : undefined,
     sizes: getSizes(product),
     unitPrice: product.calculatedPrice.unitPrice,
-    url: `/produkt/${encodeURIComponent(product.id)}`,
+    url: getShopwareProductUrl(product),
   };
 }
 

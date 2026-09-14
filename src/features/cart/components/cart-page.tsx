@@ -10,10 +10,12 @@ import {
   Trash2,
   Truck,
 } from "lucide-react";
+import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { Container } from "@/components/ui/container";
 import { Input } from "@/components/ui/input";
 import type { ShopCart, ShopCartItem } from "@/features/cart/model/cart";
 import {
@@ -111,13 +113,13 @@ function CartItemRow({
   return (
     <article className="grid grid-cols-[7rem_minmax(0,1fr)] gap-4 py-6 first:pt-0 last:pb-0 sm:grid-cols-[10rem_minmax(0,1fr)_auto] sm:gap-6">
       {item.url ? (
-        <a
+        <Link
           aria-label={item.label}
           className="relative grid aspect-square place-items-center overflow-hidden rounded-2xl bg-muted/65 p-3"
-          href={item.url}
+          href={item.url as Route}
         >
           {content}
-        </a>
+        </Link>
       ) : (
         <div className="relative grid aspect-square place-items-center overflow-hidden rounded-2xl bg-muted/65 p-3">
           {content}
@@ -129,7 +131,11 @@ function CartItemRow({
           Im Warenkorb
         </p>
         <h2 className="mt-1 text-base leading-6 font-semibold tracking-[-0.02em] sm:text-lg">
-          {item.url ? <a href={item.url}>{item.label}</a> : item.label}
+          {item.url ? (
+            <Link href={item.url as Route}>{item.label}</Link>
+          ) : (
+            item.label
+          )}
         </h2>
         {item.deliveryLabel && (
           <p className="mt-2 flex items-center gap-2 text-xs leading-5 text-muted-foreground sm:text-sm">
@@ -247,7 +253,7 @@ export function CartPage({ cart }: CartPageProps) {
 
   return (
     <main className="flex-1 bg-[#faf7f2]">
-      <div className="mx-auto w-full max-w-360 px-4 py-8 sm:px-8 sm:py-12">
+      <Container className="py-8 sm:py-12">
         <nav
           aria-label="Breadcrumb"
           className="flex items-center gap-2 text-xs text-muted-foreground"
@@ -428,7 +434,7 @@ export function CartPage({ cart }: CartPageProps) {
             </div>
           </>
         )}
-      </div>
+      </Container>
     </main>
   );
 }

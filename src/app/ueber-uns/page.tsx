@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { Container } from "@/components/ui/container";
 import { getAboutCmsPage } from "@/features/about/server/about-page";
 import { CmsPageRenderer } from "@/features/cms/components/cms-page-renderer";
 import { ErrorExperience } from "@/features/storefront-shell/components/error-experience";
@@ -28,16 +29,17 @@ export default async function AboutPage() {
 
   return (
     <main className="flex-1 pb-16 sm:pb-24">
-      <nav
+      <Container
+        as="nav"
         aria-label="Breadcrumb"
-        className="mx-auto flex w-full max-w-360 items-center gap-2.5 px-4 pt-6 text-xs text-muted-foreground sm:px-8"
+        className="flex items-center gap-2.5 pt-6 text-xs text-muted-foreground"
       >
         <Link className="transition-colors hover:text-primary" href="/">
           Startseite
         </Link>
         <span aria-hidden="true">/</span>
         <strong className="font-medium text-foreground">Über uns</strong>
-      </nav>
+      </Container>
       <CmsPageRenderer page={page} />
     </main>
   );

@@ -1,5 +1,6 @@
 import Image from "next/image";
 
+import { Container } from "@/components/ui/container";
 import { CmsButton } from "@/features/cms/components/cms-button";
 import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import {
@@ -56,28 +57,31 @@ export function CmsPromoBanner({ slot }: CmsSlotComponentProps) {
   const data = result.data;
 
   return (
-    <section
-      className="mx-2 mt-16 overflow-hidden rounded-3xl border bg-card shadow-[0_24px_60px_-42px_rgba(21,21,19,0.7)] sm:mx-6 sm:mt-20"
+    <Container
+      as="section"
+      className="mt-16 sm:mt-20"
       data-cms-element="jv-promo-banner"
     >
-      <div className="relative min-h-72 sm:min-h-96">
-        <Image
-          alt={data.image.alt}
-          className="object-cover"
-          fill
-          sizes="(max-width: 1536px) 100vw, 1440px"
-          src={data.image.url}
-        />
-        <div
-          className={cn(
-            "absolute inset-y-0 hidden w-[46%] flex-col justify-center bg-background/92 p-8 backdrop-blur-sm sm:flex lg:p-12",
-            data.contentPosition === "left" ? "left-0" : "right-0",
-          )}
-        >
-          <PromoBannerCopy data={data} />
+      <div className="overflow-hidden rounded-3xl border bg-card shadow-[0_24px_60px_-42px_rgba(21,21,19,0.7)]">
+        <div className="relative min-h-72 sm:min-h-96">
+          <Image
+            alt={data.image.alt}
+            className="object-cover"
+            fill
+            sizes="(max-width: 1536px) 100vw, 1440px"
+            src={data.image.url}
+          />
+          <div
+            className={cn(
+              "absolute inset-y-0 hidden w-[46%] flex-col justify-center bg-background/92 p-8 backdrop-blur-sm sm:flex lg:p-12",
+              data.contentPosition === "left" ? "left-0" : "right-0",
+            )}
+          >
+            <PromoBannerCopy data={data} />
+          </div>
         </div>
+        <PromoBannerCopy data={data} mobile />
       </div>
-      <PromoBannerCopy data={data} mobile />
-    </section>
+    </Container>
   );
 }

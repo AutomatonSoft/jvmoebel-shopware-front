@@ -1,4 +1,4 @@
-export const productsPerPage = 8;
+export const productsPerPage = 12;
 
 export function paginateProducts<TProduct>(
   products: readonly TProduct[],
