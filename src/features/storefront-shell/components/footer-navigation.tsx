@@ -23,17 +23,14 @@ export function FooterNavigation({
 
   return (
     <>
-      <nav
-        aria-label="Kategorien"
-        className="border-footer-border border-t pt-7 sm:col-span-2"
-      >
-        <h2 className="text-footer-muted text-xs font-semibold tracking-[0.16em] uppercase">
+      <nav aria-label="Kategorien" className="sm:col-span-2">
+        <h2 className="text-xs font-semibold tracking-[0.16em] uppercase">
           {headings.categories}
         </h2>
         <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3">
           {footerNavigation.map((item) => (
             <Link
-              className="text-footer-link hover:text-footer-accent-hover w-fit text-sm leading-5 underline decoration-transparent underline-offset-4 transition-[color,text-decoration-color] hover:decoration-current"
+              className="w-fit text-sm leading-5 text-muted-foreground underline decoration-transparent underline-offset-4 transition-[color,text-decoration-color] hover:text-foreground hover:decoration-primary focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
               href={item.href as Route}
               key={item.id}
             >
@@ -43,14 +40,14 @@ export function FooterNavigation({
         </div>
       </nav>
 
-      <nav aria-label="Service" className="border-footer-border border-t pt-7">
-        <h2 className="text-footer-muted text-xs font-semibold tracking-[0.16em] uppercase">
+      <nav aria-label="Service">
+        <h2 className="text-xs font-semibold tracking-[0.16em] uppercase">
           {headings.service}
         </h2>
         <div className="mt-6 flex flex-col gap-3">
           {serviceLinks.map((item) => (
             <Link
-              className="text-footer-link hover:text-footer-accent-hover w-fit text-sm leading-5 underline decoration-transparent underline-offset-4 transition-[color,text-decoration-color] hover:decoration-current"
+              className="w-fit text-sm leading-5 text-muted-foreground underline decoration-transparent underline-offset-4 transition-[color,text-decoration-color] hover:text-foreground hover:decoration-primary focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
               href={item.href as Route}
               key={item.id}
             >
