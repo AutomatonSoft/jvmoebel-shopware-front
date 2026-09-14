@@ -114,7 +114,7 @@ export function ShopProductCard({
           </a>
         </Heading>
 
-        <p className="mt-3 flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
+        <p className="mt-10 flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
           <strong className="shrink-0 text-xl leading-none font-semibold tracking-[-0.035em]">
             {priceFormatter.format(product.unitPrice)}
           </strong>
