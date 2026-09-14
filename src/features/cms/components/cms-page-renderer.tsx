@@ -35,6 +35,7 @@ import { CmsShopTheLook } from "@/features/cms/components/elements/cms-shop-the-
 import { CmsSubcategoryLinks } from "@/features/cms/components/elements/cms-subcategory-links";
 import { CmsTableOfContents } from "@/features/cms/components/elements/cms-table-of-contents";
 import { CmsTrendLookGrid } from "@/features/cms/components/elements/cms-trend-look-grid";
+import { CmsTrustRating } from "@/features/cms/components/elements/cms-trust-rating";
 import { CmsText } from "@/features/cms/components/elements/cms-text";
 import { CmsWhyJvmoebel } from "@/features/cms/components/elements/cms-why-jvmoebel";
 import { CmsYoutubeVideo } from "@/features/cms/components/elements/cms-youtube-video";
@@ -86,6 +87,7 @@ const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {
   "jv-subcategory-links": CmsSubcategoryLinks,
   "jv-table-of-contents": CmsTableOfContents,
   "jv-trend-look-grid": CmsTrendLookGrid,
+  "jv-trust-rating": CmsTrustRating,
   "jv-why-jvmoebel": CmsWhyJvmoebel,
   image: CmsImage,
   text: CmsText,
