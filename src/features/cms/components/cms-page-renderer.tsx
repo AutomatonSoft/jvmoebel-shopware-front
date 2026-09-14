@@ -13,6 +13,7 @@ import { CmsOfferRail } from "@/features/cms/components/elements/cms-offer-rail"
 import { CmsPageHeader } from "@/features/cms/components/elements/cms-page-header";
 import { CmsProductGrid } from "@/features/cms/components/elements/cms-product-grid";
 import { CmsPromoBanner } from "@/features/cms/components/elements/cms-promo-banner";
+import { CmsPromoDealTiles } from "@/features/cms/components/elements/cms-promo-deal-tiles";
 import { CmsRoomGrid } from "@/features/cms/components/elements/cms-room-grid";
 import { CmsShopTheLook } from "@/features/cms/components/elements/cms-shop-the-look";
 import { CmsText } from "@/features/cms/components/elements/cms-text";
@@ -44,6 +45,7 @@ const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {
   "jv-page-header": CmsPageHeader,
   "jv-product-grid": CmsProductGrid,
   "jv-promo-banner": CmsPromoBanner,
+  "jv-promo-deal-tiles": CmsPromoDealTiles,
   "jv-room-grid": CmsRoomGrid,
   "jv-shop-the-look": CmsShopTheLook,
   "jv-why-jvmoebel": CmsWhyJvmoebel,

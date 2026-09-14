@@ -1,4 +1,8 @@
-import { getCmsRecord, getCmsString } from "@/features/cms/contracts/parsing";
+import {
+  getCmsNumber,
+  getCmsRecord,
+  getCmsString,
+} from "@/features/cms/contracts/parsing";
 import type { CmsContractIssue } from "@/features/cms/contracts/result";
 import {
   resolveCmsButtonSize,
@@ -8,6 +12,11 @@ import {
 export type CmsReferenceLink = Readonly<{
   label: string;
   size: CmsButtonSize;
+  url: string;
+}>;
+
+export type CmsReferenceImage = Readonly<{
+  alt: string;
   url: string;
 }>;
 
@@ -49,6 +58,46 @@ export function parseReferenceLink(
   return {
     label,
     size: resolveCmsButtonSize(link?.size),
+    url,
+  };
+}
+
+export function getCmsEntries(value: unknown) {
+  if (Array.isArray(value)) {
+    return value.map((item, index) => [String(index), item] as const);
+  }
+
+  const record = getCmsRecord(value);
+
+  return record ? Object.entries(record) : [];
+}
+
+export function getCmsPosition(
+  record: ReturnType<typeof getCmsRecord>,
+  fallback: number,
+) {
+  return getCmsNumber(record, "position") ?? fallback;
+}
+
+export function parseReferenceImage(
+  value: unknown,
+  path: string,
+  fallbackAlt: string,
+  issues: CmsContractIssue[],
+): CmsReferenceImage | undefined {
+  const image = getCmsRecord(value);
+  const url = getCmsString(image, "url");
+
+  if (!url) {
+    issues.push({
+      message: "Image requires a non-empty URL.",
+      path: `${path}.url`,
+    });
+    return undefined;
+  }
+
+  return {
+    alt: getCmsString(image, "alt") || fallbackAlt,
     url,
   };
 }
