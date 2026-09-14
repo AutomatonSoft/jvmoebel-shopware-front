@@ -21,6 +21,7 @@ import { CmsImage } from "@/features/cms/components/elements/cms-image";
 import { CmsInlineProductTeaser } from "@/features/cms/components/elements/cms-inline-product-teaser";
 import { CmsInstagramStyle } from "@/features/cms/components/elements/cms-instagram-style";
 import { CmsLookScene } from "@/features/cms/components/elements/cms-look-scene";
+import { CmsLoyaltyPromo } from "@/features/cms/components/elements/cms-loyalty-promo";
 import { CmsNewsletter } from "@/features/cms/components/elements/cms-newsletter";
 import { CmsOfferRail } from "@/features/cms/components/elements/cms-offer-rail";
 import { CmsPageHeader } from "@/features/cms/components/elements/cms-page-header";
@@ -69,6 +70,7 @@ const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {
   "jv-inline-product-teaser": CmsInlineProductTeaser,
   "jv-instagram-style": CmsInstagramStyle,
   "jv-look-scene": CmsLookScene,
+  "jv-loyalty-promo": CmsLoyaltyPromo,
   "jv-newsletter": CmsNewsletter,
   "jv-offer-rail": CmsOfferRail,
   "jv-page-header": CmsPageHeader,
