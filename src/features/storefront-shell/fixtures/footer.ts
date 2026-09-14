@@ -10,10 +10,13 @@ export const defaultStorefrontFooterContent = {
   copyright: "© {year} {storeName}. Alle Rechte vorbehalten.",
   headings: {
     categories: "Kategorien",
+    internationalLinks: "Internationale Shops",
     paymentMethods: "Zahlungsarten",
     service: "Service",
+    shippingBadges: "Versand",
     socialLinks: "Soziale Netzwerke",
   },
+  internationalLinks: [],
   paymentMethods: [
     {
       id: "mastercard",
@@ -57,6 +60,7 @@ export const defaultStorefrontFooterContent = {
     submitLabel: "Widerruf per E-Mail vorbereiten",
     title: "Vertrag widerrufen",
   },
+  shippingBadges: [],
   socialLinks: [
     {
       id: "facebook",

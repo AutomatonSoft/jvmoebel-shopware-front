@@ -1,8 +1,10 @@
 import { defaultStorefrontFooterContent } from "@/features/storefront-shell/fixtures/footer";
 import type {
+  StorefrontFooterInternationalLink,
   StorefrontFooterLink,
   StorefrontFooterMedia,
   StorefrontFooterPaymentMethod,
+  StorefrontFooterShippingBadge,
 } from "@/features/storefront-shell/model/footer";
 import type { StoreNavigationItem } from "@/features/storefront-shell/model/navigation";
 import type {
@@ -325,6 +327,167 @@ function parseSocialLinks(
     }));
 }
 
+function parseShippingBadges(
+  value: unknown,
+  issues: StorefrontConfigIssue[],
+): StorefrontFooterShippingBadge[] {
+  if (!Array.isArray(value)) {
+    issues.push({
+      message: "Shipping badges must be an array.",
+      path: "footer.shippingBadges",
+    });
+    return [];
+  }
+
+  const ids = new Set<string>();
+  const result: Array<StorefrontFooterShippingBadge & { position: number }> =
+    [];
+
+  value.forEach((itemValue, index) => {
+    const path = `footer.shippingBadges[${index}]`;
+    const item = getRecord(itemValue);
+    const id = getString(item, "id");
+    const configuredLabel = getString(item, "label");
+    const position = getNumber(item, "position") ?? index;
+
+    if (!id || ids.has(id)) {
+      issues.push({
+        message: "Shipping badge ID must be a unique non-empty string.",
+        path: `${path}.id`,
+      });
+      return;
+    }
+
+    const media = parseMedia(
+      item?.icon,
+      configuredLabel ?? "",
+      `${path}.icon`,
+      issues,
+    );
+
+    if (!media) {
+      return;
+    }
+
+    const label = configuredLabel ?? media.alt;
+
+    if (!label) {
+      issues.push({
+        message: "Shipping badge requires a label or icon alt text.",
+        path: `${path}.label`,
+      });
+      return;
+    }
+
+    ids.add(id);
+    result.push({ id, label, media, position });
+  });
+
+  return result
+    .sort((first, second) => first.position - second.position)
+    .map(({ id, label, media }) => ({ id, label, media }));
+}
+
+function parseInternationalLinks(
+  value: unknown,
+  issues: StorefrontConfigIssue[],
+): StorefrontFooterInternationalLink[] {
+  if (!Array.isArray(value)) {
+    issues.push({
+      message: "International links must be an array.",
+      path: "footer.internationalLinks",
+    });
+    return [];
+  }
+
+  const ids = new Set<string>();
+  const result: Array<
+    StorefrontFooterInternationalLink & { position: number }
+  > = [];
+
+  value.forEach((itemValue, index) => {
+    const path = `footer.internationalLinks[${index}]`;
+    const item = getRecord(itemValue);
+    const id = getString(item, "id");
+    const label = getString(item, "label");
+    const url = getSafeUrl(getString(item, "url"), false);
+    const targetSalesChannelId = getString(item, "targetSalesChannelId");
+    const openInNewTab = getBoolean(item, "openInNewTab");
+    const position = getNumber(item, "position") ?? index;
+
+    if (!id || ids.has(id)) {
+      issues.push({
+        message: "International link ID must be a unique non-empty string.",
+        path: `${path}.id`,
+      });
+    }
+
+    if (!label) {
+      issues.push({
+        message: "International link label must be a non-empty string.",
+        path: `${path}.label`,
+      });
+    }
+
+    if (!url) {
+      issues.push({
+        message: "International link URL must use HTTP or HTTPS.",
+        path: `${path}.url`,
+      });
+    }
+
+    if (!targetSalesChannelId) {
+      issues.push({
+        message: "Target sales channel ID must be a non-empty string.",
+        path: `${path}.targetSalesChannelId`,
+      });
+    }
+
+    if (openInNewTab === undefined) {
+      issues.push({
+        message: "openInNewTab must be a boolean.",
+        path: `${path}.openInNewTab`,
+      });
+    }
+
+    const media = parseMedia(item?.icon, label ?? "", `${path}.icon`, issues);
+
+    if (
+      !id ||
+      ids.has(id) ||
+      !label ||
+      !url ||
+      !targetSalesChannelId ||
+      openInNewTab === undefined ||
+      !media
+    ) {
+      return;
+    }
+
+    ids.add(id);
+    result.push({
+      id,
+      label,
+      media,
+      openInNewTab,
+      position,
+      targetSalesChannelId,
+      url,
+    });
+  });
+
+  return result
+    .sort((first, second) => first.position - second.position)
+    .map(({ id, label, media, openInNewTab, targetSalesChannelId, url }) => ({
+      id,
+      label,
+      media,
+      openInNewTab,
+      targetSalesChannelId,
+      url,
+    }));
+}
+
 export function parseShopwareStorefrontConfig(
   value: unknown,
 ): StorefrontConfigResult {
@@ -427,6 +590,11 @@ export function parseShopwareStorefrontConfig(
             "categories",
             defaultHeadings.categories,
           ),
+          internationalLinks: getOptionalString(
+            footerHeadings,
+            "internationalLinks",
+            defaultHeadings.internationalLinks,
+          ),
           paymentMethods: getOptionalString(
             footerHeadings,
             "paymentMethods",
@@ -437,12 +605,21 @@ export function parseShopwareStorefrontConfig(
             "service",
             defaultHeadings.service,
           ),
+          shippingBadges: getOptionalString(
+            footerHeadings,
+            "shippingBadges",
+            defaultHeadings.shippingBadges,
+          ),
           socialLinks: getOptionalString(
             footerHeadings,
             "socialLinks",
             defaultHeadings.socialLinks,
           ),
         },
+        internationalLinks: parseInternationalLinks(
+          footer?.internationalLinks,
+          issues,
+        ),
         paymentMethods: parsePaymentMethods(footer?.paymentBadges, issues),
         revocation: {
           buttonLabel: revocationEnabled
@@ -483,6 +660,7 @@ export function parseShopwareStorefrontConfig(
             defaultRevocation.title,
           ),
         },
+        shippingBadges: parseShippingBadges(footer?.shippingBadges, issues),
         socialLinks: parseSocialLinks(footer?.socialLinks, issues),
       },
       footerNavigation: parseNavigation(

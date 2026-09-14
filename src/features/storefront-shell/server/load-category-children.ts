@@ -1,18 +1,19 @@
 "use server";
 
-import type { StoreNavigationItem } from "@/features/storefront-shell/model/navigation";
+import {
+  isShopwareCategoryId,
+  type StoreNavigationItem,
+} from "@/features/storefront-shell/model/navigation";
 import { getShopwareCategoryChildren } from "@/integrations/shopware/navigation";
 import { getShopwareRequestSession } from "@/integrations/shopware/session";
 
 export type LoadCategoryChildrenResult =
   { items: StoreNavigationItem[]; status: "success" } | { status: "error" };
 
-const shopwareCategoryIdPattern = /^[0-9a-f]{32}$/i;
-
 export async function loadCategoryChildren(
   categoryId: string,
 ): Promise<LoadCategoryChildrenResult> {
-  if (!shopwareCategoryIdPattern.test(categoryId)) {
+  if (!isShopwareCategoryId(categoryId)) {
     return { status: "error" };
   }
 

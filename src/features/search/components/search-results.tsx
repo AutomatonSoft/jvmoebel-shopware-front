@@ -14,6 +14,7 @@ export type SearchResultsProps = {
   errorMessage?: string;
   isSearching: boolean;
   locale: string;
+  onResultSelect: () => void;
   query: string;
   results: readonly ProductSearchResult[];
 };
@@ -24,6 +25,7 @@ export function SearchResults({
   errorMessage,
   isSearching,
   locale,
+  onResultSelect,
   query,
   results,
 }: SearchResultsProps) {
@@ -78,6 +80,7 @@ export function SearchResults({
           <Link
             className="flex min-h-28 items-center gap-4 py-4 text-left transition-colors hover:text-primary"
             href={product.url as Route}
+            onClick={onResultSelect}
           >
             <span className="relative h-20 w-24 shrink-0 overflow-hidden rounded-xl bg-muted/60 sm:h-24 sm:w-32">
               <Image

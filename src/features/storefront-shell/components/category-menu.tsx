@@ -19,6 +19,7 @@ import type {
   MainNavigation,
   StoreNavigationItem,
 } from "@/features/storefront-shell/model/navigation";
+import { shouldLoadNavigationChildren } from "@/features/storefront-shell/model/navigation";
 
 export type CategoryMenuProps = { navigation: MainNavigation };
 
@@ -38,7 +39,7 @@ function CategoryItemContent({
   loading: boolean;
 }) {
   const childCount = getChildCount(item);
-  const hasChildren = childCount > 0;
+  const loadsChildren = shouldLoadNavigationChildren(item);
 
   return (
     <>
@@ -48,7 +49,7 @@ function CategoryItemContent({
         </span>
       </span>
       <span className="flex shrink-0 items-center gap-2.5">
-        {!loading && hasChildren && (
+        {!loading && childCount > 0 && (
           <span className="min-w-6 rounded-full bg-secondary px-2 py-1 text-center text-[0.625rem] font-semibold tabular-nums text-muted-foreground">
             {childCount}
           </span>
@@ -56,7 +57,7 @@ function CategoryItemContent({
         <span className="grid size-8 place-items-center rounded-full bg-secondary text-muted-foreground transition-[background,color,transform] group-hover/category-item:bg-primary group-hover/category-item:text-primary-foreground group-hover/category-item:translate-x-0.5">
           {loading ? (
             <LoaderCircle className="size-3.5 animate-spin" />
-          ) : hasChildren ? (
+          ) : loadsChildren ? (
             <ChevronRight className="size-3.5" />
           ) : (
             <ArrowRight className="size-3.5" />
@@ -70,16 +71,18 @@ function CategoryItemContent({
 function CategoryItem({
   item,
   loading,
+  onNavigate,
   onSelect,
 }: {
   item: StoreNavigationItem;
   loading: boolean;
+  onNavigate: () => void;
   onSelect: (item: StoreNavigationItem) => Promise<void>;
 }) {
   const className =
     "group/category-item flex min-h-14 w-full items-center justify-between gap-4 rounded-xl border border-transparent px-3 py-2.5 text-foreground transition-[background,border-color,box-shadow,transform] hover:border-border hover:bg-card hover:shadow-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:scale-[.99]";
 
-  if (getChildCount(item) > 0 && item.type !== "link") {
+  if (shouldLoadNavigationChildren(item)) {
     return (
       <button
         aria-busy={loading || undefined}
@@ -94,17 +97,24 @@ function CategoryItem({
   }
 
   return (
-    <Link className={className} href={item.href as Route}>
+    <Link className={className} href={item.href as Route} onClick={onNavigate}>
       <CategoryItemContent item={item} loading={false} />
     </Link>
   );
 }
 
-function ViewAllCategoryItem({ item }: { item: StoreNavigationItem }) {
+function ViewAllCategoryItem({
+  item,
+  onNavigate,
+}: {
+  item: StoreNavigationItem;
+  onNavigate: () => void;
+}) {
   return (
     <Link
       className="group/category-item flex min-h-14 w-full items-center justify-between gap-4 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2.5 text-foreground transition-[background,border-color,box-shadow,transform] hover:border-primary/40 hover:bg-primary/10 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:scale-[.99]"
       href={item.href as Route}
+      onClick={onNavigate}
     >
       <span className="text-left text-sm font-semibold sm:text-[0.9375rem]">
         Alle {item.label}
@@ -148,13 +158,14 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
     goBack,
     goToPathDepth,
     handleOpenChange,
+    isOpen,
     loadError,
     loadingCategoryId,
     openCategory,
   } = useCategoryMenu(navigation);
 
   return (
-    <Dialog.Root onOpenChange={handleOpenChange}>
+    <Dialog.Root onOpenChange={handleOpenChange} open={isOpen}>
       <Dialog.Trigger
         aria-label="Kategorien öffnen"
         className="relative flex h-18 shrink-0 cursor-pointer items-center gap-2 bg-transparent px-0 text-xs font-semibold tracking-wide transition-colors after:absolute after:inset-x-0 after:bottom-5 after:hidden after:h-0.5 after:bg-primary hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4 focus-visible:outline-none lg:py-7 lg:after:block"
@@ -276,13 +287,17 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
                   >
                     {!currentCategory && <OffersMenuItem />}
                     {currentCategory && currentCategory.type !== "folder" && (
-                      <ViewAllCategoryItem item={currentCategory} />
+                      <ViewAllCategoryItem
+                        item={currentCategory}
+                        onNavigate={() => handleOpenChange(false)}
+                      />
                     )}
                     {currentItems.map((item) => (
                       <CategoryItem
                         item={item}
                         key={item.id}
                         loading={loadingCategoryId === item.id}
+                        onNavigate={() => handleOpenChange(false)}
                         onSelect={openCategory}
                       />
                     ))}
