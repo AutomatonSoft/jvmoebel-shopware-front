@@ -137,7 +137,7 @@ export function ShopProductCard({
             {colors.slice(0, 3).map((color) => (
               <span
                 aria-hidden="true"
-                className="size-4 rounded-full border-2 border-background shadow-[0_0_0_1px_rgba(21,21,19,0.18)]"
+                className="size-6 rounded-full border-2 border-background shadow-[0_0_0_1px_rgba(21,21,19,0.18)]"
                 key={color.value}
                 style={{ backgroundColor: color.hex }}
                 title={color.label}
