@@ -44,7 +44,7 @@ export function CmsCrossRoomSection({ slot }: CmsSlotComponentProps) {
             >
               <Image
                 alt={room.image.alt}
-                className="object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.04]"
+                className="object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.035]"
                 fill
                 sizes="(max-width: 640px) 84vw, (max-width: 1024px) 48vw, 33vw"
                 src={room.image.url}
@@ -65,7 +65,7 @@ export function CmsCrossRoomSection({ slot }: CmsSlotComponentProps) {
                       </span>
                     )}
                   </span>
-                  <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform motion-safe:group-hover:translate-x-1">
+                  <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform duration-300 motion-safe:group-hover:translate-x-1">
                     <ArrowRight aria-hidden="true" className="size-5" />
                   </span>
                 </span>
