@@ -1,7 +1,10 @@
 import { describe, expect, test } from "bun:test";
 import type { components } from "@shopware/api-client/store-api-types";
 
-import { getShopwareProductListing } from "@/integrations/shopware/product-listing";
+import {
+  getShopwareProductListing,
+  getShopwareProductListingPage,
+} from "@/integrations/shopware/product-listing";
 
 type ShopwareProduct = components["schemas"]["Product"];
 
@@ -52,6 +55,32 @@ describe("getShopwareProductListing", () => {
           manufacturer: {},
           properties: { associations: { group: {} } },
         },
+        includes: {
+          category: ["id", "name", "path", "translated"],
+          media: ["alt", "translated", "url"],
+          product: expect.arrayContaining([
+            "calculatedPrice",
+            "categories",
+            "cover",
+            "id",
+            "manufacturer",
+            "properties",
+            "seoUrls",
+            "translated",
+          ]),
+          product_manufacturer: ["id", "name", "translated"],
+          product_media: ["media"],
+          property_group: ["id", "name", "options", "translated"],
+          property_group_option: expect.arrayContaining([
+            "colorHexCode",
+            "group",
+            "groupId",
+            "id",
+            "name",
+            "translated",
+          ]),
+          seo_url: ["isCanonical", "isDeleted", "routeName", "seoPathInfo"],
+        },
         limit: 100,
         page: 1,
       },
@@ -88,6 +117,81 @@ describe("getShopwareProductListing", () => {
 
     expect(requests[1]?.request).toMatchObject({
       pathParams: { categoryId: "requested-category-id" },
+    });
+  });
+
+  test("loads exactly one page with twelve products", async () => {
+    const requests: Array<{ operation: string; request: unknown }> = [];
+    const product = {
+      calculatedPrice: { listPrice: null, unitPrice: 799 },
+      id: "product-id",
+      name: "Sessel Nara",
+      translated: { name: "Sessel Nara" },
+    } as ShopwareProduct;
+    const client = {
+      invoke: async (operation: string, request: unknown) => {
+        requests.push({ operation, request });
+
+        if (operation === "readContext get /context") {
+          return {
+            data: {
+              currency: { isoCode: "EUR" },
+              languageInfo: { localeCode: "de-DE" },
+              salesChannel: { navigationCategoryId: "root-category-id" },
+            },
+          };
+        }
+
+        return {
+          data: {
+            aggregations: {
+              price: { max: 1200, min: 100 },
+            },
+            elements: [product],
+            limit: 12,
+            page: 2,
+            total: 48,
+          },
+        };
+      },
+    } as unknown as Parameters<typeof getShopwareProductListingPage>[0];
+
+    const listing = await getShopwareProductListingPage(client, {
+      categoryIds: ["category-id"],
+      companyIds: ["manufacturer-id"],
+      maximumPrice: 1000,
+      minimumPrice: 100,
+      page: 2,
+      propertyIds: ["property-id"],
+      sort: "price-ascending",
+    });
+
+    expect(listing.pagination).toEqual({
+      currentPage: 2,
+      pageSize: 12,
+      totalPages: 4,
+      totalProducts: 48,
+    });
+    expect(listing.products).toHaveLength(1);
+    expect(requests).toHaveLength(2);
+    expect(requests[1]?.request).toMatchObject({
+      body: {
+        limit: 12,
+        manufacturer: "manufacturer-id",
+        "max-price": 1000,
+        "min-price": 100,
+        order: "price-asc",
+        page: 2,
+        "post-filter": [
+          {
+            field: "categories.id",
+            type: "equalsAny",
+            value: "category-id",
+          },
+        ],
+        properties: "property-id",
+      },
+      pathParams: { categoryId: "root-category-id" },
     });
   });
 });

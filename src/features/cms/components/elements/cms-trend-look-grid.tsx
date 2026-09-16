@@ -49,7 +49,7 @@ export function CmsTrendLookGrid({ slot }: CmsSlotComponentProps) {
             <article className="group relative isolate size-full overflow-hidden rounded-2xl bg-muted">
               <Image
                 alt={card.image.alt}
-                className="object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.04]"
+                className="object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.035]"
                 fill
                 sizes={
                   index === 0
@@ -77,7 +77,7 @@ export function CmsTrendLookGrid({ slot }: CmsSlotComponentProps) {
                     </p>
                   )}
                 </div>
-                <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-white text-foreground transition-transform motion-safe:group-hover:-translate-y-1 motion-safe:group-hover:translate-x-1">
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-white text-foreground transition-transform duration-300 motion-safe:group-hover:translate-x-1">
                   <ArrowUpRight aria-hidden="true" className="size-5" />
                 </span>
               </div>

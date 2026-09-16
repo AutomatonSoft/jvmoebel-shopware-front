@@ -115,12 +115,12 @@ export function ShopProductResults({
           <span className="mb-4 flex size-12 items-center justify-center rounded-full bg-muted">
             <Sparkles className="size-5 text-primary" />
           </span>
-          <h2 className="text-lg font-semibold">No matching products</h2>
+          <h2 className="text-lg font-semibold">Keine passenden Produkte</h2>
           <p className="mt-2 max-w-sm text-sm leading-6 text-muted-foreground">
-            Try removing one or more filters to see more furniture.
+            Entfernen Sie einen oder mehrere Filter, um weitere Möbel zu sehen.
           </p>
           <Button className="mt-5" onClick={onClearFilters} variant="outline">
-            Clear filters
+            Filter löschen
           </Button>
         </div>
       )}
@@ -133,7 +133,7 @@ export function ShopProductResults({
         >
           <div className="sticky top-[45dvh] mx-auto flex w-fit items-center gap-3 rounded-full border bg-card px-5 py-3 text-sm font-semibold shadow-xl">
             <LoaderCircle className="size-5 animate-spin text-primary" />
-            Updating products...
+            Produkte werden aktualisiert...
           </div>
         </div>
       )}

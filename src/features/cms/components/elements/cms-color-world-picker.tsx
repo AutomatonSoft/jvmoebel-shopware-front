@@ -45,7 +45,7 @@ export function CmsColorWorldPicker({ slot }: CmsSlotComponentProps) {
               <span className="relative block aspect-[4/5] overflow-hidden rounded-xl bg-muted">
                 <Image
                   alt={color.image.alt}
-                  className="object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.04]"
+                  className="object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.035]"
                   fill
                   sizes="(max-width: 640px) 76vw, (max-width: 1024px) 40vw, 25vw"
                   src={color.image.url}
@@ -62,7 +62,7 @@ export function CmsColorWorldPicker({ slot }: CmsSlotComponentProps) {
                 </strong>
                 <ArrowRight
                   aria-hidden="true"
-                  className="size-4 text-primary transition-transform motion-safe:group-hover:translate-x-1"
+                  className="size-4 text-primary transition-transform duration-300 motion-safe:group-hover:translate-x-1"
                 />
               </span>
             </CmsLink>

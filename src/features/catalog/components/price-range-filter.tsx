@@ -30,6 +30,9 @@ export function PriceRangeFilter({
   const [maximumPriceDraft, setMaximumPriceDraft] = useState<string | null>(
     null,
   );
+  const [priceRangeDraft, setPriceRangeDraft] = useState<
+    readonly [number, number] | null
+  >(null);
 
   function commitMinimumPrice() {
     if (minimumPriceDraft === null) {
@@ -77,7 +80,7 @@ export function PriceRangeFilter({
     <div>
       {minimumPriceBound < maximumPriceBound && (
         <Slider
-          aria-label="Price range"
+          aria-label="Preisbereich"
           className="mb-5 py-2"
           max={maximumPriceBound}
           min={minimumPriceBound}
@@ -88,17 +91,25 @@ export function PriceRangeFilter({
 
             setMinimumPriceDraft(null);
             setMaximumPriceDraft(null);
+            setPriceRangeDraft([value[0], value[1]]);
+          }}
+          onValueCommitted={(value) => {
+            if (!Array.isArray(value) || value.length < 2) {
+              return;
+            }
+
+            setPriceRangeDraft(null);
             onPriceRangeChange([value[0], value[1]]);
           }}
           step={10}
           thumbCollisionBehavior="none"
-          value={[minimumPrice, maximumPrice]}
+          value={priceRangeDraft ?? [minimumPrice, maximumPrice]}
         />
       )}
 
       <div className="grid grid-cols-2 gap-3">
         <label>
-          <span className="mb-2 block text-xs text-muted-foreground">From</span>
+          <span className="mb-2 block text-xs text-muted-foreground">Von</span>
           <Input
             className="h-10 bg-background text-sm"
             max={maximumPrice}
@@ -114,7 +125,7 @@ export function PriceRangeFilter({
           />
         </label>
         <label>
-          <span className="mb-2 block text-xs text-muted-foreground">To</span>
+          <span className="mb-2 block text-xs text-muted-foreground">Bis</span>
           <Input
             className="h-10 bg-background text-sm"
             max={maximumPriceBound}

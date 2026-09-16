@@ -39,13 +39,13 @@ export function CmsChipRail({ slot }: CmsSlotComponentProps) {
           {chips.map((chip) => (
             <li className="shrink-0 snap-start" key={chip.id}>
               <CmsLink
-                className="group inline-flex min-h-12 items-center gap-3 rounded-full border bg-card px-5 text-sm font-semibold shadow-[0_10px_30px_-24px_rgba(21,21,19,0.65)] transition-[background-color,border-color,transform] hover:border-primary/40 hover:bg-accent focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:outline-none motion-safe:hover:-translate-y-0.5"
+                className="group inline-flex min-h-12 items-center gap-3 rounded-full border bg-card px-5 text-sm font-semibold shadow-[0_10px_30px_-24px_rgba(21,21,19,0.65)] transition-[background-color,border-color,box-shadow] duration-300 hover:border-primary/40 hover:bg-accent hover:shadow-[0_14px_34px_-26px_rgba(21,21,19,0.6)] focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:outline-none"
                 href={chip.url}
               >
                 {chip.label}
                 <ArrowRight
                   aria-hidden="true"
-                  className="size-4 text-primary transition-transform motion-safe:group-hover:translate-x-1"
+                  className="size-4 text-primary transition-transform duration-300 motion-safe:group-hover:translate-x-1"
                 />
               </CmsLink>
             </li>

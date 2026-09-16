@@ -16,14 +16,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useCatalogState } from "@/features/catalog/hooks/use-catalog-state";
+import { useLocalCatalogState } from "@/features/catalog/hooks/use-local-catalog-state";
 import type { ProductFilterOption } from "@/features/catalog/model/filter-options";
 import type { ShopProductSort } from "@/features/catalog/model/filter-products";
 import type { ShopProductListing } from "@/features/catalog/model/product-listing";
+import type { ShopProductListingPage } from "@/features/catalog/model/product-listing-page";
 
 export type ShopCatalogProps = {
   hideHeader?: boolean;
-  initialCategory?: Pick<ProductFilterOption, "label" | "value">;
   isLoading?: boolean;
+  initialCategory?: Pick<ProductFilterOption, "label" | "value">;
   listing: ShopProductListing;
 };
 
@@ -33,29 +35,73 @@ export function ShopCatalog({
   isLoading = false,
   listing,
 }: ShopCatalogProps) {
+  const catalogState = useLocalCatalogState(listing.products, initialCategory);
+
+  return (
+    <ShopCatalogContent
+      catalogState={catalogState}
+      hideHeader={hideHeader}
+      isLoading={isLoading}
+      listing={listing}
+    />
+  );
+}
+
+export function ShopProductListingCatalog({
+  hideHeader = false,
+  isLoading = false,
+  listing,
+}: Omit<ShopCatalogProps, "initialCategory" | "listing"> & {
+  listing: ShopProductListingPage;
+}) {
+  const catalogState = useCatalogState(listing);
+
+  return (
+    <ShopCatalogContent
+      catalogState={catalogState}
+      hideHeader={hideHeader}
+      isLoading={isLoading}
+      listing={listing}
+    />
+  );
+}
+
+function ShopCatalogContent({
+  catalogState,
+  hideHeader,
+  isLoading,
+  listing,
+}: {
+  catalogState: ReturnType<typeof useCatalogState>;
+  hideHeader: boolean;
+  isLoading: boolean;
+  listing: ShopProductListing;
+}) {
   const {
     clearFilters,
     filterPanelProps,
+    isLoading: isCatalogLoading,
     paginationProps,
     products,
     setSort,
     sort,
-  } = useCatalogState(listing.products, initialCategory);
+  } = catalogState;
   const { activeFilterCount } = filterPanelProps;
+  const loading = isLoading || isCatalogLoading;
 
   return (
     <Container className="pb-20 sm:pb-28">
       {!hideHeader && (
         <>
           <nav
-            aria-label="Breadcrumb"
+            aria-label="Navigationspfad"
             className="flex items-center gap-2.5 pt-6 text-[0.625rem] text-muted-foreground"
           >
             <Link className="transition-colors hover:text-primary" href="/">
-              Home
+              Startseite
             </Link>
             <span aria-hidden="true">/</span>
-            <strong className="font-medium text-foreground">Shop</strong>
+            <strong className="font-medium text-foreground">Sortiment</strong>
           </nav>
 
           <header className="border-b pt-9 pb-6 sm:flex sm:items-end sm:justify-between sm:gap-8">
@@ -79,7 +125,7 @@ export function ShopCatalog({
           <ProductFilterPanel {...filterPanelProps} />
         </aside>
 
-        <section aria-label="Product results" className="min-w-0">
+        <section aria-label="Produktliste" className="min-w-0">
           <div className="mb-6 flex items-center justify-between gap-3">
             <span className="text-xs font-medium text-muted-foreground">
               {paginationProps.totalProducts} Produkte
@@ -91,7 +137,7 @@ export function ShopCatalog({
                 }
               >
                 <SlidersHorizontal className="size-4" />
-                Filters
+                Filter
                 {activeFilterCount > 0 && (
                   <span className="flex size-5 items-center justify-center rounded-full bg-primary text-[0.625rem] font-bold text-primary-foreground">
                     {activeFilterCount}
@@ -105,14 +151,14 @@ export function ShopCatalog({
                     <div className="flex items-start justify-between gap-4 border-b px-5 py-5">
                       <div>
                         <Dialog.Title className="text-2xl font-semibold tracking-tight">
-                          Filters
+                          Filter
                         </Dialog.Title>
                         <Dialog.Description className="mt-1 text-sm text-muted-foreground">
-                          Refine the furniture collection.
+                          Möbelkollektion eingrenzen.
                         </Dialog.Description>
                       </div>
                       <Dialog.Close
-                        aria-label="Close filters"
+                        aria-label="Filter schließen"
                         render={
                           <Button
                             className="rounded-full"
@@ -132,10 +178,10 @@ export function ShopCatalog({
                       <Dialog.Close
                         render={<Button className="w-full" size="lg" />}
                       >
-                        Show {paginationProps.totalProducts}{" "}
+                        {paginationProps.totalProducts}{" "}
                         {paginationProps.totalProducts === 1
-                          ? "product"
-                          : "products"}
+                          ? "Produkt anzeigen"
+                          : "Produkte anzeigen"}
                       </Dialog.Close>
                     </div>
                   </Dialog.Popup>
@@ -145,14 +191,14 @@ export function ShopCatalog({
 
             <div className="ml-auto flex items-center gap-2 text-xs">
               <span className="hidden text-muted-foreground sm:inline">
-                Sort by
+                Sortieren nach
               </span>
               <Select
                 onValueChange={(value) => setSort(value as ShopProductSort)}
                 value={sort}
               >
                 <SelectTrigger
-                  aria-label="Sort products"
+                  aria-label="Produkte sortieren"
                   className="h-10 min-w-40 cursor-pointer bg-card px-3 text-xs shadow-xs transition-[border-color,box-shadow,background-color] hover:border-primary/60 hover:bg-accent/30 data-popup-open:border-primary data-popup-open:ring-3 data-popup-open:ring-primary/15"
                 >
                   <SelectValue />
@@ -166,31 +212,31 @@ export function ShopCatalog({
                     className="cursor-pointer py-2 text-xs"
                     value="featured"
                   >
-                    Featured
+                    Empfohlen
                   </SelectItem>
                   <SelectItem
                     className="cursor-pointer py-2 text-xs"
                     value="newest"
                   >
-                    Newest
+                    Neuheiten
                   </SelectItem>
                   <SelectItem
                     className="cursor-pointer py-2 text-xs"
                     value="price-ascending"
                   >
-                    Price: low to high
+                    Preis: aufsteigend
                   </SelectItem>
                   <SelectItem
                     className="cursor-pointer py-2 text-xs"
                     value="price-descending"
                   >
-                    Price: high to low
+                    Preis: absteigend
                   </SelectItem>
                   <SelectItem
                     className="cursor-pointer py-2 text-xs"
                     value="rating"
                   >
-                    Best rated
+                    Beste Bewertung
                   </SelectItem>
                 </SelectContent>
               </Select>
@@ -199,7 +245,7 @@ export function ShopCatalog({
 
           <ShopProductResults
             currency={listing.currency}
-            isLoading={isLoading}
+            isLoading={loading}
             locale={listing.locale}
             onClearFilters={clearFilters}
             paginationProps={paginationProps}

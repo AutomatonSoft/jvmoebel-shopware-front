@@ -34,7 +34,7 @@ export function getShopwarePlainText(value: string) {
     .trim();
 }
 
-function getTranslatedName(value: {
+export function getShopwareTranslatedName(value: {
   name?: string | null;
   translated?: { name?: string | null };
 }) {
@@ -76,7 +76,7 @@ function getCategory(product: ShopwareProduct) {
   })[0];
 
   return {
-    label: category ? getTranslatedName(category) : "Alle Produkte",
+    label: category ? getShopwareTranslatedName(category) : "Alle Produkte",
     value: category?.id ?? "all-products",
   };
 }
@@ -132,8 +132,8 @@ function getAttributes(product: ShopwareProduct): ShopProductAttributeGroup[] {
   >();
 
   for (const property of product.properties ?? []) {
-    const groupLabel = getTranslatedName(property.group);
-    const optionLabel = getTranslatedName(property);
+    const groupLabel = getShopwareTranslatedName(property.group);
+    const optionLabel = getShopwareTranslatedName(property);
 
     if (!groupLabel || !optionLabel) {
       continue;
@@ -167,7 +167,7 @@ function getColors(product: ShopwareProduct): ShopProductColor[] {
     "grundfarbe",
   ]).flatMap((property) => {
     const hex = getPropertyHex(property);
-    const label = getTranslatedName(property);
+    const label = getShopwareTranslatedName(property);
 
     return hex && /^#[0-9a-f]{3,8}$/i.test(hex) && label
       ? [{ hex, label, value: property.id }]
@@ -188,7 +188,7 @@ function getMaterial(product: ShopwareProduct) {
     .map((groupName) => getProperties(product, [groupName])[0])
     .find(Boolean);
 
-  return material ? getTranslatedName(material) : "Nicht angegeben";
+  return material ? getShopwareTranslatedName(material) : "Nicht angegeben";
 }
 
 function getSize(value: string): ShopProductSize | undefined {
@@ -218,7 +218,7 @@ function getSize(value: string): ShopProductSize | undefined {
 function getSizes(product: ShopwareProduct): ShopProductSize[] {
   return getProperties(product, ["grosse", "groesse", "size"]).flatMap(
     (property) => {
-      const size = getSize(getTranslatedName(property));
+      const size = getSize(getShopwareTranslatedName(property));
 
       return size ? [size] : [];
     },
@@ -229,10 +229,10 @@ export function mapShopwareProduct(
   product: ShopwareProduct,
   index: number,
 ): ShopProduct {
-  const name = getTranslatedName(product) || "Produkt";
+  const name = getShopwareTranslatedName(product) || "Produkt";
   const category = getCategory(product);
   const manufacturer = product.manufacturer
-    ? getTranslatedName(product.manufacturer)
+    ? getShopwareTranslatedName(product.manufacturer)
     : "";
   const previousPrice = product.calculatedPrice.listPrice?.price;
   const rating = product.ratingAverage;
@@ -270,15 +270,11 @@ export function mapShopwareProduct(
   };
 }
 
-export function mapShopwareProductListing({
+export function createShopwareProductListing({
   currency,
   locale,
   products,
-}: ShopwareProductListingInput): ShopProductListing | null {
-  if (products.length === 0) {
-    return null;
-  }
-
+}: ShopwareProductListingInput): ShopProductListing {
   return {
     currency,
     description:
@@ -288,4 +284,10 @@ export function mapShopwareProductListing({
     products: products.map(mapShopwareProduct),
     title: "Möbelkollektion",
   };
+}
+
+export function mapShopwareProductListing(
+  input: ShopwareProductListingInput,
+): ShopProductListing | null {
+  return input.products.length > 0 ? createShopwareProductListing(input) : null;
 }
