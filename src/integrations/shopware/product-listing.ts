@@ -3,11 +3,17 @@ import "server-only";
 import type { components } from "@shopware/api-client/store-api-types";
 
 import type { ShopProductListing } from "@/features/catalog/model/product-listing";
+import type {
+  ShopProductListingPage,
+  ShopProductPageRequest,
+} from "@/features/catalog/model/product-listing-page";
+import { shopProductPageSize } from "@/features/catalog/model/product-listing-page";
 import type { ShopwareClient } from "@/integrations/shopware/client";
 import { getShopwareContext } from "@/integrations/shopware/context";
 import { mapShopwareProductListing } from "@/integrations/shopware/mappers/product-listing";
+import { mapShopwareProductListingPage } from "@/integrations/shopware/mappers/product-listing-page";
 
-const productListingPageSize = 100;
+const completeProductListingPageSize = 100;
 const productListingAssociations = {
   categories: {},
   cover: { associations: { media: {} } },
@@ -35,9 +41,9 @@ const productListingIncludes = {
     "seoUrls",
     "translated",
   ],
-  product_manufacturer: ["name", "translated"],
+  product_manufacturer: ["id", "name", "translated"],
   product_media: ["media"],
-  property_group: ["id", "name", "translated"],
+  property_group: ["id", "name", "options", "translated"],
   property_group_option: [
     "colorHexCode",
     "group",
@@ -48,8 +54,34 @@ const productListingIncludes = {
   ],
   seo_url: ["isCanonical", "isDeleted", "routeName", "seoPathInfo"],
 } satisfies components["schemas"]["Includes"];
+const productListingAggregations = [
+  {
+    field: "categories.id",
+    limit: 100,
+    name: "categoryCounts",
+    type: "terms",
+  },
+  {
+    definition: "category",
+    field: "categories.id",
+    name: "categoryEntities",
+    type: "entity",
+  },
+  {
+    field: "manufacturerId",
+    limit: 100,
+    name: "manufacturerCounts",
+    type: "terms",
+  },
+  {
+    field: "properties.id",
+    limit: 1000,
+    name: "propertyCounts",
+    type: "terms",
+  },
+] satisfies components["schemas"]["Aggregation"][];
 
-async function getShopwareProductListingPage(
+async function requestCompleteProductListingPage(
   client: ShopwareClient,
   categoryId: string,
   page: number,
@@ -60,7 +92,7 @@ async function getShopwareProductListingPage(
       body: {
         associations: productListingAssociations,
         includes: productListingIncludes,
-        limit: productListingPageSize,
+        limit: completeProductListingPageSize,
         page,
       },
       fetchOptions: { cache: "no-store" },
@@ -81,7 +113,7 @@ export async function getShopwareProductListing(
   let total: number | undefined;
 
   do {
-    const response = await getShopwareProductListingPage(
+    const response = await requestCompleteProductListingPage(
       client,
       categoryId,
       page,
@@ -91,7 +123,7 @@ export async function getShopwareProductListing(
     products.push(...pageProducts);
     total = response.data.total;
 
-    if (pageProducts.length < productListingPageSize) {
+    if (pageProducts.length < completeProductListingPageSize) {
       break;
     }
 
@@ -103,4 +135,70 @@ export async function getShopwareProductListing(
     locale: context.languageInfo.localeCode || "de-DE",
     products,
   });
+}
+
+function getShopwareProductSort(sort: ShopProductPageRequest["sort"]) {
+  switch (sort) {
+    case "newest":
+      return { sort: [{ field: "createdAt", order: "DESC" as const }] };
+    case "price-ascending":
+      return { order: "price-asc" };
+    case "price-descending":
+      return { order: "price-desc" };
+    case "rating":
+      return { sort: [{ field: "ratingAverage", order: "DESC" as const }] };
+    default:
+      return {};
+  }
+}
+
+export async function getShopwareProductListingPage(
+  client: ShopwareClient,
+  request: ShopProductPageRequest,
+): Promise<ShopProductListingPage> {
+  const context = await getShopwareContext(client);
+  const categoryId = context.salesChannel.navigationCategoryId;
+  const categoryFilter =
+    request.categoryIds.length > 0
+      ? [
+          {
+            field: "categories.id",
+            type: "equalsAny" as const,
+            value: request.categoryIds.join("|"),
+          },
+        ]
+      : undefined;
+  const response = await client.invoke(
+    "readProductListing post /product-listing/{categoryId}",
+    {
+      body: {
+        ...getShopwareProductSort(request.sort),
+        aggregations: productListingAggregations,
+        associations: productListingAssociations,
+        includes: productListingIncludes,
+        limit: shopProductPageSize,
+        manufacturer:
+          request.companyIds.length > 0
+            ? request.companyIds.join("|")
+            : undefined,
+        "max-price": request.maximumPrice,
+        "min-price": request.minimumPrice,
+        page: request.page,
+        "post-filter": categoryFilter,
+        properties:
+          request.propertyIds.length > 0
+            ? request.propertyIds.join("|")
+            : undefined,
+      },
+      fetchOptions: { cache: "no-store" },
+      pathParams: { categoryId },
+    },
+  );
+
+  return mapShopwareProductListingPage(
+    response.data,
+    request,
+    context.currency?.isoCode || "EUR",
+    context.languageInfo.localeCode || "de-DE",
+  );
 }

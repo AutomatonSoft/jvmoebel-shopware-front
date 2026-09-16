@@ -28,8 +28,8 @@ export type ProductFilterPanelProps = {
   onToggleCategory: (value: string) => void;
   onToggleCompany: (value: string) => void;
   selectedAttributes: Readonly<Record<string, readonly string[]>>;
-  selectedCategories: string[];
-  selectedCompanies: string[];
+  selectedCategories: readonly string[];
+  selectedCompanies: readonly string[];
 };
 
 const filterPreviewLimit = 8;
@@ -135,13 +135,13 @@ function ExpandableFilterOptions<TOption>({
       {expanded && getSearchText && (
         <label className="relative block">
           <span className="sr-only">
-            {searchPlaceholder ?? "Search options"}
+            {searchPlaceholder ?? "Optionen durchsuchen"}
           </span>
           <Search className="pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2 text-muted-foreground" />
           <Input
             className="h-9 bg-background pr-3 pl-9 text-xs"
             onChange={(event) => setQuery(event.target.value)}
-            placeholder={searchPlaceholder ?? "Search options"}
+            placeholder={searchPlaceholder ?? "Optionen durchsuchen"}
             type="search"
             value={query}
           />
@@ -156,7 +156,7 @@ function ExpandableFilterOptions<TOption>({
         ))}
         {visibleOptions.length === 0 && (
           <p className="py-2 text-xs text-muted-foreground">
-            No options found.
+            Keine Optionen gefunden.
           </p>
         )}
       </div>
@@ -168,7 +168,7 @@ function ExpandableFilterOptions<TOption>({
           onClick={toggleExpanded}
           type="button"
         >
-          {expanded ? "Show less" : `Show all (${options.length})`}
+          {expanded ? "Weniger anzeigen" : `Alle anzeigen (${options.length})`}
         </button>
       )}
     </>
@@ -198,18 +198,18 @@ export function ProductFilterPanel({
   return (
     <div>
       <div className="flex items-center justify-between pb-5">
-        <strong className="text-lg">Filter by</strong>
+        <strong className="text-lg">Filtern nach</strong>
         <button
           className="cursor-pointer text-xs text-muted-foreground underline underline-offset-4 transition-colors hover:text-primary disabled:cursor-default disabled:opacity-40"
           disabled={activeFilterCount === 0}
           onClick={onClear}
           type="button"
         >
-          Clear all
+          Alle löschen
         </button>
       </div>
 
-      <FilterGroup title="Price">
+      <FilterGroup title="Preis">
         <PriceRangeFilter
           maximumPrice={maximumPrice}
           maximumPriceBound={maximumPriceBound}
@@ -221,7 +221,7 @@ export function ProductFilterPanel({
         />
       </FilterGroup>
 
-      <FilterGroup title="Company">
+      <FilterGroup title="Hersteller">
         <ExpandableFilterOptions
           getKey={(option) => option.value}
           getSearchText={(option) => option.label}
@@ -238,11 +238,11 @@ export function ProductFilterPanel({
               onChange={() => onToggleCompany(option.value)}
             />
           )}
-          searchPlaceholder="Search companies"
+          searchPlaceholder="Hersteller suchen"
         />
       </FilterGroup>
 
-      <FilterGroup title="Category">
+      <FilterGroup title="Kategorie">
         <ExpandableFilterOptions
           getKey={(option) => option.value}
           layoutClassName="space-y-3"
@@ -283,7 +283,7 @@ export function ProductFilterPanel({
                 swatch={option.hex}
               />
             )}
-            searchPlaceholder={`Search ${group.label}`}
+            searchPlaceholder={`${group.label} durchsuchen`}
           />
         </FilterGroup>
       ))}
