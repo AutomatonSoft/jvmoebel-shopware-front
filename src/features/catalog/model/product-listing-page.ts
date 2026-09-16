@@ -1,0 +1,36 @@
+import type { ShopProductFilterOptions } from "@/features/catalog/model/filter-options";
+import type {
+  ShopProductFilters,
+  ShopProductSort,
+} from "@/features/catalog/model/filter-products";
+import { productsPerPage } from "@/features/catalog/model/paginate-products";
+import type { ShopProductListing } from "@/features/catalog/model/product-listing";
+
+export const shopProductPageSize = productsPerPage;
+
+export type ShopProductPageRequest = Readonly<{
+  categoryIds: readonly string[];
+  companyIds: readonly string[];
+  maximumPrice?: number;
+  minimumPrice?: number;
+  page: number;
+  propertyIds: readonly string[];
+  sort: ShopProductSort;
+}>;
+
+export type ShopProductListingPage = ShopProductListing &
+  Readonly<{
+    filterOptions: ShopProductFilterOptions;
+    filters: ShopProductFilters;
+    pagination: Readonly<{
+      currentPage: number;
+      pageSize: number;
+      totalPages: number;
+      totalProducts: number;
+    }>;
+    priceRange: Readonly<{
+      maximum: number;
+      minimum: number;
+    }>;
+    sort: ShopProductSort;
+  }>;

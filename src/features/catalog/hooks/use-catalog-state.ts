@@ -1,74 +1,43 @@
 "use client";
 
-import { useState, type Dispatch, type SetStateAction } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import type { Route } from "next";
+import { useTransition } from "react";
 
-import { buildShopProductFilterOptions } from "@/features/catalog/model/filter-options";
-import type { ProductFilterOption } from "@/features/catalog/model/filter-options";
-import {
-  filterAndSortShopProducts,
-  type ShopProductSort,
-} from "@/features/catalog/model/filter-products";
-import {
-  paginateProducts,
-  productsPerPage,
-} from "@/features/catalog/model/paginate-products";
-import type { ShopProduct } from "@/features/catalog/model/product-listing";
+import type { ShopProductSort } from "@/features/catalog/model/filter-products";
+import type { ShopProductListingPage } from "@/features/catalog/model/product-listing-page";
 
-function toggleValue<TValue extends string>(
-  value: TValue,
-  setValues: Dispatch<SetStateAction<TValue[]>>,
-  resetPage: () => void,
-) {
-  setValues((values) =>
-    values.includes(value)
-      ? values.filter((selectedValue) => selectedValue !== value)
-      : [...values, value],
-  );
-  resetPage();
+type QueryValue = string | readonly string[] | undefined;
+
+function toggleValue(value: string, values: readonly string[]) {
+  return values.includes(value)
+    ? values.filter((selectedValue) => selectedValue !== value)
+    : [...values, value];
 }
 
-export function useCatalogState(
-  products: readonly ShopProduct[],
-  initialCategory?: Pick<ProductFilterOption, "label" | "value">,
+function setQueryValue(
+  parameters: URLSearchParams,
+  key: string,
+  value: QueryValue,
 ) {
-  const prices = products.map((product) => product.unitPrice);
-  const minimumPriceBound = Math.floor(Math.min(...prices) / 10) * 10;
-  const maximumPriceBound = Math.ceil(Math.max(...prices) / 10) * 10;
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(() =>
-    initialCategory ? [initialCategory.value] : [],
-  );
-  const [selectedAttributes, setSelectedAttributes] = useState<
-    Record<string, string[]>
-  >({});
-  const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
-  const [minimumPrice, setMinimumPrice] = useState(minimumPriceBound);
-  const [maximumPrice, setMaximumPrice] = useState(maximumPriceBound);
-  const [sort, setSort] = useState<ShopProductSort>("featured");
-  const [currentPage, setCurrentPage] = useState(1);
-  const filters = {
-    attributes: selectedAttributes,
-    categories: selectedCategories,
-    companies: selectedCompanies,
-    maximumPrice,
-    minimumPrice,
-  };
-  const {
-    attributeGroups,
-    categories: productCategories,
-    companies,
-  } = buildShopProductFilterOptions(products, filters);
-  const categoryCount =
-    productCategories.find(
-      (category) => category.value === initialCategory?.value,
-    )?.count ?? 0;
-  const categories = initialCategory
-    ? [
-        { ...initialCategory, count: categoryCount },
-        ...productCategories.filter(
-          (category) => category.value !== initialCategory.value,
-        ),
-      ]
-    : productCategories;
+  parameters.delete(key);
+
+  if (typeof value === "string") {
+    parameters.set(key, value);
+  } else if (value) {
+    value.forEach((entry) => parameters.append(key, entry));
+  }
+}
+
+export function useCatalogState(listing: ShopProductListingPage) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParameters = useSearchParams();
+  const [isLoading, startTransition] = useTransition();
+  const { filterOptions, filters, pagination, priceRange, sort } = listing;
+  const selectedAttributes = filters.attributes ?? {};
+  const selectedCategories = filters.categories;
+  const selectedCompanies = filters.companies ?? [];
   const activeFilterCount =
     selectedCategories.length +
     selectedCompanies.length +
@@ -76,104 +45,131 @@ export function useCatalogState(
       (count, values) => count + values.length,
       0,
     ) +
-    (minimumPrice !== minimumPriceBound || maximumPrice !== maximumPriceBound
+    (filters.minimumPrice !== priceRange.minimum ||
+    filters.maximumPrice !== priceRange.maximum
       ? 1
       : 0);
-  const filteredProducts = filterAndSortShopProducts(products, filters, sort);
-  const pagination = paginateProducts(filteredProducts, currentPage);
 
-  function resetPage() {
-    setCurrentPage(1);
+  function navigate(updates: Readonly<Record<string, QueryValue>>) {
+    const parameters = new URLSearchParams(searchParameters.toString());
+
+    Object.entries(updates).forEach(([key, value]) =>
+      setQueryValue(parameters, key, value),
+    );
+
+    const query = parameters.toString();
+
+    startTransition(() => {
+      router.push((query ? `${pathname}?${query}` : pathname) as Route, {
+        scroll: false,
+      });
+    });
   }
 
-  function clearFilters() {
-    setSelectedCategories([]);
-    setSelectedAttributes({});
-    setSelectedCompanies([]);
-    setMinimumPrice(minimumPriceBound);
-    setMaximumPrice(maximumPriceBound);
-    resetPage();
+  function resetPage(updates: Readonly<Record<string, QueryValue>>) {
+    navigate({ ...updates, page: undefined });
   }
 
-  function changeSort(value: ShopProductSort) {
-    setSort(value);
-    resetPage();
+  function getPriceParameter(value: number, bound: number) {
+    return value === bound ? undefined : String(value);
   }
 
   return {
-    clearFilters,
+    clearFilters: () =>
+      resetPage({
+        category: undefined,
+        categoryLabel: undefined,
+        manufacturer: undefined,
+        maxPrice: undefined,
+        minPrice: undefined,
+        property: undefined,
+      }),
     filterPanelProps: {
       activeFilterCount,
-      attributeGroups,
-      categories,
-      companies,
-      maximumPrice,
-      maximumPriceBound,
-      minimumPrice,
-      minimumPriceBound,
-      onClear: clearFilters,
+      attributeGroups: filterOptions.attributeGroups,
+      categories: filterOptions.categories,
+      companies: filterOptions.companies,
+      maximumPrice: filters.maximumPrice,
+      maximumPriceBound: priceRange.maximum,
+      minimumPrice: filters.minimumPrice,
+      minimumPriceBound: priceRange.minimum,
+      onClear: () =>
+        resetPage({
+          category: undefined,
+          categoryLabel: undefined,
+          manufacturer: undefined,
+          maxPrice: undefined,
+          minPrice: undefined,
+          property: undefined,
+        }),
       onMaximumPriceChange: (value: number) => {
-        setMaximumPrice(
-          Math.max(minimumPrice, Math.min(value, maximumPriceBound)),
+        const maximumPrice = Math.max(
+          filters.minimumPrice,
+          Math.min(value, priceRange.maximum),
         );
-        resetPage();
+        resetPage({
+          maxPrice: getPriceParameter(maximumPrice, priceRange.maximum),
+        });
       },
       onMinimumPriceChange: (value: number) => {
-        setMinimumPrice(
-          Math.min(maximumPrice, Math.max(value, minimumPriceBound)),
+        const minimumPrice = Math.min(
+          filters.maximumPrice,
+          Math.max(value, priceRange.minimum),
         );
-        resetPage();
+        resetPage({
+          minPrice: getPriceParameter(minimumPrice, priceRange.minimum),
+        });
       },
       onPriceRangeChange: (value: readonly [number, number]) => {
-        const nextMinimumPrice = Math.max(
-          minimumPriceBound,
-          Math.min(value[0], maximumPriceBound),
+        const minimumPrice = Math.max(
+          priceRange.minimum,
+          Math.min(value[0], priceRange.maximum),
         );
-        const nextMaximumPrice = Math.min(
-          maximumPriceBound,
-          Math.max(value[1], nextMinimumPrice),
+        const maximumPrice = Math.min(
+          priceRange.maximum,
+          Math.max(value[1], minimumPrice),
+        );
+        resetPage({
+          maxPrice: getPriceParameter(maximumPrice, priceRange.maximum),
+          minPrice: getPriceParameter(minimumPrice, priceRange.minimum),
+        });
+      },
+      onToggleAttribute: (groupId: string, value: string) => {
+        const properties = Object.entries(selectedAttributes).flatMap(
+          ([candidateGroupId, selectedOptions]) =>
+            candidateGroupId === groupId
+              ? toggleValue(value, selectedOptions)
+              : selectedOptions,
         );
 
-        setMinimumPrice(nextMinimumPrice);
-        setMaximumPrice(nextMaximumPrice);
-        resetPage();
+        if (!(groupId in selectedAttributes)) {
+          properties.push(value);
+        }
+
+        resetPage({ property: properties });
       },
       onToggleCategory: (value: string) =>
-        toggleValue(value, setSelectedCategories, resetPage),
-      onToggleAttribute: (groupId: string, value: string) => {
-        setSelectedAttributes((attributes) => {
-          const groupValues = attributes[groupId] ?? [];
-          const nextGroupValues = groupValues.includes(value)
-            ? groupValues.filter((selectedValue) => selectedValue !== value)
-            : [...groupValues, value];
-
-          if (nextGroupValues.length === 0) {
-            const { [groupId]: removedGroup, ...remainingAttributes } =
-              attributes;
-            void removedGroup;
-
-            return remainingAttributes;
-          }
-
-          return { ...attributes, [groupId]: nextGroupValues };
-        });
-        resetPage();
-      },
+        resetPage({
+          category: toggleValue(value, selectedCategories),
+          categoryLabel: undefined,
+        }),
       onToggleCompany: (value: string) =>
-        toggleValue(value, setSelectedCompanies, resetPage),
+        resetPage({
+          manufacturer: toggleValue(value, selectedCompanies),
+        }),
       selectedAttributes,
       selectedCategories,
       selectedCompanies,
     },
+    isLoading,
     paginationProps: {
-      currentPage: pagination.currentPage,
-      onPageChange: setCurrentPage,
-      pageSize: productsPerPage,
-      totalPages: pagination.totalPages,
-      totalProducts: pagination.totalProducts,
+      ...pagination,
+      onPageChange: (page: number) =>
+        navigate({ page: page === 1 ? undefined : String(page) }),
     },
-    products: pagination.products,
-    setSort: changeSort,
+    products: listing.products,
+    setSort: (value: ShopProductSort) =>
+      resetPage({ sort: value === "featured" ? undefined : value }),
     sort,
   };
 }

@@ -67,12 +67,12 @@ export function ProductPagination({
   return (
     <div className="mt-10 flex flex-col items-center gap-4 border-t pt-6 sm:flex-row sm:justify-between">
       <p className="text-xs text-muted-foreground" aria-live="polite">
-        Showing {firstProduct}–{lastProduct} of {totalProducts} products
+        {firstProduct}–{lastProduct} von {totalProducts} Produkten
       </p>
 
-      <nav aria-label="Product pages" className="flex items-center gap-1">
+      <nav aria-label="Produktseiten" className="flex items-center gap-1">
         <Button
-          aria-label="Previous page"
+          aria-label="Vorherige Seite"
           className="size-10 rounded-full"
           disabled={currentPage === 1}
           onClick={() => onPageChange(currentPage - 1)}
@@ -95,7 +95,7 @@ export function ProductPagination({
           ) : (
             <Button
               aria-current={item === currentPage ? "page" : undefined}
-              aria-label={`Page ${item}`}
+              aria-label={`Seite ${item}`}
               className="size-10 rounded-full"
               key={item}
               onClick={() => onPageChange(item)}
@@ -109,7 +109,7 @@ export function ProductPagination({
         )}
 
         <Button
-          aria-label="Next page"
+          aria-label="Nächste Seite"
           className="size-10 rounded-full"
           disabled={currentPage === totalPages}
           onClick={() => onPageChange(currentPage + 1)}

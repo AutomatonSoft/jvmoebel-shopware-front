@@ -40,13 +40,13 @@ export function CmsGuideHubCards({ slot }: CmsSlotComponentProps) {
         {cards.map((card) => (
           <li key={card.id}>
             <CmsLink
-              className="group grid h-full overflow-hidden rounded-2xl border bg-card shadow-[0_18px_45px_-36px_rgba(21,21,19,0.7)] transition-[border-color,transform] hover:border-primary/35 focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:ring-offset-4 focus-visible:outline-none motion-safe:hover:-translate-y-1"
+              className="group grid h-full overflow-hidden rounded-2xl border bg-card shadow-[0_18px_45px_-36px_rgba(21,21,19,0.7)] transition-[border-color,box-shadow] duration-300 hover:border-primary/35 hover:shadow-[0_24px_50px_-38px_rgba(21,21,19,0.65)] focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:ring-offset-4 focus-visible:outline-none"
               href={card.url}
             >
               <span className="relative block aspect-[16/10] overflow-hidden bg-muted">
                 <Image
                   alt={card.image.alt}
-                  className="object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.04]"
+                  className="object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.035]"
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
                   src={card.image.url}
@@ -63,7 +63,7 @@ export function CmsGuideHubCards({ slot }: CmsSlotComponentProps) {
                     </span>
                   )}
                 </span>
-                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary text-primary transition-transform motion-safe:group-hover:-translate-y-0.5 motion-safe:group-hover:translate-x-0.5">
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary text-primary transition-transform duration-300 motion-safe:group-hover:translate-x-1">
                   <ArrowUpRight aria-hidden="true" className="size-5" />
                 </span>
               </span>
