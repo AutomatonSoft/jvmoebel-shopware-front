@@ -9,7 +9,10 @@ function createClient(
       foreignKey: string;
       isCanonical: boolean;
       isDeleted?: boolean;
-      routeName: "frontend.detail.page" | "frontend.navigation.page";
+      routeName:
+        | "frontend.detail.page"
+        | "frontend.landing.page"
+        | "frontend.navigation.page";
       seoPathInfo: string;
     }>
   >,
@@ -71,6 +74,28 @@ describe("resolveShopwareStorefrontRoute", () => {
       entityId: "product-id",
       kind: "product",
       shouldRedirect: true,
+    });
+  });
+
+  test("resolves a Shopware landing page SEO path", async () => {
+    const client = createClient([
+      [
+        {
+          foreignKey: "landing-page-id",
+          isCanonical: true,
+          routeName: "frontend.landing.page",
+          seoPathInfo: "ueber-uns",
+        },
+      ],
+    ]);
+
+    await expect(
+      resolveShopwareStorefrontRoute(client, "/ueber-uns"),
+    ).resolves.toEqual({
+      canonicalPath: "/ueber-uns",
+      entityId: "landing-page-id",
+      kind: "landing-page",
+      shouldRedirect: false,
     });
   });
 });

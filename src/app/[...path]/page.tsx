@@ -4,7 +4,8 @@ import { cache } from "react";
 
 import { CategoryPage } from "@/features/catalog/components/category-page";
 import { ProductDetail } from "@/features/catalog/components/product-detail";
-import { getStorefrontPageByPath } from "@/features/catalog/server/storefront-page";
+import { CmsPageRenderer } from "@/features/cms/components/cms-page-renderer";
+import { getStorefrontPageByPath } from "@/features/storefront-shell/server/storefront-page";
 
 type CategoryRoutePageProps = Readonly<{
   params: Promise<{ path: string[] }>;
@@ -35,6 +36,14 @@ export async function generateMetadata({
     };
   }
 
+  if (result.kind === "landing-page") {
+    return {
+      alternates: { canonical: result.route.canonicalPath },
+      description: result.page.metaDescription,
+      title: result.page.metaTitle || `${result.page.name} | JVMöbel`,
+    };
+  }
+
   const { category } = result.page;
 
   return {
@@ -57,9 +66,17 @@ export default async function CategoryRoutePage({
     permanentRedirect(result.route.canonicalPath as Route);
   }
 
-  return result.kind === "product" ? (
-    <ProductDetail {...result.page} />
-  ) : (
-    <CategoryPage page={result.page} />
-  );
+  if (result.kind === "product") {
+    return <ProductDetail {...result.page} />;
+  }
+
+  if (result.kind === "landing-page") {
+    return (
+      <main className="flex-1">
+        <CmsPageRenderer page={result.page.cmsPage} />
+      </main>
+    );
+  }
+
+  return <CategoryPage page={result.page} />;
 }

@@ -9,7 +9,7 @@ type ShopwareSeoUrl = components["schemas"]["SeoUrl"];
 export type ShopwareStorefrontRoute = Readonly<{
   canonicalPath: string;
   entityId: string;
-  kind: "category" | "product";
+  kind: "category" | "landing-page" | "product";
   shouldRedirect: boolean;
 }>;
 
@@ -28,6 +28,10 @@ function getRouteKind(routeName: string) {
 
   if (routeName === "frontend.detail.page") {
     return "product";
+  }
+
+  if (routeName === "frontend.landing.page") {
+    return "landing-page";
   }
 }
 
