@@ -1,4 +1,5 @@
 import type { ShopProductListing } from "@/features/catalog/model/product-listing";
+import type { CmsPage } from "@/features/cms/model/page";
 import type { StoreNavigationItem } from "@/features/storefront-shell/model/navigation";
 
 export type CategoryBreadcrumb = Readonly<{
@@ -18,5 +19,6 @@ export type ShopCategoryPage = Readonly<{
     name: string;
   }>;
   children: readonly StoreNavigationItem[];
+  cmsPage: CmsPage | null;
   listing: ShopProductListing | null;
 }>;

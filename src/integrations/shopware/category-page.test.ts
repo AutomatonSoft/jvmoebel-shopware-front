@@ -13,6 +13,11 @@ describe("getShopwareCategoryPage", () => {
         if (operation === "readCategory post /category/{navigationId}") {
           return {
             data: {
+              cmsPage: {
+                id: "category-cms-page-id",
+                sections: [],
+                type: "product_list",
+              },
               description: "Möbel &amp; Wohnen",
               id: "category-id",
               name: "Möbel & Wohnen",
@@ -58,6 +63,11 @@ describe("getShopwareCategoryPage", () => {
         name: "Möbel & Wohnen",
       },
       children: [],
+      cmsPage: {
+        id: "category-cms-page-id",
+        sections: [],
+        type: "product_list",
+      },
       listing: null,
     });
     expect(requests).toContainEqual({

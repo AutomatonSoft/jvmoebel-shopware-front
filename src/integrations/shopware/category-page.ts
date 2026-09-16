@@ -7,6 +7,7 @@ import type {
   ShopCategoryPage,
 } from "@/features/catalog/model/category-page";
 import type { ShopwareClient } from "@/integrations/shopware/client";
+import { mapShopwareCmsPage } from "@/integrations/shopware/mappers/cms-page";
 import { getShopwarePlainText } from "@/integrations/shopware/mappers/product-listing";
 import { mapShopwareCategory } from "@/integrations/shopware/mappers/navigation";
 import { getShopwareCategoryChildren } from "@/integrations/shopware/navigation";
@@ -124,6 +125,7 @@ export async function getShopwareCategoryPage(
       name: getCategoryName(category),
     },
     children,
+    cmsPage: category.cmsPage ? mapShopwareCmsPage(category.cmsPage) : null,
     listing,
   };
 }

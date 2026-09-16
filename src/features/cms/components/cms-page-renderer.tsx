@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 
 import { Container } from "@/components/ui/container";
+import type { ShopProductListing } from "@/features/catalog/model/product-listing";
 import { CmsArticleHero } from "@/features/cms/components/elements/cms-article-hero";
 import { CmsAuthorFooter } from "@/features/cms/components/elements/cms-author-footer";
 import { CmsBenefitStrip } from "@/features/cms/components/elements/cms-benefit-strip";
@@ -26,6 +27,7 @@ import { CmsNewsletter } from "@/features/cms/components/elements/cms-newsletter
 import { CmsOfferRail } from "@/features/cms/components/elements/cms-offer-rail";
 import { CmsPageHeader } from "@/features/cms/components/elements/cms-page-header";
 import { CmsProductGrid } from "@/features/cms/components/elements/cms-product-grid";
+import { CmsProductListing } from "@/features/cms/components/elements/cms-product-listing";
 import { CmsPromoBanner } from "@/features/cms/components/elements/cms-promo-banner";
 import { CmsPromoDealTiles } from "@/features/cms/components/elements/cms-promo-deal-tiles";
 import { CmsRelatedLookCards } from "@/features/cms/components/elements/cms-related-look-cards";
@@ -48,8 +50,13 @@ import type {
 import { reportCmsRenderingIssue } from "@/features/cms/server/report-rendering-issue";
 
 export type CmsSlotComponentProps = {
+  renderContext?: CmsPageRenderContext;
   slot: CmsSlot;
 };
+
+export type CmsPageRenderContext = Readonly<{
+  categoryListing?: ShopProductListing | null;
+}>;
 
 type CmsSlotComponent = ComponentType<CmsSlotComponentProps>;
 
@@ -90,15 +97,16 @@ const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {
   "jv-trust-rating": CmsTrustRating,
   "jv-why-jvmoebel": CmsWhyJvmoebel,
   image: CmsImage,
+  "product-listing": CmsProductListing,
   text: CmsText,
   "youtube-video": CmsYoutubeVideo,
 };
 
-function CmsSlotRenderer({ slot }: CmsSlotComponentProps) {
+function CmsSlotRenderer({ renderContext, slot }: CmsSlotComponentProps) {
   const SlotComponent = cmsSlotComponents[slot.type];
 
   if (SlotComponent) {
-    return <SlotComponent slot={slot} />;
+    return <SlotComponent renderContext={renderContext} slot={slot} />;
   }
 
   reportCmsRenderingIssue({
@@ -118,7 +126,13 @@ function CmsSlotRenderer({ slot }: CmsSlotComponentProps) {
   return null;
 }
 
-function CmsBlockRenderer({ block }: { block: CmsBlock }) {
+function CmsBlockRenderer({
+  block,
+  renderContext,
+}: {
+  block: CmsBlock;
+  renderContext?: CmsPageRenderContext;
+}) {
   return (
     <div
       className={block.cssClass || undefined}
@@ -132,18 +146,32 @@ function CmsBlockRenderer({ block }: { block: CmsBlock }) {
       }}
     >
       {block.slots.map((slot) => (
-        <CmsSlotRenderer key={slot.id} slot={slot} />
+        <CmsSlotRenderer
+          key={slot.id}
+          renderContext={renderContext}
+          slot={slot}
+        />
       ))}
     </div>
   );
 }
 
-function CmsSectionRenderer({ section }: { section: CmsSection }) {
+function CmsSectionRenderer({
+  renderContext,
+  section,
+}: {
+  renderContext?: CmsPageRenderContext;
+  section: CmsSection;
+}) {
   const blocks = [...section.blocks].sort(
     (first, second) => first.position - second.position,
   );
   const content = blocks.map((block) => (
-    <CmsBlockRenderer block={block} key={block.id} />
+    <CmsBlockRenderer
+      block={block}
+      key={block.id}
+      renderContext={renderContext}
+    />
   ));
 
   if (section.sizingMode === "boxed") {
@@ -172,7 +200,13 @@ function CmsSectionRenderer({ section }: { section: CmsSection }) {
   );
 }
 
-export function CmsPageRenderer({ page }: { page: CmsPage }) {
+export function CmsPageRenderer({
+  page,
+  renderContext,
+}: {
+  page: CmsPage;
+  renderContext?: CmsPageRenderContext;
+}) {
   const sections = [...page.sections].sort(
     (first, second) => first.position - second.position,
   );
@@ -184,7 +218,11 @@ export function CmsPageRenderer({ page }: { page: CmsPage }) {
       data-cms-page-type={page.type}
     >
       {sections.map((section) => (
-        <CmsSectionRenderer key={section.id} section={section} />
+        <CmsSectionRenderer
+          key={section.id}
+          renderContext={renderContext}
+          section={section}
+        />
       ))}
     </div>
   );

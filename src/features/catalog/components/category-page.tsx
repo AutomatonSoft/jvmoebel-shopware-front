@@ -5,9 +5,10 @@ import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { ShopCatalog } from "@/features/catalog/components/shop-catalog";
 import type { ShopCategoryPage } from "@/features/catalog/model/category-page";
+import { CmsPageRenderer } from "@/features/cms/components/cms-page-renderer";
 
 export function CategoryPage({ page }: { page: ShopCategoryPage }) {
-  const { breadcrumbs, category, children, listing } = page;
+  const { breadcrumbs, category, children, cmsPage, listing } = page;
 
   return (
     <main className="flex-1">
@@ -36,23 +37,25 @@ export function CategoryPage({ page }: { page: ShopCategoryPage }) {
           </strong>
         </nav>
 
-        <header className="border-b pt-9 pb-7 sm:flex sm:items-end sm:justify-between sm:gap-8">
-          <div>
-            <p className="mb-3 flex items-center gap-2 text-[0.625rem] font-semibold tracking-[0.14em] text-muted-foreground uppercase before:block before:size-1.5 before:rounded-full before:bg-primary">
-              Kategorie
-            </p>
-            <h1 className="text-3xl leading-none font-semibold tracking-[-0.04em] text-balance sm:text-4xl">
-              {category.name}
-            </h1>
-          </div>
-          {category.description && (
-            <p className="mt-4 max-w-xl text-sm leading-6 text-muted-foreground sm:mt-0 sm:text-right">
-              {category.description}
-            </p>
-          )}
-        </header>
+        {!cmsPage && (
+          <header className="border-b pt-9 pb-7 sm:flex sm:items-end sm:justify-between sm:gap-8">
+            <div>
+              <p className="mb-3 flex items-center gap-2 text-[0.625rem] font-semibold tracking-[0.14em] text-muted-foreground uppercase before:block before:size-1.5 before:rounded-full before:bg-primary">
+                Kategorie
+              </p>
+              <h1 className="text-3xl leading-none font-semibold tracking-[-0.04em] text-balance sm:text-4xl">
+                {category.name}
+              </h1>
+            </div>
+            {category.description && (
+              <p className="mt-4 max-w-xl text-sm leading-6 text-muted-foreground sm:mt-0 sm:text-right">
+                {category.description}
+              </p>
+            )}
+          </header>
+        )}
 
-        {children.length > 0 && (
+        {!cmsPage && children.length > 0 && (
           <section className="border-b py-4" aria-labelledby="subcategories">
             <h2 className="sr-only" id="subcategories">
               Unterkategorien
@@ -81,7 +84,12 @@ export function CategoryPage({ page }: { page: ShopCategoryPage }) {
         )}
       </Container>
 
-      {listing ? (
+      {cmsPage ? (
+        <CmsPageRenderer
+          page={cmsPage}
+          renderContext={{ categoryListing: listing }}
+        />
+      ) : listing ? (
         <ShopCatalog hideHeader listing={listing} />
       ) : (
         <Container as="section" className="py-12 sm:py-16">
