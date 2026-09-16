@@ -3,6 +3,7 @@
 import { ChevronDown, Search } from "lucide-react";
 import { useState, type ReactNode } from "react";
 
+import { PriceRangeFilter } from "@/features/catalog/components/price-range-filter";
 import type {
   ProductAttributeFilterGroup,
   ProductFilterOption,
@@ -22,6 +23,7 @@ export type ProductFilterPanelProps = {
   onClear: () => void;
   onMaximumPriceChange: (value: number) => void;
   onMinimumPriceChange: (value: number) => void;
+  onPriceRangeChange: (value: readonly [number, number]) => void;
   onToggleAttribute: (groupId: string, value: string) => void;
   onToggleCategory: (value: string) => void;
   onToggleCompany: (value: string) => void;
@@ -185,6 +187,7 @@ export function ProductFilterPanel({
   onClear,
   onMaximumPriceChange,
   onMinimumPriceChange,
+  onPriceRangeChange,
   onToggleAttribute,
   onToggleCategory,
   onToggleCompany,
@@ -207,42 +210,15 @@ export function ProductFilterPanel({
       </div>
 
       <FilterGroup title="Price">
-        <div className="grid grid-cols-2 gap-3">
-          <label>
-            <span className="mb-2 block text-xs text-muted-foreground">
-              From
-            </span>
-            <Input
-              className="h-10 bg-background text-sm"
-              max={maximumPrice}
-              min={minimumPriceBound}
-              onChange={(event) => {
-                if (Number.isFinite(event.target.valueAsNumber)) {
-                  onMinimumPriceChange(event.target.valueAsNumber);
-                }
-              }}
-              step="10"
-              type="number"
-              value={minimumPrice}
-            />
-          </label>
-          <label>
-            <span className="mb-2 block text-xs text-muted-foreground">To</span>
-            <Input
-              className="h-10 bg-background text-sm"
-              max={maximumPriceBound}
-              min={minimumPrice}
-              onChange={(event) => {
-                if (Number.isFinite(event.target.valueAsNumber)) {
-                  onMaximumPriceChange(event.target.valueAsNumber);
-                }
-              }}
-              step="10"
-              type="number"
-              value={maximumPrice}
-            />
-          </label>
-        </div>
+        <PriceRangeFilter
+          maximumPrice={maximumPrice}
+          maximumPriceBound={maximumPriceBound}
+          minimumPrice={minimumPrice}
+          minimumPriceBound={minimumPriceBound}
+          onMaximumPriceChange={onMaximumPriceChange}
+          onMinimumPriceChange={onMinimumPriceChange}
+          onPriceRangeChange={onPriceRangeChange}
+        />
       </FilterGroup>
 
       <FilterGroup title="Company">
