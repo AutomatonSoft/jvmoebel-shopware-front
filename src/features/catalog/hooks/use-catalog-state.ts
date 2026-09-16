@@ -124,6 +124,20 @@ export function useCatalogState(
         );
         resetPage();
       },
+      onPriceRangeChange: (value: readonly [number, number]) => {
+        const nextMinimumPrice = Math.max(
+          minimumPriceBound,
+          Math.min(value[0], maximumPriceBound),
+        );
+        const nextMaximumPrice = Math.min(
+          maximumPriceBound,
+          Math.max(value[1], nextMinimumPrice),
+        );
+
+        setMinimumPrice(nextMinimumPrice);
+        setMaximumPrice(nextMaximumPrice);
+        resetPage();
+      },
       onToggleCategory: (value: string) =>
         toggleValue(value, setSelectedCategories, resetPage),
       onToggleAttribute: (groupId: string, value: string) => {

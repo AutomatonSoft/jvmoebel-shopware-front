@@ -10,10 +10,19 @@ export type StoreLogoProps = {
 };
 
 export function StoreLogo({ branding, className, variant }: StoreLogoProps) {
+  const dimensions =
+    variant === "header"
+      ? { className: "size-18", height: 32, width: 32 }
+      : { className: "size-20", height: 40, width: 40 };
+
   return (
     <Link
       aria-label={`${branding.name} Startseite`}
-      className={cn("inline-flex w-fit shrink-0 items-center gap-2", className)}
+      className={cn(
+        "inline-flex shrink-0 items-center gap-2",
+        branding.logo ? dimensions.className : "w-fit",
+        className,
+      )}
       href="/"
     >
       {branding.logo ? (
@@ -21,22 +30,19 @@ export function StoreLogo({ branding, className, variant }: StoreLogoProps) {
         // eslint-disable-next-line @next/next/no-img-element
         <img
           alt={branding.logo.alt}
-          className={cn(
-            "h-auto w-auto object-contain",
-            variant === "header" ? "max-h-8 max-w-36" : "max-h-10 max-w-44",
-          )}
-          height={branding.logo.height}
+          className="size-full object-cover mix-blend-multiply"
+          height={dimensions.height}
           src={branding.logo.url}
-          width={branding.logo.width}
+          width={dimensions.width}
         />
       ) : (
         <>
           <span
             className={cn(
-              "flex size-9 items-center justify-center rounded-full text-xs font-bold tracking-tight",
+              "flex shrink-0 items-center justify-center rounded-full text-xs font-bold tracking-tight",
               variant === "header"
-                ? "bg-foreground text-background"
-                : "bg-primary text-primary-foreground",
+                ? "size-8 bg-foreground text-background"
+                : "size-10 bg-primary text-primary-foreground",
             )}
           >
             JV
