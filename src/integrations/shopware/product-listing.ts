@@ -15,6 +15,39 @@ const productListingAssociations = {
   properties: { associations: { group: {} } },
   seoUrls: {},
 } satisfies components["schemas"]["Associations"];
+const productListingIncludes = {
+  category: ["id", "name", "path", "translated"],
+  media: ["alt", "translated", "url"],
+  product: [
+    "calculatedPrice",
+    "categories",
+    "cover",
+    "createdAt",
+    "description",
+    "id",
+    "isNew",
+    "manufacturer",
+    "markAsTopseller",
+    "name",
+    "properties",
+    "ratingAverage",
+    "releaseDate",
+    "seoUrls",
+    "translated",
+  ],
+  product_manufacturer: ["name", "translated"],
+  product_media: ["media"],
+  property_group: ["id", "name", "translated"],
+  property_group_option: [
+    "colorHexCode",
+    "group",
+    "groupId",
+    "id",
+    "name",
+    "translated",
+  ],
+  seo_url: ["isCanonical", "isDeleted", "routeName", "seoPathInfo"],
+} satisfies components["schemas"]["Includes"];
 
 async function getShopwareProductListingPage(
   client: ShopwareClient,
@@ -26,6 +59,7 @@ async function getShopwareProductListingPage(
     {
       body: {
         associations: productListingAssociations,
+        includes: productListingIncludes,
         limit: productListingPageSize,
         page,
       },
