@@ -26,7 +26,7 @@ export function CmsPageHeader({ slot }: CmsSlotComponentProps) {
         </p>
       )}
       <div className="flex flex-col gap-5 border-b pb-8 sm:flex-row sm:items-end sm:justify-between">
-        <h1 className="text-4xl leading-none font-semibold tracking-[-0.05em] text-balance sm:text-5xl">
+        <h1 className="text-4xl leading-none font-semibold tracking-tighter text-balance sm:text-5xl">
           {title}
         </h1>
         {description && (

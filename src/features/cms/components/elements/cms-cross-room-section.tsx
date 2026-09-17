@@ -35,11 +35,11 @@ export function CmsCrossRoomSection({ slot }: CmsSlotComponentProps) {
         </h2>
       </header>
 
-      <ul className="-mx-4 grid snap-x snap-mandatory scroll-px-4 auto-cols-[84vw] grid-flow-col gap-4 overflow-x-auto px-4 pb-4 [scrollbar-width:none] sm:-mx-8 sm:scroll-px-8 sm:auto-cols-[48vw] sm:px-8 lg:mx-0 lg:auto-cols-auto lg:grid-flow-row lg:grid-cols-3 lg:px-0 [&::-webkit-scrollbar]:hidden">
+      <ul className="-mx-4 grid snap-x snap-mandatory scroll-px-4 auto-cols-[84vw] grid-flow-col gap-4 overflow-x-auto px-4 pb-4 scrollbar-none sm:-mx-8 sm:scroll-px-8 sm:auto-cols-[48vw] sm:px-8 lg:mx-0 lg:auto-cols-auto lg:grid-flow-row lg:grid-cols-3 lg:px-0 [&::-webkit-scrollbar]:hidden">
         {rooms.map((room) => (
           <li className="snap-start" key={room.id}>
             <CmsLink
-              className="group relative isolate block min-h-[28rem] overflow-hidden rounded-2xl bg-muted text-white focus-visible:ring-3 focus-visible:ring-primary focus-visible:ring-offset-4 focus-visible:outline-none sm:min-h-[32rem]"
+              className="group relative isolate block min-h-112 overflow-hidden rounded-2xl bg-muted text-white focus-visible:ring-3 focus-visible:ring-primary focus-visible:ring-offset-4 focus-visible:outline-none sm:min-h-128"
               href={room.url}
             >
               <Image

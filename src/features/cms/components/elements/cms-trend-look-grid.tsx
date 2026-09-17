@@ -36,13 +36,13 @@ export function CmsTrendLookGrid({ slot }: CmsSlotComponentProps) {
         </h2>
       </header>
 
-      <ul className="grid auto-rows-[20rem] gap-4 sm:grid-cols-2 sm:auto-rows-[24rem] lg:grid-cols-3">
+      <ul className="grid auto-rows-80 gap-4 sm:grid-cols-2 sm:auto-rows-96 lg:grid-cols-3">
         {cards.map((card, index) => (
           <li
             className={cn(
               cards.length > 1 &&
                 index === 0 &&
-                "sm:col-span-2 lg:row-span-2 lg:min-h-[49rem]",
+                "sm:col-span-2 lg:row-span-2 lg:min-h-196",
             )}
             key={card.id}
           >

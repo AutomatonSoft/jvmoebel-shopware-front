@@ -61,7 +61,7 @@ export function CmsArticleHero({ slot }: CmsSlotComponentProps) {
           </div>
         </div>
 
-        <div className="relative min-h-72 bg-muted sm:min-h-[28rem] lg:min-h-[36rem]">
+        <div className="relative min-h-72 bg-muted sm:min-h-112 lg:min-h-144">
           <Image
             alt={data.image.alt}
             className="object-cover"

@@ -35,7 +35,7 @@ export function CmsExpertTip({ slot }: CmsSlotComponentProps) {
             <p className="text-xs font-semibold tracking-[0.16em] text-primary uppercase">
               {label}
             </p>
-            <h2 className="mt-2 text-xl font-semibold tracking-[-0.025em] sm:text-2xl">
+            <h2 className="mt-2 text-xl font-semibold tracking-tight sm:text-2xl">
               {title}
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-7 text-foreground/80 sm:text-base">

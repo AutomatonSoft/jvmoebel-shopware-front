@@ -35,7 +35,7 @@ export function CmsRelatedLookCards({ slot }: CmsSlotComponentProps) {
               className="group block rounded-2xl focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:ring-offset-4 focus-visible:outline-none"
               href={card.url}
             >
-              <span className="relative block aspect-[4/3] overflow-hidden rounded-2xl bg-muted">
+              <span className="relative block aspect-4/3 overflow-hidden rounded-2xl bg-muted">
                 <Image
                   alt={card.image.alt}
                   className="object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.04]"
@@ -46,7 +46,7 @@ export function CmsRelatedLookCards({ slot }: CmsSlotComponentProps) {
               </span>
               <span className="mt-4 flex items-start justify-between gap-4 px-1">
                 <span>
-                  <strong className="block text-lg leading-tight font-semibold tracking-[-0.025em] sm:text-xl">
+                  <strong className="block text-lg leading-tight font-semibold tracking-tight sm:text-xl">
                     {card.title}
                   </strong>
                   {card.description && (

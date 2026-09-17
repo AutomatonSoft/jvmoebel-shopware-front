@@ -59,17 +59,17 @@ export function CmsWhyJvmoebel({ slot }: CmsSlotComponentProps) {
             />
             <span
               aria-hidden="true"
-              className="absolute top-0 left-0 size-2 -translate-x-[3.5px] bg-primary"
+              className="absolute top-0 left-0 size-2 translate-x-[-3.5px] bg-primary"
             />
             <span
               aria-hidden="true"
-              className="absolute bottom-0 left-0 size-2 -translate-x-[3.5px] border border-foreground/35 bg-secondary"
+              className="absolute bottom-0 left-0 size-2 translate-x-[-3.5px] border border-foreground/35 bg-secondary"
             />
 
             <div className="relative pl-8 sm:pl-12 lg:pl-14">
               <span
                 aria-hidden="true"
-                className="block text-[clamp(7rem,18vw,11rem)] leading-[0.72] font-semibold -tracking-[0.1em] text-foreground"
+                className="block text-[clamp(7rem,18vw,11rem)] leading-[0.72] font-semibold -tracking-widest text-foreground"
               >
                 {mark}
               </span>

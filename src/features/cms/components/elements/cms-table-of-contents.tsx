@@ -29,7 +29,7 @@ export function CmsTableOfContents({ slot }: CmsSlotComponentProps) {
         className="rounded-2xl border bg-secondary/70 p-5 sm:p-7"
       >
         <h2
-          className="flex items-center gap-3 text-xl font-semibold tracking-[-0.025em]"
+          className="flex items-center gap-3 text-xl font-semibold tracking-tight"
           id={headingId}
         >
           <span className="flex size-9 items-center justify-center rounded-full bg-card text-primary shadow-sm">

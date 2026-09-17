@@ -38,7 +38,7 @@ export function CmsAuthorFooter({ slot }: CmsSlotComponentProps) {
           <p className="text-xs font-semibold tracking-[0.14em] text-primary uppercase">
             Autor · {expertise}
           </p>
-          <h2 className="mt-1.5 text-xl font-semibold tracking-[-0.025em]">
+          <h2 className="mt-1.5 text-xl font-semibold tracking-tight">
             {authorName}
           </h2>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">

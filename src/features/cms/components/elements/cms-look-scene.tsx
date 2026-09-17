@@ -26,7 +26,7 @@ export function CmsLookScene({ slot }: CmsSlotComponentProps) {
       data-cms-element="jv-look-scene"
     >
       <div className="grid overflow-hidden rounded-3xl border bg-card shadow-[0_24px_60px_-44px_rgba(21,21,19,0.65)] lg:grid-cols-[minmax(0,1.7fr)_minmax(19rem,0.7fr)]">
-        <div className="relative min-h-80 bg-muted sm:min-h-[34rem]">
+        <div className="relative min-h-80 bg-muted sm:min-h-136">
           <Image
             alt={data.image.alt}
             className="object-cover"

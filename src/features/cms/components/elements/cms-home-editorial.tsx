@@ -44,7 +44,7 @@ export function CmsHomeEditorial({ slot }: CmsSlotComponentProps) {
       >
         <div
           className={cn(
-            "mx-auto w-full max-w-320",
+            "mx-auto w-full max-w-7xl",
             appearance === "card"
               ? "px-5 py-10 sm:px-8 sm:py-12 lg:px-10 lg:py-14"
               : "py-16 sm:py-24",

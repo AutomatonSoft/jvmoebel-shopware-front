@@ -43,7 +43,7 @@ export function CmsPromoDealTiles({ slot }: CmsSlotComponentProps) {
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {tiles.map((tile) => (
           <li key={tile.id}>
-            <article className="group relative isolate aspect-[4/5] overflow-hidden rounded-2xl bg-muted shadow-[0_18px_45px_-34px_rgba(21,21,19,0.75)] sm:aspect-[5/6]">
+            <article className="group relative isolate aspect-4/5 overflow-hidden rounded-2xl bg-muted shadow-[0_18px_45px_-34px_rgba(21,21,19,0.75)] sm:aspect-5/6">
               <Image
                 alt={tile.image.alt}
                 className="object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.04]"

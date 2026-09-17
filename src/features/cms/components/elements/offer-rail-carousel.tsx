@@ -55,7 +55,7 @@ function OfferCountdown({ endsAt }: { endsAt: string }) {
 
 function OfferCard({ offer }: { offer: CmsOfferRailData["offers"][number] }) {
   return (
-    <article className="group relative isolate aspect-[3/4] overflow-hidden rounded-2xl bg-foreground text-white shadow-[0_18px_45px_-30px_rgba(21,21,19,0.72)]">
+    <article className="group relative isolate aspect-3/4 overflow-hidden rounded-2xl bg-foreground text-white shadow-[0_18px_45px_-30px_rgba(21,21,19,0.72)]">
       <Image
         alt={offer.image.alt}
         className="object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.035]"
@@ -267,7 +267,7 @@ export function OfferRailCarousel({ data }: { data: CmsOfferRailData }) {
 
       <ul
         aria-label={data.title}
-        className="-mx-4 grid snap-x snap-mandatory scroll-px-4 auto-cols-[82vw] grid-flow-col gap-3 overflow-x-auto overscroll-x-contain px-4 pb-5 [scrollbar-width:none] sm:-mx-8 sm:scroll-px-8 sm:auto-cols-[minmax(18rem,45vw)] sm:gap-4 sm:px-8 lg:mx-0 lg:scroll-px-0 lg:auto-cols-[calc((100%-2rem)/3)] lg:px-0 [&::-webkit-scrollbar]:hidden"
+        className="-mx-4 grid snap-x snap-mandatory scroll-px-4 auto-cols-[82vw] grid-flow-col gap-3 overflow-x-auto overscroll-x-contain px-4 pb-5 scrollbar-none sm:-mx-8 sm:scroll-px-8 sm:auto-cols-[minmax(18rem,45vw)] sm:gap-4 sm:px-8 lg:mx-0 lg:scroll-px-0 lg:auto-cols-[calc((100%-2rem)/3)] lg:px-0 [&::-webkit-scrollbar]:hidden"
         ref={railRef}
       >
         {activeOffers.map((offer) => (

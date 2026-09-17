@@ -36,7 +36,7 @@ export function CmsEditorialTeamGrid({ slot }: CmsSlotComponentProps) {
               className="group block rounded-2xl focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:ring-offset-4 focus-visible:outline-none"
               href={member.url}
             >
-              <span className="relative block aspect-[4/5] overflow-hidden rounded-2xl bg-muted">
+              <span className="relative block aspect-4/5 overflow-hidden rounded-2xl bg-muted">
                 <Image
                   alt={member.image.alt}
                   className="object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.04]"
@@ -47,7 +47,7 @@ export function CmsEditorialTeamGrid({ slot }: CmsSlotComponentProps) {
               </span>
               <span className="mt-4 flex items-start gap-4 px-1">
                 <span className="min-w-0 flex-1">
-                  <strong className="block text-lg leading-tight font-semibold tracking-[-0.025em] sm:text-xl">
+                  <strong className="block text-lg leading-tight font-semibold tracking-tight sm:text-xl">
                     {member.name}
                   </strong>
                   <span className="mt-1.5 block text-sm text-muted-foreground">

@@ -62,7 +62,7 @@ export function CmsCategoryRail({ slot }: CmsSlotComponentProps) {
           className={cn(
             layout === "grid"
               ? "grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8"
-              : "-mx-4 -my-6 grid snap-x snap-mandatory scroll-px-4 auto-cols-[8.5rem] grid-flow-col gap-4 overflow-x-auto overscroll-x-contain px-4 py-6 [scrollbar-width:none] sm:-mx-8 sm:scroll-px-8 sm:auto-cols-[10rem] sm:gap-5 sm:px-8 lg:mx-0 lg:scroll-px-0 lg:auto-cols-[calc((100%-6.25rem)/6)] lg:px-0 [&::-webkit-scrollbar]:hidden",
+              : "-mx-4 -my-6 grid snap-x snap-mandatory scroll-px-4 auto-cols-34 grid-flow-col gap-4 overflow-x-auto overscroll-x-contain px-4 py-6 scrollbar-none sm:-mx-8 sm:scroll-px-8 sm:auto-cols-40 sm:gap-5 sm:px-8 lg:mx-0 lg:scroll-px-0 lg:auto-cols-[calc((100%-6.25rem)/6)] lg:px-0 [&::-webkit-scrollbar]:hidden",
           )}
         >
           {categories.map((category) => (

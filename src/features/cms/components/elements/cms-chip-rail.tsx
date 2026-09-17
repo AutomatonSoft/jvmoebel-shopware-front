@@ -35,7 +35,7 @@ export function CmsChipRail({ slot }: CmsSlotComponentProps) {
       </header>
 
       <nav aria-label={title}>
-        <ul className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:-mx-8 sm:px-8 lg:mx-0 lg:flex-wrap lg:px-0 [&::-webkit-scrollbar]:hidden">
+        <ul className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 scrollbar-none sm:-mx-8 sm:px-8 lg:mx-0 lg:flex-wrap lg:px-0 [&::-webkit-scrollbar]:hidden">
           {chips.map((chip) => (
             <li className="shrink-0 snap-start" key={chip.id}>
               <CmsLink

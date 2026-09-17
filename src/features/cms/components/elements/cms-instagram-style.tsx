@@ -29,7 +29,7 @@ export function CmsInstagramStyle({ slot }: CmsSlotComponentProps) {
         className="group grid overflow-hidden rounded-3xl border bg-card shadow-[0_22px_55px_-42px_rgba(21,21,19,0.7)] focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:ring-offset-4 focus-visible:outline-none md:grid-cols-[minmax(18rem,0.9fr)_minmax(0,1.1fr)]"
         href={link.url}
       >
-        <span className="relative block aspect-square min-h-72 overflow-hidden bg-muted md:aspect-auto md:min-h-[30rem]">
+        <span className="relative block aspect-square min-h-72 overflow-hidden bg-muted md:aspect-auto md:min-h-120">
           <Image
             alt={image.alt}
             className="object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.035]"

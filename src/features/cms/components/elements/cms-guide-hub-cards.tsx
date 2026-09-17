@@ -43,7 +43,7 @@ export function CmsGuideHubCards({ slot }: CmsSlotComponentProps) {
               className="group grid h-full overflow-hidden rounded-2xl border bg-card shadow-[0_18px_45px_-36px_rgba(21,21,19,0.7)] transition-[border-color,box-shadow] duration-300 hover:border-primary/35 hover:shadow-[0_24px_50px_-38px_rgba(21,21,19,0.65)] focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:ring-offset-4 focus-visible:outline-none"
               href={card.url}
             >
-              <span className="relative block aspect-[16/10] overflow-hidden bg-muted">
+              <span className="relative block aspect-16/10 overflow-hidden bg-muted">
                 <Image
                   alt={card.image.alt}
                   className="object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.035]"
