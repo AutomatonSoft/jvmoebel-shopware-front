@@ -12,6 +12,7 @@ import {
   formatCountdownValue,
   getCountdownParts,
 } from "@/features/offers/model/countdown";
+import { useCountdownNow } from "@/features/offers/hooks/use-countdown-now";
 import { cn } from "@/lib/utils";
 
 type ScrollState = Readonly<{
@@ -27,33 +28,8 @@ const initialScrollState: ScrollState = {
 const maximumTimeoutDelay = 2_147_483_647;
 
 function OfferCountdown({ endsAt }: { endsAt: string }) {
-  const [now, setNow] = useState<number | null>(null);
+  const now = useCountdownNow(endsAt);
   const parts = now === null ? null : getCountdownParts(endsAt, now);
-
-  useEffect(() => {
-    const deadline = Date.parse(endsAt);
-    let timer: number | undefined;
-
-    function updateNow() {
-      const currentNow = Date.now();
-
-      setNow(currentNow);
-
-      if (!Number.isFinite(deadline) || currentNow >= deadline) {
-        return;
-      }
-
-      timer = window.setTimeout(updateNow, 1000);
-    }
-
-    timer = window.setTimeout(updateNow, 0);
-
-    return () => {
-      if (timer !== undefined) {
-        window.clearTimeout(timer);
-      }
-    };
-  }, [endsAt]);
 
   return (
     <div
