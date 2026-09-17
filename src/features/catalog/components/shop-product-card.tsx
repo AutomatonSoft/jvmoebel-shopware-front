@@ -2,6 +2,7 @@ import { ArrowUpRight, Star } from "lucide-react";
 import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { memo } from "react";
 
 import type { ShopProduct } from "@/features/catalog/model/product-listing";
 import { WishlistToggleButton } from "@/features/wishlist/components/wishlist-toggle-button";
@@ -30,7 +31,62 @@ export type ShopProductCardProps = {
   product: ProductCardProduct;
 };
 
-export function ShopProductCard({
+function areProductColorsEqual(
+  previousColors: ProductCardProduct["colors"],
+  nextColors: ProductCardProduct["colors"],
+) {
+  if (previousColors === nextColors) {
+    return true;
+  }
+
+  if (!previousColors || !nextColors) {
+    return (
+      (previousColors?.length ?? 0) === 0 && (nextColors?.length ?? 0) === 0
+    );
+  }
+
+  return (
+    previousColors.length === nextColors.length &&
+    previousColors.every((color, index) => {
+      const nextColor = nextColors[index];
+
+      return (
+        color.hex === nextColor.hex &&
+        color.label === nextColor.label &&
+        color.value === nextColor.value
+      );
+    })
+  );
+}
+
+function areShopProductCardPropsEqual(
+  previousProps: ShopProductCardProps,
+  nextProps: ShopProductCardProps,
+) {
+  const previousProduct = previousProps.product;
+  const nextProduct = nextProps.product;
+
+  return (
+    previousProps.currency === nextProps.currency &&
+    (previousProps.eagerImage ?? false) === (nextProps.eagerImage ?? false) &&
+    (previousProps.headingLevel ?? "h2") === (nextProps.headingLevel ?? "h2") &&
+    previousProps.locale === nextProps.locale &&
+    previousProduct.badge === nextProduct.badge &&
+    areProductColorsEqual(previousProduct.colors, nextProduct.colors) &&
+    previousProduct.company === nextProduct.company &&
+    previousProduct.id === nextProduct.id &&
+    previousProduct.image.alt === nextProduct.image.alt &&
+    previousProduct.image.url === nextProduct.image.url &&
+    previousProduct.name === nextProduct.name &&
+    previousProduct.previousPrice === nextProduct.previousPrice &&
+    previousProduct.rating === nextProduct.rating &&
+    previousProduct.reviewCount === nextProduct.reviewCount &&
+    previousProduct.unitPrice === nextProduct.unitPrice &&
+    previousProduct.url === nextProduct.url
+  );
+}
+
+export const ShopProductCard = memo(function ShopProductCard({
   currency,
   eagerImage = false,
   headingLevel = "h2",
@@ -168,4 +224,4 @@ export function ShopProductCard({
       </div>
     </article>
   );
-}
+}, areShopProductCardPropsEqual);
