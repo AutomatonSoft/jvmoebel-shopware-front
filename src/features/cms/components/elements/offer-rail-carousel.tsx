@@ -177,26 +177,50 @@ export function OfferRailCarousel({ data }: { data: CmsOfferRailData }) {
       return;
     }
 
+    const railElement: HTMLUListElement = rail;
+    let animationFrame: number | null = null;
+
     function updateScrollState() {
-      if (!rail) {
-        return;
-      }
+      animationFrame = null;
 
-      const maximumScrollLeft = rail.scrollWidth - rail.clientWidth;
+      const maximumScrollLeft =
+        railElement.scrollWidth - railElement.clientWidth;
+      const canScrollBack = railElement.scrollLeft > 2;
+      const canScrollForward = railElement.scrollLeft < maximumScrollLeft - 2;
 
-      setScrollState({
-        canScrollBack: rail.scrollLeft > 2,
-        canScrollForward: rail.scrollLeft < maximumScrollLeft - 2,
+      setScrollState((currentState) => {
+        if (
+          currentState.canScrollBack === canScrollBack &&
+          currentState.canScrollForward === canScrollForward
+        ) {
+          return currentState;
+        }
+
+        return { canScrollBack, canScrollForward };
       });
     }
 
-    updateScrollState();
-    rail.addEventListener("scroll", updateScrollState, { passive: true });
-    window.addEventListener("resize", updateScrollState);
+    function requestScrollStateUpdate() {
+      if (animationFrame !== null) {
+        return;
+      }
+
+      animationFrame = window.requestAnimationFrame(updateScrollState);
+    }
+
+    requestScrollStateUpdate();
+    railElement.addEventListener("scroll", requestScrollStateUpdate, {
+      passive: true,
+    });
+    window.addEventListener("resize", requestScrollStateUpdate);
 
     return () => {
-      rail.removeEventListener("scroll", updateScrollState);
-      window.removeEventListener("resize", updateScrollState);
+      railElement.removeEventListener("scroll", requestScrollStateUpdate);
+      window.removeEventListener("resize", requestScrollStateUpdate);
+
+      if (animationFrame !== null) {
+        window.cancelAnimationFrame(animationFrame);
+      }
     };
   }, [activeOffers.length]);
 
