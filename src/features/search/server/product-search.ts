@@ -10,7 +10,7 @@ import { getShopwareProductSearch } from "@/integrations/shopware/product-search
 import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
 import { getShopwareRequestSession } from "@/integrations/shopware/session";
 
-const MAX_SEARCH_RESULTS = 5;
+const MAX_SEARCH_RESULTS = 10;
 
 function toProductSearchResult(product: ShopProduct): ProductSearchResult {
   return {
