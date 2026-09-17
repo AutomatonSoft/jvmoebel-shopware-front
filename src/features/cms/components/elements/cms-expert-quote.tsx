@@ -1,20 +1,11 @@
 import { Quote } from "lucide-react";
 
 import { Container } from "@/components/ui/container";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsExpertQuoteData } from "@/features/cms/contracts/expert-quote";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsExpertQuoteData } from "@/features/cms/contracts/expert-quote";
 
-export function CmsExpertQuote({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsExpertQuoteData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { authorName, authorRole, quote } = result.data;
+export function CmsExpertQuote({ data }: CmsElementProps<CmsExpertQuoteData>) {
+  const { authorName, authorRole, quote } = data;
 
   return (
     <Container

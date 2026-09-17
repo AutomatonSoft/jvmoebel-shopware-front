@@ -3,20 +3,13 @@ import Image from "next/image";
 
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsAuthorFooterData } from "@/features/cms/contracts/author-footer";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsAuthorFooterData } from "@/features/cms/contracts/author-footer";
 
-export function CmsAuthorFooter({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsAuthorFooterData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { authorName, bio, expertise, image, link } = result.data;
+export function CmsAuthorFooter({
+  data,
+}: CmsElementProps<CmsAuthorFooterData>) {
+  const { authorName, bio, expertise, image, link } = data;
 
   return (
     <Container

@@ -3,20 +3,13 @@ import Image from "next/image";
 
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsCrossRoomSectionData } from "@/features/cms/contracts/cross-room-section";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsCrossRoomSectionData } from "@/features/cms/contracts/cross-room-section";
 
-export function CmsCrossRoomSection({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsCrossRoomSectionData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { eyebrow, rooms, title } = result.data;
+export function CmsCrossRoomSection({
+  data,
+}: CmsElementProps<CmsCrossRoomSectionData>) {
+  const { eyebrow, rooms, title } = data;
 
   return (
     <Container

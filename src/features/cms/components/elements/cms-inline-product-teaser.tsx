@@ -3,20 +3,13 @@ import Image from "next/image";
 
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsInlineProductTeaserData } from "@/features/cms/contracts/inline-product-teaser";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsInlineProductTeaserData } from "@/features/cms/contracts/inline-product-teaser";
 
-export function CmsInlineProductTeaser({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsInlineProductTeaserData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { description, image, link, name, productId } = result.data;
+export function CmsInlineProductTeaser({
+  data,
+}: CmsElementProps<CmsInlineProductTeaserData>) {
+  const { description, image, link, name, productId } = data;
 
   return (
     <Container

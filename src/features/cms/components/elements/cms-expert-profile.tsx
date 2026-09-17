@@ -3,20 +3,13 @@ import Image from "next/image";
 
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsExpertProfileData } from "@/features/cms/contracts/expert-profile";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsExpertProfileData } from "@/features/cms/contracts/expert-profile";
 
-export function CmsExpertProfile({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsExpertProfileData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { bio, image, link, name, role } = result.data;
+export function CmsExpertProfile({
+  data,
+}: CmsElementProps<CmsExpertProfileData>) {
+  const { bio, image, link, name, role } = data;
 
   return (
     <Container

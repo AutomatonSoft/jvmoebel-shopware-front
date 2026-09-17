@@ -3,20 +3,13 @@ import Image from "next/image";
 
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsGuideHubCardsData } from "@/features/cms/contracts/guide-hub-cards";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsGuideHubCardsData } from "@/features/cms/contracts/guide-hub-cards";
 
-export function CmsGuideHubCards({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsGuideHubCardsData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { cards, eyebrow, title } = result.data;
+export function CmsGuideHubCards({
+  data,
+}: CmsElementProps<CmsGuideHubCardsData>) {
+  const { cards, eyebrow, title } = data;
 
   return (
     <Container

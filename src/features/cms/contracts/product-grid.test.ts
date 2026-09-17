@@ -130,6 +130,29 @@ describe("parseCmsProductGridData", () => {
     expect(data.issues.map((issue) => issue.path)).toEqual(["anchorId"]);
   });
 
+  test("rejects an invalid locale and currency combination", () => {
+    const data = parseCmsProductGridData({
+      currency: "EUR",
+      locale: "invalid_locale",
+      products: [
+        {
+          calculatedPrice: { unitPrice: 100 },
+          cover: { media: { url: "/images/product.webp" } },
+          id: "product",
+          name: "Product",
+          url: "/produkt/product",
+        },
+      ],
+      title: "Products",
+    });
+
+    expect(data.data).toBeNull();
+    expect(data.issues).toContainEqual({
+      message: "Locale and currency must form a valid price format.",
+      path: "locale",
+    });
+  });
+
   test("rejects a grid without metadata or valid products", () => {
     expect(parseCmsProductGridData({ products: [] }).data).toBeNull();
     expect(

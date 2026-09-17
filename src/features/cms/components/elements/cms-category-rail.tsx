@@ -3,22 +3,14 @@ import Image from "next/image";
 
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsCategoryRailData } from "@/features/cms/contracts/category-rail";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsCategoryRailData } from "@/features/cms/contracts/category-rail";
 import { cn } from "@/lib/utils";
 
-export function CmsCategoryRail({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsCategoryRailData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { categories, description, eyebrow, layout, title, viewAll } =
-    result.data;
+export function CmsCategoryRail({
+  data,
+}: CmsElementProps<CmsCategoryRailData>) {
+  const { categories, description, eyebrow, layout, title, viewAll } = data;
 
   return (
     <Container

@@ -3,25 +3,18 @@ import Image from "next/image";
 
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsPromoDealTilesData } from "@/features/cms/contracts/promo-deal-tiles";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsPromoDealTilesData } from "@/features/cms/contracts/promo-deal-tiles";
 
 const dealDateFormatter = new Intl.DateTimeFormat("de-DE", {
   day: "2-digit",
   month: "2-digit",
 });
 
-export function CmsPromoDealTiles({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsPromoDealTilesData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { eyebrow, tiles, title } = result.data;
+export function CmsPromoDealTiles({
+  data,
+}: CmsElementProps<CmsPromoDealTilesData>) {
+  const { eyebrow, tiles, title } = data;
 
   return (
     <Container

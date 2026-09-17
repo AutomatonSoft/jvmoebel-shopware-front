@@ -2,20 +2,11 @@ import { ArrowRight } from "lucide-react";
 
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsChipRailData } from "@/features/cms/contracts/chip-rail";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsChipRailData } from "@/features/cms/contracts/chip-rail";
 
-export function CmsChipRail({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsChipRailData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { chips, eyebrow, title } = result.data;
+export function CmsChipRail({ data }: CmsElementProps<CmsChipRailData>) {
+  const { chips, eyebrow, title } = data;
 
   return (
     <Container

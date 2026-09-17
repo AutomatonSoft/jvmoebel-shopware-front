@@ -3,24 +3,11 @@ import { ArrowRight } from "lucide-react";
 import { ShopProductCard } from "@/features/catalog/components/shop-product-card";
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsProductGridData } from "@/features/cms/contracts/product-grid";
-import {
-  reportCmsContractIssues,
-  reportCmsRenderingIssue,
-} from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsProductGridData } from "@/features/cms/contracts/product-grid";
 import { cn } from "@/lib/utils";
 
-export function CmsProductGrid({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsProductGridData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const data = result.data;
+export function CmsProductGrid({ data }: CmsElementProps<CmsProductGridData>) {
   const {
     anchorId,
     currency,
@@ -31,26 +18,6 @@ export function CmsProductGrid({ slot }: CmsSlotComponentProps) {
     title,
     viewAll,
   } = data;
-
-  try {
-    new Intl.NumberFormat(locale, {
-      currency,
-      maximumFractionDigits: 0,
-      style: "currency",
-    });
-  } catch (error) {
-    reportCmsRenderingIssue({
-      cause:
-        error instanceof Error
-          ? error.message
-          : "Unknown currency formatter error.",
-      code: "rendering-failed",
-      message: "Unable to create the product price formatter.",
-      slot,
-    });
-
-    return null;
-  }
 
   return (
     <Container as="section" data-cms-element="jv-product-grid" id={anchorId}>

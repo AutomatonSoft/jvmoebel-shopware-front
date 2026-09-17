@@ -1,7 +1,11 @@
-import type { ComponentType } from "react";
-
 import { Container } from "@/components/ui/container";
-import type { ShopProductListing } from "@/features/catalog/model/product-listing";
+import {
+  createCmsDataElementRenderer,
+  createCmsElementRenderer,
+  type CmsPageRenderContext,
+  type CmsSlotComponent,
+  type CmsSlotComponentProps,
+} from "@/features/cms/components/cms-element";
 import { CmsArticleHero } from "@/features/cms/components/elements/cms-article-hero";
 import { CmsAuthorFooter } from "@/features/cms/components/elements/cms-author-footer";
 import { CmsBenefitStrip } from "@/features/cms/components/elements/cms-benefit-strip";
@@ -42,12 +46,45 @@ import { CmsTrustRating } from "@/features/cms/components/elements/cms-trust-rat
 import { CmsText } from "@/features/cms/components/elements/cms-text";
 import { CmsWhyJvmoebel } from "@/features/cms/components/elements/cms-why-jvmoebel";
 import { CmsYoutubeVideo } from "@/features/cms/components/elements/cms-youtube-video";
-import type {
-  CmsBlock,
-  CmsPage,
-  CmsSection,
-  CmsSlot,
-} from "@/features/cms/model/page";
+import { parseCmsArticleHeroData } from "@/features/cms/contracts/article-hero";
+import { parseCmsAuthorFooterData } from "@/features/cms/contracts/author-footer";
+import { parseCmsBenefitStripData } from "@/features/cms/contracts/benefit-strip";
+import { parseCmsCategoryRailData } from "@/features/cms/contracts/category-rail";
+import { parseCmsChipRailData } from "@/features/cms/contracts/chip-rail";
+import { parseCmsColorWorldPickerData } from "@/features/cms/contracts/color-world-picker";
+import { parseCmsCountdownPromoData } from "@/features/cms/contracts/countdown-promo";
+import { parseCmsCrossRoomSectionData } from "@/features/cms/contracts/cross-room-section";
+import { parseCmsEditorialTeamGridData } from "@/features/cms/contracts/editorial-team-grid";
+import { parseCmsExpertProfileData } from "@/features/cms/contracts/expert-profile";
+import { parseCmsExpertQuoteData } from "@/features/cms/contracts/expert-quote";
+import { parseCmsExpertTipData } from "@/features/cms/contracts/expert-tip";
+import { parseCmsFaqData } from "@/features/cms/contracts/faq";
+import { parseCmsGuideHubCardsData } from "@/features/cms/contracts/guide-hub-cards";
+import { parseCmsHeroData } from "@/features/cms/contracts/hero";
+import { parseCmsHomeEditorialData } from "@/features/cms/contracts/home-editorial";
+import { parseCmsImageData } from "@/features/cms/contracts/image";
+import { parseCmsInlineProductTeaserData } from "@/features/cms/contracts/inline-product-teaser";
+import { parseCmsInstagramStyleData } from "@/features/cms/contracts/instagram-style";
+import { parseCmsLookSceneData } from "@/features/cms/contracts/look-scene";
+import { parseCmsLoyaltyPromoData } from "@/features/cms/contracts/loyalty-promo";
+import { parseCmsNewsletterData } from "@/features/cms/contracts/newsletter";
+import { parseCmsOfferRailData } from "@/features/cms/contracts/offer-rail";
+import { parseCmsPageHeaderData } from "@/features/cms/contracts/page-header";
+import { parseCmsProductGridData } from "@/features/cms/contracts/product-grid";
+import { parseCmsPromoBannerData } from "@/features/cms/contracts/promo-banner";
+import { parseCmsPromoDealTilesData } from "@/features/cms/contracts/promo-deal-tiles";
+import { parseCmsRelatedLookCardsData } from "@/features/cms/contracts/related-look-cards";
+import { parseCmsReviewSummaryData } from "@/features/cms/contracts/review-summary";
+import { parseCmsRoomGridData } from "@/features/cms/contracts/room-grid";
+import { parseCmsShopTheLookData } from "@/features/cms/contracts/shop-the-look";
+import { parseCmsSubcategoryLinksData } from "@/features/cms/contracts/subcategory-links";
+import { parseCmsTableOfContentsData } from "@/features/cms/contracts/table-of-contents";
+import { parseCmsTextData } from "@/features/cms/contracts/text";
+import { parseCmsTrendLookGridData } from "@/features/cms/contracts/trend-look-grid";
+import { parseCmsTrustRatingData } from "@/features/cms/contracts/trust-rating";
+import { parseCmsWhyJvmoebelData } from "@/features/cms/contracts/why-jvmoebel";
+import { parseCmsYoutubeVideoData } from "@/features/cms/contracts/youtube-video";
+import type { CmsBlock, CmsPage, CmsSection } from "@/features/cms/model/page";
 import {
   getCmsBackgroundStyle,
   getCmsVisibilityClassName,
@@ -56,58 +93,170 @@ import {
 import { reportCmsRenderingIssue } from "@/features/cms/server/report-rendering-issue";
 import { cn } from "@/lib/utils";
 
-export type CmsSlotComponentProps = {
-  renderContext?: CmsPageRenderContext;
-  slot: CmsSlot;
-};
+export type {
+  CmsPageRenderContext,
+  CmsSlotComponentProps,
+} from "@/features/cms/components/cms-element";
 
-export type CmsPageRenderContext = Readonly<{
-  categoryListing?: ShopProductListing | null;
-}>;
+function CmsProductListingSlot({ renderContext, slot }: CmsSlotComponentProps) {
+  const listing = renderContext?.categoryListing;
 
-type CmsSlotComponent = ComponentType<CmsSlotComponentProps>;
+  if (!listing) {
+    reportCmsRenderingIssue({
+      code: "rendering-failed",
+      message:
+        "The product-listing element requires category listing data from its route.",
+      slot,
+    });
+    return null;
+  }
+
+  return <CmsProductListing listing={listing} />;
+}
 
 const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {
-  "jv-article-hero": CmsArticleHero,
-  "jv-author-footer": CmsAuthorFooter,
-  "jv-benefit-strip": CmsBenefitStrip,
-  "jv-category-rail": CmsCategoryRail,
-  "jv-chip-rail": CmsChipRail,
-  "jv-color-world-picker": CmsColorWorldPicker,
-  "jv-countdown-promo": CmsCountdownPromo,
-  "jv-cross-room-section": CmsCrossRoomSection,
-  "jv-editorial-team-grid": CmsEditorialTeamGrid,
-  "jv-expert-tip": CmsExpertTip,
-  "jv-expert-quote": CmsExpertQuote,
-  "jv-expert-profile": CmsExpertProfile,
-  "jv-faq": CmsFaq,
-  "jv-guide-hub-cards": CmsGuideHubCards,
-  "jv-hero": CmsHero,
-  "jv-home-editorial": CmsHomeEditorial,
-  "jv-inline-product-teaser": CmsInlineProductTeaser,
-  "jv-instagram-style": CmsInstagramStyle,
-  "jv-look-scene": CmsLookScene,
-  "jv-loyalty-promo": CmsLoyaltyPromo,
-  "jv-newsletter": CmsNewsletter,
-  "jv-offer-rail": CmsOfferRail,
-  "jv-page-header": CmsPageHeader,
-  "jv-product-grid": CmsProductGrid,
-  "jv-promo-banner": CmsPromoBanner,
-  "jv-promo-deal-tiles": CmsPromoDealTiles,
-  "jv-related-look-cards": CmsRelatedLookCards,
-  "jv-review-summary": CmsReviewSummary,
-  "jv-room-grid": CmsRoomGrid,
-  "jv-shop-the-look": CmsShopTheLook,
-  "jv-subcategory-links": CmsSubcategoryLinks,
-  "jv-table-of-contents": CmsTableOfContents,
-  "jv-trend-look-grid": CmsTrendLookGrid,
-  "jv-trust-rating": CmsTrustRating,
-  "jv-why-jvmoebel": CmsWhyJvmoebel,
-  image: CmsImage,
-  "product-listing": CmsProductListing,
+  "jv-article-hero": createCmsDataElementRenderer(
+    parseCmsArticleHeroData,
+    CmsArticleHero,
+  ),
+  "jv-author-footer": createCmsDataElementRenderer(
+    parseCmsAuthorFooterData,
+    CmsAuthorFooter,
+  ),
+  "jv-benefit-strip": createCmsDataElementRenderer(
+    parseCmsBenefitStripData,
+    CmsBenefitStrip,
+  ),
+  "jv-category-rail": createCmsDataElementRenderer(
+    parseCmsCategoryRailData,
+    CmsCategoryRail,
+  ),
+  "jv-chip-rail": createCmsDataElementRenderer(
+    parseCmsChipRailData,
+    CmsChipRail,
+  ),
+  "jv-color-world-picker": createCmsDataElementRenderer(
+    parseCmsColorWorldPickerData,
+    CmsColorWorldPicker,
+  ),
+  "jv-countdown-promo": createCmsDataElementRenderer(
+    parseCmsCountdownPromoData,
+    CmsCountdownPromo,
+  ),
+  "jv-cross-room-section": createCmsDataElementRenderer(
+    parseCmsCrossRoomSectionData,
+    CmsCrossRoomSection,
+  ),
+  "jv-editorial-team-grid": createCmsDataElementRenderer(
+    parseCmsEditorialTeamGridData,
+    CmsEditorialTeamGrid,
+  ),
+  "jv-expert-tip": createCmsDataElementRenderer(
+    parseCmsExpertTipData,
+    CmsExpertTip,
+  ),
+  "jv-expert-quote": createCmsDataElementRenderer(
+    parseCmsExpertQuoteData,
+    CmsExpertQuote,
+  ),
+  "jv-expert-profile": createCmsDataElementRenderer(
+    parseCmsExpertProfileData,
+    CmsExpertProfile,
+  ),
+  "jv-faq": createCmsDataElementRenderer(parseCmsFaqData, CmsFaq),
+  "jv-guide-hub-cards": createCmsDataElementRenderer(
+    parseCmsGuideHubCardsData,
+    CmsGuideHubCards,
+  ),
+  "jv-hero": createCmsDataElementRenderer(parseCmsHeroData, CmsHero),
+  "jv-home-editorial": createCmsDataElementRenderer(
+    parseCmsHomeEditorialData,
+    CmsHomeEditorial,
+  ),
+  "jv-inline-product-teaser": createCmsDataElementRenderer(
+    parseCmsInlineProductTeaserData,
+    CmsInlineProductTeaser,
+  ),
+  "jv-instagram-style": createCmsDataElementRenderer(
+    parseCmsInstagramStyleData,
+    CmsInstagramStyle,
+  ),
+  "jv-look-scene": createCmsDataElementRenderer(
+    parseCmsLookSceneData,
+    CmsLookScene,
+  ),
+  "jv-loyalty-promo": createCmsDataElementRenderer(
+    parseCmsLoyaltyPromoData,
+    CmsLoyaltyPromo,
+  ),
+  "jv-newsletter": createCmsDataElementRenderer(
+    parseCmsNewsletterData,
+    CmsNewsletter,
+  ),
+  "jv-offer-rail": createCmsDataElementRenderer(
+    parseCmsOfferRailData,
+    CmsOfferRail,
+  ),
+  "jv-page-header": createCmsDataElementRenderer(
+    parseCmsPageHeaderData,
+    CmsPageHeader,
+  ),
+  "jv-product-grid": createCmsDataElementRenderer(
+    parseCmsProductGridData,
+    CmsProductGrid,
+  ),
+  "jv-promo-banner": createCmsDataElementRenderer(
+    parseCmsPromoBannerData,
+    CmsPromoBanner,
+  ),
+  "jv-promo-deal-tiles": createCmsDataElementRenderer(
+    parseCmsPromoDealTilesData,
+    CmsPromoDealTiles,
+  ),
+  "jv-related-look-cards": createCmsDataElementRenderer(
+    parseCmsRelatedLookCardsData,
+    CmsRelatedLookCards,
+  ),
+  "jv-review-summary": createCmsDataElementRenderer(
+    parseCmsReviewSummaryData,
+    CmsReviewSummary,
+  ),
+  "jv-room-grid": createCmsDataElementRenderer(
+    parseCmsRoomGridData,
+    CmsRoomGrid,
+  ),
+  "jv-shop-the-look": createCmsDataElementRenderer(
+    parseCmsShopTheLookData,
+    CmsShopTheLook,
+  ),
+  "jv-subcategory-links": createCmsDataElementRenderer(
+    parseCmsSubcategoryLinksData,
+    CmsSubcategoryLinks,
+  ),
+  "jv-table-of-contents": createCmsDataElementRenderer(
+    parseCmsTableOfContentsData,
+    CmsTableOfContents,
+  ),
+  "jv-trend-look-grid": createCmsDataElementRenderer(
+    parseCmsTrendLookGridData,
+    CmsTrendLookGrid,
+  ),
+  "jv-trust-rating": createCmsDataElementRenderer(
+    parseCmsTrustRatingData,
+    CmsTrustRating,
+  ),
+  "jv-why-jvmoebel": createCmsDataElementRenderer(
+    parseCmsWhyJvmoebelData,
+    CmsWhyJvmoebel,
+  ),
+  image: createCmsElementRenderer(parseCmsImageData, CmsImage),
+  "product-listing": CmsProductListingSlot,
   "sidebar-filter": CmsSidebarFilter,
-  text: CmsText,
-  "youtube-video": CmsYoutubeVideo,
+  text: createCmsElementRenderer(parseCmsTextData, CmsText),
+  "youtube-video": createCmsElementRenderer(
+    parseCmsYoutubeVideoData,
+    CmsYoutubeVideo,
+  ),
 };
 
 function CmsSlotRenderer({ renderContext, slot }: CmsSlotComponentProps) {

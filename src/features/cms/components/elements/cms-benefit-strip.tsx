@@ -1,12 +1,11 @@
 import { BadgeEuro, RefreshCcw, Truck } from "lucide-react";
 
 import { Container } from "@/components/ui/container";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import {
-  parseCmsBenefitStripData,
-  type CmsBenefitStripIcon,
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type {
+  CmsBenefitStripData,
+  CmsBenefitStripIcon,
 } from "@/features/cms/contracts/benefit-strip";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
 
 const benefitIcons = {
   delivery: Truck,
@@ -14,19 +13,13 @@ const benefitIcons = {
   returns: RefreshCcw,
 } satisfies Record<CmsBenefitStripIcon, typeof BadgeEuro>;
 
-export function CmsBenefitStrip({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsBenefitStripData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
+export function CmsBenefitStrip({
+  data,
+}: CmsElementProps<CmsBenefitStripData>) {
   return (
     <Container data-cms-element="jv-benefit-strip">
       <div className="grid overflow-hidden rounded-3xl border bg-card md:grid-cols-3">
-        {result.data.items.map((item) => {
+        {data.items.map((item) => {
           const Icon = benefitIcons[item.icon];
 
           return (

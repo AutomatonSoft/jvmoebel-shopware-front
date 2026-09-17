@@ -8,12 +8,11 @@ import {
 
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import {
-  parseCmsWhyJvmoebelData,
-  type CmsWhyJvmoebelBenefitIcon,
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type {
+  CmsWhyJvmoebelBenefitIcon,
+  CmsWhyJvmoebelData,
 } from "@/features/cms/contracts/why-jvmoebel";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
 
 const benefitIcons = {
   advice: MessageCircle,
@@ -21,18 +20,13 @@ const benefitIcons = {
   payment: ShieldCheck,
 } satisfies Record<CmsWhyJvmoebelBenefitIcon, typeof Sparkles>;
 
-export function CmsWhyJvmoebel({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsWhyJvmoebelData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
+export function CmsWhyJvmoebel({
+  data,
+  id,
+}: CmsElementProps<CmsWhyJvmoebelData>) {
   const { benefits, description, eyebrow, mark, tagline, title, viewAll } =
-    result.data;
-  const headingId = `why-jvmoebel-${slot.id}`;
+    data;
+  const headingId = `why-jvmoebel-${id}`;
 
   return (
     <Container

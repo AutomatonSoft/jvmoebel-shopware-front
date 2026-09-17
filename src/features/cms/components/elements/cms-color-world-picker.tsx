@@ -3,20 +3,13 @@ import Image from "next/image";
 
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsColorWorldPickerData } from "@/features/cms/contracts/color-world-picker";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsColorWorldPickerData } from "@/features/cms/contracts/color-world-picker";
 
-export function CmsColorWorldPicker({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsColorWorldPickerData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { colors, description, title } = result.data;
+export function CmsColorWorldPicker({
+  data,
+}: CmsElementProps<CmsColorWorldPickerData>) {
+  const { colors, description, title } = data;
 
   return (
     <Container

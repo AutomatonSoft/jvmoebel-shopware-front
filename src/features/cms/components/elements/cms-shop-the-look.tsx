@@ -3,20 +3,11 @@ import Image from "next/image";
 
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsShopTheLookData } from "@/features/cms/contracts/shop-the-look";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsShopTheLookData } from "@/features/cms/contracts/shop-the-look";
 
-export function CmsShopTheLook({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsShopTheLookData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { description, eyebrow, image, items, title, viewAll } = result.data;
+export function CmsShopTheLook({ data }: CmsElementProps<CmsShopTheLookData>) {
+  const { description, eyebrow, image, items, title, viewAll } = data;
 
   return (
     <Container

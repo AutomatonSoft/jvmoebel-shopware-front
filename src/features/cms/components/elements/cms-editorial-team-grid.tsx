@@ -3,20 +3,13 @@ import Image from "next/image";
 
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsEditorialTeamGridData } from "@/features/cms/contracts/editorial-team-grid";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsEditorialTeamGridData } from "@/features/cms/contracts/editorial-team-grid";
 
-export function CmsEditorialTeamGrid({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsEditorialTeamGridData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { members, title } = result.data;
+export function CmsEditorialTeamGrid({
+  data,
+}: CmsElementProps<CmsEditorialTeamGridData>) {
+  const { members, title } = data;
 
   return (
     <Container

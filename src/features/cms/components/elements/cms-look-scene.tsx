@@ -4,21 +4,10 @@ import Image from "next/image";
 import { Container } from "@/components/ui/container";
 import { CmsButton } from "@/features/cms/components/cms-button";
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsLookSceneData } from "@/features/cms/contracts/look-scene";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsLookSceneData } from "@/features/cms/contracts/look-scene";
 
-export function CmsLookScene({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsLookSceneData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const data = result.data;
-
+export function CmsLookScene({ data }: CmsElementProps<CmsLookSceneData>) {
   return (
     <Container
       as="section"

@@ -1,25 +1,18 @@
 import { ChevronDown } from "lucide-react";
 
 import { Container } from "@/components/ui/container";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsHomeEditorialData } from "@/features/cms/contracts/home-editorial";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsHomeEditorialData } from "@/features/cms/contracts/home-editorial";
 import { sanitizeCmsHtml } from "@/features/cms/lib/sanitize-html";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
 import { cn } from "@/lib/utils";
 
 function EditorialParagraph({ content }: { content: string }) {
   return <div dangerouslySetInnerHTML={{ __html: sanitizeCmsHtml(content) }} />;
 }
 
-export function CmsHomeEditorial({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsHomeEditorialData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
+export function CmsHomeEditorial({
+  data,
+}: CmsElementProps<CmsHomeEditorialData>) {
   const {
     appearance,
     introduction,
@@ -28,7 +21,7 @@ export function CmsHomeEditorial({ slot }: CmsSlotComponentProps) {
     showMoreLabel,
     statement,
     title,
-  } = result.data;
+  } = data;
 
   return (
     <Container

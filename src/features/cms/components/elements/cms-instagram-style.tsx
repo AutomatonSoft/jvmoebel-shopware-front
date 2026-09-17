@@ -3,20 +3,13 @@ import Image from "next/image";
 
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsInstagramStyleData } from "@/features/cms/contracts/instagram-style";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsInstagramStyleData } from "@/features/cms/contracts/instagram-style";
 
-export function CmsInstagramStyle({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsInstagramStyleData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { caption, handle, image, link } = result.data;
+export function CmsInstagramStyle({
+  data,
+}: CmsElementProps<CmsInstagramStyleData>) {
+  const { caption, handle, image, link } = data;
 
   return (
     <Container

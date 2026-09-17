@@ -2,21 +2,15 @@ import { ArrowDownRight, List } from "lucide-react";
 
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsTableOfContentsData } from "@/features/cms/contracts/table-of-contents";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsTableOfContentsData } from "@/features/cms/contracts/table-of-contents";
 
-export function CmsTableOfContents({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsTableOfContentsData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { items, title } = result.data;
-  const headingId = `table-of-contents-${slot.id}`;
+export function CmsTableOfContents({
+  data,
+  id,
+}: CmsElementProps<CmsTableOfContentsData>) {
+  const { items, title } = data;
+  const headingId = `table-of-contents-${id}`;
 
   return (
     <Container

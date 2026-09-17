@@ -1,13 +1,11 @@
 import Image from "next/image";
 
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
 import {
-  parseCmsImageData,
   type CmsImageAlignment,
   type CmsImageData,
 } from "@/features/cms/contracts/image";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
 import { cn } from "@/lib/utils";
 
 const horizontalAlignmentClasses = {
@@ -73,16 +71,7 @@ function CmsImageContent({ data }: { data: CmsImageData }) {
   );
 }
 
-export function CmsImage({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsImageData(slot);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const data = result.data;
+export function CmsImage({ data }: CmsElementProps<CmsImageData>) {
   const image = <CmsImageContent data={data} />;
 
   return (

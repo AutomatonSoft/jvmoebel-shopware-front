@@ -187,6 +187,24 @@ export function parseCmsProductGridData(
     issues.push({ message: "Locale is missing or empty.", path: "locale" });
   }
 
+  let hasValidPriceFormat = false;
+
+  if (currency && locale) {
+    try {
+      new Intl.NumberFormat(locale, {
+        currency,
+        maximumFractionDigits: 0,
+        style: "currency",
+      });
+      hasValidPriceFormat = true;
+    } catch {
+      issues.push({
+        message: "Locale and currency must form a valid price format.",
+        path: "locale",
+      });
+    }
+  }
+
   if (products.data.length === 0) {
     issues.push({
       message: "At least one valid product is required.",
@@ -198,7 +216,13 @@ export function parseCmsProductGridData(
     issues.push({ message: "Title is missing or empty.", path: "title" });
   }
 
-  if (!currency || !locale || products.data.length === 0 || !title) {
+  if (
+    !currency ||
+    !locale ||
+    !hasValidPriceFormat ||
+    products.data.length === 0 ||
+    !title
+  ) {
     return { data: null, issues };
   }
 

@@ -1,18 +1,9 @@
 import { Container } from "@/components/ui/container";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsPageHeaderData } from "@/features/cms/contracts/page-header";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsPageHeaderData } from "@/features/cms/contracts/page-header";
 
-export function CmsPageHeader({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsPageHeaderData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { description, eyebrow, title } = result.data;
+export function CmsPageHeader({ data }: CmsElementProps<CmsPageHeaderData>) {
+  const { description, eyebrow, title } = data;
 
   return (
     <Container

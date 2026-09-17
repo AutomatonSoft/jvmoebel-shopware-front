@@ -3,20 +3,13 @@ import Image from "next/image";
 
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsRelatedLookCardsData } from "@/features/cms/contracts/related-look-cards";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsRelatedLookCardsData } from "@/features/cms/contracts/related-look-cards";
 
-export function CmsRelatedLookCards({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsRelatedLookCardsData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { cards, title } = result.data;
+export function CmsRelatedLookCards({
+  data,
+}: CmsElementProps<CmsRelatedLookCardsData>) {
+  const { cards, title } = data;
 
   return (
     <Container
