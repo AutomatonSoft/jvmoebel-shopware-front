@@ -14,6 +14,7 @@ export type ShopProductPageRequest = Readonly<{
   maximumPrice?: number;
   minimumPrice?: number;
   page: number;
+  propertyGroups: Readonly<Record<string, readonly string[]>>;
   propertyIds: readonly string[];
   sort: ShopProductSort;
 }>;
@@ -22,6 +23,7 @@ export const defaultShopProductPageRequest = {
   categoryIds: [],
   companyIds: [],
   page: 1,
+  propertyGroups: {},
   propertyIds: [],
   sort: "featured",
 } satisfies ShopProductPageRequest;

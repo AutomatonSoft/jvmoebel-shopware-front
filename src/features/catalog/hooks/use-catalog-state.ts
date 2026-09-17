@@ -135,16 +135,18 @@ export function useCatalogState(listing: ShopProductListingPage) {
         });
       },
       onToggleAttribute: (groupId: string, value: string) => {
-        const properties = Object.entries(selectedAttributes).flatMap(
-          ([candidateGroupId, selectedOptions]) =>
-            candidateGroupId === groupId
-              ? toggleValue(value, selectedOptions)
-              : selectedOptions,
+        const nextSelectedAttributes = Object.fromEntries(
+          Object.entries({
+            ...selectedAttributes,
+            [groupId]: toggleValue(value, selectedAttributes[groupId] ?? []),
+          }).filter(([, selectedOptions]) => selectedOptions.length > 0),
         );
-
-        if (!(groupId in selectedAttributes)) {
-          properties.push(value);
-        }
+        const properties = Object.entries(nextSelectedAttributes).flatMap(
+          ([candidateGroupId, selectedOptions]) =>
+            selectedOptions.map(
+              (selectedOption) => `${candidateGroupId}:${selectedOption}`,
+            ),
+        );
 
         resetPage({ property: properties });
       },

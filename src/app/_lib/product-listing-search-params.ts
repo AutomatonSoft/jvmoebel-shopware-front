@@ -22,6 +22,28 @@ function getParameterValues(value?: string | string[]) {
   );
 }
 
+function getPropertySelection(value?: string | string[]) {
+  const propertyIds: string[] = [];
+  const propertyGroups: Record<string, string[]> = {};
+
+  for (const entry of getParameterValues(value)) {
+    const separatorIndex = entry.indexOf(":");
+
+    if (separatorIndex <= 0 || separatorIndex === entry.length - 1) {
+      propertyIds.push(entry);
+      continue;
+    }
+
+    const groupId = entry.slice(0, separatorIndex);
+    const propertyId = entry.slice(separatorIndex + 1);
+
+    propertyIds.push(propertyId);
+    propertyGroups[groupId] = [...(propertyGroups[groupId] ?? []), propertyId];
+  }
+
+  return { propertyGroups, propertyIds };
+}
+
 function getPositiveInteger(value?: string | string[]) {
   const number = Number(getFirstParameter(value));
 
@@ -51,13 +73,18 @@ function getProductSort(value?: string | string[]): ShopProductSort {
 export function getProductPageRequest(
   parameters: ProductListingSearchParams,
 ): ShopProductPageRequest {
+  const { propertyGroups, propertyIds } = getPropertySelection(
+    parameters.property,
+  );
+
   return {
     categoryIds: getParameterValues(parameters.category),
     companyIds: getParameterValues(parameters.manufacturer),
     maximumPrice: getOptionalPrice(parameters.maxPrice),
     minimumPrice: getOptionalPrice(parameters.minPrice),
     page: getPositiveInteger(parameters.page),
-    propertyIds: getParameterValues(parameters.property),
+    propertyGroups,
+    propertyIds,
     sort: getProductSort(parameters.sort),
   };
 }

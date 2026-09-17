@@ -98,32 +98,171 @@ const productListingPageIncludes = {
   ],
   seo_url: ["isCanonical", "isDeleted", "routeName", "seoPathInfo"],
 } satisfies components["schemas"]["Includes"];
-const productListingAggregations = [
-  {
-    field: "categories.id",
-    limit: 100,
-    name: "categoryCounts",
-    type: "terms",
-  },
+type ShopwareCriteriaFilter = NonNullable<
+  components["schemas"]["Criteria"]["filter"]
+>[number];
+type ShopwareTermsAggregation = components["schemas"]["AggregationTerms"] &
+  components["schemas"]["SubAggregations"];
+
+const staticProductListingAggregations = [
   {
     definition: "category",
     field: "categories.id",
     name: "categoryEntities",
     type: "entity",
   },
-  {
-    field: "manufacturerId",
-    limit: 100,
-    name: "manufacturerCounts",
-    type: "terms",
-  },
-  {
-    field: "properties.id",
-    limit: 1000,
-    name: "propertyCounts",
-    type: "terms",
-  },
 ] satisfies components["schemas"]["Aggregation"][];
+
+function getPropertyCountAggregationName(groupId: string) {
+  return `propertyCounts_${groupId}`;
+}
+
+function getPropertyFilters(
+  request: ShopProductPageRequest,
+  excludedGroupId?: string,
+): ShopwareCriteriaFilter[] {
+  const groupedPropertyIds = new Set(
+    Object.values(request.propertyGroups).flat(),
+  );
+  const propertyGroups: Array<[string, readonly string[]]> = Object.entries(
+    request.propertyGroups,
+  );
+  const ungroupedPropertyIds = request.propertyIds.filter(
+    (id) => !groupedPropertyIds.has(id),
+  );
+
+  if (ungroupedPropertyIds.length > 0) {
+    propertyGroups.push(["ungrouped", ungroupedPropertyIds]);
+  }
+
+  return propertyGroups.flatMap(([groupId, propertyIds]) =>
+    groupId === excludedGroupId || propertyIds.length === 0
+      ? []
+      : [
+          {
+            operator: "or" as const,
+            queries: [
+              {
+                field: "product.optionIds",
+                type: "equalsAny" as const,
+                value: propertyIds.join("|"),
+              },
+              {
+                field: "product.propertyIds",
+                type: "equalsAny" as const,
+                value: propertyIds.join("|"),
+              },
+            ],
+            type: "multi" as const,
+          },
+        ],
+  );
+}
+
+function getFacetFilters(
+  request: ShopProductPageRequest,
+  options: Readonly<{
+    excludeCategory?: boolean;
+    excludeManufacturer?: boolean;
+    excludePropertyGroupId?: string;
+  }> = {},
+): ShopwareCriteriaFilter[] {
+  const filters: ShopwareCriteriaFilter[] = [];
+
+  if (!options.excludeCategory && request.categoryIds.length > 0) {
+    filters.push({
+      field: "categories.id",
+      type: "equalsAny",
+      value: request.categoryIds.join("|"),
+    });
+  }
+
+  if (!options.excludeManufacturer && request.companyIds.length > 0) {
+    filters.push({
+      field: "manufacturerId",
+      type: "equalsAny",
+      value: request.companyIds.join("|"),
+    });
+  }
+
+  if (
+    request.minimumPrice !== undefined ||
+    request.maximumPrice !== undefined
+  ) {
+    filters.push({
+      field: "product.cheapestPrice",
+      parameters: {
+        gte: request.minimumPrice,
+        lte: request.maximumPrice,
+      },
+      type: "range",
+    });
+  }
+
+  filters.push(...getPropertyFilters(request, options.excludePropertyGroupId));
+
+  return filters;
+}
+
+function getFilteredTermsAggregation(
+  name: string,
+  field: string,
+  limit: number,
+  filters: ShopwareCriteriaFilter[],
+): components["schemas"]["Aggregation"] {
+  const aggregation = {
+    field,
+    limit,
+    name,
+    type: "terms" as const,
+  } satisfies ShopwareTermsAggregation;
+
+  if (filters.length === 0) {
+    return aggregation;
+  }
+
+  return {
+    aggregation,
+    // The generated SDK type contains one extra array level; the Store API
+    // expects the same flat filter list used by Criteria.filter.
+    filter:
+      filters as unknown as components["schemas"]["AggregationFilter"]["filter"],
+    name,
+    type: "filter",
+  };
+}
+
+function getProductListingAggregations(request: ShopProductPageRequest) {
+  return [
+    getFilteredTermsAggregation(
+      "categoryCounts",
+      "categories.id",
+      100,
+      getFacetFilters(request, { excludeCategory: true }),
+    ),
+    ...staticProductListingAggregations,
+    getFilteredTermsAggregation(
+      "manufacturerCounts",
+      "manufacturerId",
+      100,
+      getFacetFilters(request, { excludeManufacturer: true }),
+    ),
+    getFilteredTermsAggregation(
+      "propertyCounts",
+      "properties.id",
+      1000,
+      getFacetFilters(request),
+    ),
+    ...Object.keys(request.propertyGroups).map((groupId) =>
+      getFilteredTermsAggregation(
+        getPropertyCountAggregationName(groupId),
+        "properties.id",
+        1000,
+        getFacetFilters(request, { excludePropertyGroupId: groupId }),
+      ),
+    ),
+  ];
+}
 
 async function requestCompleteProductListingPage(
   client: ShopwareClient,
@@ -220,7 +359,7 @@ export async function getShopwareProductListingPage(
     client.invoke("readProductListing post /product-listing/{categoryId}", {
       body: {
         ...getShopwareProductSort(request.sort),
-        aggregations: productListingAggregations,
+        aggregations: getProductListingAggregations(request),
         associations: productListingPageAssociations,
         includes: productListingPageIncludes,
         limit: shopProductPageSize,
