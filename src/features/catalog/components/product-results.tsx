@@ -1,7 +1,7 @@
 "use client";
 
-import { LoaderCircle, Sparkles } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { Sparkles } from "lucide-react";
+import { motion } from "motion/react";
 import { memo, useEffect, useRef } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -32,27 +32,20 @@ const ShopProductGrid = memo(function ShopProductGrid({
   locale,
   products,
 }: Pick<ShopProductResultsProps, "currency" | "locale" | "products">) {
-  return (
-    <AnimatePresence initial={false} mode="popLayout">
-      {products.map((product, index) => (
-        <motion.div
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.96 }}
-          initial={{ opacity: 0, scale: 0.96 }}
-          key={product.id}
-          layout
-          transition={productLayoutTransition}
-        >
-          <ShopProductCard
-            currency={currency}
-            eagerImage={index < 4}
-            locale={locale}
-            product={product}
-          />
-        </motion.div>
-      ))}
-    </AnimatePresence>
-  );
+  return products.map((product, index) => (
+    <motion.div
+      key={product.id}
+      layout="position"
+      transition={{ layout: productLayoutTransition }}
+    >
+      <ShopProductCard
+        currency={currency}
+        eagerImage={index < 4}
+        locale={locale}
+        product={product}
+      />
+    </motion.div>
+  ));
 });
 
 export function ShopProductResults({
@@ -126,7 +119,7 @@ export function ShopProductResults({
       {products.length > 0 ? (
         <>
           <div
-            className={`grid grid-cols-2 gap-x-3 gap-y-9 transition-[opacity,filter] duration-200 md:grid-cols-3 md:gap-x-4 xl:grid-cols-4 ${isLoading ? "pointer-events-none opacity-35 saturate-50" : ""}`}
+            className={`grid grid-cols-2 gap-x-3 gap-y-9 md:grid-cols-3 md:gap-x-4 xl:grid-cols-4 ${isLoading ? "pointer-events-none" : ""}`}
           >
             <ShopProductGrid
               currency={currency}
@@ -155,16 +148,15 @@ export function ShopProductResults({
       )}
 
       {isLoading && (
-        <div
-          aria-live="polite"
-          className="absolute inset-0 z-10 cursor-wait bg-background/45 backdrop-blur-[1px]"
-          role="status"
-        >
-          <div className="sticky top-[45dvh] mx-auto flex w-fit items-center gap-3 rounded-full border bg-card px-5 py-3 text-sm font-semibold shadow-xl">
-            <LoaderCircle className="size-5 animate-spin text-primary" />
+        <>
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-10 bg-background/30 transition-opacity duration-200"
+          />
+          <span aria-live="polite" className="sr-only" role="status">
             Produkte werden aktualisiert...
-          </div>
-        </div>
+          </span>
+        </>
       )}
     </div>
   );
