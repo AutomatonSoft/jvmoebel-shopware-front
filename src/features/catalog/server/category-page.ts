@@ -1,21 +1,40 @@
 import "server-only";
 
+import { unstable_cache } from "next/cache";
+
+import { getStorefrontRoute } from "@/features/storefront-shell/server/storefront-route";
+import { shopwareCacheTtlSeconds } from "@/integrations/shopware/cache-policy";
 import { getShopwareCategoryPage } from "@/integrations/shopware/category-page";
-import {
-  resolveShopwareCategoryRoute,
-  type ShopwareCategoryRoute,
-} from "@/integrations/shopware/category-route";
+import type { ShopwareCategoryRoute } from "@/integrations/shopware/category-route";
 import { getShopwareRequestSession } from "@/integrations/shopware/session";
 
-export async function getCategoryPageByPath(pathname: string) {
-  const client = getShopwareRequestSession().client;
-  const route = await resolveShopwareCategoryRoute(client, pathname);
+const getCachedShopwareCategoryPage = unstable_cache(
+  (categoryId: string) =>
+    getShopwareCategoryPage(getShopwareRequestSession().client, categoryId),
+  ["shopware-category-page"],
+  {
+    revalidate: shopwareCacheTtlSeconds.categoryPage,
+    tags: ["shopware:catalog", "shopware:cms"],
+  },
+);
 
-  if (!route) {
+export function getShopCategoryPage(categoryId: string) {
+  return getCachedShopwareCategoryPage(categoryId);
+}
+
+export async function getCategoryPageByPath(pathname: string) {
+  const storefrontRoute = await getStorefrontRoute(pathname);
+
+  if (storefrontRoute?.kind !== "category") {
     return null;
   }
 
-  const page = await getShopwareCategoryPage(client, route.categoryId);
+  const route = {
+    canonicalPath: storefrontRoute.canonicalPath,
+    categoryId: storefrontRoute.entityId,
+    shouldRedirect: storefrontRoute.shouldRedirect,
+  } satisfies ShopwareCategoryRoute;
+  const page = await getShopCategoryPage(route.categoryId);
 
   return { page, route } satisfies {
     page: Awaited<ReturnType<typeof getShopwareCategoryPage>>;

@@ -1,15 +1,13 @@
 import "server-only";
 
+import { getShopCategoryPage } from "@/features/catalog/server/category-page";
+import { getShopProductPageData } from "@/features/catalog/server/product-detail";
 import { getMockLandingPageRoute } from "@/features/storefront-shell/fixtures/landing-pages";
-import { getShopwareCategoryPage } from "@/integrations/shopware/category-page";
+import { getStorefrontRoute } from "@/features/storefront-shell/server/storefront-route";
 import { getShopwareLandingPage } from "@/integrations/shopware/landing-page";
 import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
-import { getShopwareProductDetail } from "@/integrations/shopware/product-detail";
 import { getShopwareRequestSession } from "@/integrations/shopware/session";
-import {
-  resolveShopwareStorefrontRoute,
-  type ShopwareStorefrontRoute,
-} from "@/integrations/shopware/storefront-route";
+import type { ShopwareStorefrontRoute } from "@/integrations/shopware/storefront-route";
 
 export async function getStorefrontPageByPath(pathname: string) {
   if (shouldUseShopwareMocks()) {
@@ -31,29 +29,29 @@ export async function getStorefrontPageByPath(pathname: string) {
     } as const;
   }
 
-  const client = getShopwareRequestSession().client;
-  const route = await resolveShopwareStorefrontRoute(client, pathname);
+  const route = await getStorefrontRoute(pathname);
 
   if (!route) {
     return null;
   }
 
   if (route.kind === "product") {
-    const page = await getShopwareProductDetail(client, route.entityId);
+    const page = await getShopProductPageData(route.entityId);
 
     return page
       ? ({ kind: "product", page, route } satisfies {
           kind: "product";
-          page: NonNullable<
-            Awaited<ReturnType<typeof getShopwareProductDetail>>
-          >;
+          page: NonNullable<Awaited<ReturnType<typeof getShopProductPageData>>>;
           route: ShopwareStorefrontRoute;
         })
       : null;
   }
 
   if (route.kind === "landing-page") {
-    const page = await getShopwareLandingPage(client, route.entityId);
+    const page = await getShopwareLandingPage(
+      getShopwareRequestSession().client,
+      route.entityId,
+    );
 
     return page
       ? ({ kind: "landing-page", page, route } satisfies {
@@ -66,11 +64,11 @@ export async function getStorefrontPageByPath(pathname: string) {
 
   return {
     kind: "category",
-    page: await getShopwareCategoryPage(client, route.entityId),
+    page: await getShopCategoryPage(route.entityId),
     route,
   } satisfies {
     kind: "category";
-    page: Awaited<ReturnType<typeof getShopwareCategoryPage>>;
+    page: Awaited<ReturnType<typeof getShopCategoryPage>>;
     route: ShopwareStorefrontRoute;
   };
 }

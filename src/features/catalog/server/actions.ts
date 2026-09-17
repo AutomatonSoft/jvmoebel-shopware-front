@@ -3,9 +3,9 @@
 import type { Route } from "next";
 import { redirect } from "next/navigation";
 
+import { getCanonicalProductPath } from "@/features/storefront-shell/server/storefront-route";
 import { findShopwareProductVariant } from "@/integrations/shopware/product-detail";
 import { getShopwareRequestSession } from "@/integrations/shopware/session";
-import { getShopwareCanonicalProductPath } from "@/integrations/shopware/storefront-route";
 
 function getRequiredString(formData: FormData, name: string) {
   const value = formData.get(name);
@@ -49,8 +49,7 @@ export async function selectProductVariant(formData: FormData) {
 
   try {
     destination =
-      (await getShopwareCanonicalProductPath(client, destinationProductId)) ??
-      destination;
+      (await getCanonicalProductPath(destinationProductId)) ?? destination;
   } catch (error) {
     console.error("Product variant URL lookup failed.", error);
   }
