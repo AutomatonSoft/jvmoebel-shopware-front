@@ -7,6 +7,7 @@ import {
   type ShopProductPageRequest,
 } from "@/features/catalog/model/product-listing-page";
 import { getShopProductListingPage } from "@/features/catalog/server/product-listing";
+import { getStorefrontShellData } from "@/features/storefront-shell/server/storefront-config";
 import { getStorefrontRoute } from "@/features/storefront-shell/server/storefront-route";
 import { shopwareCacheTtlSeconds } from "@/integrations/shopware/cache-policy";
 import { getShopwareCategoryPageContent } from "@/integrations/shopware/category-page";
@@ -14,11 +15,17 @@ import type { ShopwareCategoryRoute } from "@/integrations/shopware/category-rou
 import { getShopwareRequestSession } from "@/integrations/shopware/session";
 
 const getCachedShopwareCategoryPageContent = unstable_cache(
-  (categoryId: string) =>
-    getShopwareCategoryPageContent(
+  (categoryId: string) => {
+    const navigation = getStorefrontShellData().then(
+      (storefront) => storefront.navigation,
+    );
+
+    return getShopwareCategoryPageContent(
       getShopwareRequestSession().client,
       categoryId,
-    ),
+      navigation,
+    );
+  },
   ["shopware-category-page-content"],
   {
     revalidate: shopwareCacheTtlSeconds.categoryPage,

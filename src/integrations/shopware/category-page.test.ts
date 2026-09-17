@@ -21,7 +21,7 @@ describe("getShopwareCategoryPageContent", () => {
               description: "Möbel &amp; Wohnen",
               id: "category-id",
               name: "Möbel & Wohnen",
-              path: "|root-category-id|",
+              path: "|root-category-id|parent-category-id|",
               seoUrl: "/Moebel-Wohnen/",
               translated: {
                 description: "Möbel &amp; Wohnen",
@@ -42,10 +42,24 @@ describe("getShopwareCategoryPageContent", () => {
       },
     } as unknown as ShopwareClient;
 
-    const page = await getShopwareCategoryPageContent(client, "category-id");
+    const page = await getShopwareCategoryPageContent(client, "category-id", [
+      {
+        children: [],
+        href: "/Wohnen/",
+        id: "parent-category-id",
+        label: "Wohnen",
+        type: "page",
+      },
+    ]);
 
     expect(page).toMatchObject({
-      breadcrumbs: [],
+      breadcrumbs: [
+        {
+          href: "/Wohnen/",
+          id: "parent-category-id",
+          label: "Wohnen",
+        },
+      ],
       category: {
         canonicalPath: "/Moebel-Wohnen/",
         description: "Möbel & Wohnen",
