@@ -232,4 +232,56 @@ describe("getShopwareProductListing", () => {
       pathParams: { categoryId: "root-category-id" },
     });
   });
+
+  test("loads context and products concurrently for a requested category", async () => {
+    let releaseContext: (() => void) | undefined;
+    let productListingStarted = false;
+    const contextGate = new Promise<void>((resolve) => {
+      releaseContext = resolve;
+    });
+    const client = {
+      invoke: async (operation: string) => {
+        if (operation === "readContext get /context") {
+          await contextGate;
+
+          return {
+            data: {
+              currency: { isoCode: "EUR" },
+              languageInfo: { localeCode: "de-DE" },
+              salesChannel: { navigationCategoryId: "root-category-id" },
+            },
+          };
+        }
+
+        productListingStarted = true;
+
+        return {
+          data: {
+            aggregations: { price: { max: 1200, min: 100 } },
+            elements: [],
+            limit: 12,
+            page: 1,
+            total: 0,
+          },
+        };
+      },
+    } as unknown as Parameters<typeof getShopwareProductListingPage>[0];
+
+    const listingPromise = getShopwareProductListingPage(
+      client,
+      {
+        categoryIds: [],
+        companyIds: [],
+        page: 1,
+        propertyIds: [],
+        sort: "featured",
+      },
+      "requested-category-id",
+    );
+
+    expect(productListingStarted).toBe(true);
+
+    releaseContext?.();
+    await listingPromise;
+  });
 });

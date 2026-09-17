@@ -201,9 +201,10 @@ export async function getShopwareProductListingPage(
   request: ShopProductPageRequest,
   requestedCategoryId?: string,
 ): Promise<ShopProductListingPage> {
-  const context = await getShopwareContext(client);
+  const contextPromise = getShopwareContext(client);
   const categoryId =
-    requestedCategoryId ?? context.salesChannel.navigationCategoryId;
+    requestedCategoryId ??
+    (await contextPromise).salesChannel.navigationCategoryId;
   const categoryFilter =
     request.categoryIds.length > 0
       ? [
@@ -214,9 +215,9 @@ export async function getShopwareProductListingPage(
           },
         ]
       : undefined;
-  const response = await client.invoke(
-    "readProductListing post /product-listing/{categoryId}",
-    {
+  const [context, response] = await Promise.all([
+    contextPromise,
+    client.invoke("readProductListing post /product-listing/{categoryId}", {
       body: {
         ...getShopwareProductSort(request.sort),
         aggregations: productListingAggregations,
@@ -238,8 +239,8 @@ export async function getShopwareProductListingPage(
       },
       fetchOptions: { cache: "no-store" },
       pathParams: { categoryId },
-    },
-  );
+    }),
+  ]);
 
   return mapShopwareProductListingPage(
     response.data,
