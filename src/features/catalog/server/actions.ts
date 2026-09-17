@@ -1,9 +1,11 @@
 "use server";
 
+import type { Route } from "next";
 import { redirect } from "next/navigation";
 
 import { findShopwareProductVariant } from "@/integrations/shopware/product-detail";
 import { getShopwareRequestSession } from "@/integrations/shopware/session";
+import { getShopwareCanonicalProductPath } from "@/integrations/shopware/storefront-route";
 
 function getRequiredString(formData: FormData, name: string) {
   const value = formData.get(name);
@@ -28,11 +30,12 @@ export async function selectProductVariant(formData: FormData) {
     redirect("/moebel-sortiment");
   }
 
+  const client = getShopwareRequestSession().client;
   let variantId: string | null = null;
 
   try {
     variantId = await findShopwareProductVariant(
-      getShopwareRequestSession().client,
+      client,
       parentProductId,
       optionIds,
       switchedGroupId,
@@ -41,9 +44,16 @@ export async function selectProductVariant(formData: FormData) {
     console.error("Product variant selection failed.", error);
   }
 
-  redirect(
-    variantId
-      ? `/produkt/${encodeURIComponent(variantId)}`
-      : `/produkt/${encodeURIComponent(currentProductId)}?fehler=variante`,
-  );
+  const destinationProductId = variantId ?? currentProductId;
+  let destination = `/produkt/${encodeURIComponent(destinationProductId)}`;
+
+  try {
+    destination =
+      (await getShopwareCanonicalProductPath(client, destinationProductId)) ??
+      destination;
+  } catch (error) {
+    console.error("Product variant URL lookup failed.", error);
+  }
+
+  redirect(`${destination}${variantId ? "" : "?fehler=variante"}` as Route);
 }

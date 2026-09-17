@@ -65,6 +65,22 @@ async function findSeoUrls(
   return response.data.elements;
 }
 
+export async function getShopwareCanonicalProductPath(
+  client: ShopwareClient,
+  productId: string,
+) {
+  const canonicalSeoUrl = (
+    await findSeoUrls(client, "foreignKey", productId)
+  ).find(
+    (seoUrl) =>
+      isSupportedSeoUrl(seoUrl) &&
+      seoUrl.routeName === "frontend.detail.page" &&
+      seoUrl.isCanonical,
+  );
+
+  return canonicalSeoUrl ? getPublicPath(canonicalSeoUrl.seoPathInfo) : null;
+}
+
 export async function resolveShopwareStorefrontRoute(
   client: ShopwareClient,
   pathname: string,

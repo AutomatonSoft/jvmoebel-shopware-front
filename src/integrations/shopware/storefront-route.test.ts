@@ -1,7 +1,10 @@
 import { describe, expect, test } from "bun:test";
 
 import type { ShopwareClient } from "@/integrations/shopware/client";
-import { resolveShopwareStorefrontRoute } from "@/integrations/shopware/storefront-route";
+import {
+  getShopwareCanonicalProductPath,
+  resolveShopwareStorefrontRoute,
+} from "@/integrations/shopware/storefront-route";
 
 function createClient(
   responses: Array<
@@ -25,6 +28,29 @@ function createClient(
 }
 
 describe("resolveShopwareStorefrontRoute", () => {
+  test("finds the canonical SEO path for a product ID", async () => {
+    const client = createClient([
+      [
+        {
+          foreignKey: "product-id",
+          isCanonical: false,
+          routeName: "frontend.detail.page",
+          seoPathInfo: "Altes-Sofa/JV-100",
+        },
+        {
+          foreignKey: "product-id",
+          isCanonical: true,
+          routeName: "frontend.detail.page",
+          seoPathInfo: "Sofa-Alba/JV-100",
+        },
+      ],
+    ]);
+
+    await expect(
+      getShopwareCanonicalProductPath(client, "product-id"),
+    ).resolves.toBe("/Sofa-Alba/JV-100");
+  });
+
   test("resolves a canonical product SEO path without a trailing slash", async () => {
     const client = createClient([
       [

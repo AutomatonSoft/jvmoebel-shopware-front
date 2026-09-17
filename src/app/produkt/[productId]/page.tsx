@@ -6,7 +6,12 @@ import { getShopProductPageData } from "@/features/catalog/server/product-detail
 
 export type ProductPageProps = {
   params: Promise<{ productId: string }>;
+  searchParams: Promise<{ fehler?: string | string[] }>;
 };
+
+function hasVariantSelectionError(value?: string | string[]) {
+  return (Array.isArray(value) ? value[0] : value) === "variante";
+}
 
 export async function generateMetadata({
   params,
@@ -25,8 +30,13 @@ export async function generateMetadata({
   };
 }
 
-export default async function ProductPage({ params }: ProductPageProps) {
+export default async function ProductPage({
+  params,
+  searchParams,
+}: ProductPageProps) {
   const { productId } = await params;
+  const { fehler } = await searchParams;
+  const variantSelectionFailed = hasVariantSelectionError(fehler);
   const pageData = await getShopProductPageData(productId);
 
   if (!pageData) {
@@ -36,8 +46,15 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const legacyPath = `/produkt/${encodeURIComponent(productId)}`;
 
   if (pageData.product.url !== legacyPath) {
-    permanentRedirect(pageData.product.url as Route);
+    const errorQuery = variantSelectionFailed ? "?fehler=variante" : "";
+
+    permanentRedirect(`${pageData.product.url}${errorQuery}` as Route);
   }
 
-  return <ProductDetail {...pageData} />;
+  return (
+    <ProductDetail
+      {...pageData}
+      variantSelectionFailed={variantSelectionFailed}
+    />
+  );
 }

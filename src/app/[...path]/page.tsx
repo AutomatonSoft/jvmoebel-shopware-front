@@ -9,6 +9,7 @@ import { getStorefrontPageByPath } from "@/features/storefront-shell/server/stor
 
 type CategoryRoutePageProps = Readonly<{
   params: Promise<{ path: string[] }>;
+  searchParams: Promise<{ fehler?: string | string[] }>;
 }>;
 
 const loadStorefrontPage = cache(getStorefrontPageByPath);
@@ -55,19 +56,33 @@ export async function generateMetadata({
 
 export default async function CategoryRoutePage({
   params,
+  searchParams,
 }: CategoryRoutePageProps) {
   const result = await loadStorefrontPage(await getPath(params));
+  const { fehler } = await searchParams;
+  const variantSelectionFailed =
+    (Array.isArray(fehler) ? fehler[0] : fehler) === "variante";
 
   if (!result) {
     notFound();
   }
 
   if (result.route.shouldRedirect) {
-    permanentRedirect(result.route.canonicalPath as Route);
+    const errorQuery =
+      result.kind === "product" && variantSelectionFailed
+        ? "?fehler=variante"
+        : "";
+
+    permanentRedirect(`${result.route.canonicalPath}${errorQuery}` as Route);
   }
 
   if (result.kind === "product") {
-    return <ProductDetail {...result.page} />;
+    return (
+      <ProductDetail
+        {...result.page}
+        variantSelectionFailed={variantSelectionFailed}
+      />
+    );
   }
 
   if (result.kind === "landing-page") {

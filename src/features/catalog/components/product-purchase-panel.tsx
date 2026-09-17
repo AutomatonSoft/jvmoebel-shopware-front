@@ -36,6 +36,7 @@ type ProductPurchasePanelProps = Readonly<{
   currency: string;
   locale: string;
   product: ShopProductDetail;
+  variantSelectionFailed?: boolean;
 }>;
 
 function AddToCartButton() {
@@ -58,6 +59,7 @@ export function ProductPurchasePanel({
   currency,
   locale,
   product,
+  variantSelectionFailed,
 }: ProductPurchasePanelProps) {
   const [selectedColor, setSelectedColor] = useState(
     product.colors[0]?.value ?? "",
@@ -211,6 +213,16 @@ export function ProductPurchasePanel({
           <strong className="font-semibold text-foreground">JVMöbel</strong>
         </p>
       </section>
+
+      {variantSelectionFailed && (
+        <p
+          className="mt-5 rounded-xl border border-destructive/25 bg-destructive/5 px-4 py-3 text-sm text-destructive"
+          role="alert"
+        >
+          Diese Variante konnte nicht ausgewählt werden. Bitte wählen Sie eine
+          andere verfügbare Option.
+        </p>
+      )}
 
       <div
         className={
