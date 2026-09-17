@@ -1,7 +1,7 @@
 "use client";
 
 import { LoaderCircle, Sparkles } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +21,22 @@ export type ShopProductResultsProps = {
   paginationProps: ProductPaginationProps;
   products: readonly ShopProduct[];
 };
+
+const ShopProductGrid = memo(function ShopProductGrid({
+  currency,
+  locale,
+  products,
+}: Pick<ShopProductResultsProps, "currency" | "locale" | "products">) {
+  return products.map((product, index) => (
+    <ShopProductCard
+      currency={currency}
+      eagerImage={index < 4}
+      key={product.id}
+      locale={locale}
+      product={product}
+    />
+  ));
+});
 
 export function ShopProductResults({
   currency,
@@ -95,15 +111,11 @@ export function ShopProductResults({
           <div
             className={`grid grid-cols-2 gap-x-3 gap-y-9 transition-[opacity,filter] duration-200 md:grid-cols-3 md:gap-x-4 xl:grid-cols-4 ${isLoading ? "pointer-events-none opacity-35 saturate-50" : ""}`}
           >
-            {products.map((product, index) => (
-              <ShopProductCard
-                currency={currency}
-                eagerImage={index < 4}
-                key={product.id}
-                locale={locale}
-                product={product}
-              />
-            ))}
+            <ShopProductGrid
+              currency={currency}
+              locale={locale}
+              products={products}
+            />
           </div>
 
           <ProductPagination {...paginationProps} onPageChange={changePage} />
