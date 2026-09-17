@@ -20,7 +20,11 @@ import {
 } from "@/integrations/shopware/customer-account";
 
 function getRedirectPath(formData: FormData) {
-  return formData.get("redirectTo") === "/warenkorb" ? "/warenkorb" : null;
+  const redirectTo = formData.get("redirectTo");
+
+  return redirectTo === "/warenkorb" || redirectTo === "/kasse"
+    ? redirectTo
+    : null;
 }
 
 export async function loginCustomer(

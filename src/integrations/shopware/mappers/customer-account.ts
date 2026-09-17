@@ -7,7 +7,7 @@ type ShopwareCustomer = components["schemas"]["Customer"];
 export function mapShopwareCustomerAccount(
   customer: ShopwareCustomer | null | undefined,
 ): CustomerAccountSummary | null {
-  if (!customer) {
+  if (!customer || customer.guest) {
     return null;
   }
 

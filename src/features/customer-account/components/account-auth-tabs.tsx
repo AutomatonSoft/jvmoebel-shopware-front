@@ -6,8 +6,8 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const tabs = [
-  { href: "/kundenkonto/registrieren", label: "Registrieren" },
   { href: "/kundenkonto/anmelden", label: "Anmelden" },
+  { href: "/kundenkonto/registrieren", label: "Registrieren" },
 ] as const;
 
 export function AccountAuthTabs() {

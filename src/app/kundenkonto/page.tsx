@@ -23,7 +23,7 @@ export default async function CustomerAccountPage({
   ]);
 
   if (!account) {
-    redirect("/kundenkonto/registrieren");
+    redirect("/kundenkonto/anmelden");
   }
 
   const successToast =

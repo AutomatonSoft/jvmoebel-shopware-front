@@ -17,6 +17,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Input } from "@/components/ui/input";
+import { CartCheckoutDialog } from "@/features/cart/components/cart-checkout-dialog";
 import type { ShopCart, ShopCartItem } from "@/features/cart/model/cart";
 import {
   applyPromotionCode,
@@ -26,6 +27,7 @@ import {
 
 type CartPageProps = Readonly<{
   cart: ShopCart;
+  signedIn: boolean;
 }>;
 
 function QuantityControl({ item }: Readonly<{ item: ShopCartItem }>) {
@@ -236,7 +238,7 @@ function EmptyCart() {
   );
 }
 
-export function CartPage({ cart }: CartPageProps) {
+export function CartPage({ cart, signedIn }: CartPageProps) {
   const formatter = new Intl.NumberFormat(cart.locale, {
     currency: cart.currency,
     minimumFractionDigits: 2,
@@ -246,11 +248,6 @@ export function CartPage({ cart }: CartPageProps) {
     (total, item) => total + item.quantity,
     0,
   );
-  const inquiryItems = cart.items
-    .map((item) => `${item.quantity}× ${item.label}`)
-    .join(", ");
-  const inquiryHref = `mailto:info@jvmoebel.de?subject=${encodeURIComponent("Bestellanfrage aus dem Warenkorb")}&body=${encodeURIComponent(`Guten Tag, ich interessiere mich für folgende Produkte: ${inquiryItems}`)}`;
-
   return (
     <main className="flex-1 bg-[#faf7f2]">
       <Container className="py-8 sm:py-12">
@@ -296,7 +293,7 @@ export function CartPage({ cart }: CartPageProps) {
                   <span className="grid size-7 place-items-center rounded-full border">
                     2
                   </span>
-                  Anfrage
+                  Kasse
                 </li>
                 <li
                   aria-hidden="true"
@@ -401,29 +398,19 @@ export function CartPage({ cart }: CartPageProps) {
                   </form>
                 )}
 
-                <Button
-                  className="mt-7 w-full justify-between bg-primary hover:bg-primary/85"
-                  nativeButton={false}
-                  render={<a href={inquiryHref} />}
-                  size="lg"
-                >
-                  Bestellung anfragen
-                  <span className="grid size-7 place-items-center rounded-full bg-primary-foreground/20">
-                    <ArrowRight className="size-4" />
-                  </span>
-                </Button>
+                <CartCheckoutDialog signedIn={signedIn} />
                 <p className="mt-3 text-center text-[0.6875rem] leading-5 text-foreground/55">
-                  Wir bestätigen Verfügbarkeit und Liefertermin persönlich.
+                  Sicher bestellen – mit Kundenkonto oder als Gast.
                 </p>
 
                 <ul className="mt-6 grid gap-3 border-t border-foreground/15 pt-6 text-xs text-foreground/65">
                   <li className="flex items-center gap-2.5">
                     <ShieldCheck className="size-4 text-primary" />
-                    Sichere und persönliche Beratung
+                    Sicherer Checkout ohne Registrierung
                   </li>
                   <li className="flex items-center gap-2.5">
                     <PackageCheck className="size-4 text-primary" />
-                    Verfügbarkeit wird vorab geprüft
+                    Versand und Zahlung transparent wählen
                   </li>
                   <li className="flex items-center gap-2.5">
                     <Check className="size-4 text-primary" />

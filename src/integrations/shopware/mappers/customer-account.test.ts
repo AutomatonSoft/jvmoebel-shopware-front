@@ -51,4 +51,10 @@ describe("mapShopwareCustomerAccount", () => {
   test("returns null when there is no authenticated customer", () => {
     expect(mapShopwareCustomerAccount(undefined)).toBeNull();
   });
+
+  test("does not expose a checkout guest as a registered account", () => {
+    expect(
+      mapShopwareCustomerAccount({ guest: true } as ShopwareCustomer),
+    ).toBeNull();
+  });
 });

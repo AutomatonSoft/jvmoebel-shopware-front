@@ -6,6 +6,7 @@ import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { AccountField } from "@/features/customer-account/components/account-field";
 import { AccountToast } from "@/features/customer-account/components/account-toast";
+import { SocialAuthButtons } from "@/features/customer-account/components/social-auth-buttons";
 import type { AccountActionState } from "@/features/customer-account/model/account";
 import { loginCustomer } from "@/features/customer-account/server/actions";
 
@@ -35,6 +36,8 @@ export function LoginForm({ redirectTo }: Readonly<{ redirectTo?: string }>) {
         trigger={state}
         type="error"
       />
+
+      <SocialAuthButtons mode="login" />
 
       <AccountField
         autoComplete="email"

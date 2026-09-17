@@ -16,6 +16,7 @@ import { useActionState, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AccountField } from "@/features/customer-account/components/account-field";
 import { AccountToast } from "@/features/customer-account/components/account-toast";
+import { SocialAuthButtons } from "@/features/customer-account/components/social-auth-buttons";
 import type {
   AccountActionState,
   RegistrationOptions,
@@ -113,6 +114,7 @@ export function RegisterForm({
           className={step === "account" ? "space-y-6" : "hidden"}
           inert={step !== "account"}
         >
+          <SocialAuthButtons mode="register" />
           <fieldset className="grid gap-3 sm:grid-cols-2" data-step="account">
             <legend className="sr-only">Persönliche Angaben</legend>
             <AccountField
