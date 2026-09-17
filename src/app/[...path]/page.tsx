@@ -4,7 +4,7 @@ import { cache } from "react";
 
 import { CategoryPage } from "@/features/catalog/components/category-page";
 import { ProductDetail } from "@/features/catalog/components/product-detail";
-import { CmsPageRenderer } from "@/features/cms/components/cms-page-renderer";
+import { CmsLandingPageView } from "@/features/cms/components/cms-landing-page-view";
 import { getStorefrontPageByPath } from "@/features/storefront-shell/server/storefront-page";
 
 type CategoryRoutePageProps = Readonly<{
@@ -71,11 +71,7 @@ export default async function CategoryRoutePage({
   }
 
   if (result.kind === "landing-page") {
-    return (
-      <main className="flex-1">
-        <CmsPageRenderer page={result.page.cmsPage} />
-      </main>
-    );
+    return <CmsLandingPageView page={result.page} />;
   }
 
   return <CategoryPage page={result.page} />;

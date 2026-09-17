@@ -1,8 +1,9 @@
 # About page
 
-The `/ueber-uns` route renders a dedicated Shopware Shopping Experience. In
-live mode, its CMS page ID comes from the sales-channel configuration key
-`jvStorefrontAboutCmsPageId`. The value must be a 32-character Shopware ID.
+The `/ueber-uns` route is a Shopware landing page with an assigned Shopping
+Experience. In live mode, the shared storefront router resolves its SEO URL
+and landing-page ID through the Store API. The frontend has no dedicated route
+file or CMS page ID setting for this page.
 
 Mock mode uses `aboutCmsPageMock`. Its copy and source image are adapted from
 the existing JVMöbel page at

@@ -1,7 +1,9 @@
 import "server-only";
 
+import { getMockLandingPageRoute } from "@/features/storefront-shell/fixtures/landing-pages";
 import { getShopwareCategoryPage } from "@/integrations/shopware/category-page";
 import { getShopwareLandingPage } from "@/integrations/shopware/landing-page";
+import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
 import { getShopwareProductDetail } from "@/integrations/shopware/product-detail";
 import { getShopwareRequestSession } from "@/integrations/shopware/session";
 import {
@@ -10,6 +12,25 @@ import {
 } from "@/integrations/shopware/storefront-route";
 
 export async function getStorefrontPageByPath(pathname: string) {
+  if (shouldUseShopwareMocks()) {
+    const mockRoute = getMockLandingPageRoute(pathname);
+
+    if (!mockRoute) {
+      return null;
+    }
+
+    return {
+      kind: "landing-page",
+      page: mockRoute.page,
+      route: {
+        canonicalPath: mockRoute.canonicalPath,
+        entityId: mockRoute.page.id,
+        kind: "landing-page",
+        shouldRedirect: pathname !== mockRoute.canonicalPath,
+      } satisfies ShopwareStorefrontRoute,
+    } as const;
+  }
+
   const client = getShopwareRequestSession().client;
   const route = await resolveShopwareStorefrontRoute(client, pathname);
 

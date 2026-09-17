@@ -31,5 +31,5 @@ for every new video. Paste the YouTube video ID, provide a meaningful video
 title, and arrange the blocks in the desired order. The storefront renders any
 number of these elements without a code change.
 
-The page layout ID must be exposed through the sales-channel configuration key
-`jvStorefrontVideoShopCmsPageId`.
+Publish the Shopping Experience through a Shopware landing page with an SEO
+URL. The shared storefront router resolves the landing page and its layout.

@@ -1,10 +1,10 @@
 # Discount offers page
 
-The `/rabatt-angebote` route renders a dedicated Shopware Shopping Experience.
-In live mode, the CMS page ID comes from the sales-channel configuration key
-`jvStorefrontDiscountOffersCmsPageId`. The value must be a 32-character
-Shopware ID. A missing or invalid ID, or a failed Store API request, produces
-the page's explicit unavailable state and a server-side error message.
+The `/rabatt-angebote` route is a Shopware landing page with an assigned
+Shopping Experience. In live mode, the shared storefront router resolves its
+SEO URL and landing-page ID through the Store API. The frontend has no
+dedicated route file or CMS page ID setting for this page. A missing SEO URL or
+an inactive or incomplete landing page returns the storefront 404 page.
 
 Mock mode uses `discountOffersCmsPageMock`, which follows the same CMS
 contracts as the live response.
@@ -43,8 +43,8 @@ The hero call to action can target the product section through
 The manager controls every category card and its destination. The mock links
 use `/moebel-sortiment?category={value}&categoryLabel={label}` so the catalog
 can keep the selected filter and its display label even when the first loaded
-product set does not contain that category. Live links may instead point to
-the canonical Shopware category route once that routing is available.
+product set does not contain that category. Live links should point to the
+canonical Shopware category route.
 
 All custom element payloads and Administration responsibilities are documented
 separately in the [CMS component index](../README.md#supported-elements).

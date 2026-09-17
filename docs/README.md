@@ -5,6 +5,7 @@
 | Documentation                                             | Purpose                                |
 | --------------------------------------------------------- | -------------------------------------- |
 | [`storefront-config.md`](storefront/storefront-config.md) | Global header and footer configuration |
+| [`dynamic-routing.md`](storefront/dynamic-routing.md)     | Shopware SEO URL and landing routing   |
 | [`product-listing.md`](storefront/product-listing.md)     | Product listing model and behavior     |
 | [`discount-offers.md`](storefront/discount-offers.md)     | Discount offers page composition       |
 | [`about-page.md`](storefront/about-page.md)               | About page composition                 |
