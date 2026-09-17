@@ -39,17 +39,23 @@ type ProductPurchasePanelProps = Readonly<{
   variantSelectionFailed?: boolean;
 }>;
 
-function AddToCartButton() {
+function AddToCartButton({ unavailable }: Readonly<{ unavailable: boolean }>) {
   const { pending } = useFormStatus();
+  const label = unavailable
+    ? "Derzeit nicht verfügbar"
+    : pending
+      ? "Wird hinzugefügt …"
+      : "In den Warenkorb";
 
   return (
     <Button
-      className="h-12 w-full rounded-xl text-base shadow-sm disabled:cursor-wait"
-      disabled={pending}
+      aria-describedby="product-availability"
+      className="h-12 w-full rounded-xl text-base shadow-sm disabled:cursor-not-allowed"
+      disabled={pending || unavailable}
       size="lg"
       type="submit"
     >
-      {pending ? "Wird hinzugefügt …" : "In den Warenkorb"}
+      {label}
       <ShoppingBag className="size-4" />
     </Button>
   );
@@ -187,7 +193,10 @@ export function ProductPurchasePanel({
       </header>
 
       <section className="border-b py-5">
-        <p className="flex items-center gap-2 text-sm font-semibold">
+        <p
+          className="flex items-center gap-2 text-sm font-semibold"
+          id="product-availability"
+        >
           <span
             aria-hidden="true"
             className={`size-2.5 rounded-full ${product.isAvailable === false ? "bg-destructive" : product.isAvailable === true ? "bg-emerald-600" : "bg-muted-foreground"}`}
@@ -616,7 +625,7 @@ export function ProductPurchasePanel({
       <div className="sticky bottom-0 z-10 -mx-1 bg-background/95 px-1 pt-5 pb-1 backdrop-blur">
         <form action={addProductToCart}>
           <input name="productId" type="hidden" value={product.id} />
-          <AddToCartButton />
+          <AddToCartButton unavailable={product.isAvailable === false} />
         </form>
         <WishlistToggleButton
           className="mt-2"

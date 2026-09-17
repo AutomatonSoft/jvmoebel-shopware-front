@@ -20,6 +20,9 @@ import {
   updateShopwareCartItem,
 } from "@/integrations/shopware/cart";
 import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
+import { isShopwareProductAvailable } from "@/integrations/shopware/product-detail";
+
+class ProductUnavailableError extends Error {}
 
 function getRequiredString(formData: FormData, name: string) {
   const value = formData.get(name);
@@ -39,6 +42,10 @@ async function runCartMutation(
     await persistCustomerContext(session.getContextToken());
     revalidatePath("/warenkorb");
   } catch (error) {
+    if (error instanceof ProductUnavailableError) {
+      redirect("/warenkorb?fehler=nicht-verfuegbar");
+    }
+
     console.error("Cart mutation failed.", error);
     redirect("/warenkorb?fehler=aktualisierung");
   }
@@ -120,9 +127,13 @@ export async function addProductToCart(formData: FormData) {
   if (shouldUseShopwareMocks()) {
     await runMockCartMutation(() => addMockProduct(productId));
   } else {
-    await runCartMutation((session) =>
-      addShopwareProduct(session.client, productId),
-    );
+    await runCartMutation(async (session) => {
+      if (!(await isShopwareProductAvailable(session.client, productId))) {
+        throw new ProductUnavailableError();
+      }
+
+      await addShopwareProduct(session.client, productId);
+    });
   }
 
   redirect("/warenkorb?meldung=hinzugefuegt");

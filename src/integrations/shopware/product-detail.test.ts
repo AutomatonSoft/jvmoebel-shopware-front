@@ -4,6 +4,7 @@ import type { components } from "@shopware/api-client/store-api-types";
 import {
   findShopwareProductVariant,
   getShopwareProductDetail,
+  isShopwareProductAvailable,
 } from "@/integrations/shopware/product-detail";
 
 type ShopwareProduct = components["schemas"]["Product"];
@@ -171,6 +172,31 @@ describe("getShopwareProductDetail", () => {
           },
           fetchOptions: { cache: "no-store" },
           pathParams: { productId: "parent-product-id" },
+        },
+      },
+    ]);
+  });
+
+  test("checks current product availability without CMS or configurator data", async () => {
+    const requests: Array<{ operation: string; request: unknown }> = [];
+    const client = {
+      invoke: async (operation: string, request: unknown) => {
+        requests.push({ operation, request });
+
+        return { data: { product: { available: false } } };
+      },
+    } as unknown as Parameters<typeof isShopwareProductAvailable>[0];
+
+    await expect(
+      isShopwareProductAvailable(client, "unavailable-product-id"),
+    ).resolves.toBe(false);
+    expect(requests).toEqual([
+      {
+        operation: "readProductDetail post /product/{productId}",
+        request: {
+          fetchOptions: { cache: "no-store" },
+          pathParams: { productId: "unavailable-product-id" },
+          query: { skipCmsPage: true, skipConfigurator: true },
         },
       },
     ]);
