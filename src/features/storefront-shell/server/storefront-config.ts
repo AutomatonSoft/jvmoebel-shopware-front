@@ -36,7 +36,7 @@ const getCachedShopwareStorefrontShellData = unstable_cache(
   ["shopware-storefront-shell"],
   {
     revalidate: shopwareCacheTtlSeconds.storefrontShell,
-    tags: ["shopware:storefront-shell"],
+    tags: ["shopware:categories", "shopware:storefront-shell"],
   },
 );
 
