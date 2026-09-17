@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
+import type { ShopProductPageRequest } from "@/features/catalog/model/product-listing-page";
 import { getShopwareCategoryPage } from "@/integrations/shopware/category-page";
 import type { ShopwareClient } from "@/integrations/shopware/client";
 
@@ -48,11 +49,30 @@ describe("getShopwareCategoryPage", () => {
           return { data: [] };
         }
 
-        return { data: { elements: [], total: 0 } };
+        return {
+          data: {
+            aggregations: { price: { max: 1200, min: 100 } },
+            elements: [],
+            limit: 12,
+            page: 2,
+            total: 24,
+          },
+        };
       },
     } as unknown as ShopwareClient;
+    const productRequest = {
+      categoryIds: [],
+      companyIds: [],
+      page: 2,
+      propertyIds: [],
+      sort: "featured",
+    } satisfies ShopProductPageRequest;
 
-    const page = await getShopwareCategoryPage(client, "category-id");
+    const page = await getShopwareCategoryPage(
+      client,
+      "category-id",
+      productRequest,
+    );
 
     expect(page).toMatchObject({
       breadcrumbs: [],
@@ -68,11 +88,20 @@ describe("getShopwareCategoryPage", () => {
         sections: [],
         type: "product_list",
       },
-      listing: null,
+      listing: {
+        pagination: {
+          currentPage: 2,
+          pageSize: 12,
+          totalPages: 2,
+          totalProducts: 24,
+        },
+        products: [],
+      },
     });
     expect(requests).toContainEqual({
       operation: "readProductListing post /product-listing/{categoryId}",
       request: expect.objectContaining({
+        body: expect.objectContaining({ limit: 12, page: 2 }),
         pathParams: { categoryId: "category-id" },
       }),
     });

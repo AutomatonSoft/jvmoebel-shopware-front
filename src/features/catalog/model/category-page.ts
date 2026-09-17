@@ -1,4 +1,4 @@
-import type { ShopProductListing } from "@/features/catalog/model/product-listing";
+import type { ShopProductListingPage } from "@/features/catalog/model/product-listing-page";
 import type { CmsPage } from "@/features/cms/model/page";
 import type { StoreNavigationItem } from "@/features/storefront-shell/model/navigation";
 
@@ -20,5 +20,5 @@ export type ShopCategoryPage = Readonly<{
   }>;
   children: readonly StoreNavigationItem[];
   cmsPage: CmsPage | null;
-  listing: ShopProductListing | null;
+  listing: ShopProductListingPage | null;
 }>;

@@ -18,6 +18,14 @@ export type ShopProductPageRequest = Readonly<{
   sort: ShopProductSort;
 }>;
 
+export const defaultShopProductPageRequest = {
+  categoryIds: [],
+  companyIds: [],
+  page: 1,
+  propertyIds: [],
+  sort: "featured",
+} satisfies ShopProductPageRequest;
+
 export type ShopProductListingPage = ShopProductListing &
   Readonly<{
     filterOptions: ShopProductFilterOptions;

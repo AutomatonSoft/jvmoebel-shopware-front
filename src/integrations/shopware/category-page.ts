@@ -6,12 +6,16 @@ import type {
   CategoryBreadcrumb,
   ShopCategoryPage,
 } from "@/features/catalog/model/category-page";
+import {
+  defaultShopProductPageRequest,
+  type ShopProductPageRequest,
+} from "@/features/catalog/model/product-listing-page";
 import type { ShopwareClient } from "@/integrations/shopware/client";
 import { mapShopwareCmsPage } from "@/integrations/shopware/mappers/cms-page";
 import { getShopwarePlainText } from "@/integrations/shopware/mappers/product-listing";
 import { mapShopwareCategory } from "@/integrations/shopware/mappers/navigation";
 import { getShopwareCategoryChildren } from "@/integrations/shopware/navigation";
-import { getShopwareProductListing } from "@/integrations/shopware/product-listing";
+import { getShopwareProductListingPage } from "@/integrations/shopware/product-listing";
 
 type ShopwareCategory = components["schemas"]["Category"];
 
@@ -103,6 +107,7 @@ async function getBreadcrumbs(
 export async function getShopwareCategoryPage(
   client: ShopwareClient,
   categoryId: string,
+  productRequest: ShopProductPageRequest = defaultShopProductPageRequest,
 ): Promise<ShopCategoryPage> {
   const category = await getCategory(client, categoryId);
   const [breadcrumbs, children, listing] = await Promise.all([
@@ -110,7 +115,7 @@ export async function getShopwareCategoryPage(
     getShopwareCategoryChildren(client, categoryId),
     category.type === "folder"
       ? Promise.resolve(null)
-      : getShopwareProductListing(client, categoryId),
+      : getShopwareProductListingPage(client, productRequest, categoryId),
   ]);
   const translated = category.translated;
 

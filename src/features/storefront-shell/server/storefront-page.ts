@@ -1,5 +1,9 @@
 import "server-only";
 
+import {
+  defaultShopProductPageRequest,
+  type ShopProductPageRequest,
+} from "@/features/catalog/model/product-listing-page";
 import { getShopCategoryPage } from "@/features/catalog/server/category-page";
 import { getShopProductPageData } from "@/features/catalog/server/product-detail";
 import { getMockLandingPageRoute } from "@/features/storefront-shell/fixtures/landing-pages";
@@ -9,7 +13,10 @@ import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
 import { getShopwareRequestSession } from "@/integrations/shopware/session";
 import type { ShopwareStorefrontRoute } from "@/integrations/shopware/storefront-route";
 
-export async function getStorefrontPageByPath(pathname: string) {
+export async function getStorefrontPageByPath(
+  pathname: string,
+  productRequest: ShopProductPageRequest = defaultShopProductPageRequest,
+) {
   if (shouldUseShopwareMocks()) {
     const mockRoute = getMockLandingPageRoute(pathname);
 
@@ -64,7 +71,7 @@ export async function getStorefrontPageByPath(pathname: string) {
 
   return {
     kind: "category",
-    page: await getShopCategoryPage(route.entityId),
+    page: await getShopCategoryPage(route.entityId, productRequest),
     route,
   } satisfies {
     kind: "category";

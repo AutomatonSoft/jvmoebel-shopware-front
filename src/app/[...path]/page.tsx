@@ -2,17 +2,30 @@ import type { Metadata, Route } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import { cache } from "react";
 
+import {
+  getProductPageRequest,
+  type ProductListingSearchParams,
+} from "@/app/_lib/product-listing-search-params";
 import { CategoryPage } from "@/features/catalog/components/category-page";
+import type { ShopProductPageRequest } from "@/features/catalog/model/product-listing-page";
 import { ProductDetail } from "@/features/catalog/components/product-detail";
 import { CmsLandingPageView } from "@/features/cms/components/cms-landing-page-view";
 import { getStorefrontPageByPath } from "@/features/storefront-shell/server/storefront-page";
 
 type CategoryRoutePageProps = Readonly<{
   params: Promise<{ path: string[] }>;
-  searchParams: Promise<{ fehler?: string | string[] }>;
+  searchParams: Promise<
+    ProductListingSearchParams & { fehler?: string | string[] }
+  >;
 }>;
 
-const loadStorefrontPage = cache(getStorefrontPageByPath);
+const loadStorefrontPage = cache(
+  (pathname: string, productRequestKey: string) =>
+    getStorefrontPageByPath(
+      pathname,
+      JSON.parse(productRequestKey) as ShopProductPageRequest,
+    ),
+);
 
 async function getPath(params: CategoryRoutePageProps["params"]) {
   const { path } = await params;
@@ -20,10 +33,25 @@ async function getPath(params: CategoryRoutePageProps["params"]) {
   return `/${path.join("/")}`;
 }
 
+async function getPageResult({ params, searchParams }: CategoryRoutePageProps) {
+  const [pathname, parameters] = await Promise.all([
+    getPath(params),
+    searchParams,
+  ]);
+  const productRequest = getProductPageRequest(parameters);
+  const result = await loadStorefrontPage(
+    pathname,
+    JSON.stringify(productRequest),
+  );
+
+  return { parameters, result };
+}
+
 export async function generateMetadata({
   params,
+  searchParams,
 }: CategoryRoutePageProps): Promise<Metadata> {
-  const result = await loadStorefrontPage(await getPath(params));
+  const { result } = await getPageResult({ params, searchParams });
 
   if (!result) {
     return {};
@@ -58,8 +86,8 @@ export default async function CategoryRoutePage({
   params,
   searchParams,
 }: CategoryRoutePageProps) {
-  const result = await loadStorefrontPage(await getPath(params));
-  const { fehler } = await searchParams;
+  const { parameters, result } = await getPageResult({ params, searchParams });
+  const { fehler } = parameters;
   const variantSelectionFailed =
     (Array.isArray(fehler) ? fehler[0] : fehler) === "variante";
 

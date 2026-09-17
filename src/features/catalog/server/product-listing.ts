@@ -34,8 +34,12 @@ const getCachedShopwareProductListing = unstable_cache(
 );
 
 const getCachedShopwareProductListingPage = unstable_cache(
-  (request: ShopProductPageRequest) =>
-    getShopwareProductListingPage(getShopwareRequestSession().client, request),
+  (request: ShopProductPageRequest, categoryId: string | null) =>
+    getShopwareProductListingPage(
+      getShopwareRequestSession().client,
+      request,
+      categoryId ?? undefined,
+    ),
   ["shopware-product-listing-page"],
   {
     revalidate: shopwareCacheTtlSeconds.productListingPage,
@@ -111,10 +115,11 @@ function getMockProductListingPage(
 
 export async function getShopProductListingPage(
   request: ShopProductPageRequest,
+  categoryId?: string,
 ): Promise<ShopProductListingPage> {
   if (shouldUseShopwareMocks()) {
     return getMockProductListingPage(request);
   }
 
-  return getCachedShopwareProductListingPage(request);
+  return getCachedShopwareProductListingPage(request, categoryId ?? null);
 }

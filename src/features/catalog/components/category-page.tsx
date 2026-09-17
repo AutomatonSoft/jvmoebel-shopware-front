@@ -3,7 +3,7 @@ import type { Route } from "next";
 import Link from "next/link";
 
 import { Container } from "@/components/ui/container";
-import { ShopCatalog } from "@/features/catalog/components/shop-catalog";
+import { ShopProductListingCatalog } from "@/features/catalog/components/shop-catalog";
 import type { ShopCategoryPage } from "@/features/catalog/model/category-page";
 import { CmsPageRenderer } from "@/features/cms/components/cms-page-renderer";
 
@@ -90,7 +90,7 @@ export function CategoryPage({ page }: { page: ShopCategoryPage }) {
           renderContext={{ category, categoryListing: listing }}
         />
       ) : listing ? (
-        <ShopCatalog hideHeader listing={listing} />
+        <ShopProductListingCatalog hideHeader listing={listing} />
       ) : (
         <Container as="section" className="py-12 sm:py-16">
           <div className="flex min-h-64 flex-col items-center justify-center rounded-2xl border border-dashed bg-card/40 px-6 text-center">

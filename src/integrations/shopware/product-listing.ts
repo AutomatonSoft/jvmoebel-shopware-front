@@ -155,9 +155,11 @@ function getShopwareProductSort(sort: ShopProductPageRequest["sort"]) {
 export async function getShopwareProductListingPage(
   client: ShopwareClient,
   request: ShopProductPageRequest,
+  requestedCategoryId?: string,
 ): Promise<ShopProductListingPage> {
   const context = await getShopwareContext(client);
-  const categoryId = context.salesChannel.navigationCategoryId;
+  const categoryId =
+    requestedCategoryId ?? context.salesChannel.navigationCategoryId;
   const categoryFilter =
     request.categoryIds.length > 0
       ? [
