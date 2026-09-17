@@ -2,67 +2,40 @@
 
 import { useSyncExternalStore } from "react";
 
-import { parseWishlistProductIds } from "@/features/wishlist/model/wishlist";
+import {
+  emptyWishlistProductIds,
+  getServerWishlistItemSnapshot,
+  getServerWishlistProductIdsSnapshot,
+  getWishlistItemSnapshot,
+  getWishlistProductIdsSnapshot,
+  subscribeToWishlist,
+  toggleWishlistProduct,
+} from "@/features/wishlist/hooks/wishlist-store";
 
-const emptyWishlistSnapshot = "[]";
-const wishlistChangeEvent = "jvmoebel:wishlist-change";
-const wishlistStorageKey = "jvmoebel:wishlist-product-ids";
+export function useWishlist() {
+  const productIds = useSyncExternalStore(
+    subscribeToWishlist,
+    getWishlistProductIdsSnapshot,
+    getServerWishlistProductIdsSnapshot,
+  );
 
-function getWishlistSnapshot() {
-  try {
-    return (
-      window.localStorage.getItem(wishlistStorageKey) ?? emptyWishlistSnapshot
-    );
-  } catch (error) {
-    console.error("Wishlist storage could not be read.", error);
-    return emptyWishlistSnapshot;
-  }
-}
-
-function getServerWishlistSnapshot() {
-  return null;
-}
-
-function subscribeToWishlist(onStoreChange: () => void) {
-  window.addEventListener("storage", onStoreChange);
-  window.addEventListener(wishlistChangeEvent, onStoreChange);
-
-  return () => {
-    window.removeEventListener("storage", onStoreChange);
-    window.removeEventListener(wishlistChangeEvent, onStoreChange);
+  return {
+    isReady: productIds !== null,
+    productIds: productIds ?? emptyWishlistProductIds,
+    toggleProduct: toggleWishlistProduct,
   };
 }
 
-function writeWishlist(productIds: readonly string[]) {
-  try {
-    window.localStorage.setItem(wishlistStorageKey, JSON.stringify(productIds));
-    window.dispatchEvent(new Event(wishlistChangeEvent));
-  } catch (error) {
-    console.error("Wishlist storage could not be updated.", error);
-  }
-}
-
-export function useWishlist() {
-  const snapshot = useSyncExternalStore(
+export function useWishlistItem(productId: string) {
+  const isFavorite = useSyncExternalStore<boolean | null>(
     subscribeToWishlist,
-    getWishlistSnapshot,
-    getServerWishlistSnapshot,
+    () => getWishlistItemSnapshot(productId),
+    getServerWishlistItemSnapshot,
   );
-  const productIds = parseWishlistProductIds(snapshot);
-
-  function toggleProduct(productId: string) {
-    const currentProductIds = parseWishlistProductIds(getWishlistSnapshot());
-    const nextProductIds = currentProductIds.includes(productId)
-      ? currentProductIds.filter((currentId) => currentId !== productId)
-      : [...currentProductIds, productId];
-
-    writeWishlist(nextProductIds);
-  }
 
   return {
-    isFavorite: (productId: string) => productIds.includes(productId),
-    isReady: snapshot !== null,
-    productIds,
-    toggleProduct,
+    isFavorite: isFavorite ?? false,
+    isReady: isFavorite !== null,
+    toggleProduct: () => toggleWishlistProduct(productId),
   };
 }
