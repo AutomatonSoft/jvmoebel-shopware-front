@@ -1,11 +1,10 @@
 import { describe, expect, test } from "bun:test";
 
-import type { ShopProductPageRequest } from "@/features/catalog/model/product-listing-page";
-import { getShopwareCategoryPage } from "@/integrations/shopware/category-page";
+import { getShopwareCategoryPageContent } from "@/integrations/shopware/category-page";
 import type { ShopwareClient } from "@/integrations/shopware/client";
 
-describe("getShopwareCategoryPage", () => {
-  test("loads category navigation and products for the selected category", async () => {
+describe("getShopwareCategoryPageContent", () => {
+  test("loads stable content for the selected category", async () => {
     const requests: Array<{ operation: string; request: unknown }> = [];
     const client = {
       invoke: async (operation: string, request: unknown) => {
@@ -33,46 +32,17 @@ describe("getShopwareCategoryPage", () => {
           };
         }
 
-        if (operation === "readContext get /context") {
-          return {
-            data: {
-              currency: { isoCode: "EUR" },
-              languageInfo: { localeCode: "de-DE" },
-              salesChannel: { navigationCategoryId: "root-category-id" },
-            },
-          };
-        }
-
         if (
           operation === "readNavigation post /navigation/{activeId}/{rootId}"
         ) {
           return { data: [] };
         }
 
-        return {
-          data: {
-            aggregations: { price: { max: 1200, min: 100 } },
-            elements: [],
-            limit: 12,
-            page: 2,
-            total: 24,
-          },
-        };
+        throw new Error(`Unexpected operation: ${operation}`);
       },
     } as unknown as ShopwareClient;
-    const productRequest = {
-      categoryIds: [],
-      companyIds: [],
-      page: 2,
-      propertyIds: [],
-      sort: "featured",
-    } satisfies ShopProductPageRequest;
 
-    const page = await getShopwareCategoryPage(
-      client,
-      "category-id",
-      productRequest,
-    );
+    const page = await getShopwareCategoryPageContent(client, "category-id");
 
     expect(page).toMatchObject({
       breadcrumbs: [],
@@ -88,22 +58,11 @@ describe("getShopwareCategoryPage", () => {
         sections: [],
         type: "product_list",
       },
-      listing: {
-        pagination: {
-          currentPage: 2,
-          pageSize: 12,
-          totalPages: 2,
-          totalProducts: 24,
-        },
-        products: [],
-      },
+      hasProductListing: true,
     });
-    expect(requests).toContainEqual({
-      operation: "readProductListing post /product-listing/{categoryId}",
-      request: expect.objectContaining({
-        body: expect.objectContaining({ limit: 12, page: 2 }),
-        pathParams: { categoryId: "category-id" },
-      }),
-    });
+    expect(requests.map(({ operation }) => operation)).toEqual([
+      "readCategory post /category/{navigationId}",
+      "readNavigation post /navigation/{activeId}/{rootId}",
+    ]);
   });
 });

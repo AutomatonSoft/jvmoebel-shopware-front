@@ -22,3 +22,9 @@ export type ShopCategoryPage = Readonly<{
   cmsPage: CmsPage | null;
   listing: ShopProductListingPage | null;
 }>;
+
+export type ShopCategoryPageContent = Readonly<
+  Omit<ShopCategoryPage, "listing"> & {
+    hasProductListing: boolean;
+  }
+>;

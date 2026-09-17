@@ -6,31 +6,40 @@ import {
   defaultShopProductPageRequest,
   type ShopProductPageRequest,
 } from "@/features/catalog/model/product-listing-page";
+import { getShopProductListingPage } from "@/features/catalog/server/product-listing";
 import { getStorefrontRoute } from "@/features/storefront-shell/server/storefront-route";
 import { shopwareCacheTtlSeconds } from "@/integrations/shopware/cache-policy";
-import { getShopwareCategoryPage } from "@/integrations/shopware/category-page";
+import { getShopwareCategoryPageContent } from "@/integrations/shopware/category-page";
 import type { ShopwareCategoryRoute } from "@/integrations/shopware/category-route";
 import { getShopwareRequestSession } from "@/integrations/shopware/session";
 
-const getCachedShopwareCategoryPage = unstable_cache(
-  (categoryId: string, productRequest: ShopProductPageRequest) =>
-    getShopwareCategoryPage(
+const getCachedShopwareCategoryPageContent = unstable_cache(
+  (categoryId: string) =>
+    getShopwareCategoryPageContent(
       getShopwareRequestSession().client,
       categoryId,
-      productRequest,
     ),
-  ["shopware-category-page"],
+  ["shopware-category-page-content"],
   {
     revalidate: shopwareCacheTtlSeconds.categoryPage,
-    tags: ["shopware:catalog", "shopware:cms"],
+    tags: ["shopware:categories", "shopware:cms"],
   },
 );
 
-export function getShopCategoryPage(
+export async function getShopCategoryPage(
   categoryId: string,
   productRequest: ShopProductPageRequest = defaultShopProductPageRequest,
 ) {
-  return getCachedShopwareCategoryPage(categoryId, productRequest);
+  const [content, listing] = await Promise.all([
+    getCachedShopwareCategoryPageContent(categoryId),
+    getShopProductListingPage(productRequest, categoryId),
+  ]);
+  const { hasProductListing, ...page } = content;
+
+  return {
+    ...page,
+    listing: hasProductListing ? listing : null,
+  };
 }
 
 export async function getCategoryPageByPath(
@@ -51,7 +60,7 @@ export async function getCategoryPageByPath(
   const page = await getShopCategoryPage(route.categoryId, productRequest);
 
   return { page, route } satisfies {
-    page: Awaited<ReturnType<typeof getShopwareCategoryPage>>;
+    page: Awaited<ReturnType<typeof getShopCategoryPage>>;
     route: ShopwareCategoryRoute;
   };
 }
