@@ -10,6 +10,8 @@ const errorMessages: Readonly<Record<string, string>> = {
   gutschein: "Bitte geben Sie einen gültigen Gutscheincode ein.",
   "nicht-verfuegbar":
     "Dieser Artikel ist derzeit nicht verfügbar und wurde nicht hinzugefügt.",
+  shopware:
+    "Shopware hat den Artikel nicht in den Warenkorb übernommen. Bitte prüfen Sie die Verfügbarkeit und versuchen Sie es erneut.",
 };
 
 const successMessages: Readonly<Record<string, string>> = {

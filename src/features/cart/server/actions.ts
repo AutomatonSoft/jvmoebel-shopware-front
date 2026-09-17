@@ -30,17 +30,20 @@ function getRequiredString(formData: FormData, name: string) {
   return typeof value === "string" && value.trim() ? value.trim() : null;
 }
 
-async function runCartMutation(
+async function runCartMutation<Result>(
   mutation: (
     session: Awaited<ReturnType<typeof createCustomerSession>>,
-  ) => Promise<void>,
+  ) => Promise<Result>,
 ) {
   try {
     const session = await createCustomerSession();
 
-    await mutation(session);
+    const result = await mutation(session);
+
     await persistCustomerContext(session.getContextToken());
     revalidatePath("/warenkorb");
+
+    return result;
   } catch (error) {
     if (error instanceof ProductUnavailableError) {
       redirect("/warenkorb?fehler=nicht-verfuegbar");
@@ -127,13 +130,17 @@ export async function addProductToCart(formData: FormData) {
   if (shouldUseShopwareMocks()) {
     await runMockCartMutation(() => addMockProduct(productId));
   } else {
-    await runCartMutation(async (session) => {
+    const result = await runCartMutation(async (session) => {
       if (!(await isShopwareProductAvailable(session.client, productId))) {
         throw new ProductUnavailableError();
       }
 
-      await addShopwareProduct(session.client, productId);
+      return addShopwareProduct(session.client, productId);
     });
+
+    if (!result.succeeded) {
+      redirect("/warenkorb?fehler=shopware");
+    }
   }
 
   redirect("/warenkorb?meldung=hinzugefuegt");
