@@ -1,15 +1,12 @@
 # Документация проекта
 
-## Витрина и маршрутизация
+## Техническая часть витрины
 
-| Документ                                                  | Описание                                          |
-| --------------------------------------------------------- | ------------------------------------------------- |
-| [`storefront-config.md`](storefront/storefront-config.md) | Конфигурация шапки и подвала.                     |
-| [`dynamic-routing.md`](storefront/dynamic-routing.md)     | SEO-маршрутизация Shopware и посадочные страницы. |
-| [`product-listing.md`](storefront/product-listing.md)     | Модель и поведение каталога.                      |
-| [`discount-offers.md`](storefront/discount-offers.md)     | Страница акционных предложений.                   |
-| [`about-page.md`](storefront/about-page.md)               | Страница «О компании».                            |
-| [`video-shop.md`](storefront/video-shop.md)               | Страница Video Shop.                              |
+| Документ                                                  | Описание                                     |
+| --------------------------------------------------------- | -------------------------------------------- |
+| [`dynamic-routing.md`](storefront/dynamic-routing.md)     | Как Shopware SEO URL открывает CMS-страницу. |
+| [`storefront-config.md`](storefront/storefront-config.md) | Конфигурация шапки и подвала.                |
+| [`product-listing.md`](catalog/product-listing.md)        | Специальный каталог `/moebel-sortiment`.     |
 
 ## CMS-компоненты Shopware
 

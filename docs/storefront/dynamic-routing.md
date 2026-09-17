@@ -1,30 +1,19 @@
-# Dynamic Shopware routing
+# Динамическая маршрутизация Shopware
 
-The catch-all route `src/app/[...path]/page.tsx` resolves public Shopware SEO
-URLs through the Store API. It supports categories, products, and landing
-pages.
+Маршрут `src/app/[...path]/page.tsx` обрабатывает публичные SEO URL Shopware. Он поддерживает категории, товары и landing pages.
 
-For a landing page request, the storefront:
+Для landing page frontend:
 
-1. queries `/store-api/seo-url` with the requested path;
-2. accepts the `frontend.landing.page` route and reads its landing-page ID;
-3. loads `/store-api/landing-page/{landingPageId}`;
-4. maps the assigned Shopping Experience into the shared CMS model;
-5. renders its sections, blocks, and supported elements through the central
-   CMS renderer.
+1. запрашивает SEO URL через Store API;
+2. определяет тип `frontend.landing.page` и ID landing page;
+3. загружает страницу вместе с Shopping Experience;
+4. преобразует ответ в общую CMS-модель;
+5. рендерит зарегистрированные CMS-элементы.
 
-Non-canonical SEO URLs redirect permanently to the canonical Shopware URL.
-Unknown URLs and inactive or incomplete landing pages return the Next.js 404
-page. Both Store API requests use `cache: "no-store"`, so published Shopware
-changes are read on the next page request.
+Неканонический SEO URL перенаправляется на канонический. Неизвестный URL или недоступная страница возвращает Next.js 404. Запросы к Store API не кэшируются, поэтому опубликованные изменения Shopware видны при следующем запросе страницы.
 
-## Creating a page
+## Создание обычной CMS-страницы
 
-Create and publish a Shopware landing page, assign its Shopping Experience and
-sales channel, and give it an SEO URL for that sales channel. No Next.js route
-file or CMS page ID environment setting is required. The frontend can render
-the page automatically when every element in its Shopping Experience is
-supported by the CMS renderer.
+Создайте и опубликуйте landing page в Shopware, назначьте ей Shopping Experience, sales channel и SEO URL. Отдельный файл маршрута Next.js и переменная окружения с CMS page ID не нужны. Менеджер сам определяет состав и порядок поддерживаемых CMS-компонентов в Shopping Experience.
 
-Mock mode keeps a small path-to-fixture registry for local development. That
-registry does not participate in live Shopware routing.
+В mock-режиме действует небольшой реестр URL и fixtures только для локальной разработки; он не участвует в live-маршрутизации.
