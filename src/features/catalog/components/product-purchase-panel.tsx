@@ -67,12 +67,6 @@ export function ProductPurchasePanel({
   product,
   variantSelectionFailed,
 }: ProductPurchasePanelProps) {
-  const [selectedColor, setSelectedColor] = useState(
-    product.colors[0]?.value ?? "",
-  );
-  const [selectedSize, setSelectedSize] = useState<ShopProductSize | undefined>(
-    product.sizes[0],
-  );
   const [selectedServiceIds, setSelectedServiceIds] = useState<string[]>([]);
   const [selectedAccessoryIds, setSelectedAccessoryIds] = useState<string[]>(
     [],
@@ -95,9 +89,6 @@ export function ProductPurchasePanel({
     product.previousPrice && product.previousPrice > product.unitPrice
       ? Math.round((1 - product.unitPrice / product.previousPrice) * 100)
       : undefined;
-  const selectedColorLabel = product.colors.find(
-    (color) => color.value === selectedColor,
-  )?.label;
   const selectedColorVariant = product.colorVariantGroups
     .flatMap((group) => group.options)
     .find((option) => option.selected);
@@ -109,12 +100,7 @@ export function ProductPurchasePanel({
   const postalCodeIsConfirmed =
     postalCode.length === 5 && confirmedPostalCode === postalCode;
   const inquiryDetails = [
-    selectedColorVariant?.label || selectedColorLabel
-      ? `Farbe: ${selectedColorVariant?.label ?? selectedColorLabel}`
-      : undefined,
-    product.sizeVariantGroups.length === 0 && selectedSize
-      ? `Größe: ${sizeLabels[selectedSize]}`
-      : undefined,
+    selectedColorVariant ? `Farbe: ${selectedColorVariant.label}` : undefined,
     ...selectedVariantLabels,
     confirmedPostalCode ? `Postleitzahl: ${confirmedPostalCode}` : undefined,
     ...product.services
@@ -326,42 +312,45 @@ export function ProductPurchasePanel({
                   <strong className="block text-sm font-semibold">
                     Farbe{" "}
                     <span className="font-normal">
-                      ({product.colors.length} Optionen)
+                      ({product.colors.length}{" "}
+                      {product.colors.length === 1 ? "Angabe" : "Angaben"})
                     </span>
                   </strong>
                   <span className="mt-1 block truncate text-sm text-muted-foreground">
-                    {selectedColorLabel}
+                    {product.colors.map((color) => color.label).join(", ")}
                   </span>
                 </span>
-                <span
-                  aria-hidden="true"
-                  className="size-12 shrink-0 rounded-full border-2 border-background shadow-[0_0_0_1px_var(--color-border)]"
-                  style={{
-                    backgroundColor:
-                      product.colors.find(
-                        (color) => color.value === selectedColor,
-                      )?.hex ?? "transparent",
-                  }}
-                />
+                <span aria-hidden="true" className="flex -space-x-2">
+                  {product.colors.slice(0, 4).map((color) => (
+                    <span
+                      className="size-8 rounded-full border-2 border-background shadow-[0_0_0_1px_var(--color-border)]"
+                      key={color.value}
+                      style={{ backgroundColor: color.hex }}
+                    />
+                  ))}
+                </span>
                 <ChevronRight className="size-5 shrink-0 text-muted-foreground transition-transform group-open:rotate-90" />
               </summary>
-              <div className="flex flex-wrap gap-3 border-t bg-muted/20 px-4 py-4">
-                {product.colors.map((color) => {
-                  const isSelected = color.value === selectedColor;
-
-                  return (
-                    <button
-                      aria-label={`${color.label}${isSelected ? ", ausgewählt" : ""}`}
-                      aria-pressed={isSelected}
-                      className={`size-10 cursor-pointer rounded-full border-2 border-background shadow-[0_0_0_1px_var(--color-border)] transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${isSelected ? "shadow-[0_0_0_2px_var(--color-foreground)]" : ""}`}
+              <div className="border-t bg-muted/20 px-4 py-4">
+                <p className="mb-3 text-xs text-muted-foreground">
+                  Diese Angaben beschreiben den Artikel und sind nicht
+                  auswählbar.
+                </p>
+                <ul className="flex flex-wrap gap-3">
+                  {product.colors.map((color) => (
+                    <li
+                      className="flex items-center gap-2 rounded-full border bg-card py-2 pr-3 pl-2 text-sm"
                       key={color.value}
-                      onClick={() => setSelectedColor(color.value)}
-                      style={{ backgroundColor: color.hex }}
-                      title={color.label}
-                      type="button"
-                    />
-                  );
-                })}
+                    >
+                      <span
+                        aria-hidden="true"
+                        className="size-6 rounded-full border-2 border-background shadow-[0_0_0_1px_var(--color-border)]"
+                        style={{ backgroundColor: color.hex }}
+                      />
+                      <span>{color.label}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </details>
           )}
@@ -438,33 +427,32 @@ export function ProductPurchasePanel({
                 <strong className="block text-sm font-semibold">
                   Größe{" "}
                   <span className="font-normal">
-                    ({product.sizes.length} Optionen)
+                    ({product.sizes.length}{" "}
+                    {product.sizes.length === 1 ? "Angabe" : "Angaben"})
                   </span>
                 </strong>
                 <span className="mt-1 block truncate text-sm text-muted-foreground">
-                  {selectedSize ? sizeLabels[selectedSize] : "Bitte auswählen"}
+                  {product.sizes.map((size) => sizeLabels[size]).join(", ")}
                 </span>
               </span>
               <ChevronRight className="size-5 shrink-0 text-muted-foreground transition-transform group-open:rotate-90" />
             </summary>
-            <div className="grid gap-2 border-t bg-muted/20 px-4 py-4 sm:grid-cols-2">
-              {product.sizes.map((size) => {
-                const isSelected = size === selectedSize;
-
-                return (
-                  <button
-                    aria-pressed={isSelected}
-                    className={`flex min-h-12 items-center rounded-xl border px-4 py-3 text-left text-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${isSelected ? "border-foreground bg-foreground text-background" : "bg-card hover:border-foreground/40"}`}
+            <div className="border-t bg-muted/20 px-4 py-4">
+              <p className="mb-3 text-xs text-muted-foreground">
+                Diese Angaben beschreiben den Artikel und sind nicht auswählbar.
+              </p>
+              <ul className="grid gap-2 sm:grid-cols-2">
+                {product.sizes.map((size) => (
+                  <li
+                    className="flex min-h-12 items-center rounded-xl border bg-card px-4 py-3 text-sm"
                     key={size}
-                    onClick={() => setSelectedSize(size)}
-                    type="button"
                   >
                     <strong className="font-semibold">
                       {sizeLabels[size]}
                     </strong>
-                  </button>
-                );
-              })}
+                  </li>
+                ))}
+              </ul>
             </div>
           </details>
         )}
