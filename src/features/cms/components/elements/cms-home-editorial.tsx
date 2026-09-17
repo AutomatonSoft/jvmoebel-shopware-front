@@ -74,10 +74,10 @@ export function CmsHomeEditorial({ slot }: CmsSlotComponentProps) {
                 {title}
               </h2>
               <div className="mt-5 grid gap-4 text-sm leading-7 text-muted-foreground [&_a]:font-medium [&_a]:text-foreground [&_a]:underline [&_a]:decoration-primary/45 [&_a]:underline-offset-4 [&_a]:transition-colors [&_a:hover]:text-primary [&_a:focus-visible]:rounded-sm [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-offset-2 [&_a:focus-visible]:outline-primary">
-                {introduction.map((paragraph, index) => (
+                {introduction.map((paragraph) => (
                   <EditorialParagraph
-                    content={paragraph}
-                    key={`${index}-${paragraph.slice(0, 24)}`}
+                    content={paragraph.content}
+                    key={paragraph.id}
                   />
                 ))}
               </div>
@@ -113,10 +113,10 @@ export function CmsHomeEditorial({ slot }: CmsSlotComponentProps) {
                     </h3>
                   )}
                   <div className="grid gap-3 text-sm leading-7 text-muted-foreground [&_a]:font-medium [&_a]:text-foreground [&_a]:underline [&_a]:decoration-primary/45 [&_a]:underline-offset-4 [&_a]:transition-colors [&_a:hover]:text-primary [&_a:focus-visible]:rounded-sm [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-offset-2 [&_a:focus-visible]:outline-primary">
-                    {section.paragraphs.map((paragraph, index) => (
+                    {section.paragraphs.map((paragraph) => (
                       <EditorialParagraph
-                        content={paragraph}
-                        key={`${index}-${paragraph.slice(0, 24)}`}
+                        content={paragraph.content}
+                        key={paragraph.id}
                       />
                     ))}
                   </div>

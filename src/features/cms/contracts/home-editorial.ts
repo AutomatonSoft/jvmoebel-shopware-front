@@ -4,16 +4,21 @@ import type {
   CmsContractResult,
 } from "@/features/cms/contracts/result";
 
+export type CmsHomeEditorialParagraph = Readonly<{
+  content: string;
+  id: string;
+}>;
+
 export type CmsHomeEditorialSection = Readonly<{
   id: string;
-  paragraphs: readonly string[];
+  paragraphs: readonly CmsHomeEditorialParagraph[];
   position: number;
   title?: string;
 }>;
 
 export type CmsHomeEditorialData = Readonly<{
   appearance: "card" | "plain";
-  introduction: readonly string[];
+  introduction: readonly CmsHomeEditorialParagraph[];
   sections: readonly CmsHomeEditorialSection[];
   showLessLabel: string;
   showMoreLabel: string;
@@ -25,7 +30,7 @@ function parseParagraphs(
   value: unknown,
   path: string,
 ): Readonly<{
-  data: string[];
+  data: CmsHomeEditorialParagraph[];
   issues: readonly CmsContractIssue[];
 }> {
   const paragraphsRecord = getCmsRecord(value);
@@ -35,6 +40,7 @@ function parseParagraphs(
       ? Object.entries(paragraphsRecord)
       : [];
   const issues: CmsContractIssue[] = [];
+  const paragraphOccurrences = new Map<string, number>();
 
   const paragraphs = paragraphEntries.flatMap(([key, paragraph]) => {
     if (typeof paragraph !== "string" || !paragraph.trim()) {
@@ -46,7 +52,16 @@ function parseParagraphs(
       return [];
     }
 
-    return [paragraph];
+    const occurrence = (paragraphOccurrences.get(paragraph) ?? 0) + 1;
+
+    paragraphOccurrences.set(paragraph, occurrence);
+
+    return [
+      {
+        content: paragraph,
+        id: `paragraph:${paragraph}:${occurrence}`,
+      },
+    ];
   });
 
   return { data: paragraphs, issues };
