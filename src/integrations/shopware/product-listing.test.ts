@@ -126,6 +126,15 @@ describe("getShopwareProductListing", () => {
       calculatedPrice: { listPrice: null, unitPrice: 799 },
       id: "product-id",
       name: "Sessel Nara",
+      properties: [
+        {
+          colorHexCode: "#c96f4a",
+          groupId: "color-group-id",
+          id: "color-id",
+          name: "Terrakotta",
+          translated: { colorHexCode: "#c96f4a", name: "Terrakotta" },
+        },
+      ],
       translated: { name: "Sessel Nara" },
     } as ShopwareProduct;
     const client = {
@@ -173,9 +182,38 @@ describe("getShopwareProductListing", () => {
       totalProducts: 48,
     });
     expect(listing.products).toHaveLength(1);
+    expect(listing.products[0]?.colors).toEqual([
+      { hex: "#c96f4a", label: "Terrakotta", value: "color-id" },
+    ]);
     expect(requests).toHaveLength(2);
     expect(requests[1]?.request).toMatchObject({
       body: {
+        associations: {
+          cover: { associations: { media: {} } },
+          manufacturer: {},
+          properties: {},
+          seoUrls: {
+            filter: [
+              {
+                field: "routeName",
+                type: "equals",
+                value: "frontend.detail.page",
+              },
+              { field: "isCanonical", type: "equals", value: true },
+              { field: "isDeleted", type: "equals", value: false },
+            ],
+          },
+        },
+        includes: {
+          category: ["id", "name", "translated"],
+          product: expect.not.arrayContaining([
+            "categories",
+            "createdAt",
+            "description",
+            "releaseDate",
+          ]),
+          property_group_option: expect.not.arrayContaining(["group"]),
+        },
         limit: 12,
         manufacturer: "manufacturer-id",
         "max-price": 1000,

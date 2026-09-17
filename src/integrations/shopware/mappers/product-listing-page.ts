@@ -9,6 +9,7 @@ import type { ShopProductListingPage } from "@/features/catalog/model/product-li
 import type { ShopProductPageRequest } from "@/features/catalog/model/product-listing-page";
 import {
   createShopwareProductListing,
+  mapShopwareProductCard,
   getShopwareTranslatedName,
 } from "@/integrations/shopware/mappers/product-listing";
 
@@ -115,11 +116,14 @@ export function mapShopwareProductListingPage(
   currency: string,
   locale: string,
 ): ShopProductListingPage {
-  const listing = createShopwareProductListing({
-    currency,
-    locale,
-    products: response.elements,
-  });
+  const listing = createShopwareProductListing(
+    {
+      currency,
+      locale,
+      products: response.elements,
+    },
+    mapShopwareProductCard,
+  );
 
   const aggregations = response.aggregations as unknown as
     ProductListingAggregations | undefined;

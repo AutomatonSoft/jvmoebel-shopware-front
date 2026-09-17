@@ -21,6 +21,22 @@ const productListingAssociations = {
   properties: { associations: { group: {} } },
   seoUrls: {},
 } satisfies components["schemas"]["Associations"];
+const productListingPageAssociations = {
+  cover: { associations: { media: {} } },
+  manufacturer: {},
+  properties: {},
+  seoUrls: {
+    filter: [
+      {
+        field: "routeName",
+        type: "equals",
+        value: "frontend.detail.page",
+      },
+      { field: "isCanonical", type: "equals", value: true },
+      { field: "isDeleted", type: "equals", value: false },
+    ],
+  },
+} satisfies components["schemas"]["Associations"];
 const productListingIncludes = {
   category: ["id", "name", "path", "translated"],
   media: ["alt", "translated", "url"],
@@ -47,6 +63,34 @@ const productListingIncludes = {
   property_group_option: [
     "colorHexCode",
     "group",
+    "groupId",
+    "id",
+    "name",
+    "translated",
+  ],
+  seo_url: ["isCanonical", "isDeleted", "routeName", "seoPathInfo"],
+} satisfies components["schemas"]["Includes"];
+const productListingPageIncludes = {
+  category: ["id", "name", "translated"],
+  media: ["alt", "translated", "url"],
+  product: [
+    "calculatedPrice",
+    "cover",
+    "id",
+    "isNew",
+    "manufacturer",
+    "markAsTopseller",
+    "name",
+    "properties",
+    "ratingAverage",
+    "seoUrls",
+    "translated",
+  ],
+  product_manufacturer: ["id", "name", "translated"],
+  product_media: ["media"],
+  property_group: ["id", "name", "options", "translated"],
+  property_group_option: [
+    "colorHexCode",
     "groupId",
     "id",
     "name",
@@ -176,8 +220,8 @@ export async function getShopwareProductListingPage(
       body: {
         ...getShopwareProductSort(request.sort),
         aggregations: productListingAggregations,
-        associations: productListingAssociations,
-        includes: productListingIncludes,
+        associations: productListingPageAssociations,
+        includes: productListingPageIncludes,
         limit: shopProductPageSize,
         manufacturer:
           request.companyIds.length > 0

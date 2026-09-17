@@ -18,6 +18,10 @@ type ShopwareProductListingInput = Readonly<{
   locale: string;
   products: readonly ShopwareProduct[];
 }>;
+type ShopwareProductMapper = (
+  product: ShopwareProduct,
+  index: number,
+) => ShopProduct;
 
 const fallbackProductImage =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='1000' viewBox='0 0 800 1000'%3E%3Crect width='800' height='1000' fill='%23dedbd4'/%3E%3C/svg%3E";
@@ -34,10 +38,16 @@ export function getShopwarePlainText(value: string) {
     .trim();
 }
 
-export function getShopwareTranslatedName(value: {
-  name?: string | null;
-  translated?: { name?: string | null };
-}) {
+export function getShopwareTranslatedName(
+  value?: {
+    name?: string | null;
+    translated?: { name?: string | null };
+  } | null,
+) {
+  if (!value) {
+    return "";
+  }
+
   return getShopwarePlainText(
     value.translated?.name?.trim() || value.name?.trim() || "",
   );
@@ -160,18 +170,17 @@ function getAttributes(product: ShopwareProduct): ShopProductAttributeGroup[] {
 }
 
 function getColors(product: ShopwareProduct): ShopProductColor[] {
-  return getProperties(product, [
-    "color",
-    "colour",
-    "farbe",
-    "grundfarbe",
-  ]).flatMap((property) => {
+  const colorGroupNames = ["color", "colour", "farbe", "grundfarbe"];
+
+  return (product.properties ?? []).flatMap((property) => {
     const hex = getPropertyHex(property);
     const label = getShopwareTranslatedName(property);
+    const groupName = getPropertyGroupName(property);
+    const isColor = property.group
+      ? colorGroupNames.includes(groupName)
+      : Boolean(hex);
 
-    return hex && /^#[0-9a-f]{3,8}$/i.test(hex) && label
-      ? [{ hex, label, value: property.id }]
-      : [];
+    return isColor && hex && label ? [{ hex, label, value: property.id }] : [];
   });
 }
 
@@ -270,18 +279,35 @@ export function mapShopwareProduct(
   };
 }
 
-export function createShopwareProductListing({
-  currency,
-  locale,
-  products,
-}: ShopwareProductListingInput): ShopProductListing {
+export function mapShopwareProductCard(
+  product: ShopwareProduct,
+  index: number,
+): ShopProduct {
+  const mappedProduct = mapShopwareProduct(product, index);
+
+  return {
+    ...mappedProduct,
+    attributes: [],
+    category: "all-products",
+    categoryLabel: "Alle Produkte",
+    colors: getColors(product),
+    description: "",
+    material: "Nicht angegeben",
+    sizes: [],
+  };
+}
+
+export function createShopwareProductListing(
+  { currency, locale, products }: ShopwareProductListingInput,
+  mapProduct: ShopwareProductMapper = mapShopwareProduct,
+): ShopProductListing {
   return {
     currency,
     description:
       "Entdecken Sie Möbel für Wohnzimmer, Esszimmer und erholsame Räume.",
     eyebrow: "Unser Sortiment",
     locale,
-    products: products.map(mapShopwareProduct),
+    products: products.map(mapProduct),
     title: "Möbelkollektion",
   };
 }
