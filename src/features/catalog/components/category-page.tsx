@@ -87,7 +87,7 @@ export function CategoryPage({ page }: { page: ShopCategoryPage }) {
       {cmsPage ? (
         <CmsPageRenderer
           page={cmsPage}
-          renderContext={{ categoryListing: listing }}
+          renderContext={{ category, categoryListing: listing }}
         />
       ) : listing ? (
         <ShopCatalog hideHeader listing={listing} />

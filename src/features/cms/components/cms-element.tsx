@@ -1,11 +1,13 @@
 import type { ComponentType, FunctionComponent } from "react";
 
+import type { ShopCategoryPage } from "@/features/catalog/model/category-page";
 import type { ShopProductListing } from "@/features/catalog/model/product-listing";
 import type { CmsContractResult } from "@/features/cms/contracts/result";
 import type { CmsSlot } from "@/features/cms/model/page";
 import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
 
 export type CmsPageRenderContext = Readonly<{
+  category?: Pick<ShopCategoryPage["category"], "name">;
   categoryListing?: ShopProductListing | null;
 }>;
 

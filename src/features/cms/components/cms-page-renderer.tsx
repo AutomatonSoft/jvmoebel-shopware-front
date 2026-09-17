@@ -9,6 +9,7 @@ import {
 import { CmsArticleHero } from "@/features/cms/components/elements/cms-article-hero";
 import { CmsAuthorFooter } from "@/features/cms/components/elements/cms-author-footer";
 import { CmsBenefitStrip } from "@/features/cms/components/elements/cms-benefit-strip";
+import { CmsCategoryName } from "@/features/cms/components/elements/cms-category-name";
 import { CmsCategoryRail } from "@/features/cms/components/elements/cms-category-rail";
 import { CmsChipRail } from "@/features/cms/components/elements/cms-chip-rail";
 import { CmsColorWorldPicker } from "@/features/cms/components/elements/cms-color-world-picker";
@@ -98,6 +99,22 @@ export type {
   CmsSlotComponentProps,
 } from "@/features/cms/components/cms-element";
 
+function CmsCategoryNameSlot({ renderContext, slot }: CmsSlotComponentProps) {
+  const category = renderContext?.category;
+
+  if (!category) {
+    reportCmsRenderingIssue({
+      code: "rendering-failed",
+      message:
+        "The category-name element requires category data from its route.",
+      slot,
+    });
+    return null;
+  }
+
+  return <CmsCategoryName name={category.name} />;
+}
+
 function CmsProductListingSlot({ renderContext, slot }: CmsSlotComponentProps) {
   const listing = renderContext?.categoryListing;
 
@@ -115,6 +132,7 @@ function CmsProductListingSlot({ renderContext, slot }: CmsSlotComponentProps) {
 }
 
 const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {
+  "category-name": CmsCategoryNameSlot,
   "jv-article-hero": createCmsDataElementRenderer(
     parseCmsArticleHeroData,
     CmsArticleHero,
