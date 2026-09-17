@@ -1,6 +1,7 @@
 "use client";
 
 import { LoaderCircle, Sparkles } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { memo, useEffect, useRef } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,10 @@ import { ShopProductCard } from "@/features/catalog/components/shop-product-card
 import type { ShopProduct } from "@/features/catalog/model/product-listing";
 
 const resultScrollReleaseDelay = 700;
+const productLayoutTransition = {
+  duration: 0.28,
+  ease: [0.22, 1, 0.36, 1],
+} as const;
 
 export type ShopProductResultsProps = {
   currency: string;
@@ -27,15 +32,27 @@ const ShopProductGrid = memo(function ShopProductGrid({
   locale,
   products,
 }: Pick<ShopProductResultsProps, "currency" | "locale" | "products">) {
-  return products.map((product, index) => (
-    <ShopProductCard
-      currency={currency}
-      eagerImage={index < 4}
-      key={product.id}
-      locale={locale}
-      product={product}
-    />
-  ));
+  return (
+    <AnimatePresence initial={false} mode="popLayout">
+      {products.map((product, index) => (
+        <motion.div
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.96 }}
+          initial={{ opacity: 0, scale: 0.96 }}
+          key={product.id}
+          layout
+          transition={productLayoutTransition}
+        >
+          <ShopProductCard
+            currency={currency}
+            eagerImage={index < 4}
+            locale={locale}
+            product={product}
+          />
+        </motion.div>
+      ))}
+    </AnimatePresence>
+  );
 });
 
 export function ShopProductResults({
