@@ -34,6 +34,7 @@ import { CmsRelatedLookCards } from "@/features/cms/components/elements/cms-rela
 import { CmsReviewSummary } from "@/features/cms/components/elements/cms-review-summary";
 import { CmsRoomGrid } from "@/features/cms/components/elements/cms-room-grid";
 import { CmsShopTheLook } from "@/features/cms/components/elements/cms-shop-the-look";
+import { CmsSidebarFilter } from "@/features/cms/components/elements/cms-sidebar-filter";
 import { CmsSubcategoryLinks } from "@/features/cms/components/elements/cms-subcategory-links";
 import { CmsTableOfContents } from "@/features/cms/components/elements/cms-table-of-contents";
 import { CmsTrendLookGrid } from "@/features/cms/components/elements/cms-trend-look-grid";
@@ -47,7 +48,13 @@ import type {
   CmsSection,
   CmsSlot,
 } from "@/features/cms/model/page";
+import {
+  getCmsBackgroundStyle,
+  getCmsVisibilityClassName,
+  isPassiveCmsBlock,
+} from "@/features/cms/model/layout";
 import { reportCmsRenderingIssue } from "@/features/cms/server/report-rendering-issue";
+import { cn } from "@/lib/utils";
 
 export type CmsSlotComponentProps = {
   renderContext?: CmsPageRenderContext;
@@ -98,6 +105,7 @@ const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {
   "jv-why-jvmoebel": CmsWhyJvmoebel,
   image: CmsImage,
   "product-listing": CmsProductListing,
+  "sidebar-filter": CmsSidebarFilter,
   text: CmsText,
   "youtube-video": CmsYoutubeVideo,
 };
@@ -135,10 +143,15 @@ function CmsBlockRenderer({
 }) {
   return (
     <div
-      className={block.cssClass || undefined}
+      className={cn(
+        block.cssClass,
+        getCmsVisibilityClassName(block.visibility),
+      )}
       data-cms-block-id={block.id}
+      data-cms-block-position={block.sectionPosition}
       data-cms-block-type={block.type}
       style={{
+        ...getCmsBackgroundStyle(block),
         marginBottom: block.marginBottom || undefined,
         marginLeft: block.marginLeft || undefined,
         marginRight: block.marginRight || undefined,
@@ -166,36 +179,53 @@ function CmsSectionRenderer({
   const blocks = [...section.blocks].sort(
     (first, second) => first.position - second.position,
   );
-  const content = blocks.map((block) => (
-    <CmsBlockRenderer
-      block={block}
-      key={block.id}
-      renderContext={renderContext}
-    />
-  ));
-
-  if (section.sizingMode === "boxed") {
-    return (
-      <Container
-        as="section"
-        className={section.cssClass || undefined}
-        data-cms-section-id={section.id}
-        data-cms-section-sizing={section.sizingMode}
-        data-cms-section-type={section.type}
-      >
-        {content}
-      </Container>
+  const renderBlocks = (items: readonly CmsBlock[]) =>
+    items.map((block) => (
+      <CmsBlockRenderer
+        block={block}
+        key={block.id}
+        renderContext={renderContext}
+      />
+    ));
+  const sidebarBlocks = blocks.filter(
+    (block) => block.sectionPosition === "sidebar" && !isPassiveCmsBlock(block),
+  );
+  const mainBlocks = blocks.filter(
+    (block) => block.sectionPosition !== "sidebar",
+  );
+  const content =
+    section.type === "sidebar" && sidebarBlocks.length > 0 ? (
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,3fr)] lg:gap-12">
+        <aside
+          className={cn(
+            "min-w-0",
+            section.mobileBehavior === "hidden" && "max-lg:hidden",
+          )}
+        >
+          {renderBlocks(sidebarBlocks)}
+        </aside>
+        <div className="min-w-0">{renderBlocks(mainBlocks)}</div>
+      </div>
+    ) : (
+      renderBlocks(section.type === "sidebar" ? mainBlocks : blocks)
     );
-  }
+  const layoutContent =
+    section.sizingMode === "boxed" ? <Container>{content}</Container> : content;
 
   return (
     <section
-      className={section.cssClass || undefined}
+      className={cn(
+        section.cssClass,
+        getCmsVisibilityClassName(section.visibility),
+      )}
       data-cms-section-id={section.id}
+      data-cms-section-mobile-behavior={section.mobileBehavior}
+      data-cms-section-position={section.position}
       data-cms-section-sizing={section.sizingMode}
       data-cms-section-type={section.type}
+      style={getCmsBackgroundStyle(section)}
     >
-      {content}
+      {layoutContent}
     </section>
   );
 }
@@ -216,6 +246,7 @@ export function CmsPageRenderer({
       className={page.cssClass || undefined}
       data-cms-page-id={page.id}
       data-cms-page-type={page.type}
+      style={{ backgroundColor: page.backgroundColor || undefined }}
     >
       {sections.map((section) => (
         <CmsSectionRenderer

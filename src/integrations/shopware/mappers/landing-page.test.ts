@@ -46,6 +46,7 @@ describe("mapShopwareLandingPage", () => {
   test("maps an active landing page and its CMS layout", () => {
     expect(mapShopwareLandingPage(createLandingPage())).toEqual({
       cmsPage: {
+        backgroundColor: undefined,
         cssClass: undefined,
         id: "cms-page-id",
         sections: [],
