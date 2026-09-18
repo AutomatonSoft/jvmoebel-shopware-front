@@ -1,5 +1,6 @@
 import { aboutCmsPageMock } from "@/features/about/fixtures/about-page";
 import type { CmsLandingPage } from "@/features/cms/model/landing-page";
+import { contactCmsPageMock } from "@/features/contact/fixtures/contact-page";
 import { inspirationCmsPageMock } from "@/features/inspiration/fixtures/inspiration-page";
 import { discountOffersCmsPageMock } from "@/features/offers/fixtures/discount-offers-page";
 import { videoShopCmsPageMock } from "@/features/video-shop/fixtures/video-shop-page";
@@ -10,6 +11,17 @@ export type MockLandingPageRoute = Readonly<{
 }>;
 
 const mockLandingPages: Readonly<Record<string, MockLandingPageRoute>> = {
+  "/kontakt": {
+    canonicalPath: "/kontakt",
+    page: {
+      cmsPage: contactCmsPageMock,
+      id: "mock-contact-landing-page",
+      metaDescription:
+        "Kontaktieren Sie JVMoebel für eine persönliche Beratung zu Möbeln und Einrichtung.",
+      metaTitle: "Kontakt | JVMoebel",
+      name: "Kontakt",
+    },
+  },
   "/inspiration": {
     canonicalPath: "/inspiration",
     page: {

@@ -1,7 +1,14 @@
 "use client";
 
-import { Send } from "lucide-react";
-import { useState, type FormEvent, type ReactNode } from "react";
+import {
+  Mail,
+  MapPin,
+  MessageSquareText,
+  Send,
+  UserRound,
+  type LucideIcon,
+} from "lucide-react";
+import { useState, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,40 +61,51 @@ export function ContactForm({ title }: Readonly<{ title: string }>) {
     <form
       aria-busy={pending}
       aria-label={title}
-      className="grid gap-5"
+      className="grid gap-2"
       onSubmit={handleSubmit}
     >
-      <div className="grid gap-5 sm:grid-cols-2">
-        <ContactField label="Vorname">
-          <Input autoComplete="given-name" name="firstName" required />
-        </ContactField>
-        <ContactField label="Nachname">
-          <Input autoComplete="family-name" name="lastName" required />
-        </ContactField>
+      <div className="grid gap-2 sm:grid-cols-2">
+        <ContactInput
+          autoComplete="given-name"
+          icon={UserRound}
+          invalid={invalid}
+          label="Vorname"
+          name="firstName"
+        />
+        <ContactInput
+          autoComplete="family-name"
+          icon={UserRound}
+          invalid={invalid}
+          label="Nachname"
+          name="lastName"
+        />
       </div>
 
-      <ContactField label="E-Mail-Adresse">
-        <Input autoComplete="email" name="email" required type="email" />
-      </ContactField>
+      <ContactInput
+        autoComplete="email"
+        icon={Mail}
+        invalid={invalid}
+        label="E-Mail-Adresse"
+        name="email"
+        type="email"
+      />
 
-      <ContactField label="Adresse">
-        <textarea
-          autoComplete="street-address"
-          className="min-h-24 w-full resize-y rounded-xl border bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-3 focus-visible:ring-primary/15"
-          name="address"
-          required
-          rows={3}
-        />
-      </ContactField>
+      <ContactTextarea
+        autoComplete="street-address"
+        icon={MapPin}
+        invalid={invalid}
+        label="Adresse"
+        name="address"
+        rows={3}
+      />
 
-      <ContactField label="Ihre Anfrage">
-        <textarea
-          className="min-h-36 w-full resize-y rounded-xl border bg-background px-3 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-3 focus-visible:ring-primary/15"
-          name="comment"
-          required
-          rows={6}
-        />
-      </ContactField>
+      <ContactTextarea
+        icon={MessageSquareText}
+        invalid={invalid}
+        label="Ihre Anfrage"
+        name="comment"
+        rows={6}
+      />
 
       {invalid && (
         <p className="text-sm text-destructive" role="alert">
@@ -114,17 +132,90 @@ export function ContactForm({ title }: Readonly<{ title: string }>) {
   );
 }
 
-function ContactField({
-  children,
+function ContactInput({
+  autoComplete,
+  icon: Icon,
+  invalid,
   label,
+  name,
+  type = "text",
 }: Readonly<{
-  children: ReactNode;
+  autoComplete: string;
+  icon: LucideIcon;
+  invalid: boolean;
   label: string;
+  name: string;
+  type?: "email" | "text";
 }>) {
+  const id = `contact-${name}`;
+
   return (
-    <label className="grid gap-2 text-sm font-medium">
-      {label}
-      {children}
-    </label>
+    <div className="group relative min-w-0">
+      <Input
+        aria-invalid={invalid || undefined}
+        autoComplete={autoComplete}
+        className="peer h-11 rounded-lg border-border/80 bg-card/80 pt-5 pb-1 pl-11 pr-3 text-foreground shadow-none transition-[border-color,background-color,box-shadow] focus-visible:border-primary focus-visible:bg-card focus-visible:ring-2 focus-visible:ring-primary/10 motion-reduce:transition-none"
+        id={id}
+        name={name}
+        placeholder=" "
+        required
+        type={type}
+      />
+      <Icon
+        aria-hidden="true"
+        className="pointer-events-none absolute top-3.5 left-3.5 size-4 text-muted-foreground/70 transition-colors peer-focus:text-primary peer-aria-invalid:text-destructive motion-reduce:transition-none"
+        strokeWidth={1.5}
+      />
+      <label
+        className="absolute top-2 left-11 max-w-[calc(100%-3.5rem)] origin-left truncate text-[0.65rem] leading-4 text-muted-foreground transition-[top,translate,font-size,color] peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-focus:top-2 peer-focus:translate-y-0 peer-focus:text-[0.65rem] peer-focus:text-primary peer-aria-invalid:text-destructive motion-reduce:transition-none"
+        htmlFor={id}
+      >
+        {label}
+      </label>
+    </div>
+  );
+}
+
+function ContactTextarea({
+  autoComplete,
+  icon: Icon,
+  invalid,
+  label,
+  name,
+  rows,
+}: Readonly<{
+  autoComplete?: string;
+  icon: LucideIcon;
+  invalid: boolean;
+  label: string;
+  name: string;
+  rows: number;
+}>) {
+  const id = `contact-${name}`;
+
+  return (
+    <div className="group relative min-w-0">
+      <textarea
+        aria-invalid={invalid || undefined}
+        autoComplete={autoComplete}
+        className="peer min-h-28 w-full resize-y rounded-lg border border-border/80 bg-card/80 pt-6 pb-2 pl-11 pr-3 text-sm text-foreground shadow-none outline-none transition-[border-color,background-color,box-shadow] placeholder:text-muted-foreground focus-visible:border-primary focus-visible:bg-card focus-visible:ring-2 focus-visible:ring-primary/10 motion-reduce:transition-none"
+        id={id}
+        name={name}
+        placeholder=" "
+        required
+        rows={rows}
+      />
+      <Icon
+        aria-hidden="true"
+        className="pointer-events-none absolute top-3.5 left-3.5 size-4 text-muted-foreground/70 transition-colors peer-focus:text-primary peer-aria-invalid:text-destructive motion-reduce:transition-none"
+        strokeWidth={1.5}
+      />
+      <label
+        className="absolute top-2 left-11 max-w-[calc(100%-3.5rem)] origin-left truncate text-[0.65rem] leading-4 text-muted-foreground transition-[top,translate,font-size,color] peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-focus:top-2 peer-focus:text-[0.65rem] peer-focus:text-primary peer-aria-invalid:text-destructive motion-reduce:transition-none"
+        htmlFor={id}
+      >
+        {label}
+      </label>
+    </div>
   );
 }
