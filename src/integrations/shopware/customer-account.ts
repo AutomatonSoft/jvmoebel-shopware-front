@@ -151,7 +151,14 @@ export async function getShopwareCustomerOrderDetail(
 ): Promise<CustomerOrderDetail | null> {
   const response = await client.invoke("readOrder post /order", {
     body: {
-      associations: { lineItems: {}, stateMachineState: {} },
+      associations: {
+        deliveries: {
+          associations: { shippingMethod: {}, shippingOrderAddress: {} },
+        },
+        lineItems: {},
+        stateMachineState: {},
+        transactions: { associations: { paymentMethod: {} } },
+      },
       limit: 100,
       sort: [{ field: "orderDateTime", order: "DESC" }],
     },
@@ -162,13 +169,32 @@ export async function getShopwareCustomerOrderDetail(
   );
   if (!order) return null;
   const [summary] = mapShopwareCustomerOrders([order]);
+  const delivery = order.deliveries?.[0];
+  const address = delivery?.shippingOrderAddress;
+  const transaction = order.transactions?.[0];
+
   return {
     ...summary,
+    delivery:
+      delivery?.shippingMethod?.translated.name ||
+      delivery?.shippingMethod?.name,
     items: (order.lineItems ?? []).map((item) => ({
       label: item.label || "Artikel",
       quantity: item.quantity,
       total: (item.priceDefinition?.price ?? 0) * item.quantity,
     })),
+    payment:
+      transaction?.paymentMethod?.translated.name ||
+      transaction?.paymentMethod?.name,
+    shippingAddress: address
+      ? {
+          city: address.city,
+          firstName: address.firstName,
+          lastName: address.lastName,
+          street: address.street,
+          zipcode: address.zipcode,
+        }
+      : undefined,
   };
 }
 

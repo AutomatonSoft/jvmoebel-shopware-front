@@ -71,6 +71,30 @@ export default async function CustomerOrderDetailRoute({
             <p className="text-lg font-semibold">{money.format(order.total)}</p>
           </div>
         </section>
+        <section className="mt-6 grid gap-4 sm:grid-cols-2">
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <h2 className="text-sm font-semibold">Lieferung</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {order.delivery ?? "Versandart wird vorbereitet"}
+            </p>
+            {order.shippingAddress && (
+              <p className="mt-4 text-sm leading-6 text-muted-foreground">
+                {order.shippingAddress.firstName}{" "}
+                {order.shippingAddress.lastName}
+                <br />
+                {order.shippingAddress.street}
+                <br />
+                {order.shippingAddress.zipcode} {order.shippingAddress.city}
+              </p>
+            )}
+          </div>
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <h2 className="text-sm font-semibold">Zahlung</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {order.payment ?? "Zahlungsart wird vorbereitet"}
+            </p>
+          </div>
+        </section>
       </Container>
     </main>
   );

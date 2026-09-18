@@ -26,11 +26,20 @@ export type CustomerOrderSummary = Readonly<{
 
 export type CustomerOrderDetail = CustomerOrderSummary &
   Readonly<{
+    delivery?: string;
     items: readonly Readonly<{
       label: string;
       quantity: number;
       total: number;
     }>[];
+    payment?: string;
+    shippingAddress?: Readonly<{
+      city: string;
+      firstName: string;
+      lastName: string;
+      street: string;
+      zipcode?: string;
+    }>;
   }>;
 
 export type RegistrationOption = Readonly<{
