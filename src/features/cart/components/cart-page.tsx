@@ -18,7 +18,11 @@ import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Input } from "@/components/ui/input";
 import { CartCheckoutDialog } from "@/features/cart/components/cart-checkout-dialog";
-import type { ShopCart, ShopCartItem } from "@/features/cart/model/cart";
+import {
+  getShopCartItemCount,
+  type ShopCart,
+  type ShopCartItem,
+} from "@/features/cart/model/cart";
 import {
   applyPromotionCode,
   removeCartItem,
@@ -244,10 +248,7 @@ export function CartPage({ cart, signedIn }: CartPageProps) {
     minimumFractionDigits: 2,
     style: "currency",
   });
-  const itemCount = cart.items.reduce(
-    (total, item) => total + item.quantity,
-    0,
-  );
+  const itemCount = getShopCartItemCount(cart);
   return (
     <main className="flex-1 bg-[#faf7f2]">
       <Container className="py-8 sm:py-12">
