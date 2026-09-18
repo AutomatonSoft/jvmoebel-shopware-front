@@ -14,7 +14,10 @@ export async function createCustomerSession() {
   });
 }
 
-export async function persistCustomerContext(contextToken?: string) {
+export async function persistCustomerContext(
+  contextToken?: string,
+  options: Readonly<{ persistent?: boolean }> = {},
+) {
   if (!contextToken) {
     throw new Error("Shopware did not return a customer context token.");
   }
@@ -23,7 +26,7 @@ export async function persistCustomerContext(contextToken?: string) {
 
   cookieStore.set(customerContextCookie, contextToken, {
     httpOnly: true,
-    maxAge: 60 * 60 * 24 * 30,
+    ...(options.persistent === false ? {} : { maxAge: 60 * 60 * 24 * 30 }),
     path: "/",
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",

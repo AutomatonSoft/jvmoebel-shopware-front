@@ -1,57 +1,39 @@
 # `jv-why-jvmoebel`
 
-Brand statement with a decorative mark and linked customer benefits.
+## Скриншот
 
-## `slot.data`
+> Добавьте сюда скриншот компонента из Shopware.
 
-```json
-{
-  "eyebrow": "Warum JVMöbel",
-  "title": "Service, der zu Ihrem Zuhause passt",
-  "description": "Wir begleiten Sie von der Idee bis zur Lieferung.",
-  "mark": "JV",
-  "tagline": "Möbel mit Charakter",
-  "benefits": [
-    {
-      "id": "advice",
-      "position": 0,
-      "icon": "advice",
-      "title": "Persönliche Beratung",
-      "description": "Wir planen gemeinsam mit Ihnen.",
-      "url": "/beratung"
-    }
-  ],
-  "viewAll": {
-    "label": "Unser Service",
-    "url": "/service"
-  }
-}
-```
+## Назначение
 
-## Field contract
+Брендовый блок с крупной маркировкой, ценностным предложением и ссылками на преимущества магазина.
 
-| Field         | Required | Rule                                                         |
-| ------------- | -------- | ------------------------------------------------------------ |
-| `title`       | yes      | Non-empty section heading.                                   |
-| `mark`        | yes      | Short decorative brand mark.                                 |
-| `tagline`     | yes      | Text displayed below the mark.                               |
-| `benefits`    | yes      | Array or keyed object containing at least one valid benefit. |
-| `eyebrow`     | no       | Short text above the heading.                                |
-| `description` | no       | Supporting text.                                             |
-| `viewAll`     | no       | Rendered only when both `label` and `url` are present.       |
+## Настройка в Shopware
 
-Each benefit requires non-empty `title`, `description`, and `url`. `icon` must
-be one of `advice`, `design`, or `payment`. `id` is optional and generated when
-omitted. A finite numeric `position` controls order; otherwise input order is
-used.
+| Поле                                       | Где отображается               | Обязательно    |
+| ------------------------------------------ | ------------------------------ | -------------- |
+| Маркировка                                 | Крупный текст в левой части    | Да             |
+| Слоган                                     | Под маркировкой                | Да             |
+| Заголовок, надзаголовок и описание         | Правая часть блока             | Заголовок — да |
+| Преимущество: заголовок, описание и иконка | Каждый пункт списка            | Да             |
+| Ссылка преимущества                        | Переход из пункта              | Да             |
+| Ссылка «Смотреть все»                      | Под списком                    | Нет            |
+| Порядок                                    | Последовательность преимуществ | Нет            |
 
-Invalid benefits are omitted. The whole element is omitted when `title`,
-`mark`, or `tagline` is missing or no valid benefits remain. Arrays are
-canonical; keyed objects are also accepted.
+Доступные иконки преимуществ: «Консультация», «Дизайн», «Оплата».
 
-## Shopware Administration
+## Технический контракт Shopware
 
-Register the `jv-why-jvmoebel` element and block. Editors should control the
-section copy, mark, tagline, benefit list, benefit links and one of the three
-supported icon choices. The icon field should be a select rather than free
-text so invalid values cannot be saved.
+- `slot.type`: `jv-why-jvmoebel`; данные передаются в `slot.data`.
+
+| Поле                                                           | Тип                           | Правило                                                |
+| -------------------------------------------------------------- | ----------------------------- | ------------------------------------------------------ |
+| `mark`, `tagline`, `title`                                     | `string`                      | Непустые строки.                                       |
+| `eyebrow`, `description`                                       | `string`                      | Необязательные тексты.                                 |
+| `benefits`                                                     | `array \| object`             | Хотя бы один корректный пункт.                         |
+| `benefits[].title`, `benefits[].description`, `benefits[].url` | `string`                      | Непустые строки.                                       |
+| `benefits[].icon`                                              | `advice \| design \| payment` | Обязательное поддерживаемое значение.                  |
+| `benefits[].id`, `benefits[].position`                         | `string \| number`            | Необязательны; position задаёт порядок.                |
+| `viewAll.label`, `viewAll.url`                                 | `string`                      | Необязательная ссылка, но при передаче нужны оба поля. |
+
+Некорректные преимущества пропускаются; без обязательных полей и хотя бы одного преимущества элемент не рендерится.

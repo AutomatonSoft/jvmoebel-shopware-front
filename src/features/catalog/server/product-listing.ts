@@ -1,5 +1,7 @@
 import "server-only";
 
+import { unstable_cache } from "next/cache";
+
 import { shopProductListingMock } from "@/features/catalog/fixtures/product-listing";
 import { buildShopProductFilterOptions } from "@/features/catalog/model/filter-options";
 import { filterAndSortShopProducts } from "@/features/catalog/model/filter-products";
@@ -10,12 +12,40 @@ import type {
 } from "@/features/catalog/model/product-listing-page";
 import { shopProductPageSize } from "@/features/catalog/model/product-listing-page";
 import { paginateProducts } from "@/features/catalog/model/paginate-products";
+import { shopwareCacheTtlSeconds } from "@/integrations/shopware/cache-policy";
 import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
 import {
   getShopwareProductListing,
   getShopwareProductListingPage,
 } from "@/integrations/shopware/product-listing";
 import { getShopwareRequestSession } from "@/integrations/shopware/session";
+
+const getCachedShopwareProductListing = unstable_cache(
+  (categoryId: string | null) =>
+    getShopwareProductListing(
+      getShopwareRequestSession().client,
+      categoryId ?? undefined,
+    ),
+  ["shopware-product-listing"],
+  {
+    revalidate: shopwareCacheTtlSeconds.productListing,
+    tags: ["shopware:catalog"],
+  },
+);
+
+const getCachedShopwareProductListingPage = unstable_cache(
+  (request: ShopProductPageRequest, categoryId: string | null) =>
+    getShopwareProductListingPage(
+      getShopwareRequestSession().client,
+      request,
+      categoryId ?? undefined,
+    ),
+  ["shopware-product-listing-page"],
+  {
+    revalidate: shopwareCacheTtlSeconds.productListingPage,
+    tags: ["shopware:catalog"],
+  },
+);
 
 export async function getShopProductListing(
   categoryId?: string,
@@ -24,10 +54,7 @@ export async function getShopProductListing(
     return shopProductListingMock;
   }
 
-  return getShopwareProductListing(
-    getShopwareRequestSession().client,
-    categoryId,
-  );
+  return getCachedShopwareProductListing(categoryId ?? null);
 }
 
 function getMockProductListingPage(
@@ -88,13 +115,11 @@ function getMockProductListingPage(
 
 export async function getShopProductListingPage(
   request: ShopProductPageRequest,
+  categoryId?: string,
 ): Promise<ShopProductListingPage> {
   if (shouldUseShopwareMocks()) {
     return getMockProductListingPage(request);
   }
 
-  return getShopwareProductListingPage(
-    getShopwareRequestSession().client,
-    request,
-  );
+  return getCachedShopwareProductListingPage(request, categoryId ?? null);
 }

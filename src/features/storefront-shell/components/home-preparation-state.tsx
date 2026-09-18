@@ -1,14 +1,10 @@
-"use client";
-
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
-import { ArrowRight, Clock3, ShieldCheck, ShoppingBag } from "lucide-react";
+import { Clock3, ShieldCheck, ShoppingBag } from "lucide-react";
 import { Container } from "@/components/ui/container";
+import { HomeRefreshButton } from "@/features/storefront-shell/components/home-refresh-button";
 
 export function HomePreparationState() {
-  const router = useRouter();
-
   return (
     <main className="relative isolate flex min-h-[72vh] flex-1 items-center overflow-hidden bg-background py-16">
       <div
@@ -51,14 +47,7 @@ export function HomePreparationState() {
               Zum Shop
             </Link>
 
-            <button
-              type="button"
-              onClick={() => router.refresh()}
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-border bg-white/70 px-6 text-sm font-semibold text-foreground backdrop-blur-xl transition hover:-translate-y-0.5 hover:bg-white focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/30"
-            >
-              Erneut prüfen
-              <ArrowRight className="size-4" />
-            </button>
+            <HomeRefreshButton />
           </div>
 
           <div className="mt-10 grid max-w-xl gap-3 sm:grid-cols-2">

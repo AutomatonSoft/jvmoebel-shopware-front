@@ -1,25 +1,18 @@
 import { ChevronDown } from "lucide-react";
 
 import { Container } from "@/components/ui/container";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsHomeEditorialData } from "@/features/cms/contracts/home-editorial";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsHomeEditorialData } from "@/features/cms/contracts/home-editorial";
 import { sanitizeCmsHtml } from "@/features/cms/lib/sanitize-html";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
 import { cn } from "@/lib/utils";
 
 function EditorialParagraph({ content }: { content: string }) {
   return <div dangerouslySetInnerHTML={{ __html: sanitizeCmsHtml(content) }} />;
 }
 
-export function CmsHomeEditorial({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsHomeEditorialData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
+export function CmsHomeEditorial({
+  data,
+}: CmsElementProps<CmsHomeEditorialData>) {
   const {
     appearance,
     introduction,
@@ -28,7 +21,7 @@ export function CmsHomeEditorial({ slot }: CmsSlotComponentProps) {
     showMoreLabel,
     statement,
     title,
-  } = result.data;
+  } = data;
 
   return (
     <Container
@@ -44,7 +37,7 @@ export function CmsHomeEditorial({ slot }: CmsSlotComponentProps) {
       >
         <div
           className={cn(
-            "mx-auto w-full max-w-320",
+            "mx-auto w-full max-w-7xl",
             appearance === "card"
               ? "px-5 py-10 sm:px-8 sm:py-12 lg:px-10 lg:py-14"
               : "py-16 sm:py-24",
@@ -74,10 +67,10 @@ export function CmsHomeEditorial({ slot }: CmsSlotComponentProps) {
                 {title}
               </h2>
               <div className="mt-5 grid gap-4 text-sm leading-7 text-muted-foreground [&_a]:font-medium [&_a]:text-foreground [&_a]:underline [&_a]:decoration-primary/45 [&_a]:underline-offset-4 [&_a]:transition-colors [&_a:hover]:text-primary [&_a:focus-visible]:rounded-sm [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-offset-2 [&_a:focus-visible]:outline-primary">
-                {introduction.map((paragraph, index) => (
+                {introduction.map((paragraph) => (
                   <EditorialParagraph
-                    content={paragraph}
-                    key={`${index}-${paragraph.slice(0, 24)}`}
+                    content={paragraph.content}
+                    key={paragraph.id}
                   />
                 ))}
               </div>
@@ -113,10 +106,10 @@ export function CmsHomeEditorial({ slot }: CmsSlotComponentProps) {
                     </h3>
                   )}
                   <div className="grid gap-3 text-sm leading-7 text-muted-foreground [&_a]:font-medium [&_a]:text-foreground [&_a]:underline [&_a]:decoration-primary/45 [&_a]:underline-offset-4 [&_a]:transition-colors [&_a:hover]:text-primary [&_a:focus-visible]:rounded-sm [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-offset-2 [&_a:focus-visible]:outline-primary">
-                    {section.paragraphs.map((paragraph, index) => (
+                    {section.paragraphs.map((paragraph) => (
                       <EditorialParagraph
-                        content={paragraph}
-                        key={`${index}-${paragraph.slice(0, 24)}`}
+                        content={paragraph.content}
+                        key={paragraph.id}
                       />
                     ))}
                   </div>

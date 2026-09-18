@@ -8,6 +8,10 @@ const errorMessages: Readonly<Record<string, string>> = {
     "Der Warenkorb konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut.",
   eingabe: "Die Warenkorb-Aktion enthält ungültige Angaben.",
   gutschein: "Bitte geben Sie einen gültigen Gutscheincode ein.",
+  "nicht-verfuegbar":
+    "Dieser Artikel ist derzeit nicht verfügbar und wurde nicht hinzugefügt.",
+  shopware:
+    "Shopware hat den Artikel nicht in den Warenkorb übernommen. Bitte prüfen Sie die Verfügbarkeit und versuchen Sie es erneut.",
 };
 
 const successMessages: Readonly<Record<string, string>> = {

@@ -1,20 +1,13 @@
 import { Quote, Star } from "lucide-react";
 
 import { Container } from "@/components/ui/container";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsReviewSummaryData } from "@/features/cms/contracts/review-summary";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsReviewSummaryData } from "@/features/cms/contracts/review-summary";
 
-export function CmsReviewSummary({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsReviewSummaryData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { rating, sourceLabel, summary } = result.data;
+export function CmsReviewSummary({
+  data,
+}: CmsElementProps<CmsReviewSummaryData>) {
+  const { rating, sourceLabel, summary } = data;
   const filledStars = Math.round(rating);
   const formattedRating = rating.toFixed(1).replace(".", ",");
 

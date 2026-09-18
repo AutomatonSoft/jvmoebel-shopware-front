@@ -29,12 +29,6 @@ export function SearchResults({
   query,
   results,
 }: SearchResultsProps) {
-  const priceFormatter = new Intl.NumberFormat(locale, {
-    currency,
-    maximumFractionDigits: 0,
-    style: "currency",
-  });
-
   if (!query.trim()) {
     return (
       <p className="py-3 text-sm text-muted-foreground">
@@ -67,6 +61,12 @@ export function SearchResults({
       </p>
     );
   }
+
+  const priceFormatter = new Intl.NumberFormat(locale, {
+    currency,
+    maximumFractionDigits: 0,
+    style: "currency",
+  });
 
   return (
     <ul className="divide-y">

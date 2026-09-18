@@ -5,6 +5,18 @@ export type CountdownParts = Readonly<{
   seconds: number;
 }>;
 
+const countdownTickInterval = 1000;
+
+export function getNextCountdownTickDelay(endsAt: string, now: number) {
+  const remainingMilliseconds = Date.parse(endsAt) - now;
+
+  if (!Number.isFinite(remainingMilliseconds) || remainingMilliseconds <= 0) {
+    return null;
+  }
+
+  return Math.max(Math.min(remainingMilliseconds, countdownTickInterval), 1);
+}
+
 export function getCountdownParts(
   endsAt: string,
   now: number,

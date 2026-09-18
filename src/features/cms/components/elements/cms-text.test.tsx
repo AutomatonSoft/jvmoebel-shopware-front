@@ -1,8 +1,9 @@
-import { describe, expect, spyOn, test } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import type { ReactElement } from "react";
 
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
 import { CmsText } from "@/features/cms/components/elements/cms-text";
+import { parseCmsTextData } from "@/features/cms/contracts/text";
+import type { CmsSlot } from "@/features/cms/model/page";
 
 type CmsTextElement = ReactElement<{
   dangerouslySetInnerHTML: { __html: string };
@@ -21,11 +22,17 @@ function createTextSlot({
     type: "text",
     config,
     data,
-  } as unknown as CmsSlotComponentProps["slot"];
+  } as unknown as CmsSlot;
 }
 
-function renderTextHtml(slot: CmsSlotComponentProps["slot"]): string | null {
-  const element = CmsText({ slot }) as CmsTextElement | null;
+function renderTextHtml(slot: CmsSlot): string | null {
+  const result = parseCmsTextData(slot);
+
+  if (!result.data) {
+    return null;
+  }
+
+  const element = CmsText({ data: result.data, id: slot.id }) as CmsTextElement;
 
   return element?.props.dangerouslySetInnerHTML.__html ?? null;
 }
@@ -109,20 +116,14 @@ describe("CmsText", () => {
   });
 
   test("renders nothing for empty content", () => {
-    const consoleError = spyOn(console, "error").mockImplementation(() => {});
+    const result = parseCmsTextData(
+      createTextSlot({
+        data: { content: "   " },
+        config: { content: { source: "static", value: "   " } },
+      }),
+    );
 
-    try {
-      const element = CmsText({
-        slot: createTextSlot({
-          data: { content: "   " },
-          config: { content: { source: "static", value: "   " } },
-        }),
-      });
-
-      expect(element).toBeNull();
-      expect(consoleError).toHaveBeenCalledTimes(1);
-    } finally {
-      consoleError.mockRestore();
-    }
+    expect(result.data).toBeNull();
+    expect(result.issues).toHaveLength(1);
   });
 });

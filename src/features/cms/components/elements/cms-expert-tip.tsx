@@ -1,20 +1,11 @@
 import { Lightbulb } from "lucide-react";
 
 import { Container } from "@/components/ui/container";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsExpertTipData } from "@/features/cms/contracts/expert-tip";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsExpertTipData } from "@/features/cms/contracts/expert-tip";
 
-export function CmsExpertTip({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsExpertTipData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { body, label, title } = result.data;
+export function CmsExpertTip({ data }: CmsElementProps<CmsExpertTipData>) {
+  const { body, label, title } = data;
 
   return (
     <Container
@@ -35,7 +26,7 @@ export function CmsExpertTip({ slot }: CmsSlotComponentProps) {
             <p className="text-xs font-semibold tracking-[0.16em] text-primary uppercase">
               {label}
             </p>
-            <h2 className="mt-2 text-xl font-semibold tracking-[-0.025em] sm:text-2xl">
+            <h2 className="mt-2 text-xl font-semibold tracking-tight sm:text-2xl">
               {title}
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-7 text-foreground/80 sm:text-base">

@@ -3,21 +3,14 @@ import Image from "next/image";
 
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsTrendLookGridData } from "@/features/cms/contracts/trend-look-grid";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsTrendLookGridData } from "@/features/cms/contracts/trend-look-grid";
 import { cn } from "@/lib/utils";
 
-export function CmsTrendLookGrid({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsTrendLookGridData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { cards, eyebrow, title } = result.data;
+export function CmsTrendLookGrid({
+  data,
+}: CmsElementProps<CmsTrendLookGridData>) {
+  const { cards, eyebrow, title } = data;
 
   return (
     <Container
@@ -36,13 +29,13 @@ export function CmsTrendLookGrid({ slot }: CmsSlotComponentProps) {
         </h2>
       </header>
 
-      <ul className="grid auto-rows-[20rem] gap-4 sm:grid-cols-2 sm:auto-rows-[24rem] lg:grid-cols-3">
+      <ul className="grid auto-rows-80 gap-4 sm:grid-cols-2 sm:auto-rows-96 lg:grid-cols-3">
         {cards.map((card, index) => (
           <li
             className={cn(
               cards.length > 1 &&
                 index === 0 &&
-                "sm:col-span-2 lg:row-span-2 lg:min-h-[49rem]",
+                "sm:col-span-2 lg:row-span-2 lg:min-h-196",
             )}
             key={card.id}
           >

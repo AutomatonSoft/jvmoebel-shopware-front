@@ -2,12 +2,8 @@ import Image from "next/image";
 
 import { Container } from "@/components/ui/container";
 import { CmsButton } from "@/features/cms/components/cms-button";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import {
-  parseCmsPromoBannerData,
-  type CmsPromoBannerData,
-} from "@/features/cms/contracts/promo-banner";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsPromoBannerData } from "@/features/cms/contracts/promo-banner";
 import { cn } from "@/lib/utils";
 
 function PromoBannerCopy({
@@ -45,17 +41,7 @@ function PromoBannerCopy({
   );
 }
 
-export function CmsPromoBanner({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsPromoBannerData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const data = result.data;
-
+export function CmsPromoBanner({ data }: CmsElementProps<CmsPromoBannerData>) {
   return (
     <Container
       as="section"

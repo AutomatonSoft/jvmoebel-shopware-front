@@ -30,12 +30,12 @@ describe("searchProducts", () => {
     expect(response.locale).toBe("de-DE");
   });
 
-  test("limits mock results to five products", async () => {
+  test("returns all matching mock products below the ten-result limit", async () => {
     setEnvironmentVariable("NODE_ENV", "development");
     process.env.SHOPWARE_USE_MOCKS = "true";
 
     const response = await searchProducts("a");
 
-    expect(response.results).toHaveLength(5);
+    expect(response.results).toHaveLength(9);
   });
 });

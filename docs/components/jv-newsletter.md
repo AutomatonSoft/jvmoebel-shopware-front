@@ -1,48 +1,33 @@
 # `jv-newsletter`
 
-Newsletter callout and subscription form.
+## Скриншот
 
-## `slot.data`
+> Добавьте сюда скриншот компонента из Shopware.
 
-```json
-{
-  "eyebrow": "Newsletter",
-  "title": "Wohnideen direkt ins Postfach",
-  "description": "Erhalten Sie Neuigkeiten, Angebote und Einrichtungsideen.",
-  "buttonLabel": "Anmelden",
-  "buttonSize": "large",
-  "placeholder": "Ihre E-Mail-Adresse",
-  "successMessage": "Vielen Dank für Ihre Anmeldung.",
-  "invalidEmailMessage": "Geben Sie eine gültige E-Mail-Adresse ein.",
-  "errorMessage": "Die Anmeldung ist fehlgeschlagen. Versuchen Sie es erneut."
-}
-```
+## Назначение
 
-## Field contract
+Форма подписки на рассылку с текстами для обычного состояния, ошибки и успешной отправки.
 
-| Field                 | Required | Rule                                                 |
-| --------------------- | -------- | ---------------------------------------------------- |
-| `title`               | yes      | Non-empty section heading.                           |
-| `description`         | yes      | Non-empty supporting text.                           |
-| `buttonLabel`         | yes      | Subscription button label.                           |
-| `placeholder`         | yes      | Email input placeholder.                             |
-| `successMessage`      | yes      | Message displayed after a successful subscription.   |
-| `invalidEmailMessage` | yes      | Message displayed for an invalid email address.      |
-| `errorMessage`        | yes      | Message displayed when subscription fails.           |
-| `eyebrow`             | no       | Short text above the heading.                        |
-| `buttonSize`          | no       | `small`, `medium`, or `large`; defaults to `medium`. |
+## Настройка в Shopware
 
-The whole element is omitted when any required field is missing. Email
-validation and the Shopware newsletter request are handled by the frontend
-integration. The confirmation URL is resolved from the current Shopware sales
-channel domain.
+| Поле                               | Где отображается        | Обязательно               |
+| ---------------------------------- | ----------------------- | ------------------------- |
+| Заголовок, надзаголовок и описание | Над формой              | Заголовок и описание — да |
+| Подсказка поля                     | В поле e-mail           | Да                        |
+| Текст кнопки и размер              | Кнопка отправки         | Текст — да                |
+| Текст ошибки                       | При ошибке запроса      | Да                        |
+| Текст некорректного e-mail         | При неверном адресе     | Да                        |
+| Текст успеха                       | После успешной подписки | Да                        |
 
-The form sends a same-origin `POST` request to
-`/store-api/newsletter/subscribe`. The Next.js route validates the email and
-forwards the subscription to the configured Shopware Store API.
+## Технический контракт Shopware
 
-## Shopware Administration
+- `slot.type`: `jv-newsletter`; данные передаются в `slot.data`.
 
-Register the `jv-newsletter` element and block. Editors should control all
-visible copy, result messages, and the button size. Use a select for button
-size.
+| Поле                                                    | Тип                        | Правило                              |
+| ------------------------------------------------------- | -------------------------- | ------------------------------------ |
+| `title`, `description`, `placeholder`, `buttonLabel`    | `string`                   | Непустые строки.                     |
+| `invalidEmailMessage`, `errorMessage`, `successMessage` | `string`                   | Непустые строки.                     |
+| `eyebrow`                                               | `string`                   | Необязательный надзаголовок.         |
+| `buttonSize`                                            | `small \| medium \| large` | Необязателен; по умолчанию `medium`. |
+
+При отсутствии любого обязательного текста элемент не рендерится.

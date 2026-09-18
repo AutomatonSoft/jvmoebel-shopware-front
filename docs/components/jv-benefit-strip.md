@@ -1,41 +1,33 @@
 # `jv-benefit-strip`
 
-Compact list of service or shopping benefits.
+## Скриншот
 
-## `slot.data`
+> Добавьте сюда скриншот компонента из Shopware.
 
-```json
-{
-  "items": [
-    {
-      "id": "delivery",
-      "position": 0,
-      "icon": "delivery",
-      "title": "Möbelspedition und Aufbauservice",
-      "description": "Große Möbel liefern wir bequem bis zum Wunschort."
-    }
-  ]
-}
-```
+## Назначение
 
-## Field contract
+Полоса преимуществ магазина: доставка, выгодная цена и условия возврата.
 
-`items` is required and must contain at least one valid entry. Arrays are
-canonical; keyed objects are also accepted.
+## Настройка в Shopware
 
-| Item field    | Required | Rule                                                                |
-| ------------- | -------- | ------------------------------------------------------------------- |
-| `title`       | yes      | Non-empty benefit heading.                                          |
-| `description` | yes      | Non-empty supporting text.                                          |
-| `icon`        | yes      | One of `delivery`, `price`, or `returns`.                           |
-| `id`          | no       | Stable identifier; generated from the title and index when omitted. |
-| `position`    | no       | Finite number used for ordering; input order is the fallback.       |
+| Поле                   | Где отображается            | Обязательно |
+| ---------------------- | --------------------------- | ----------- |
+| Заголовок преимущества | Основной текст карточки     | Да          |
+| Описание               | Текст под заголовком        | Да          |
+| Иконка                 | Слева от текста             | Да          |
+| Порядок                | Последовательность карточек | Нет         |
 
-Invalid entries are omitted. The whole element is omitted when no valid entry
-remains.
+Для иконки выберите один из вариантов: «Доставка», «Цена» или «Возврат».
 
-## Shopware Administration
+## Технический контракт Shopware
 
-Register the `jv-benefit-strip` element and block. Editors should add, remove,
-reorder, and edit benefits and choose an icon from the three supported values.
-The frontend owns icon artwork, layout, responsive behavior, and styling.
+- `slot.type`: `jv-benefit-strip`; данные передаются в `slot.data`.
+
+| Поле                                   | Тип                            | Правило                                                           |
+| -------------------------------------- | ------------------------------ | ----------------------------------------------------------------- |
+| `items`                                | `array \| object`              | Хотя бы один корректный пункт; массив является основным форматом. |
+| `items[].title`, `items[].description` | `string`                       | Непустые строки.                                                  |
+| `items[].icon`                         | `delivery \| price \| returns` | Обязательное поддерживаемое значение.                             |
+| `items[].id`, `items[].position`       | `string \| number`             | Необязательны; position задаёт порядок.                           |
+
+Некорректные пункты пропускаются; без корректных пунктов элемент не рендерится.

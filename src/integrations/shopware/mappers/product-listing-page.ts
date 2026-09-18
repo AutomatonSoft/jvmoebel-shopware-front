@@ -9,6 +9,7 @@ import type { ShopProductListingPage } from "@/features/catalog/model/product-li
 import type { ShopProductPageRequest } from "@/features/catalog/model/product-listing-page";
 import {
   createShopwareProductListing,
+  mapShopwareProductCard,
   getShopwareTranslatedName,
 } from "@/integrations/shopware/mappers/product-listing";
 
@@ -32,7 +33,12 @@ type ProductListingAggregations = Readonly<{
   price?: PriceAggregation;
   properties?: EntityAggregation<ShopwarePropertyGroup>;
   propertyCounts?: BucketAggregation;
-}>;
+}> &
+  Readonly<Record<string, unknown>>;
+
+function getPropertyCountAggregationName(groupId: string) {
+  return `propertyCounts_${groupId}`;
+}
 
 function getAggregationCounts(aggregation?: BucketAggregation) {
   return new Map(
@@ -54,18 +60,23 @@ function mapEntityOptions(
     const label = getShopwareTranslatedName(entity);
     const count = counts.get(entity.id) ?? 0;
 
-    return label && count > 0 ? [{ count, label, value: entity.id }] : [];
+    return label ? [{ count, label, value: entity.id }] : [];
   });
 }
 
 function mapAttributeGroups(
   groups: readonly ShopwarePropertyGroup[] = [],
-  aggregation?: BucketAggregation,
+  aggregations?: ProductListingAggregations,
+  selectedPropertyGroups: Readonly<Record<string, readonly string[]>> = {},
 ): ProductAttributeFilterGroup[] {
-  const counts = getAggregationCounts(aggregation);
-
   return groups.flatMap((group) => {
     const label = getShopwareTranslatedName(group);
+    const groupAggregation =
+      selectedPropertyGroups[group.id]?.length > 0
+        ? ((aggregations?.[getPropertyCountAggregationName(group.id)] as
+            BucketAggregation | undefined) ?? aggregations?.propertyCounts)
+        : aggregations?.propertyCounts;
+    const counts = getAggregationCounts(groupAggregation);
     const options = (group.options ?? []).flatMap((option) => {
       const optionLabel = getShopwareTranslatedName(option);
       const count = counts.get(option.id) ?? 0;
@@ -74,7 +85,7 @@ function mapAttributeGroups(
         option.colorHexCode?.trim() ||
         undefined;
 
-      return optionLabel && count > 0
+      return optionLabel
         ? [
             {
               count,
@@ -115,11 +126,14 @@ export function mapShopwareProductListingPage(
   currency: string,
   locale: string,
 ): ShopProductListingPage {
-  const listing = createShopwareProductListing({
-    currency,
-    locale,
-    products: response.elements,
-  });
+  const listing = createShopwareProductListing(
+    {
+      currency,
+      locale,
+      products: response.elements,
+    },
+    mapShopwareProductCard,
+  );
 
   const aggregations = response.aggregations as unknown as
     ProductListingAggregations | undefined;
@@ -130,7 +144,8 @@ export function mapShopwareProductListingPage(
   const filterOptions = {
     attributeGroups: mapAttributeGroups(
       aggregations?.properties?.entities,
-      aggregations?.propertyCounts,
+      aggregations,
+      request.propertyGroups,
     ),
     categories: mapEntityOptions(
       aggregations?.categoryEntities?.entities,

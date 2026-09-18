@@ -2,12 +2,14 @@
 
 import { ApiClientError } from "@shopware/api-client";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 import type { AccountActionState } from "@/features/customer-account/model/account";
 import {
   parseCustomerLogin,
   parseCustomerRegistration,
 } from "@/features/customer-account/model/validation";
+import { getRegistrationOptions } from "@/features/customer-account/server/account";
 import {
   clearCustomerContext,
   createCustomerSession,
@@ -18,9 +20,18 @@ import {
   logoutShopwareCustomer,
   registerShopwareCustomer,
 } from "@/integrations/shopware/customer-account";
+import { parseCheckoutAddress } from "@/features/checkout/model/validation";
+import {
+  getShopwareCheckoutOptions,
+  updateShopwareCustomerAddress,
+} from "@/integrations/shopware/checkout";
 
 function getRedirectPath(formData: FormData) {
-  return formData.get("redirectTo") === "/warenkorb" ? "/warenkorb" : null;
+  const redirectTo = formData.get("redirectTo");
+
+  return redirectTo === "/warenkorb" || redirectTo === "/kasse"
+    ? redirectTo
+    : null;
 }
 
 export async function loginCustomer(
@@ -42,7 +53,9 @@ export async function loginCustomer(
     const session = await createCustomerSession();
 
     await loginShopwareCustomer(session.client, login);
-    await persistCustomerContext(session.getContextToken());
+    await persistCustomerContext(session.getContextToken(), {
+      persistent: login.rememberMe,
+    });
   } catch (error) {
     if (error instanceof ApiClientError && [400, 401].includes(error.status)) {
       return {
@@ -78,6 +91,21 @@ export async function registerCustomer(
   }
 
   try {
+    const options = await getRegistrationOptions();
+
+    if (
+      registration.countryId !== options.defaultCountryId ||
+      (registration.salutationId &&
+        !options.salutations.some(
+          (salutation) => salutation.id === registration.salutationId,
+        ))
+    ) {
+      return {
+        message: "Bitte prÃ¼fen Sie Ihre Angaben.",
+        status: "invalid",
+      };
+    }
+
     const session = await createCustomerSession();
 
     await registerShopwareCustomer(session.client, registration);
@@ -115,4 +143,196 @@ export async function logoutCustomer() {
   }
 
   redirect("/kundenkonto/anmelden");
+}
+
+export async function saveCustomerProfile(
+  _previousState: AccountActionState,
+  formData: FormData,
+): Promise<AccountActionState> {
+  const firstName = formData.get("firstName");
+  const lastName = formData.get("lastName");
+
+  if (
+    typeof firstName !== "string" ||
+    typeof lastName !== "string" ||
+    !firstName.trim() ||
+    !lastName.trim() ||
+    firstName.trim().length > 255 ||
+    lastName.trim().length > 255
+  ) {
+    return { message: "Bitte prüfen Sie Ihren Namen.", status: "invalid" };
+  }
+
+  try {
+    const session = await createCustomerSession();
+
+    await session.client.invoke("changeProfile post /account/change-profile", {
+      body: { firstName: firstName.trim(), lastName: lastName.trim() },
+      fetchOptions: { cache: "no-store" },
+    });
+    await persistCustomerContext(session.getContextToken());
+  } catch (error) {
+    console.error("Customer profile update failed.", error);
+    return {
+      message: "Ihr Profil konnte nicht gespeichert werden.",
+      status: "error",
+    };
+  }
+
+  revalidatePath("/");
+  revalidatePath("/kundenkonto");
+  revalidatePath("/kundenkonto/profil");
+  redirect("/kundenkonto?profil=1");
+}
+
+export async function changeCustomerEmail(
+  _previousState: AccountActionState,
+  formData: FormData,
+): Promise<AccountActionState> {
+  const email = formData.get("email");
+  const emailConfirmation = formData.get("emailConfirmation");
+  const password = formData.get("password");
+
+  if (
+    typeof email !== "string" ||
+    typeof emailConfirmation !== "string" ||
+    typeof password !== "string" ||
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ||
+    email.trim() !== emailConfirmation.trim() ||
+    password.length === 0 ||
+    password.length > 4096
+  ) {
+    return {
+      message: "Bitte prüfen Sie E-Mail-Adresse und Passwort.",
+      status: "invalid",
+    };
+  }
+
+  try {
+    const session = await createCustomerSession();
+
+    await session.client.invoke("changeEmail post /account/change-email", {
+      body: {
+        email: email.trim(),
+        emailConfirmation: emailConfirmation.trim(),
+        password,
+      },
+      fetchOptions: { cache: "no-store" },
+    });
+    await persistCustomerContext(session.getContextToken());
+  } catch (error) {
+    console.error("Customer email update failed.", error);
+    return {
+      message: "Die E-Mail-Adresse konnte nicht geändert werden.",
+      status: "error",
+    };
+  }
+
+  revalidatePath("/");
+  revalidatePath("/kundenkonto");
+  redirect("/kundenkonto?email=1");
+}
+
+export async function saveCustomerSettings(
+  _previousState: AccountActionState,
+  formData: FormData,
+): Promise<AccountActionState> {
+  const firstName = formData.get("firstName");
+  const lastName = formData.get("lastName");
+  const currentEmail = formData.get("currentEmail");
+  const email = formData.get("email");
+  if (
+    typeof firstName !== "string" ||
+    typeof lastName !== "string" ||
+    typeof currentEmail !== "string" ||
+    typeof email !== "string" ||
+    !firstName.trim() ||
+    !lastName.trim() ||
+    firstName.trim().length > 255 ||
+    lastName.trim().length > 255
+  )
+    return { message: "Bitte prüfen Sie Ihre Angaben.", status: "invalid" };
+  try {
+    const session = await createCustomerSession();
+    await session.client.invoke("changeProfile post /account/change-profile", {
+      body: { firstName: firstName.trim(), lastName: lastName.trim() },
+      fetchOptions: { cache: "no-store" },
+    });
+    if (email.trim() !== currentEmail) {
+      const emailConfirmation = formData.get("emailConfirmation");
+      const password = formData.get("password");
+      if (
+        typeof emailConfirmation !== "string" ||
+        typeof password !== "string" ||
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ||
+        email.trim() !== emailConfirmation.trim() ||
+        !password ||
+        password.length > 4096
+      )
+        return {
+          message:
+            "Bitte bestätigen Sie die neue E-Mail-Adresse und Ihr Passwort.",
+          status: "invalid",
+        };
+      await session.client.invoke("changeEmail post /account/change-email", {
+        body: {
+          email: email.trim(),
+          emailConfirmation: emailConfirmation.trim(),
+          password,
+        },
+        fetchOptions: { cache: "no-store" },
+      });
+    }
+    await persistCustomerContext(session.getContextToken());
+  } catch (error) {
+    console.error("Customer settings update failed.", error);
+    return {
+      message: "Ihre Änderungen konnten nicht gespeichert werden.",
+      status: "error",
+    };
+  }
+  revalidatePath("/");
+  revalidatePath("/kundenkonto");
+  redirect("/kundenkonto?einstellungen=1");
+}
+
+export async function saveCustomerAccountAddress(
+  _previousState: AccountActionState,
+  formData: FormData,
+): Promise<AccountActionState> {
+  const address = parseCheckoutAddress(formData);
+
+  if (!address) {
+    return {
+      message: "Bitte füllen Sie alle Pflichtfelder aus.",
+      status: "invalid",
+    };
+  }
+
+  try {
+    const session = await createCustomerSession();
+    const options = await getShopwareCheckoutOptions(session.client);
+
+    if (
+      !options.countries.some((country) => country.id === address.countryId)
+    ) {
+      return {
+        message: "Bitte wählen Sie ein gültiges Land.",
+        status: "invalid",
+      };
+    }
+
+    await updateShopwareCustomerAddress(session.client, address);
+    await persistCustomerContext(session.getContextToken());
+  } catch (error) {
+    console.error("Customer account address update failed.", error);
+    return {
+      message: "Ihre Adresse konnte nicht gespeichert werden.",
+      status: "error",
+    };
+  }
+
+  revalidatePath("/kundenkonto");
+  revalidatePath("/kundenkonto/adressen");
+  redirect("/kundenkonto?adresse=1");
 }

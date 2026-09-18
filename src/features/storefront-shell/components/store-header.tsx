@@ -24,10 +24,10 @@ export function StoreHeader({
   customer,
   navigation,
 }: StoreHeaderProps) {
-  const accountHref = customer ? "/kundenkonto" : "/kundenkonto/registrieren";
+  const accountHref = customer ? "/kundenkonto" : "/kundenkonto/anmelden";
   const accountLabel = customer
     ? `${customer.firstName} ${customer.lastName}`.trim()
-    : "Registrieren";
+    : "Anmelden";
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
@@ -62,7 +62,7 @@ export function StoreHeader({
         <div className="ml-auto flex items-center justify-end xl:ml-0">
           <Link
             aria-label={
-              customer ? `Kundenkonto von ${accountLabel}` : "Konto erstellen"
+              customer ? `Kundenkonto von ${accountLabel}` : "Anmelden"
             }
             className="hidden min-h-10 items-center gap-2 rounded-full p-1 pr-3 transition-[background,transform,box-shadow] hover:bg-muted focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-[.975] xl:flex"
             href={accountHref}
@@ -82,7 +82,7 @@ export function StoreHeader({
           <div className="flex items-center gap-1 sm:ml-2 sm:border-l sm:border-foreground/10 sm:pl-2">
             <Link
               aria-label={
-                customer ? `Kundenkonto von ${accountLabel}` : "Konto erstellen"
+                customer ? `Kundenkonto von ${accountLabel}` : "Anmelden"
               }
               className="flex size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-90 xl:hidden"
               href={accountHref}

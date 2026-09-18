@@ -9,7 +9,7 @@ type ShopwareSeoUrl = components["schemas"]["SeoUrl"];
 export type ShopwareStorefrontRoute = Readonly<{
   canonicalPath: string;
   entityId: string;
-  kind: "category" | "product";
+  kind: "category" | "landing-page" | "product";
   shouldRedirect: boolean;
 }>;
 
@@ -28,6 +28,10 @@ function getRouteKind(routeName: string) {
 
   if (routeName === "frontend.detail.page") {
     return "product";
+  }
+
+  if (routeName === "frontend.landing.page") {
+    return "landing-page";
   }
 }
 
@@ -59,6 +63,22 @@ async function findSeoUrls(
   });
 
   return response.data.elements;
+}
+
+export async function getShopwareCanonicalProductPath(
+  client: ShopwareClient,
+  productId: string,
+) {
+  const canonicalSeoUrl = (
+    await findSeoUrls(client, "foreignKey", productId)
+  ).find(
+    (seoUrl) =>
+      isSupportedSeoUrl(seoUrl) &&
+      seoUrl.routeName === "frontend.detail.page" &&
+      seoUrl.isCanonical,
+  );
+
+  return canonicalSeoUrl ? getPublicPath(canonicalSeoUrl.seoPathInfo) : null;
 }
 
 export async function resolveShopwareStorefrontRoute(

@@ -1,7 +1,8 @@
 "use client";
 
-import { LoaderCircle, Sparkles } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { Sparkles } from "lucide-react";
+import { motion } from "motion/react";
+import { memo, useEffect, useRef } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +13,10 @@ import { ShopProductCard } from "@/features/catalog/components/shop-product-card
 import type { ShopProduct } from "@/features/catalog/model/product-listing";
 
 const resultScrollReleaseDelay = 700;
+const productLayoutTransition = {
+  duration: 0.28,
+  ease: [0.22, 1, 0.36, 1],
+} as const;
 
 export type ShopProductResultsProps = {
   currency: string;
@@ -21,6 +26,27 @@ export type ShopProductResultsProps = {
   paginationProps: ProductPaginationProps;
   products: readonly ShopProduct[];
 };
+
+const ShopProductGrid = memo(function ShopProductGrid({
+  currency,
+  locale,
+  products,
+}: Pick<ShopProductResultsProps, "currency" | "locale" | "products">) {
+  return products.map((product, index) => (
+    <motion.div
+      key={product.id}
+      layout="position"
+      transition={{ layout: productLayoutTransition }}
+    >
+      <ShopProductCard
+        currency={currency}
+        eagerImage={index < 4}
+        locale={locale}
+        product={product}
+      />
+    </motion.div>
+  ));
+});
 
 export function ShopProductResults({
   currency,
@@ -93,17 +119,13 @@ export function ShopProductResults({
       {products.length > 0 ? (
         <>
           <div
-            className={`grid grid-cols-2 gap-x-3 gap-y-9 transition-[opacity,filter] duration-200 md:grid-cols-3 md:gap-x-4 xl:grid-cols-4 ${isLoading ? "pointer-events-none opacity-35 saturate-50" : ""}`}
+            className={`grid grid-cols-2 gap-x-3 gap-y-9 md:grid-cols-3 md:gap-x-4 xl:grid-cols-4 ${isLoading ? "pointer-events-none" : ""}`}
           >
-            {products.map((product, index) => (
-              <ShopProductCard
-                currency={currency}
-                eagerImage={index < 4}
-                key={product.id}
-                locale={locale}
-                product={product}
-              />
-            ))}
+            <ShopProductGrid
+              currency={currency}
+              locale={locale}
+              products={products}
+            />
           </div>
 
           <ProductPagination {...paginationProps} onPageChange={changePage} />
@@ -126,16 +148,15 @@ export function ShopProductResults({
       )}
 
       {isLoading && (
-        <div
-          aria-live="polite"
-          className="absolute inset-0 z-10 cursor-wait bg-background/45 backdrop-blur-[1px]"
-          role="status"
-        >
-          <div className="sticky top-[45dvh] mx-auto flex w-fit items-center gap-3 rounded-full border bg-card px-5 py-3 text-sm font-semibold shadow-xl">
-            <LoaderCircle className="size-5 animate-spin text-primary" />
+        <>
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-10 bg-background/30 transition-opacity duration-200"
+          />
+          <span aria-live="polite" className="sr-only" role="status">
             Produkte werden aktualisiert...
-          </div>
-        </div>
+          </span>
+        </>
       )}
     </div>
   );

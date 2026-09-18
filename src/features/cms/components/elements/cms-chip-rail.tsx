@@ -2,20 +2,11 @@ import { ArrowRight } from "lucide-react";
 
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsChipRailData } from "@/features/cms/contracts/chip-rail";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsChipRailData } from "@/features/cms/contracts/chip-rail";
 
-export function CmsChipRail({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsChipRailData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { chips, eyebrow, title } = result.data;
+export function CmsChipRail({ data }: CmsElementProps<CmsChipRailData>) {
+  const { chips, eyebrow, title } = data;
 
   return (
     <Container
@@ -35,7 +26,7 @@ export function CmsChipRail({ slot }: CmsSlotComponentProps) {
       </header>
 
       <nav aria-label={title}>
-        <ul className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:-mx-8 sm:px-8 lg:mx-0 lg:flex-wrap lg:px-0 [&::-webkit-scrollbar]:hidden">
+        <ul className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 scrollbar-none sm:-mx-8 sm:px-8 lg:mx-0 lg:flex-wrap lg:px-0 [&::-webkit-scrollbar]:hidden">
           {chips.map((chip) => (
             <li className="shrink-0 snap-start" key={chip.id}>
               <CmsLink

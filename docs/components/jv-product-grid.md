@@ -1,96 +1,43 @@
 # `jv-product-grid`
 
-Curated grid of product cards inside a CMS page. This is a CMS element
-contract, not the full catalog listing contract.
+## Скриншот
 
-## `slot.data`
+> Добавьте сюда скриншот компонента из Shopware.
 
-```json
-{
-  "eyebrow": "Für Sie ausgewählt",
-  "title": "Beliebte Möbel",
-  "anchorId": "sale-products",
-  "layout": "rail",
-  "locale": "de-DE",
-  "currency": "EUR",
-  "products": [
-    {
-      "id": "0123456789abcdef0123456789abcdef",
-      "position": 0,
-      "url": "/produkt/0123456789abcdef0123456789abcdef",
-      "badge": "Bestseller",
-      "ratingAverage": 4.9,
-      "reviewCount": 128,
-      "translated": {
-        "name": "Alba Modular Sofa",
-        "description": "Natürliches Bouclé, vier Sitzplätze"
-      },
-      "cover": {
-        "media": {
-          "url": "https://media.example.com/products/alba.webp",
-          "alt": "Alba Modular Sofa"
-        }
-      },
-      "calculatedPrice": {
-        "unitPrice": 2490,
-        "listPrice": {
-          "price": 2890
-        }
-      }
-    }
-  ],
-  "viewAll": {
-    "label": "Alle Möbel",
-    "url": "/moebel-sortiment"
-  }
-}
-```
+## Назначение
 
-## Field contract
+Сетка или горизонтальная лента выбранных товаров с ценами, рейтингами и ссылкой на полный список.
 
-| Field      | Required | Rule                                                           |
-| ---------- | -------- | -------------------------------------------------------------- |
-| `title`    | yes      | Non-empty section heading.                                     |
-| `locale`   | yes      | Locale used by `Intl.NumberFormat`, for example `de-DE`.       |
-| `currency` | yes      | Currency code used to format prices, for example `EUR`.        |
-| `products` | yes      | Array or keyed object containing at least one valid product.   |
-| `anchorId` | no       | HTML anchor beginning with a letter, such as `sale-products`.  |
-| `layout`   | no       | `grid` or `rail`. Invalid or missing values default to `grid`. |
-| `eyebrow`  | no       | Short text above the heading.                                  |
-| `viewAll`  | no       | Rendered only when both `label` and `url` are present.         |
+## Настройка в Shopware
 
-Each product requires:
+| Поле                                              | Где отображается               | Обязательно    |
+| ------------------------------------------------- | ------------------------------ | -------------- |
+| Заголовок и надзаголовок                          | Над товарами                   | Заголовок — да |
+| Вид                                               | Сетка или лента                | Нет            |
+| Валюта и локаль                                   | Формат цены                    | Да             |
+| Название и изображение товара                     | Карточка товара                | Да             |
+| Цена                                              | Карточка товара                | Да             |
+| Предыдущая цена, рейтинг, отзывы, бейдж, описание | Дополнительные данные карточки | Нет            |
+| Ссылка товара                                     | Переход из карточки            | Да             |
+| Ссылка «Смотреть все»                             | Рядом с заголовком             | Нет            |
 
-- non-empty `id` and `url`;
-- a name from `translated.name` or `name`;
-- non-empty `cover.media.url`;
-- finite numeric `calculatedPrice.unitPrice`.
+## Технический контракт Shopware
 
-Optional product fields:
+- `slot.type`: `jv-product-grid`; данные передаются в `slot.data`.
 
-| Field                                    | Rule                                                          |
-| ---------------------------------------- | ------------------------------------------------------------- |
-| `position`                               | Finite number used for ordering; input order is the fallback. |
-| `badge`                                  | Short merchandising label.                                    |
-| `translated.description` / `description` | Translated value has priority.                                |
-| `cover.media.alt`                        | Defaults to the resolved product name.                        |
-| `calculatedPrice.listPrice.price`        | Previous price.                                               |
-| `ratingAverage`                          | Numeric rating.                                               |
-| `reviewCount`                            | Numeric review count.                                         |
+| Поле                                                                                                                      | Тип                | Правило                                                            |
+| ------------------------------------------------------------------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------ |
+| `title`, `currency`, `locale`                                                                                             | `string`           | Непустые строки.                                                   |
+| `eyebrow`                                                                                                                 | `string`           | Необязательный надзаголовок.                                       |
+| `layout`                                                                                                                  | `grid \| rail`     | `rail` включает ленту; другое или отсутствующее значение — `grid`. |
+| `anchorId`                                                                                                                | `string`           | Необязательный корректный HTML id.                                 |
+| `products`                                                                                                                | `array \| object`  | Хотя бы один корректный товар.                                     |
+| `products[].id`, `products[].url`                                                                                         | `string`           | Непустые строки.                                                   |
+| `products[].translated.name` или `products[].name`                                                                        | `string`           | Непустое название.                                                 |
+| `products[].cover.media.url`                                                                                              | `string`           | Непустой публичный URL изображения.                                |
+| `products[].calculatedPrice.unitPrice`                                                                                    | `number`           | Обязательная цена.                                                 |
+| `products[].calculatedPrice.listPrice.price`                                                                              | `number`           | Необязательная предыдущая цена.                                    |
+| `products[].badge`, `products[].description`, `products[].ratingAverage`, `products[].reviewCount`, `products[].position` | `string \| number` | Необязательные поля; position задаёт порядок.                      |
+| `viewAll.label`, `viewAll.url`                                                                                            | `string`           | Необязательная ссылка, но при передаче нужны оба поля.             |
 
-Prices use the currency's major unit rather than integer cents. The current UI
-formats prices without fractional digits. Invalid products are omitted; the
-whole element is omitted when no valid products remain. Arrays are canonical;
-keyed objects are also accepted.
-
-## Shopware Administration
-
-Register the `jv-product-grid` element and block. Editors should control the
-section copy, layout, anchor, optional view-all link, and a manual multi-product
-selection. The selected products must keep the order set by the editor; the
-resolver writes that order to each product's `position`. Product name,
-description, cover media, prices and reviews should be resolved from the
-selected Shopware products rather than copied into CMS configuration. The
-resolver must return the documented normalized product objects and
-sales-channel prices in `slot.data`. Products that are unavailable in the
-current sales channel should be omitted by the resolver.
+Некорректные товары пропускаются; без корректных товаров элемент не рендерится.

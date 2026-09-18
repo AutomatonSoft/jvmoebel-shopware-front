@@ -3,22 +3,14 @@ import Image from "next/image";
 
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsCategoryRailData } from "@/features/cms/contracts/category-rail";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsCategoryRailData } from "@/features/cms/contracts/category-rail";
 import { cn } from "@/lib/utils";
 
-export function CmsCategoryRail({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsCategoryRailData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { categories, description, eyebrow, layout, title, viewAll } =
-    result.data;
+export function CmsCategoryRail({
+  data,
+}: CmsElementProps<CmsCategoryRailData>) {
+  const { categories, description, eyebrow, layout, title, viewAll } = data;
 
   return (
     <Container
@@ -62,7 +54,7 @@ export function CmsCategoryRail({ slot }: CmsSlotComponentProps) {
           className={cn(
             layout === "grid"
               ? "grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8"
-              : "-mx-4 -my-6 grid snap-x snap-mandatory scroll-px-4 auto-cols-[8.5rem] grid-flow-col gap-4 overflow-x-auto overscroll-x-contain px-4 py-6 [scrollbar-width:none] sm:-mx-8 sm:scroll-px-8 sm:auto-cols-[10rem] sm:gap-5 sm:px-8 lg:mx-0 lg:scroll-px-0 lg:auto-cols-[calc((100%-6.25rem)/6)] lg:px-0 [&::-webkit-scrollbar]:hidden",
+              : "-mx-4 -my-6 grid snap-x snap-mandatory scroll-px-4 auto-cols-34 grid-flow-col gap-4 overflow-x-auto overscroll-x-contain px-4 py-6 scrollbar-none sm:-mx-8 sm:scroll-px-8 sm:auto-cols-40 sm:gap-5 sm:px-8 lg:mx-0 lg:scroll-px-0 lg:auto-cols-[calc((100%-6.25rem)/6)] lg:px-0 [&::-webkit-scrollbar]:hidden",
           )}
         >
           {categories.map((category) => (

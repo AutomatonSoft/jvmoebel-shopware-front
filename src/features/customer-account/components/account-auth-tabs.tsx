@@ -6,8 +6,8 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const tabs = [
-  { href: "/kundenkonto/registrieren", label: "Registrieren" },
   { href: "/kundenkonto/anmelden", label: "Anmelden" },
+  { href: "/kundenkonto/registrieren", label: "Registrieren" },
 ] as const;
 
 export function AccountAuthTabs() {
@@ -18,7 +18,7 @@ export function AccountAuthTabs() {
   return (
     <nav
       aria-label="Anmeldung und Registrierung"
-      className="mb-5 grid grid-cols-2 border-b border-border"
+      className="mb-3 grid grid-cols-2 border-b border-border"
     >
       {tabs.map((tab) => {
         const active = pathname === tab.href;

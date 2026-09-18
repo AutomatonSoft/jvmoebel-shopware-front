@@ -2,22 +2,13 @@ import { Clock3, Copy } from "lucide-react";
 
 import { Container } from "@/components/ui/container";
 import { CmsButton } from "@/features/cms/components/cms-button";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
 import { CountdownPromoTimer } from "@/features/cms/components/elements/countdown-promo-timer";
-import { parseCmsCountdownPromoData } from "@/features/cms/contracts/countdown-promo";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsCountdownPromoData } from "@/features/cms/contracts/countdown-promo";
 
-export function CmsCountdownPromo({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsCountdownPromoData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const data = result.data;
-
+export function CmsCountdownPromo({
+  data,
+}: CmsElementProps<CmsCountdownPromoData>) {
   return (
     <Container
       as="section"

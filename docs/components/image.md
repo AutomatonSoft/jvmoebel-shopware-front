@@ -1,56 +1,40 @@
 # `image`
 
-Standard Shopware image CMS element. It uses Shopware's existing image
-Administration controls and does not require a custom `jv-*` extension.
+## Скриншот
 
-## Data source
+> Добавьте сюда скриншот компонента из Shopware.
 
-The selected media entity must be resolved into `slot.data.media`:
+## Назначение
 
-```json
-{
-  "media": {
-    "url": "https://shop.example.com/media/showroom.webp",
-    "translated": {
-      "alt": "JVMöbel showroom",
-      "title": "Our showroom"
-    },
-    "metaData": {
-      "width": 1600,
-      "height": 900
-    }
-  }
-}
-```
+Стандартный элемент Shopware для одиночного изображения, при необходимости со ссылкой.
 
-`media.url` is required. The frontend reads translated alt and title text first,
-then falls back to the corresponding direct media fields. Width and height are
-optional but recommended to preserve the intrinsic aspect ratio.
+## Настройка в Shopware
 
-The media ID in `slot.config.media.value` is not enough to render an image. The
-Store API must return the resolved media entity in `slot.data.media`.
+| Поле                                       | Где отображается                         | Обязательно |
+| ------------------------------------------ | ---------------------------------------- | ----------- |
+| Медиафайл                                  | Изображение на странице                  | Да          |
+| Alt-текст и заголовок медиа                | Доступность и подсказка изображения      | Нет         |
+| Режим отображения                          | Масштабирование изображения в контейнере | Нет         |
+| Горизонтальное и вертикальное выравнивание | Положение изображения                    | Нет         |
+| Минимальная высота                         | Высота контейнера для режимов заполнения | Нет         |
+| Ссылка и открытие в новой вкладке          | Переход по изображению                   | Нет         |
+| Декоративное изображение                   | Убирает alt-текст для скринридера        | Нет         |
 
-## Supported configuration
+## Технический контракт Shopware
 
-The frontend reads standard Shopware configuration entries from `slot.config`:
+- `slot.type`: `image`.
+- Медиафайл передаётся в `slot.data.media`, остальные настройки — в `slot.config.<имя>.value`.
 
-| Field               | Supported values                                       |
-| ------------------- | ------------------------------------------------------ |
-| `displayMode`       | `standard`, `cover`, `contain`, or `stretch`           |
-| `minHeight`         | CSS height used by non-standard display modes          |
-| `horizontalAlign`   | `flex-start`, `center`, or `flex-end`                  |
-| `verticalAlign`     | `flex-start`, `center`, or `flex-end`                  |
-| `url`               | Root-relative, HTTP, HTTPS, `mailto`, `tel`, or anchor |
-| `newTab`            | Opens the configured link in a new tab                 |
-| `ariaLabel`         | Accessible label for the image link                    |
-| `fetchPriorityHigh` | Requests high image fetch priority                     |
-| `isDecorative`      | Renders empty alt and title text                       |
+| Поле                                                                                 | Тип                                       | Правило                                                               |
+| ------------------------------------------------------------------------------------ | ----------------------------------------- | --------------------------------------------------------------------- |
+| `data.media.url`                                                                     | `string`                                  | Обязательный относительный URL или абсолютный `http(s)` URL.          |
+| `data.media.translated.alt`, `data.media.alt`                                        | `string`                                  | Необязательны; `translated.alt` имеет приоритет.                      |
+| `data.media.translated.title`, `data.media.title`                                    | `string`                                  | Необязательны; `translated.title` имеет приоритет.                    |
+| `data.media.metaData.width`, `data.media.metaData.height`                            | `number`                                  | Необязательны; положительные значения используются как размеры.       |
+| `config.displayMode.value`                                                           | `standard \| cover \| contain \| stretch` | По умолчанию `standard`.                                              |
+| `config.horizontalAlign.value`, `config.verticalAlign.value`                         | `center \| flex-start \| flex-end`        | По умолчанию `center`.                                                |
+| `config.minHeight.value`, `config.ariaLabel.value`                                   | `string`                                  | Необязательные настройки.                                             |
+| `config.url.value`                                                                   | `string`                                  | Необязательная относительная, `http(s)`, `mailto:` или `tel:` ссылка. |
+| `config.newTab.value`, `config.isDecorative.value`, `config.fetchPriorityHigh.value` | `boolean`                                 | Необязательные флаги; `true` включает настройку.                      |
 
-Unsupported image URLs omit the element. Unsafe link protocols are reported
-and the image is rendered without a link.
-
-## Shopware Administration
-
-Editors use Shopware's standard image element to select media, choose its
-display mode and alignment, configure an optional link, and mark decorative
-images. No additional Administration component is required.
+Для декоративного изображения frontend передаёт пустой `alt`. При невалидном URL медиа элемент не рендерится.

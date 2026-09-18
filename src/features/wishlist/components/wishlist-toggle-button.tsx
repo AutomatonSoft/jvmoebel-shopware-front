@@ -3,7 +3,7 @@
 import { Heart } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { useWishlist } from "@/features/wishlist/hooks/use-wishlist";
+import { useWishlistItem } from "@/features/wishlist/hooks/use-wishlist";
 import { cn } from "@/lib/utils";
 
 type WishlistToggleButtonProps = Readonly<{
@@ -19,8 +19,11 @@ export function WishlistToggleButton({
   productName,
   variant = "card",
 }: WishlistToggleButtonProps) {
-  const { isFavorite, isReady, toggleProduct } = useWishlist();
-  const active = isFavorite(productId);
+  const {
+    isFavorite: active,
+    isReady,
+    toggleProduct,
+  } = useWishlistItem(productId);
   const accessibleLabel = active
     ? `${productName} aus der Wunschliste entfernen`
     : `${productName} zur Wunschliste hinzufügen`;
@@ -32,7 +35,7 @@ export function WishlistToggleButton({
         aria-pressed={active}
         className={cn("w-full", className)}
         disabled={!isReady}
-        onClick={() => toggleProduct(productId)}
+        onClick={toggleProduct}
         type="button"
         variant="outline"
       >
@@ -56,7 +59,7 @@ export function WishlistToggleButton({
         className,
       )}
       disabled={!isReady}
-      onClick={() => toggleProduct(productId)}
+      onClick={toggleProduct}
       type="button"
     >
       <Heart

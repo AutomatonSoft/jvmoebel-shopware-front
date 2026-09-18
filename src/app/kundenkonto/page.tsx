@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { AccountToast } from "@/features/customer-account/components/account-toast";
 import { CustomerProfilePage } from "@/features/customer-account/components/customer-profile-page";
 import { getCustomerAccount } from "@/features/customer-account/server/account";
+import { getCustomerAccountOrders } from "@/features/customer-account/server/account";
 
 export const metadata: Metadata = {
   description: "Verwalten Sie Ihr persönliches Kundenkonto bei JVMöbel.",
@@ -11,19 +12,30 @@ export const metadata: Metadata = {
 };
 
 type CustomerAccountPageProps = Readonly<{
-  searchParams: Promise<{ angemeldet?: string; registriert?: string }>;
+  searchParams: Promise<{
+    angemeldet?: string;
+    registriert?: string;
+    profil?: string;
+    adresse?: string;
+    email?: string;
+    einstellungen?: string;
+  }>;
 }>;
 
 export default async function CustomerAccountPage({
   searchParams,
 }: CustomerAccountPageProps) {
-  const [account, params] = await Promise.all([
+  const [account, orders, params] = await Promise.all([
     getCustomerAccount(),
+    getCustomerAccountOrders().catch((error: unknown) => {
+      console.error("Customer order lookup failed.", error);
+      return null;
+    }),
     searchParams,
   ]);
 
   if (!account) {
-    redirect("/kundenkonto/registrieren");
+    redirect("/kundenkonto/anmelden");
   }
 
   const successToast =
@@ -32,16 +44,36 @@ export default async function CustomerAccountPage({
           description: "Willkommen bei JVMöbel.",
           title: "Konto erfolgreich erstellt",
         }
-      : params.angemeldet === "1"
+      : params.einstellungen === "1"
         ? {
-            description: `Willkommen zurück, ${account.firstName}.`,
-            title: "Erfolgreich angemeldet",
+            description: "Ihre Angaben wurden aktualisiert.",
+            title: "Profil gespeichert",
           }
-        : null;
+        : params.profil === "1"
+          ? {
+              description: "Ihre persönlichen Daten wurden aktualisiert.",
+              title: "Profil gespeichert",
+            }
+          : params.adresse === "1"
+            ? {
+                description: "Ihre Adresse wurde aktualisiert.",
+                title: "Adresse gespeichert",
+              }
+            : params.email === "1"
+              ? {
+                  description: "Ihre E-Mail-Adresse wurde aktualisiert.",
+                  title: "E-Mail-Adresse gespeichert",
+                }
+              : params.angemeldet === "1"
+                ? {
+                    description: `Willkommen zurück, ${account.firstName}.`,
+                    title: "Erfolgreich angemeldet",
+                  }
+                : null;
 
   return (
     <>
-      <CustomerProfilePage account={account} />
+      <CustomerProfilePage account={account} orders={orders} />
       {successToast && (
         <AccountToast
           {...successToast}

@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 
 import { ArrowRight, Home, RefreshCw, Search, ShoppingBag } from "lucide-react";

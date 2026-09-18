@@ -101,3 +101,20 @@ export async function findShopwareProductVariant(
 
   return data.foundCombination?.variantId ?? data.variantId ?? null;
 }
+
+export async function isShopwareProductAvailable(
+  client: ShopwareClient,
+  productId: string,
+) {
+  const response = await client.invoke(
+    "readProductDetail post /product/{productId}",
+    {
+      fetchOptions: { cache: "no-store" },
+      pathParams: { productId },
+      query: { skipCmsPage: true, skipConfigurator: true },
+    },
+  );
+  const product = response.data.product;
+
+  return Boolean(product && product.available !== false);
+}

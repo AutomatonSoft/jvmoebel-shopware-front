@@ -1,75 +1,62 @@
-# Project documentation
+# Документация проекта
 
-## Storefront and page contracts
+## Техническая часть витрины
 
-| Documentation                                             | Purpose                                |
-| --------------------------------------------------------- | -------------------------------------- |
-| [`storefront-config.md`](storefront/storefront-config.md) | Global header and footer configuration |
-| [`product-listing.md`](storefront/product-listing.md)     | Product listing model and behavior     |
-| [`discount-offers.md`](storefront/discount-offers.md)     | Discount offers page composition       |
-| [`about-page.md`](storefront/about-page.md)               | About page composition                 |
-| [`video-shop.md`](storefront/video-shop.md)               | Video Shop page composition            |
+| Документ                                                  | Описание                                     |
+| --------------------------------------------------------- | -------------------------------------------- |
+| [`dynamic-routing.md`](storefront/dynamic-routing.md)     | Как Shopware SEO URL открывает CMS-страницу. |
+| [`storefront-config.md`](storefront/storefront-config.md) | Конфигурация шапки и подвала.                |
+| [`product-listing.md`](catalog/product-listing.md)        | Специальный каталог `/moebel-sortiment`.     |
 
-## Shopware CMS components
+## CMS-компоненты Shopware
 
-The following files document CMS elements rendered by the Next.js
-storefront. Each file defines the element's `slot.type`, the resolved
-`slot.data` expected from Shopware, validation and fallback behavior, and the
-fields that should be editable in Shopware Administration.
+Каждый файл в `components` описывает один элемент: назначение, место для скриншота, поля для контент-менеджера и технический контракт для расширения Shopware.
 
-### Supported elements
+| `slot.type`                | Документ                                                                | Назначение                         |
+| -------------------------- | ----------------------------------------------------------------------- | ---------------------------------- |
+| `jv-article-hero`          | [`jv-article-hero.md`](components/jv-article-hero.md)                   | Шапка статьи.                      |
+| `jv-author-footer`         | [`jv-author-footer.md`](components/jv-author-footer.md)                 | Карточка автора.                   |
+| `jv-benefit-strip`         | [`jv-benefit-strip.md`](components/jv-benefit-strip.md)                 | Преимущества магазина.             |
+| `jv-category-rail`         | [`jv-category-rail.md`](components/jv-category-rail.md)                 | Карточки категорий.                |
+| `jv-chip-rail`             | [`jv-chip-rail.md`](components/jv-chip-rail.md)                         | Быстрые ссылки-чипы.               |
+| `jv-color-world-picker`    | [`jv-color-world-picker.md`](components/jv-color-world-picker.md)       | Подборки по цвету.                 |
+| `jv-countdown-promo`       | [`jv-countdown-promo.md`](components/jv-countdown-promo.md)             | Акция с обратным отсчётом.         |
+| `jv-editorial-team-grid`   | [`jv-editorial-team-grid.md`](components/jv-editorial-team-grid.md)     | Команда редакции.                  |
+| `jv-expert-profile`        | [`jv-expert-profile.md`](components/jv-expert-profile.md)               | Карточка эксперта.                 |
+| `jv-expert-quote`          | [`jv-expert-quote.md`](components/jv-expert-quote.md)                   | Цитата эксперта.                   |
+| `jv-expert-tip`            | [`jv-expert-tip.md`](components/jv-expert-tip.md)                       | Совет эксперта.                    |
+| `jv-faq`                   | [`jv-faq.md`](components/jv-faq.md)                                     | Частые вопросы.                    |
+| `jv-guide-hub-cards`       | [`jv-guide-hub-cards.md`](components/jv-guide-hub-cards.md)             | Карточки гайдов.                   |
+| `jv-hero`                  | [`jv-hero.md`](components/jv-hero.md)                                   | Главный баннер.                    |
+| `jv-home-editorial`        | [`jv-home-editorial.md`](components/jv-home-editorial.md)               | Раскрывающийся редакционный текст. |
+| `jv-inline-product-teaser` | [`jv-inline-product-teaser.md`](components/jv-inline-product-teaser.md) | Врезка товара.                     |
+| `jv-instagram-style`       | [`jv-instagram-style.md`](components/jv-instagram-style.md)             | Карточка в стиле Instagram.        |
+| `jv-loyalty-promo`         | [`jv-loyalty-promo.md`](components/jv-loyalty-promo.md)                 | Программа лояльности.              |
+| `jv-newsletter`            | [`jv-newsletter.md`](components/jv-newsletter.md)                       | Подписка на рассылку.              |
+| `jv-offer-rail`            | [`jv-offer-rail.md`](components/jv-offer-rail.md)                       | Лента предложений.                 |
+| `jv-page-header`           | [`jv-page-header.md`](components/jv-page-header.md)                     | Заголовок внутренней страницы.     |
+| `jv-product-grid`          | [`jv-product-grid.md`](components/jv-product-grid.md)                   | Выбранные товары.                  |
+| `jv-review-summary`        | [`jv-review-summary.md`](components/jv-review-summary.md)               | Краткий отзыв.                     |
+| `jv-room-grid`             | [`jv-room-grid.md`](components/jv-room-grid.md)                         | Подборки по комнатам.              |
+| `jv-shop-the-look`         | [`jv-shop-the-look.md`](components/jv-shop-the-look.md)                 | Интерьер с точками товаров.        |
+| `jv-subcategory-links`     | [`jv-subcategory-links.md`](components/jv-subcategory-links.md)         | Ссылки на подкатегории.            |
+| `jv-table-of-contents`     | [`jv-table-of-contents.md`](components/jv-table-of-contents.md)         | Оглавление статьи.                 |
+| `jv-trust-rating`          | [`jv-trust-rating.md`](components/jv-trust-rating.md)                   | Рейтинг доверия.                   |
+| `jv-why-jvmoebel`          | [`jv-why-jvmoebel.md`](components/jv-why-jvmoebel.md)                   | Преимущества бренда.               |
+| `image`                    | [`image.md`](components/image.md)                                       | Одиночное изображение.             |
+| `product-listing`          | [`product-listing.md`](components/product-listing.md)                   | Каталог страницы категории.        |
+| `sidebar-filter`           | [`sidebar-filter.md`](components/sidebar-filter.md)                     | Слот бокового фильтра.             |
+| `text`                     | [`text.md`](components/text.md)                                         | Форматированный текст.             |
+| `youtube-video`            | [`youtube-video.md`](components/youtube-video.md)                       | Видео YouTube.                     |
 
-| `slot.type`         | Documentation                                             | Purpose                      |
-| ------------------- | --------------------------------------------------------- | ---------------------------- |
-| `jv-page-header`    | [`jv-page-header.md`](components/jv-page-header.md)       | Internal page heading        |
-| `jv-hero`           | [`jv-hero.md`](components/jv-hero.md)                     | Hero banner carousel         |
-| `jv-category-rail`  | [`jv-category-rail.md`](components/jv-category-rail.md)   | Category cards               |
-| `jv-room-grid`      | [`jv-room-grid.md`](components/jv-room-grid.md)           | Editorial room grid          |
-| `jv-product-grid`   | [`jv-product-grid.md`](components/jv-product-grid.md)     | Curated product cards        |
-| `jv-promo-banner`   | [`jv-promo-banner.md`](components/jv-promo-banner.md)     | Image and promotional copy   |
-| `jv-benefit-strip`  | [`jv-benefit-strip.md`](components/jv-benefit-strip.md)   | Service benefits             |
-| `jv-faq`            | [`jv-faq.md`](components/jv-faq.md)                       | Expandable questions         |
-| `jv-shop-the-look`  | [`jv-shop-the-look.md`](components/jv-shop-the-look.md)   | Image with product hotspots  |
-| `jv-why-jvmoebel`   | [`jv-why-jvmoebel.md`](components/jv-why-jvmoebel.md)     | Brand benefits section       |
-| `jv-home-editorial` | [`jv-home-editorial.md`](components/jv-home-editorial.md) | Expandable editorial content |
-| `jv-newsletter`     | [`jv-newsletter.md`](components/jv-newsletter.md)         | Newsletter subscription form |
-| `jv-offer-rail`     | [`jv-offer-rail.md`](components/jv-offer-rail.md)         | Timed promotional cards      |
-| `image`             | [`image.md`](components/image.md)                         | Standard image content       |
-| `text`              | [`text.md`](components/text.md)                           | Standard rich-text content   |
-| `youtube-video`     | [`youtube-video.md`](components/youtube-video.md)         | Standard YouTube video       |
-
-### Common Store API structure
-
-Page-body elements are read from the standard Shopware CMS hierarchy:
+### Общий поток данных
 
 ```text
-CmsPage
-└── sections, ordered by position
-    └── blocks, ordered by position
-        └── slots
-            └── element selected by slot.type
+Shopware CMS page
+└── sections → blocks → slots
+                    ├── slot.type — выбирает компонент
+                    ├── slot.data — данные кастомных `jv-*` элементов
+                    └── slot.config — настройки стандартных элементов
 ```
 
-Custom element values must be resolved into `slot.data`. Supplying values only
-in `slot.config` is not supported for custom elements. The standard `text`
-element additionally supports static `slot.config.content` as documented in
-its own file.
-
-An unknown `slot.type` produces a visible development marker and is omitted in
-production. A known element with invalid required data is omitted without
-breaking the rest of the page. Contract issues are reported server-side.
-
-Arrays are the canonical representation for repeatable fields. Some elements
-also accept keyed objects for fixture and Administration compatibility; this
-is stated in the relevant component file.
-
-### Shopware Administration responsibility
-
-The frontend renderer does not register custom CMS elements, blocks, or
-Administration controls. A Shopware extension must register every custom
-`jv-*` element and its block, expose the documented fields, resolve selected
-media and entities, and return the final values in `slot.data`.
-
-The extension should preserve configured order, provide stable IDs, and emit
-public media URLs. Layout, responsive behavior, typography, and visual styling
-remain owned by the frontend.
+Расширение Shopware должно зарегистрировать нужные `jv-*` элементы и блоки, отдать публичные URL медиафайлов и сохранить порядок повторяющихся записей. Frontend проверяет контракт каждого элемента, регистрирует найденные ошибки на сервере и не выводит элемент, если обязательные данные не прошли проверку.

@@ -1,47 +1,21 @@
-# Storefront shell contract
+# Конфигурация оболочки витрины
 
-The global header and footer are loaded together from
-`GET /store-api/storefront-config`. The endpoint resolves the configuration for
-the current Shopware sales channel and language.
+Глобальные шапка и подвал загружаются одним запросом `GET /store-api/storefront-config` для текущих sales channel и языка. Корневой layout запрашивает эти данные при серверном рендеринге и преобразует их в frontend-модели.
 
-The root layout performs this request once per server render and maps the
-response to frontend-owned presentation models. Customer account data and
-on-demand category children remain separate requests.
+Данные аккаунта покупателя и дочерние категории меню загружаются отдельно по мере необходимости.
 
-## Header
+## Шапка
 
-`header.branding` supplies the store name and optional logo. A complete logo
-contains `url`, `alt`, `width`, and `height`. Invalid or incomplete branding
-uses the local wordmark fallback.
+- `header.branding` задаёт название магазина и необязательный логотип.
+- Логотип должен содержать `url`, `alt`, `width` и `height`; при невалидных данных используется локальный текстовый логотип.
+- `header.navigation` содержит верхний уровень меню. Каждый пункт имеет `id`, `label`, `href` и `children`.
 
-`header.navigation` supplies the top-level header links. The frontend preserves
-this array as returned and does not merge children from the footer navigation.
-Every item contains `id`, `label`, `href`, and a `children` array.
+## Подвал
 
-## Footer
+Ответ передаёт текст о компании, параметры отзыва договора, copyright, навигацию, социальные ссылки и способы оплаты. Социальные ссылки и платёжные значки сортируются по `position`; флаги `openInNewTab` и `revocation.enabled` управляют соответствующим интерфейсом.
 
-The footer response supplies:
+Некорректные отдельные пункты меню, социальные ссылки и значки пропускаются. При отсутствии обязательных текстов используются локальные значения по умолчанию. Ошибка Store API не скрывается.
 
-- `about` copy;
-- revocation availability, button label, and recipient email;
-- copyright text;
-- category and service navigation;
-- ordered social links and payment badges with resolved media.
+## Mock-режим
 
-The frontend maps `copyrightText` to its copyright model, `recipientEmail` to
-the revocation recipient, and media `icon` objects to its shared media model.
-Social links and payment badges are sorted by `position`. `openInNewTab` and
-`revocation.enabled` directly control their respective UI behavior.
-
-The current response does not own footer headings or the explanatory copy in
-the revocation dialog. Those values remain in the local footer defaults.
-
-Invalid individual navigation, social, or payment entries are reported and
-omitted. Missing required footer copy falls back to the corresponding local
-value. A failed Store API request is not silently swallowed.
-
-## Mock mode
-
-With `SHOPWARE_USE_MOCKS=true`, the shell uses the existing local branding,
-footer, main-navigation, and service-navigation fixtures without requiring
-Shopware credentials.
+При `SHOPWARE_USE_MOCKS=true` используются локальные fixtures шапки, подвала и навигации; доступ к Shopware не требуется.

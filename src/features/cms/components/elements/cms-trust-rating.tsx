@@ -2,22 +2,13 @@ import { ArrowUpRight, ShieldCheck, Star } from "lucide-react";
 
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsTrustRatingData } from "@/features/cms/contracts/trust-rating";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsTrustRatingData } from "@/features/cms/contracts/trust-rating";
 
 const reviewCountFormatter = new Intl.NumberFormat("de-DE");
 
-export function CmsTrustRating({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsTrustRatingData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { link, providerLabel, rating, reviewCount } = result.data;
+export function CmsTrustRating({ data }: CmsElementProps<CmsTrustRatingData>) {
+  const { link, providerLabel, rating, reviewCount } = data;
   const filledStars = Math.round(rating);
   const formattedRating = rating.toFixed(1).replace(".", ",");
 
