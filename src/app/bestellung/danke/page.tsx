@@ -5,9 +5,9 @@ import { OrderConfirmation } from "@/features/checkout/components/order-confirma
 import { getCheckoutReceipt } from "@/features/checkout/server/receipt";
 
 export const metadata: Metadata = {
-  description: "Ihre Bestellung bei JVMöbel wurde erfolgreich übermittelt.",
+  description: "Ihre Bestellung bei JVMoebel wurde erfolgreich übermittelt.",
   robots: { follow: false, index: false },
-  title: "Bestellung bestätigt | JVMöbel",
+  title: "Bestellung bestätigt | JVMoebel",
 };
 
 type OrderConfirmationRouteProps = Readonly<{

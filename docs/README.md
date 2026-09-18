@@ -20,6 +20,7 @@
 | `jv-category-rail`         | [`jv-category-rail.md`](components/jv-category-rail.md)                 | Карточки категорий.                |
 | `jv-chip-rail`             | [`jv-chip-rail.md`](components/jv-chip-rail.md)                         | Быстрые ссылки-чипы.               |
 | `jv-color-world-picker`    | [`jv-color-world-picker.md`](components/jv-color-world-picker.md)       | Подборки по цвету.                 |
+| `form`                     | [`form.md`](components/form.md)                                         | Контактная форма.                  |
 | `jv-countdown-promo`       | [`jv-countdown-promo.md`](components/jv-countdown-promo.md)             | Акция с обратным отсчётом.         |
 | `jv-editorial-team-grid`   | [`jv-editorial-team-grid.md`](components/jv-editorial-team-grid.md)     | Команда редакции.                  |
 | `jv-expert-profile`        | [`jv-expert-profile.md`](components/jv-expert-profile.md)               | Карточка эксперта.                 |

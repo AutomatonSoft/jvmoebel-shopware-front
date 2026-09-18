@@ -89,7 +89,7 @@ function CustomerOrders({ orders }: Pick<CustomerProfilePageProps, "orders">) {
         <div>
           <p className="font-semibold">Noch keine aktuellen Bestellungen</p>
           <p className="mt-1 text-sm leading-6 text-muted-foreground">
-            Entdecken Sie Möbel, die zu Ihrem Zuhause passen.
+            Entdecken Sie Moebel, die zu Ihrem Zuhause passen.
           </p>
         </div>
         <Button

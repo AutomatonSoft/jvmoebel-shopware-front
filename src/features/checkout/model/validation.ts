@@ -1,126 +1,242 @@
+import { z, type ZodError } from "zod";
+
 import type {
   CheckoutAddress,
+  CheckoutActionState,
   CheckoutMethodSelection,
   GuestCheckoutRegistration,
 } from "@/features/checkout/model/checkout";
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-function getValue(formData: FormData, name: string, maxLength: number) {
-  const value = formData.get(name);
-
-  if (typeof value !== "string") {
-    return undefined;
-  }
-
-  const normalizedValue = value.trim();
-
-  return normalizedValue && normalizedValue.length <= maxLength
-    ? normalizedValue
-    : undefined;
+function requiredString(maxLength: number) {
+  return z.string().trim().min(1).max(maxLength);
 }
 
-function getOptionalValue(formData: FormData, name: string, maxLength: number) {
-  const value = formData.get(name);
+function optionalString(maxLength: number) {
+  return z
+    .string()
+    .trim()
+    .max(maxLength)
+    .transform((value) => value || undefined)
+    .catch(undefined);
+}
 
-  if (typeof value !== "string") {
-    return undefined;
+const emailSchema = requiredString(254).regex(emailPattern);
+
+export const checkoutAddressSchema = z.object({
+  additionalAddressLine1: optionalString(255),
+  city: requiredString(255),
+  countryId: requiredString(64),
+  firstName: requiredString(255),
+  lastName: requiredString(255),
+  phoneNumber: optionalString(40),
+  street: requiredString(255),
+  zipcode: requiredString(50),
+});
+
+export const guestCheckoutRegistrationSchema = z
+  .object({
+    acceptedDataProtection: z.union([z.literal(true), z.literal("on")]),
+    billingAddress: checkoutAddressSchema,
+    email: emailSchema,
+    shippingAddress: checkoutAddressSchema.optional(),
+    shippingSameAsBilling: z.union([
+      z.literal(true),
+      z.literal(false),
+      z.literal("on"),
+    ]),
+  })
+  .refine(
+    ({ shippingAddress, shippingSameAsBilling }) =>
+      shippingSameAsBilling || Boolean(shippingAddress),
+  )
+  .transform(
+    ({
+      billingAddress,
+      email,
+      shippingAddress,
+      shippingSameAsBilling,
+    }): GuestCheckoutRegistration => ({
+      acceptedDataProtection: true,
+      billingAddress,
+      email,
+      shippingAddress: shippingSameAsBilling ? undefined : shippingAddress,
+    }),
+  );
+
+export const checkoutAddressFieldMessages = {
+  city: "Bitte geben Sie Ihren Ort ein.",
+  countryId: "Bitte wählen Sie ein Land aus.",
+  firstName: "Bitte geben Sie Ihren Vornamen ein.",
+  lastName: "Bitte geben Sie Ihren Nachnamen ein.",
+  street: "Bitte geben Sie Straße und Hausnummer ein.",
+  zipcode: "Bitte geben Sie Ihre Postleitzahl ein.",
+} as const;
+
+export const guestCheckoutFieldMessages = {
+  acceptedDataProtection: "Bitte stimmen Sie der Verarbeitung Ihrer Daten zu.",
+  email: "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+} as const;
+
+const checkoutMethodSelectionSchema = z.object({
+  acceptedTerms: z.literal(true),
+  customerComment: optionalString(1000),
+  paymentMethodId: requiredString(64),
+  shippingMethodId: requiredString(64),
+});
+
+const guestPasswordSchema = z.string().min(8).max(4096);
+
+const checkoutMethodFieldMessages = {
+  acceptedTerms: "Bitte stimmen Sie den Bedingungen zu.",
+  paymentMethodId: "Bitte wählen Sie eine Zahlungsart aus.",
+  shippingMethodId: "Bitte wählen Sie eine Versandart aus.",
+} as const;
+
+const guestPasswordFieldMessages = {
+  password: "Das Passwort muss mindestens acht Zeichen lang sein.",
+} as const;
+
+function getAddressInput(formData: FormData, prefix = "") {
+  return {
+    additionalAddressLine1: formData.get(`${prefix}additionalAddressLine1`),
+    city: formData.get(`${prefix}city`),
+    countryId: formData.get(`${prefix}countryId`),
+    firstName: formData.get(`${prefix}firstName`),
+    lastName: formData.get(`${prefix}lastName`),
+    phoneNumber: formData.get(`${prefix}phoneNumber`),
+    street: formData.get(`${prefix}street`),
+    zipcode: formData.get(`${prefix}zipcode`),
+  };
+}
+
+function getGuestCheckoutRegistrationInput(formData: FormData) {
+  const shippingSameAsBilling = formData.get("shippingSameAsBilling") === "on";
+
+  return {
+    acceptedDataProtection: formData.get("acceptedDataProtection") === "on",
+    billingAddress: getAddressInput(formData),
+    email: formData.get("email"),
+    shippingAddress: shippingSameAsBilling
+      ? undefined
+      : getAddressInput(formData, "shipping"),
+    shippingSameAsBilling,
+  };
+}
+
+export function validateGuestCheckoutRegistration(formData: FormData) {
+  return guestCheckoutRegistrationSchema.safeParse(
+    getGuestCheckoutRegistrationInput(formData),
+  );
+}
+
+export function getGuestCheckoutRegistrationFieldErrors(error: ZodError) {
+  const fieldErrors: Record<string, string> = {};
+
+  for (const issue of error.issues) {
+    const [address, field] = issue.path;
+
+    if (
+      (address === "billingAddress" || address === "shippingAddress") &&
+      typeof field === "string" &&
+      field in checkoutAddressFieldMessages
+    ) {
+      const name = `${address === "shippingAddress" ? "shipping" : ""}${field}`;
+
+      fieldErrors[name] ??=
+        checkoutAddressFieldMessages[
+          field as keyof typeof checkoutAddressFieldMessages
+        ];
+      continue;
+    }
+
+    if (typeof address === "string" && address in guestCheckoutFieldMessages) {
+      fieldErrors[address] ??=
+        guestCheckoutFieldMessages[
+          address as keyof typeof guestCheckoutFieldMessages
+        ];
+    }
   }
 
-  const normalizedValue = value.trim();
+  return fieldErrors satisfies NonNullable<CheckoutActionState["fieldErrors"]>;
+}
 
-  return normalizedValue.length <= maxLength
-    ? normalizedValue || undefined
-    : undefined;
+function getFieldErrors(
+  error: ZodError,
+  messages: Readonly<Record<string, string>>,
+) {
+  const fieldErrors: Record<string, string> = {};
+
+  for (const issue of error.issues) {
+    const field = issue.path[0];
+
+    if (typeof field === "string" && field in messages) {
+      fieldErrors[field] ??= messages[field];
+    }
+  }
+
+  return fieldErrors satisfies NonNullable<CheckoutActionState["fieldErrors"]>;
+}
+
+export function validateCheckoutAddress(formData: FormData, prefix = "") {
+  return checkoutAddressSchema.safeParse(getAddressInput(formData, prefix));
+}
+
+export function getCheckoutAddressFieldErrors(error: ZodError) {
+  return getFieldErrors(error, checkoutAddressFieldMessages);
+}
+
+export function validateCheckoutMethodSelection(formData: FormData) {
+  return checkoutMethodSelectionSchema.safeParse({
+    acceptedTerms: formData.get("acceptedTerms") === "on",
+    customerComment: formData.get("customerComment"),
+    paymentMethodId: formData.get("paymentMethodId"),
+    shippingMethodId: formData.get("shippingMethodId"),
+  });
+}
+
+export function getCheckoutMethodSelectionFieldErrors(error: ZodError) {
+  return getFieldErrors(error, checkoutMethodFieldMessages);
+}
+
+export function validateGuestPassword(formData: FormData) {
+  return guestPasswordSchema.safeParse(formData.get("password"));
+}
+
+export function getGuestPasswordFieldErrors(_error: ZodError) {
+  return {
+    password: guestPasswordFieldMessages.password,
+  } satisfies NonNullable<CheckoutActionState["fieldErrors"]>;
 }
 
 export function parseCheckoutAddress(
   formData: FormData,
   prefix = "",
 ): CheckoutAddress | null {
-  const additionalAddressLine1 = getOptionalValue(
-    formData,
-    `${prefix}additionalAddressLine1`,
-    255,
-  );
-  const city = getValue(formData, `${prefix}city`, 255);
-  const countryId = getValue(formData, `${prefix}countryId`, 64);
-  const firstName = getValue(formData, `${prefix}firstName`, 255);
-  const lastName = getValue(formData, `${prefix}lastName`, 255);
-  const phoneNumber = getOptionalValue(formData, `${prefix}phoneNumber`, 40);
-  const street = getValue(formData, `${prefix}street`, 255);
-  const zipcode = getValue(formData, `${prefix}zipcode`, 50);
+  const result = validateCheckoutAddress(formData, prefix);
 
-  if (!city || !countryId || !firstName || !lastName || !street || !zipcode) {
-    return null;
-  }
-
-  return {
-    additionalAddressLine1,
-    city,
-    countryId,
-    firstName,
-    lastName,
-    phoneNumber,
-    street,
-    zipcode,
-  };
+  return result.success ? result.data : null;
 }
 
 export function parseGuestCheckoutRegistration(
   formData: FormData,
 ): GuestCheckoutRegistration | null {
-  const acceptedDataProtection =
-    formData.get("acceptedDataProtection") === "on";
-  const billingAddress = parseCheckoutAddress(formData);
-  const email = getValue(formData, "email", 254);
-  const shippingSameAsBilling = formData.get("shippingSameAsBilling") === "on";
-  const shippingAddress = shippingSameAsBilling
-    ? undefined
-    : parseCheckoutAddress(formData, "shipping");
+  const result = validateGuestCheckoutRegistration(formData);
 
-  if (
-    !acceptedDataProtection ||
-    !billingAddress ||
-    !email ||
-    !emailPattern.test(email) ||
-    (!shippingSameAsBilling && !shippingAddress)
-  ) {
-    return null;
-  }
-
-  return {
-    acceptedDataProtection: true,
-    billingAddress,
-    email,
-    shippingAddress: shippingAddress || undefined,
-  };
+  return result.success ? result.data : null;
 }
 
 export function parseCheckoutMethodSelection(
   formData: FormData,
 ): CheckoutMethodSelection | null {
-  const acceptedTerms = formData.get("acceptedTerms") === "on";
-  const customerComment = getOptionalValue(formData, "customerComment", 1000);
-  const paymentMethodId = getValue(formData, "paymentMethodId", 64);
-  const shippingMethodId = getValue(formData, "shippingMethodId", 64);
+  const result = validateCheckoutMethodSelection(formData);
 
-  if (!acceptedTerms || !paymentMethodId || !shippingMethodId) {
-    return null;
-  }
-
-  return {
-    acceptedTerms: true,
-    customerComment,
-    paymentMethodId,
-    shippingMethodId,
-  };
+  return result.success ? result.data : null;
 }
 
 export function parseGuestPassword(formData: FormData) {
-  const value = formData.get("password");
+  const result = validateGuestPassword(formData);
 
-  return typeof value === "string" && value.length >= 8 && value.length <= 4096
-    ? value
-    : null;
+  return result.success ? result.data : null;
 }

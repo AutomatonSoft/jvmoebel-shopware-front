@@ -35,3 +35,7 @@ export type ShopCart = Readonly<{
   subtotal: number;
   total: number;
 }>;
+
+export function getShopCartItemCount(cart: Pick<ShopCart, "items">) {
+  return cart.items.reduce((total, item) => total + item.quantity, 0);
+}

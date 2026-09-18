@@ -5,6 +5,7 @@ import type {
   StorefrontFooterMedia,
   StorefrontFooterPaymentMethod,
   StorefrontFooterShippingBadge,
+  ContactWidgetChannel,
 } from "@/features/storefront-shell/model/footer";
 import type { StoreNavigationItem } from "@/features/storefront-shell/model/navigation";
 import type {
@@ -55,7 +56,11 @@ function getSafeUrl(value: string | undefined, allowRelative: boolean) {
   try {
     const url = new URL(value);
 
-    return url.protocol === "http:" || url.protocol === "https:"
+    return url.protocol === "http:" ||
+      url.protocol === "https:" ||
+      url.protocol === "mailto:" ||
+      url.protocol === "tel:" ||
+      url.protocol === "sms:"
       ? value
       : undefined;
   } catch {
@@ -196,6 +201,54 @@ function parseMedia(
     alt: getString(media, "alt") ?? fallbackAlt,
     url,
   };
+}
+
+function parseContactWidget(
+  value: unknown,
+  issues: StorefrontConfigIssue[],
+): { channels: ContactWidgetChannel[] } | undefined {
+  const record = getRecord(value);
+  if (!record) return undefined;
+
+  const channelsValue = record.channels;
+  if (!Array.isArray(channelsValue)) return undefined;
+
+  const result: ContactWidgetChannel[] = [];
+  const ids = new Set<string>();
+
+  channelsValue.forEach((itemValue, index) => {
+    const item = getRecord(itemValue);
+    const path = `footer.contactWidget.channels[${index}]`;
+    const url = getSafeUrl(getString(item, "url"), true);
+    const type = getString(item, "type");
+
+    if (!url) {
+      issues.push({
+        message: "Contact channel must have a URL.",
+        path: `${path}.url`,
+      });
+      return;
+    }
+
+    const id = getString(item, "id") ?? `channel-${index}`;
+    if (ids.has(id)) return;
+
+    ids.add(id);
+
+    const media = getRecord(item?.icon);
+
+    result.push({
+      id,
+      url,
+      type: type ?? "custom",
+      label: getString(item, "label"),
+      icon: media ? getString(media, "url") : undefined,
+    });
+  });
+
+  if (result.length === 0) return undefined;
+
+  return { channels: result };
 }
 
 function parsePaymentMethods(
@@ -662,6 +715,7 @@ export function parseShopwareStorefrontConfig(
         },
         shippingBadges: parseShippingBadges(footer?.shippingBadges, issues),
         socialLinks: parseSocialLinks(footer?.socialLinks, issues),
+        contactWidget: parseContactWidget(footer?.contactWidget, issues),
       },
       footerNavigation: parseNavigation(
         footer?.categoryNavigation,

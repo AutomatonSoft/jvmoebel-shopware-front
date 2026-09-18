@@ -137,7 +137,7 @@ export function ProductPurchaseSummary({
         </div>
         <p className="mt-4 text-xs text-muted-foreground">
           Verkauf und Versand durch:&nbsp;
-          <strong className="font-semibold text-foreground">JVMöbel</strong>
+          <strong className="font-semibold text-foreground">JVMoebel</strong>
         </p>
       </section>
 
@@ -530,7 +530,7 @@ export function ProductAccessoryOptions({
     <section className="border-b py-6">
       <h2 className="text-lg font-semibold">Passendes Zubehör</h2>
       <p className="mt-1 text-sm leading-6 text-muted-foreground">
-        Praktische Ergänzungen für Ihr neues Möbelstück.
+        Praktische Ergänzungen für Ihr neues Moebelstück.
       </p>
 
       <div className="mt-4 space-y-2.5">

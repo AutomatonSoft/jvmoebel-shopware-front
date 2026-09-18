@@ -16,6 +16,7 @@ export function GuestAccountForm() {
     convertCheckoutGuest,
     initialState,
   );
+  const fieldErrors = state.fieldErrors ?? {};
 
   return (
     <form
@@ -37,6 +38,7 @@ export function GuestAccountForm() {
       />
       <AccountField
         autoComplete="new-password"
+        error={fieldErrors.password}
         id="password"
         label="Passwort festlegen"
         minLength={8}

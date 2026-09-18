@@ -1,8 +1,9 @@
-import { Heart, ShoppingBag, UserRound } from "lucide-react";
+import { ShoppingBag, UserRound } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 
 import { Container } from "@/components/ui/container";
+import { HeaderWishlistLink } from "@/features/storefront-shell/components/header-wishlist-link";
 import { CategoryMenu } from "@/features/storefront-shell/components/category-menu";
 import { HeaderSearch } from "@/features/storefront-shell/components/header-search";
 import { MobileHeaderSearch } from "@/features/storefront-shell/components/mobile-header-search";
@@ -13,6 +14,7 @@ import type { MainNavigation } from "@/features/storefront-shell/model/navigatio
 
 export type StoreHeaderProps = {
   branding: StorefrontBranding;
+  cartItemCount: number;
   customer: CustomerAccountSummary | null;
   navigation: MainNavigation;
 };
@@ -21,6 +23,7 @@ const MAX_VISIBLE_CATEGORIES = 6;
 
 export function StoreHeader({
   branding,
+  cartItemCount,
   customer,
   navigation,
 }: StoreHeaderProps) {
@@ -89,19 +92,25 @@ export function StoreHeader({
             >
               <UserRound className="size-4.5" />
             </Link>
+            <HeaderWishlistLink />
             <Link
-              aria-label="Wunschliste"
-              className="hidden size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:scale-90 sm:flex"
-              href="/wunschliste"
-            >
-              <Heart className="size-4.5" />
-            </Link>
-            <Link
-              aria-label="Warenkorb"
-              className="flex size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-90"
+              aria-label={
+                cartItemCount > 0
+                  ? `Warenkorb, ${cartItemCount} Artikel`
+                  : "Warenkorb"
+              }
+              className="relative flex size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-90"
               href="/warenkorb"
             >
               <ShoppingBag className="size-4.5" />
+              {cartItemCount > 0 && (
+                <span
+                  aria-hidden="true"
+                  className="absolute -top-0.5 -right-0.5 grid min-w-4 place-items-center rounded-full bg-primary px-1 text-[0.5625rem] leading-4 font-bold text-primary-foreground"
+                >
+                  {cartItemCount > 99 ? "99+" : cartItemCount}
+                </span>
+              )}
             </Link>
           </div>
         </div>

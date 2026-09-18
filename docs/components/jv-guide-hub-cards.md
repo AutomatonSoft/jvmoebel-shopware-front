@@ -2,7 +2,7 @@
 
 ## Скриншот
 
-> Добавьте сюда скриншот компонента из Shopware.
+![Скриншот Component](./screenshots/jv-guide-hub-cards.png)
 
 ## Назначение
 

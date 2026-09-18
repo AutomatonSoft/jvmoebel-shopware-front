@@ -31,7 +31,7 @@ function createLandingPage(
       cmsPageId: "cms-page-id",
       cmsPageVersionId: "",
       keywords: "",
-      metaDescription: "Über JVMöbel",
+      metaDescription: "Über JVMoebel",
       metaTitle: "Über uns",
       name: "Über uns",
       url: "/ueber-uns",
@@ -53,7 +53,7 @@ describe("mapShopwareLandingPage", () => {
         type: "landingpage",
       },
       id: "landing-page-id",
-      metaDescription: "Über JVMöbel",
+      metaDescription: "Über JVMoebel",
       metaTitle: "Über uns",
       name: "Über uns",
     });

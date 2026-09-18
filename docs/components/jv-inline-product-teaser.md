@@ -2,7 +2,7 @@
 
 ## Скриншот
 
-> Добавьте сюда скриншот компонента из Shopware.
+![Скриншот Component](./screenshots/jv-inline-product-teaser.png)
 
 ## Назначение
 

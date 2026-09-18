@@ -8,7 +8,7 @@ import {
   getCustomerOrderDetail,
 } from "@/features/customer-account/server/account";
 
-export const metadata: Metadata = { title: "Bestellung | JVMöbel" };
+export const metadata: Metadata = { title: "Bestellung | JVMoebel" };
 
 export default async function CustomerOrderDetailRoute({
   params,

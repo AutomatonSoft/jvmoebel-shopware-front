@@ -1,23 +1,19 @@
+import { z } from "zod";
+
 import type { NewsletterSubscription } from "@/features/newsletter/model/subscription";
 
-function parseEmail(formData: FormData): string | undefined {
-  const value = formData.get("email");
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  if (typeof value !== "string") {
-    return undefined;
-  }
-
-  const email = value.trim();
-
-  return email.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-    ? email
-    : undefined;
-}
+const newsletterSubscriptionSchema = z.object({
+  email: z.string().trim().max(254).regex(emailPattern),
+});
 
 export function parseNewsletterSubscription(
   formData: FormData,
 ): NewsletterSubscription | null {
-  const email = parseEmail(formData);
+  const result = newsletterSubscriptionSchema.safeParse({
+    email: formData.get("email"),
+  });
 
-  return email ? { email } : null;
+  return result.success ? result.data : null;
 }

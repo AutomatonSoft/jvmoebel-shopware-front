@@ -80,7 +80,7 @@ function createProductDetail(product: ShopProduct): ShopProductDetail {
       {
         description: "Schützt empfindliche Böden vor Kratzern",
         id: "floor-protector-set",
-        name: "Möbelgleiter-Set",
+        name: "Moebelgleiter-Set",
         price: 19,
       },
     ],
@@ -92,12 +92,12 @@ function createProductDetail(product: ShopProduct): ShopProductDetail {
     colorVariantGroups: [],
     deliveryEstimate:
       product.badge === "Low stock" ? "2–4 Wochen" : "4–8 Wochen",
-    deliveryMethod: "Möbelspedition bis zum Wunschort",
+    deliveryMethod: "Moebelspedition bis zum Wunschort",
     dimensions: productDimensions[product.id] ?? fallbackDimensions,
     gallery: createProductGallery(product),
     isAvailable: true,
-    longDescription: `${product.name} verbindet eine klare Formensprache mit dem charakteristischen Material ${product.material}. Das Möbelstück ist für moderne Wohnräume gestaltet und lässt sich durch die verfügbaren Farben und Größen auf das persönliche Einrichtungskonzept abstimmen.`,
-    longDescriptionHtml: `<p>${product.name} verbindet eine klare Formensprache mit dem charakteristischen Material ${product.material}. Das Möbelstück ist für moderne Wohnräume gestaltet und lässt sich durch die verfügbaren Farben und Größen auf das persönliche Einrichtungskonzept abstimmen.</p>`,
+    longDescription: `${product.name} verbindet eine klare Formensprache mit dem charakteristischen Material ${product.material}. Das Moebelstück ist für moderne Wohnräume gestaltet und lässt sich durch die verfügbaren Farben und Größen auf das persönliche Einrichtungskonzept abstimmen.`,
+    longDescriptionHtml: `<p>${product.name} verbindet eine klare Formensprache mit dem charakteristischen Material ${product.material}. Das Moebelstück ist für moderne Wohnräume gestaltet und lässt sich durch die verfügbaren Farben und Größen auf das persönliche Einrichtungskonzept abstimmen.</p>`,
     services: [
       {
         available: true,
@@ -108,16 +108,16 @@ function createProductDetail(product: ShopProduct): ShopProductDetail {
       },
       {
         available: true,
-        description: "Extrapflege für Ihr neues Polstermöbel",
+        description: "Extrapflege für Ihr neues Polstermoebel",
         id: "stain-protection",
         name: "Premium-Fleckschutz",
         price: 169,
       },
       {
         available: false,
-        description: "Fachgerechte Entsorgung eines Möbelstücks",
+        description: "Fachgerechte Entsorgung eines Moebelstücks",
         id: "old-furniture-removal",
-        name: "Altmöbelmitnahme",
+        name: "Altmoebelmitnahme",
         price: 129,
       },
     ],

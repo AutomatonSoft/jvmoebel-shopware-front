@@ -52,7 +52,7 @@ describe("parseCmsYoutubeVideoData", () => {
       config: {
         videoID: { source: "static", value: "BrAtCRDwYhI" },
       },
-      data: { title: "Moderne Luxusmöbel" },
+      data: { title: "Moderne Luxusmoebel" },
     });
 
     expect(result.data).toEqual({
@@ -60,7 +60,7 @@ describe("parseCmsYoutubeVideoData", () => {
       autoPlay: false,
       displayMode: "standard",
       end: undefined,
-      iframeTitle: "Moderne Luxusmöbel",
+      iframeTitle: "Moderne Luxusmoebel",
       loop: false,
       needsConfirmation: false,
       showControls: true,

@@ -22,7 +22,7 @@ export default function GlobalError({
       <body>
         <ErrorExperience
           code="500"
-          eyebrow="JVMöbel"
+          eyebrow="JVMoebel"
           title="Der Shop braucht einen kurzen Moment."
           description="Beim Laden ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut. Falls das Problem bestehen bleibt, ist unser System bereits bereit für eine erneute Anfrage."
           reference={error.digest}

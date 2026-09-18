@@ -6,7 +6,7 @@ import { AccountBackButton } from "@/features/customer-account/components/accoun
 import { CustomerProfileForm } from "@/features/customer-account/components/customer-profile-form";
 import { getCustomerAccount } from "@/features/customer-account/server/account";
 
-export const metadata: Metadata = { title: "Kundenprofil | JVMöbel" };
+export const metadata: Metadata = { title: "Kundenprofil | JVMoebel" };
 
 export default async function CustomerProfileRoute() {
   const account = await getCustomerAccount();

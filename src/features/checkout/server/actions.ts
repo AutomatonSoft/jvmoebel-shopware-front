@@ -9,10 +9,14 @@ import { redirect } from "next/navigation";
 import { clearMockCart } from "@/features/cart/server/mock-cart";
 import type { CheckoutActionState } from "@/features/checkout/model/checkout";
 import {
-  parseCheckoutAddress,
-  parseCheckoutMethodSelection,
-  parseGuestCheckoutRegistration,
-  parseGuestPassword,
+  getCheckoutAddressFieldErrors,
+  getCheckoutMethodSelectionFieldErrors,
+  getGuestCheckoutRegistrationFieldErrors,
+  getGuestPasswordFieldErrors,
+  validateCheckoutAddress,
+  validateCheckoutMethodSelection,
+  validateGuestCheckoutRegistration,
+  validateGuestPassword,
 } from "@/features/checkout/model/validation";
 import {
   convertMockCheckoutGuest,
@@ -84,14 +88,17 @@ export async function registerCheckoutGuest(
   _previousState: CheckoutActionState,
   formData: FormData,
 ): Promise<CheckoutActionState> {
-  const registration = parseGuestCheckoutRegistration(formData);
+  const validation = validateGuestCheckoutRegistration(formData);
 
-  if (!registration) {
+  if (!validation.success) {
     return {
+      fieldErrors: getGuestCheckoutRegistrationFieldErrors(validation.error),
       message: "Bitte füllen Sie alle Pflichtfelder vollständig aus.",
       status: "invalid",
     };
   }
+
+  const registration = validation.data;
 
   try {
     if (shouldUseShopwareMocks()) {
@@ -152,14 +159,17 @@ export async function saveCustomerCheckoutAddress(
   _previousState: CheckoutActionState,
   formData: FormData,
 ): Promise<CheckoutActionState> {
-  const address = parseCheckoutAddress(formData);
+  const validation = validateCheckoutAddress(formData);
 
-  if (!address) {
+  if (!validation.success) {
     return {
+      fieldErrors: getCheckoutAddressFieldErrors(validation.error),
       message: "Bitte füllen Sie alle Pflichtfelder vollständig aus.",
       status: "invalid",
     };
   }
+
+  const address = validation.data;
 
   try {
     const session = await createCustomerSession();
@@ -169,6 +179,7 @@ export async function saveCustomerCheckoutAddress(
       !options.countries.some((country) => country.id === address.countryId)
     ) {
       return {
+        fieldErrors: { countryId: "Bitte wählen Sie ein gültiges Land." },
         message: "Bitte wählen Sie ein gültiges Land.",
         status: "invalid",
       };
@@ -188,15 +199,18 @@ export async function placeCheckoutOrder(
   _previousState: CheckoutActionState,
   formData: FormData,
 ): Promise<CheckoutActionState> {
-  const selection = parseCheckoutMethodSelection(formData);
+  const validation = validateCheckoutMethodSelection(formData);
 
-  if (!selection) {
+  if (!validation.success) {
     return {
+      fieldErrors: getCheckoutMethodSelectionFieldErrors(validation.error),
       message:
         "Bitte wählen Sie Versand und Zahlung und bestätigen Sie die Bedingungen.",
       status: "invalid",
     };
   }
+
+  const selection = validation.data;
 
   let destination = "/bestellung/danke";
 
@@ -270,14 +284,17 @@ export async function convertCheckoutGuest(
   _previousState: CheckoutActionState,
   formData: FormData,
 ): Promise<CheckoutActionState> {
-  const password = parseGuestPassword(formData);
+  const validation = validateGuestPassword(formData);
 
-  if (!password) {
+  if (!validation.success) {
     return {
+      fieldErrors: getGuestPasswordFieldErrors(validation.error),
       message: "Das Passwort muss mindestens acht Zeichen lang sein.",
       status: "invalid",
     };
   }
+
+  const password = validation.data;
 
   try {
     if (shouldUseShopwareMocks()) {

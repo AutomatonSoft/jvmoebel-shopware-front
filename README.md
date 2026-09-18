@@ -1,6 +1,6 @@
-# JVMöbel Shopware Frontend
+# JVMoebel Shopware Frontend
 
-Frontend витрины JVMöbel на Next.js. Shopware управляет товарами, категориями, SEO URL и содержимым Shopping Experiences; Next.js получает данные через Store API и отображает страницы и CMS-компоненты.
+Frontend витрины JVMoebel на Next.js. Shopware управляет товарами, категориями, SEO URL и содержимым Shopping Experiences; Next.js получает данные через Store API и отображает страницы и CMS-компоненты.
 
 ## Стек
 

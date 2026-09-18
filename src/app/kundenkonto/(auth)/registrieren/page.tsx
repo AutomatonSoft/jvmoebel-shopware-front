@@ -4,8 +4,8 @@ import { RegisterForm } from "@/features/customer-account/components/register-fo
 import { getRegistrationOptions } from "@/features/customer-account/server/account";
 
 export const metadata: Metadata = {
-  description: "Erstellen Sie Ihr persönliches JVMöbel Kundenkonto.",
-  title: "Konto erstellen | JVMöbel",
+  description: "Erstellen Sie Ihr persönliches JVMoebel Kundenkonto.",
+  title: "Konto erstellen | JVMoebel",
 };
 
 type CustomerRegistrationPageProps = Readonly<{

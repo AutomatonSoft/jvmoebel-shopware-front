@@ -2,7 +2,10 @@
 
 import { ArrowRight, Building2, ReceiptText } from "lucide-react";
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { startTransition, useActionState } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import type { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { AccountField } from "@/features/customer-account/components/account-field";
@@ -12,30 +15,85 @@ import type {
   AccountActionState,
   RegistrationOptions,
 } from "@/features/customer-account/model/account";
+import {
+  customerRegistrationFieldMessages,
+  registrationInputSchema,
+} from "@/features/customer-account/model/validation";
 import { registerCustomer } from "@/features/customer-account/server/actions";
 
 const initialState: AccountActionState = { status: "idle" };
+
+type RegistrationFormInput = z.input<typeof registrationInputSchema>;
+type RegistrationFormOutput = z.output<typeof registrationInputSchema>;
 
 export function RegisterForm({
   options,
   redirectTo,
 }: Readonly<{ options: RegistrationOptions; redirectTo?: string }>) {
-  const [accountType, setAccountType] = useState<"business" | "private">(
-    "private",
-  );
   const [state, formAction, pending] = useActionState(
     registerCustomer,
     initialState,
   );
-  const invalid = state.status === "invalid" || undefined;
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+    register,
+  } = useForm<RegistrationFormInput, undefined, RegistrationFormOutput>({
+    defaultValues: {
+      acceptedDataProtection: true,
+      accountType: "private",
+      countryId: options.defaultCountryId,
+      salutationId: "",
+    },
+    mode: "onBlur",
+    reValidateMode: "onChange",
+    resolver: zodResolver(registrationInputSchema),
+    shouldUnregister: true,
+  });
+  const fieldErrors = state.fieldErrors ?? {};
+  const invalid =
+    state.status === "invalid" && !state.fieldErrors ? true : undefined;
+  const accountType = useWatch({ control, name: "accountType" });
+  const clientFieldErrors = errors as Partial<
+    Record<keyof typeof customerRegistrationFieldMessages, unknown>
+  >;
+
+  const submitRegistration = handleSubmit((_values, event) => {
+    if (pending || !event?.currentTarget) {
+      return;
+    }
+
+    const formData = new FormData(event.currentTarget);
+
+    startTransition(() => {
+      formAction(formData);
+    });
+  });
+
+  const getFieldError = (
+    field: keyof typeof customerRegistrationFieldMessages,
+  ) =>
+    clientFieldErrors[field]
+      ? customerRegistrationFieldMessages[field]
+      : fieldErrors[field];
 
   return (
-    <form action={formAction} className="space-y-2">
+    <form
+      action={formAction}
+      className="space-y-2"
+      noValidate
+      onSubmit={submitRegistration}
+    >
       {redirectTo && (
         <input name="redirectTo" type="hidden" value={redirectTo} />
       )}
-      <input name="acceptedDataProtection" type="hidden" value="on" />
-      <input name="countryId" type="hidden" value={options.defaultCountryId} />
+      <input {...register("acceptedDataProtection")} type="hidden" value="on" />
+      <input
+        {...register("countryId")}
+        type="hidden"
+        value={options.defaultCountryId}
+      />
 
       <AccountToast
         description={state.message}
@@ -62,10 +120,9 @@ export function RegisterForm({
             {(["private", "business"] as const).map((value) => (
               <label className="cursor-pointer" key={value}>
                 <input
+                  {...register("accountType")}
                   checked={accountType === value}
                   className="peer sr-only"
-                  name="accountType"
-                  onChange={() => setAccountType(value)}
                   type="radio"
                   value={value}
                 />
@@ -83,9 +140,8 @@ export function RegisterForm({
               Anrede
             </legend>
             <select
+              {...register("salutationId")}
               className="h-11 w-full rounded-lg border border-border/80 bg-card/80 px-3 text-sm text-foreground outline-none transition-[border-color,box-shadow] focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/10"
-              defaultValue=""
-              name="salutationId"
             >
               <option value="">Keine Angabe</option>
               {options.salutations.map((salutation) => (
@@ -105,17 +161,21 @@ export function RegisterForm({
           </legend>
           <AccountField
             autoComplete="organization"
+            error={getFieldError("company")}
             icon={Building2}
             id="company"
             invalid={invalid}
             label="Firmenname inkl. Rechtsform"
+            registration={register("company")}
           />
           <AccountField
             autoComplete="off"
+            error={getFieldError("vatId")}
             icon={ReceiptText}
             id="vatId"
             invalid={invalid}
             label="USt-Id-Nr. oder Steuernummer"
+            registration={register("vatId")}
           />
         </fieldset>
       )}
@@ -124,32 +184,40 @@ export function RegisterForm({
         <legend className="sr-only">Persönliche Angaben</legend>
         <AccountField
           autoComplete="given-name"
+          error={getFieldError("firstName")}
           id="firstName"
           invalid={invalid}
           label="Vorname"
+          registration={register("firstName")}
         />
         <AccountField
           autoComplete="family-name"
+          error={getFieldError("lastName")}
           id="lastName"
           invalid={invalid}
           label="Nachname"
+          registration={register("lastName")}
         />
         <AccountField
           autoComplete="email"
           className="sm:col-span-2"
+          error={getFieldError("email")}
           id="email"
           invalid={invalid}
           label="E-Mail-Adresse"
+          registration={register("email")}
           type="email"
         />
         <AccountField
           autoComplete="new-password"
           className="sm:col-span-2"
+          error={getFieldError("password")}
           id="password"
           invalid={invalid}
           label="Passwort"
           maxLength={72}
           minLength={8}
+          registration={register("password")}
           type="password"
         />
       </fieldset>
