@@ -31,6 +31,17 @@ const storefrontConfigResponse = {
         label: "Living Room",
       },
     ],
+    contactWidget: {
+      channels: [
+        {
+          icon: null,
+          id: "telegram",
+          label: "Telegram",
+          type: "telegram",
+          url: "https://t.me/XLANDJV",
+        },
+      ],
+    },
     copyrightText: "Copyright",
     internationalLinks: [
       {
@@ -159,6 +170,16 @@ describe("parseShopwareStorefrontConfig", () => {
         eyebrow: "About",
         title: "Footer title",
       },
+      contactWidget: {
+        channels: [
+          {
+            id: "telegram",
+            label: "Telegram",
+            type: "telegram",
+            url: "https://t.me/XLANDJV",
+          },
+        ],
+      },
       copyright: "Copyright",
       internationalLinks: [
         {
@@ -254,7 +275,10 @@ describe("parseShopwareStorefrontConfig", () => {
   test("falls back safely and reports an invalid response", () => {
     const result = parseShopwareStorefrontConfig(null);
 
-    expect(result.data.footerContent).toEqual(defaultStorefrontFooterContent);
+    expect(result.data.footerContent).toEqual({
+      ...defaultStorefrontFooterContent,
+      contactWidget: undefined,
+    });
     expect(result.data.navigation).toEqual([]);
     expect(result.issues).toContainEqual({
       message: "Storefront configuration must be an object.",
