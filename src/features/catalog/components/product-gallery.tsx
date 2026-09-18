@@ -51,10 +51,10 @@ export function ProductGallery({ badge, images }: ProductGalleryProps) {
 
   return (
     <div
-      className={`grid min-w-0 gap-3 ${hasMultipleImages ? "sm:grid-cols-[5rem_minmax(0,1fr)]" : ""}`}
+      className={`grid min-w-0 gap-3 ${hasMultipleImages ? "sm:relative sm:block sm:pl-[5.75rem]" : ""}`}
     >
       {hasMultipleImages && (
-        <div className="order-2 flex gap-2 overflow-x-auto pb-1 sm:order-1 sm:flex-col sm:overflow-x-visible sm:overflow-y-auto sm:pb-0">
+        <div className="order-2 flex gap-2 overflow-x-auto pb-1 sm:absolute sm:inset-y-0 sm:left-0 sm:w-20 sm:flex-col sm:overflow-x-visible sm:overflow-y-auto sm:pb-0 sm:[scrollbar-width:none] sm:[&::-webkit-scrollbar]:hidden">
           {images.map((image, index) => {
             const isActive = index === activeImageIndex;
 
