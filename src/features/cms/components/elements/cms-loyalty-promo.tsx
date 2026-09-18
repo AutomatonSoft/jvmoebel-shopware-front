@@ -3,20 +3,13 @@ import Image from "next/image";
 
 import { Container } from "@/components/ui/container";
 import { CmsButton } from "@/features/cms/components/cms-button";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsLoyaltyPromoData } from "@/features/cms/contracts/loyalty-promo";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsLoyaltyPromoData } from "@/features/cms/contracts/loyalty-promo";
 
-export function CmsLoyaltyPromo({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsLoyaltyPromoData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { benefits, description, image, link, promoCode, title } = result.data;
+export function CmsLoyaltyPromo({
+  data,
+}: CmsElementProps<CmsLoyaltyPromoData>) {
+  const { benefits, description, image, link, promoCode, title } = data;
 
   return (
     <Container
@@ -64,7 +57,7 @@ export function CmsLoyaltyPromo({ slot }: CmsSlotComponentProps) {
           </div>
         </div>
 
-        <div className="relative min-h-80 bg-muted sm:min-h-[28rem] lg:min-h-[36rem]">
+        <div className="relative min-h-80 bg-muted sm:min-h-112 lg:min-h-144">
           <Image
             alt={image.alt}
             className="object-cover"

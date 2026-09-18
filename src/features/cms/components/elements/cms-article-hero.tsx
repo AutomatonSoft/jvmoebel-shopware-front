@@ -2,26 +2,15 @@ import { CalendarDays, Clock3 } from "lucide-react";
 import Image from "next/image";
 
 import { Container } from "@/components/ui/container";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsArticleHeroData } from "@/features/cms/contracts/article-hero";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsArticleHeroData } from "@/features/cms/contracts/article-hero";
 
 const articleDateFormatter = new Intl.DateTimeFormat("de-DE", {
   dateStyle: "long",
   timeZone: "Europe/Berlin",
 });
 
-export function CmsArticleHero({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsArticleHeroData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const data = result.data;
-
+export function CmsArticleHero({ data }: CmsElementProps<CmsArticleHeroData>) {
   return (
     <Container
       as="header"
@@ -61,7 +50,7 @@ export function CmsArticleHero({ slot }: CmsSlotComponentProps) {
           </div>
         </div>
 
-        <div className="relative min-h-72 bg-muted sm:min-h-[28rem] lg:min-h-[36rem]">
+        <div className="relative min-h-72 bg-muted sm:min-h-112 lg:min-h-144">
           <Image
             alt={data.image.alt}
             className="object-cover"

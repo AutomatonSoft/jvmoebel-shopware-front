@@ -20,6 +20,9 @@ import {
   updateShopwareCartItem,
 } from "@/integrations/shopware/cart";
 import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
+import { isShopwareProductAvailable } from "@/integrations/shopware/product-detail";
+
+class ProductUnavailableError extends Error {}
 
 function getRequiredString(formData: FormData, name: string) {
   const value = formData.get(name);
@@ -27,18 +30,25 @@ function getRequiredString(formData: FormData, name: string) {
   return typeof value === "string" && value.trim() ? value.trim() : null;
 }
 
-async function runCartMutation(
+async function runCartMutation<Result>(
   mutation: (
     session: Awaited<ReturnType<typeof createCustomerSession>>,
-  ) => Promise<void>,
+  ) => Promise<Result>,
 ) {
   try {
     const session = await createCustomerSession();
 
-    await mutation(session);
+    const result = await mutation(session);
+
     await persistCustomerContext(session.getContextToken());
     revalidatePath("/warenkorb");
+
+    return result;
   } catch (error) {
+    if (error instanceof ProductUnavailableError) {
+      redirect("/warenkorb?fehler=nicht-verfuegbar");
+    }
+
     console.error("Cart mutation failed.", error);
     redirect("/warenkorb?fehler=aktualisierung");
   }
@@ -120,9 +130,17 @@ export async function addProductToCart(formData: FormData) {
   if (shouldUseShopwareMocks()) {
     await runMockCartMutation(() => addMockProduct(productId));
   } else {
-    await runCartMutation((session) =>
-      addShopwareProduct(session.client, productId),
-    );
+    const result = await runCartMutation(async (session) => {
+      if (!(await isShopwareProductAvailable(session.client, productId))) {
+        throw new ProductUnavailableError();
+      }
+
+      return addShopwareProduct(session.client, productId);
+    });
+
+    if (!result.succeeded) {
+      redirect("/warenkorb?fehler=shopware");
+    }
   }
 
   redirect("/warenkorb?meldung=hinzugefuegt");

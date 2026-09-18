@@ -1,51 +1,35 @@
 # `jv-room-grid`
 
-Editorial grid of linked room cards.
+## Скриншот
 
-## `slot.data`
+> Добавьте сюда скриншот компонента из Shopware.
 
-```json
-{
-  "eyebrow": "Nach Raum einkaufen",
-  "title": "Möbel für jeden Raum",
-  "description": "Entdecken Sie aufeinander abgestimmte Wohnideen.",
-  "rooms": [
-    {
-      "id": "living-room",
-      "position": 0,
-      "featured": true,
-      "label": "Wohnzimmer",
-      "title": "Sofas, Sessel und Tische",
-      "url": "/Moebel-Wohnen/Wohnzimmer/",
-      "image": {
-        "url": "https://media.example.com/rooms/living-room.webp",
-        "alt": "Modernes Wohnzimmer"
-      }
-    }
-  ]
-}
-```
+## Назначение
 
-## Field contract
+Редакционная сетка подборок по комнатам.
 
-| Field         | Required | Rule                                                      |
-| ------------- | -------- | --------------------------------------------------------- |
-| `title`       | yes      | Non-empty section heading.                                |
-| `rooms`       | yes      | Array or keyed object containing at least one valid room. |
-| `eyebrow`     | no       | Short text above the heading.                             |
-| `description` | no       | Supporting text.                                          |
+## Настройка в Shopware
 
-Each room requires non-empty `label`, `title`, `url`, and `image.url`. `id` is
-optional and generated when omitted. `image.alt` defaults to an empty string.
-A finite numeric `position` controls order; otherwise input order is used.
-`featured: true` or `featured: 1` makes the card span two desktop rows.
+| Поле                               | Где отображается               | Обязательно    |
+| ---------------------------------- | ------------------------------ | -------------- |
+| Заголовок, надзаголовок и описание | Над сеткой                     | Заголовок — да |
+| Метка и название комнаты           | Текст на карточке              | Да             |
+| Изображение и alt-текст            | Фон карточки                   | Да             |
+| Ссылка                             | Карточка целиком               | Да             |
+| Выделить карточку                  | Более крупная карточка в сетке | Нет            |
+| Порядок                            | Последовательность карточек    | Нет            |
 
-Invalid rooms are omitted. The whole element is omitted when the top-level
-title is missing or no valid rooms remain. Arrays are canonical; keyed objects
-are also accepted.
+## Технический контракт Shopware
 
-## Shopware Administration
+- `slot.type`: `jv-room-grid`; данные передаются в `slot.data`.
 
-Register the `jv-room-grid` element and block. Editors should control the
-section copy and add, remove, reorder, feature, link, and assign media to room
-cards. The resolver must expose public media URLs in `slot.data`.
+| Поле                                                                 | Тип                | Правило                                             |
+| -------------------------------------------------------------------- | ------------------ | --------------------------------------------------- |
+| `title`                                                              | `string`           | Непустая строка.                                    |
+| `eyebrow`, `description`                                             | `string`           | Необязательные тексты.                              |
+| `rooms`                                                              | `array \| object`  | Хотя бы одна корректная карточка.                   |
+| `rooms[].label`, `rooms[].title`, `rooms[].url`, `rooms[].image.url` | `string`           | Непустые строки.                                    |
+| `rooms[].featured`                                                   | `boolean \| 1`     | Только `true` или `1` включает выделенную карточку. |
+| `rooms[].image.alt`, `rooms[].id`, `rooms[].position`                | `string \| number` | Необязательны; position задаёт порядок.             |
+
+Некорректные карточки пропускаются; без корректных карточек элемент не рендерится.

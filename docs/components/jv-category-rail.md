@@ -1,60 +1,38 @@
 # `jv-category-rail`
 
-Linked category cards displayed as a horizontal rail or a responsive grid.
+## Скриншот
 
-## `slot.data`
+> Добавьте сюда скриншот компонента из Shopware.
 
-```json
-{
-  "eyebrow": "Räume entdecken",
-  "title": "Möbel für jeden Raum",
-  "description": "Finden Sie passende Möbel nach
-  bereich.",
-  "layout": "grid",
-  "categories": [
-    {
-      "id": "living-room",
-      "position": 0,
-      "label": "Wohnzimmer",
-      "url": "/Moebel-Wohnen/Wohnzimmer/",
-      "image": {
-        "url": "https://media.example.com/categories/living-room.webp",
-        "alt": "Modernes Wohnzimmer"
-      }
-    }
-  ],
-  "viewAll": {
-    "label": "Alle Kategorien",
-    "url": "/moebel-sortiment"
-  }
-}
-```
+## Назначение
 
-## Field contract
+Сетка или горизонтальная лента карточек категорий.
 
-| Field         | Required | Rule                                                           |
-| ------------- | -------- | -------------------------------------------------------------- |
-| `title`       | yes      | Non-empty section heading.                                     |
-| `categories`  | yes      | Array or keyed object containing at least one valid category.  |
-| `layout`      | no       | `rail` or `grid`. Invalid or missing values default to `rail`. |
-| `eyebrow`     | no       | Short text above the heading.                                  |
-| `description` | no       | Supporting text.                                               |
-| `viewAll`     | no       | Rendered only when both `label` and `url` are present.         |
+## Настройка в Shopware
 
-Each category requires non-empty `label`, `url`, and `image.url`. `id` is
-optional and generated from the label and index when omitted. `image.alt`
-defaults to the category label. A finite numeric `position` controls order;
-otherwise input order is used.
+| Поле                    | Где отображается               | Обязательно    |
+| ----------------------- | ------------------------------ | -------------- |
+| Заголовок и описание    | Над карточками                 | Заголовок — да |
+| Надзаголовок            | Над заголовком                 | Нет            |
+| Вид                     | Сетка или горизонтальная лента | Нет            |
+| Название категории      | Текст карточки                 | Да             |
+| Изображение и alt-текст | Изображение карточки           | Да             |
+| Ссылка категории        | Карточка целиком               | Да             |
+| Ссылка «Смотреть все»   | Рядом с заголовком             | Нет            |
+| Порядок                 | Последовательность карточек    | Нет            |
 
-Invalid categories are omitted. The whole element is omitted when `title` is
-missing or no valid categories remain. Arrays are canonical; keyed objects are
-also accepted.
+## Технический контракт Shopware
 
-## Shopware Administration
+- `slot.type`: `jv-category-rail`; данные передаются в `slot.data`.
 
-Register the `jv-category-rail` element and block. Editors should control the
-heading copy, category cards, their order, links and media, and the optional
-view-all link. Editors should also choose between the horizontal `rail` and
-responsive `grid` layouts. A category selector may be used, but the Store API
-resolver must still return the documented strings and resolved
-`{ "url", "alt" }` media object in `slot.data`.
+| Поле                                                                 | Тип                | Правило                                                            |
+| -------------------------------------------------------------------- | ------------------ | ------------------------------------------------------------------ |
+| `title`                                                              | `string`           | Непустая строка.                                                   |
+| `description`, `eyebrow`                                             | `string`           | Необязательные тексты.                                             |
+| `layout`                                                             | `grid \| rail`     | `grid` включает сетку; другое или отсутствующее значение — `rail`. |
+| `categories`                                                         | `array \| object`  | Хотя бы одна корректная категория.                                 |
+| `categories[].label`, `categories[].url`, `categories[].image.url`   | `string`           | Непустые строки.                                                   |
+| `categories[].image.alt`, `categories[].id`, `categories[].position` | `string \| number` | Необязательны; alt по умолчанию label.                             |
+| `viewAll.label`, `viewAll.url`                                       | `string`           | Необязательная ссылка, но при передаче нужны оба поля.             |
+
+Некорректные категории пропускаются; без корректных категорий элемент не рендерится.

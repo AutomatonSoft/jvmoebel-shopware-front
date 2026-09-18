@@ -1,35 +1,37 @@
-# YouTube video
+# `youtube-video`
 
-## Slot type
+## Скриншот
 
-`youtube-video`
+> Добавьте сюда скриншот компонента из Shopware.
 
-This renderer supports Shopware's standard YouTube CMS element. No custom CMS
-element or Administration extension is required.
+## Назначение
 
-## Shopware configuration
+Стандартный элемент Shopware для встраивания видео YouTube, при необходимости с предварительным согласием посетителя.
 
-The element reads the standard values from `slot.config`:
+## Настройка в Shopware
 
-| Field                 | Required | Default     | Purpose                           |
-| --------------------- | -------- | ----------- | --------------------------------- |
-| `videoID`             | yes      | —           | Eleven-character YouTube video ID |
-| `iframeTitle`         | no       | Video label | Accessible iframe title           |
-| `autoPlay`            | no       | `false`     | Starts playback automatically     |
-| `loop`                | no       | `false`     | Repeats the video                 |
-| `showControls`        | no       | `true`      | Shows YouTube playback controls   |
-| `start`               | no       | —           | Start time in seconds             |
-| `end`                 | no       | —           | End time in seconds               |
-| `displayMode`         | no       | `standard`  | Standard or cover display         |
-| `advancedPrivacyMode` | no       | `true`      | Uses `youtube-nocookie.com`       |
-| `needsConfirmation`   | no       | `false`     | Requires a click before loading   |
+| Поле                                    | Где отображается                            | Обязательно |
+| --------------------------------------- | ------------------------------------------- | ----------- |
+| ID видео YouTube                        | Встраиваемое видео                          | Да          |
+| Заголовок iframe                        | Подпись для скринридера                     | Нет         |
+| Режим конфиденциальности                | Использование домена `youtube-nocookie.com` | Нет         |
+| Автозапуск, повтор, элементы управления | Поведение проигрывателя                     | Нет         |
+| Время начала и окончания                | Отрезок видео                               | Нет         |
+| Согласие на загрузку                    | Экран подтверждения перед iframe            | Нет         |
+| Режим отображения                       | Атрибут режима контейнера                   | Нет         |
 
-## Administration workflow
+## Технический контракт Shopware
 
-In **Content → Shopping Experiences**, add the standard **YouTube video** block
-for every new video. Paste the YouTube video ID, provide a meaningful video
-title, and arrange the blocks in the desired order. The storefront renders any
-number of these elements without a code change.
+- `slot.type`: `youtube-video`; настройки передаются в `slot.config.<имя>.value`.
+- `slot.data.title` используется только как резервный заголовок iframe.
 
-The page layout ID must be exposed through the sales-channel configuration key
-`jvStorefrontVideoShopCmsPageId`.
+| Поле                                                                                                        | Тип                 | Правило                                                         |
+| ----------------------------------------------------------------------------------------------------------- | ------------------- | --------------------------------------------------------------- |
+| `config.videoID.value`                                                                                      | `string`            | Обязательный ID YouTube из 11 символов: буквы, цифры, `_`, `-`. |
+| `config.iframeTitle.value`                                                                                  | `string`            | Необязателен; иначе `data.title`, затем `YouTube-Video`.        |
+| `config.advancedPrivacyMode.value`                                                                          | `boolean`           | По умолчанию `true`.                                            |
+| `config.autoPlay.value`, `config.loop.value`, `config.needsConfirmation.value`, `config.showControls.value` | `boolean`           | По умолчанию: `false`, `false`, `false`, `true`.                |
+| `config.start.value`, `config.end.value`                                                                    | `number`            | Необязательные неотрицательные секунды; округляются.            |
+| `config.displayMode.value`                                                                                  | `standard \| cover` | По умолчанию `standard`.                                        |
+
+При невалидном ID видео элемент не рендерится. Если включён `needsConfirmation`, iframe загружается только после согласия посетителя.

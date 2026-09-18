@@ -4,6 +4,7 @@ import {
   formatCountdownLabel,
   formatCountdownValue,
   getCountdownParts,
+  getNextCountdownTickDelay,
 } from "@/features/offers/model/countdown";
 
 describe("offer countdown", () => {
@@ -27,5 +28,18 @@ describe("offer countdown", () => {
       getCountdownParts(endsAt, Date.parse("2026-09-15T06:59:59.500Z")),
     ).toEqual({ days: 0, hours: 0, minutes: 0, seconds: 1 });
     expect(getCountdownParts(endsAt, Date.parse(endsAt))).toBeNull();
+  });
+
+  test("schedules ticks only until the deadline", () => {
+    const endsAt = "2026-09-15T07:00:00Z";
+
+    expect(
+      getNextCountdownTickDelay(endsAt, Date.parse("2026-09-15T06:59:50Z")),
+    ).toBe(1000);
+    expect(
+      getNextCountdownTickDelay(endsAt, Date.parse("2026-09-15T06:59:59.500Z")),
+    ).toBe(500);
+    expect(getNextCountdownTickDelay(endsAt, Date.parse(endsAt))).toBeNull();
+    expect(getNextCountdownTickDelay("invalid", Date.now())).toBeNull();
   });
 });

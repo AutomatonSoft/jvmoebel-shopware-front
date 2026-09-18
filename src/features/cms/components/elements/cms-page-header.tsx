@@ -1,18 +1,9 @@
 import { Container } from "@/components/ui/container";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsPageHeaderData } from "@/features/cms/contracts/page-header";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsPageHeaderData } from "@/features/cms/contracts/page-header";
 
-export function CmsPageHeader({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsPageHeaderData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { description, eyebrow, title } = result.data;
+export function CmsPageHeader({ data }: CmsElementProps<CmsPageHeaderData>) {
+  const { description, eyebrow, title } = data;
 
   return (
     <Container
@@ -26,7 +17,7 @@ export function CmsPageHeader({ slot }: CmsSlotComponentProps) {
         </p>
       )}
       <div className="flex flex-col gap-5 border-b pb-8 sm:flex-row sm:items-end sm:justify-between">
-        <h1 className="text-4xl leading-none font-semibold tracking-[-0.05em] text-balance sm:text-5xl">
+        <h1 className="text-4xl leading-none font-semibold tracking-tighter text-balance sm:text-5xl">
           {title}
         </h1>
         {description && (

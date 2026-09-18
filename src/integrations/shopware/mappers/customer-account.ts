@@ -1,13 +1,14 @@
 import type { components } from "@shopware/api-client/store-api-types";
 
 import type { CustomerAccountSummary } from "@/features/customer-account/model/account";
+import { isPendingCustomerAddress } from "@/integrations/shopware/customer-address";
 
 type ShopwareCustomer = components["schemas"]["Customer"];
 
 export function mapShopwareCustomerAccount(
   customer: ShopwareCustomer | null | undefined,
 ): CustomerAccountSummary | null {
-  if (!customer) {
+  if (!customer || customer.guest) {
     return null;
   }
 
@@ -15,19 +16,21 @@ export function mapShopwareCustomerAccount(
     customer.defaultBillingAddress ?? customer.activeBillingAddress;
 
   return {
-    billingAddress: address
-      ? {
-          city: address.city,
-          country:
-            address.country?.translated.name ||
-            address.country?.name ||
-            undefined,
-          firstName: address.firstName,
-          lastName: address.lastName,
-          street: address.street,
-          zipcode: address.zipcode || undefined,
-        }
-      : undefined,
+    billingAddress:
+      address && !isPendingCustomerAddress(address)
+        ? {
+            city: address.city,
+            country:
+              address.country?.translated.name ||
+              address.country?.name ||
+              undefined,
+            countryId: address.countryId,
+            firstName: address.firstName,
+            lastName: address.lastName,
+            street: address.street,
+            zipcode: address.zipcode || undefined,
+          }
+        : undefined,
     customerNumber: customer.customerNumber,
     email: customer.email,
     firstName: customer.firstName,

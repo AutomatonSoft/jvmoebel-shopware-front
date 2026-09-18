@@ -1,10 +1,10 @@
 import { describe, expect, test } from "bun:test";
 
-import { getShopwareCategoryPage } from "@/integrations/shopware/category-page";
+import { getShopwareCategoryPageContent } from "@/integrations/shopware/category-page";
 import type { ShopwareClient } from "@/integrations/shopware/client";
 
-describe("getShopwareCategoryPage", () => {
-  test("loads category navigation and products for the selected category", async () => {
+describe("getShopwareCategoryPageContent", () => {
+  test("loads stable content for the selected category", async () => {
     const requests: Array<{ operation: string; request: unknown }> = [];
     const client = {
       invoke: async (operation: string, request: unknown) => {
@@ -13,10 +13,15 @@ describe("getShopwareCategoryPage", () => {
         if (operation === "readCategory post /category/{navigationId}") {
           return {
             data: {
+              cmsPage: {
+                id: "category-cms-page-id",
+                sections: [],
+                type: "product_list",
+              },
               description: "Möbel &amp; Wohnen",
               id: "category-id",
               name: "Möbel & Wohnen",
-              path: "|root-category-id|",
+              path: "|root-category-id|parent-category-id|",
               seoUrl: "/Moebel-Wohnen/",
               translated: {
                 description: "Möbel &amp; Wohnen",
@@ -27,30 +32,34 @@ describe("getShopwareCategoryPage", () => {
           };
         }
 
-        if (operation === "readContext get /context") {
-          return {
-            data: {
-              currency: { isoCode: "EUR" },
-              languageInfo: { localeCode: "de-DE" },
-              salesChannel: { navigationCategoryId: "root-category-id" },
-            },
-          };
-        }
-
         if (
           operation === "readNavigation post /navigation/{activeId}/{rootId}"
         ) {
           return { data: [] };
         }
 
-        return { data: { elements: [], total: 0 } };
+        throw new Error(`Unexpected operation: ${operation}`);
       },
     } as unknown as ShopwareClient;
 
-    const page = await getShopwareCategoryPage(client, "category-id");
+    const page = await getShopwareCategoryPageContent(client, "category-id", [
+      {
+        children: [],
+        href: "/Wohnen/",
+        id: "parent-category-id",
+        label: "Wohnen",
+        type: "page",
+      },
+    ]);
 
     expect(page).toMatchObject({
-      breadcrumbs: [],
+      breadcrumbs: [
+        {
+          href: "/Wohnen/",
+          id: "parent-category-id",
+          label: "Wohnen",
+        },
+      ],
       category: {
         canonicalPath: "/Moebel-Wohnen/",
         description: "Möbel & Wohnen",
@@ -58,13 +67,16 @@ describe("getShopwareCategoryPage", () => {
         name: "Möbel & Wohnen",
       },
       children: [],
-      listing: null,
+      cmsPage: {
+        id: "category-cms-page-id",
+        sections: [],
+        type: "product_list",
+      },
+      hasProductListing: true,
     });
-    expect(requests).toContainEqual({
-      operation: "readProductListing post /product-listing/{categoryId}",
-      request: expect.objectContaining({
-        pathParams: { categoryId: "category-id" },
-      }),
-    });
+    expect(requests.map(({ operation }) => operation)).toEqual([
+      "readCategory post /category/{navigationId}",
+      "readNavigation post /navigation/{activeId}/{rootId}",
+    ]);
   });
 });

@@ -1,24 +1,16 @@
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
 import { CmsYoutubeVideoConsent } from "@/features/cms/components/elements/cms-youtube-video-consent";
 import {
   buildYoutubeEmbedUrl,
-  parseCmsYoutubeVideoData,
+  type CmsYoutubeVideoData,
 } from "@/features/cms/contracts/youtube-video";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
 
 const youtubePermissions =
   "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
 
-export function CmsYoutubeVideo({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsYoutubeVideoData(slot);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const data = result.data;
+export function CmsYoutubeVideo({
+  data,
+}: CmsElementProps<CmsYoutubeVideoData>) {
   const embedUrl = buildYoutubeEmbedUrl(data);
 
   return (

@@ -1,63 +1,42 @@
 # `jv-shop-the-look`
 
-Editorial image with numbered, linked hotspots and a matching product list.
+## Скриншот
 
-## `slot.data`
+> Добавьте сюда скриншот компонента из Shopware.
 
-```json
-{
-  "eyebrow": "Shop the look",
-  "title": "Ein Wohnzimmer zum Ankommen",
-  "description": "Entdecken Sie die Möbel aus diesem Raum.",
-  "image": {
-    "url": "https://media.example.com/looks/living-room.webp",
-    "alt": "Wohnzimmer mit markierten Möbeln"
-  },
-  "items": [
-    {
-      "id": "sofa",
-      "position": 0,
-      "name": "Alba Sofa",
-      "description": "Vier Sitzplätze in Bouclé",
-      "url": "/produkt/0123456789abcdef0123456789abcdef",
-      "hotspot": {
-        "x": 42,
-        "y": 64
-      }
-    }
-  ],
-  "viewAll": {
-    "label": "Alle Produkte ansehen",
-    "url": "/moebel-sortiment"
-  }
-}
-```
+## Назначение
 
-## Field contract
+Изображение интерьера с интерактивными точками, ведущими к товарам из этой сцены.
 
-| Field         | Required | Rule                                                      |
-| ------------- | -------- | --------------------------------------------------------- |
-| `title`       | yes      | Non-empty section heading.                                |
-| `image.url`   | yes      | Non-empty background image URL.                           |
-| `items`       | yes      | Array or keyed object containing at least one valid item. |
-| `image.alt`   | no       | Defaults to the section title.                            |
-| `eyebrow`     | no       | Short text above the heading.                             |
-| `description` | no       | Supporting text.                                          |
-| `viewAll`     | no       | Rendered only when both `label` and `url` are present.    |
+## Настройка в Shopware
 
-Each item requires non-empty `name` and `url`. `hotspot.x` and `hotspot.y`
-must be finite numbers from `0` through `100`, representing percentages from
-the image's left and top edges. `description` and `id` are optional. A finite
-numeric `position` controls display order; otherwise input order is used.
+| Поле                               | Где отображается                  | Обязательно    |
+| ---------------------------------- | --------------------------------- | -------------- |
+| Заголовок, надзаголовок и описание | Над сценой                        | Заголовок — да |
+| Главное изображение и alt-текст    | Сцена интерьера                   | Да             |
+| Название товара                    | В карточке по интерактивной точке | Да             |
+| Описание товара                    | В карточке по интерактивной точке | Нет            |
+| Положение точки X/Y                | Место точки на изображении        | Да             |
+| Ссылка товара                      | Переход из точки                  | Да             |
+| Ссылка «Смотреть все»              | Под сценой                        | Нет            |
+| Порядок                            | Последовательность товаров        | Нет            |
 
-Invalid items are omitted. The whole element is omitted when the title or
-image is missing or no valid items remain. Arrays are canonical; keyed objects
-are also accepted.
+Координаты точки задаются в процентах: 0 — левый/верхний край, 100 — правый/нижний.
 
-## Shopware Administration
+## Технический контракт Shopware
 
-Register the `jv-shop-the-look` element and block. Editors should select the
-main image, add and reorder items, choose their product or URL, and place each
-hotspot using percentage coordinates. A visual hotspot picker is recommended.
-The resolver must convert selected media and products to the documented values
-in `slot.data`.
+- `slot.type`: `jv-shop-the-look`; данные передаются в `slot.data`.
+
+| Поле                                                    | Тип                | Правило                                                |
+| ------------------------------------------------------- | ------------------ | ------------------------------------------------------ |
+| `title`                                                 | `string`           | Непустая строка.                                       |
+| `eyebrow`, `description`                                | `string`           | Необязательные тексты.                                 |
+| `image.url`                                             | `string`           | Непустой публичный URL.                                |
+| `image.alt`                                             | `string`           | Необязателен; по умолчанию заголовок.                  |
+| `items`                                                 | `array \| object`  | Хотя бы один корректный товар.                         |
+| `items[].name`, `items[].url`                           | `string`           | Непустые строки.                                       |
+| `items[].hotspot.x`, `items[].hotspot.y`                | `number`           | Числа в диапазоне от `0` до `100`.                     |
+| `items[].description`, `items[].id`, `items[].position` | `string \| number` | Необязательны; position задаёт порядок.                |
+| `viewAll.label`, `viewAll.url`                          | `string`           | Необязательная ссылка, но при передаче нужны оба поля. |
+
+Некорректные точки пропускаются; без изображения, заголовка или корректных точек элемент не рендерится.

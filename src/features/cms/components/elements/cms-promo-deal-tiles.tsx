@@ -3,25 +3,18 @@ import Image from "next/image";
 
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsPromoDealTilesData } from "@/features/cms/contracts/promo-deal-tiles";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsPromoDealTilesData } from "@/features/cms/contracts/promo-deal-tiles";
 
 const dealDateFormatter = new Intl.DateTimeFormat("de-DE", {
   day: "2-digit",
   month: "2-digit",
 });
 
-export function CmsPromoDealTiles({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsPromoDealTilesData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { eyebrow, tiles, title } = result.data;
+export function CmsPromoDealTiles({
+  data,
+}: CmsElementProps<CmsPromoDealTilesData>) {
+  const { eyebrow, tiles, title } = data;
 
   return (
     <Container
@@ -43,7 +36,7 @@ export function CmsPromoDealTiles({ slot }: CmsSlotComponentProps) {
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {tiles.map((tile) => (
           <li key={tile.id}>
-            <article className="group relative isolate aspect-[4/5] overflow-hidden rounded-2xl bg-muted shadow-[0_18px_45px_-34px_rgba(21,21,19,0.75)] sm:aspect-[5/6]">
+            <article className="group relative isolate aspect-4/5 overflow-hidden rounded-2xl bg-muted shadow-[0_18px_45px_-34px_rgba(21,21,19,0.75)] sm:aspect-5/6">
               <Image
                 alt={tile.image.alt}
                 className="object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.04]"

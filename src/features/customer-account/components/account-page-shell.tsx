@@ -22,31 +22,39 @@ export function AccountPageShell({
   title,
 }: AccountPageShellProps) {
   return (
-    <Container as="main" className="flex-1 py-6 sm:py-10 lg:py-12">
+    <Container
+      as="main"
+      className={cn(
+        "flex-1",
+        authNavigation ? "py-2" : "py-6 sm:py-10 lg:py-12",
+      )}
+    >
       <div className="mx-auto max-w-6xl">
-        <nav
-          aria-label="Breadcrumb"
-          className="mb-6 flex items-center gap-2 text-[0.7rem] text-muted-foreground"
-        >
-          <Link className="transition-colors hover:text-foreground" href="/">
-            Startseite
-          </Link>
-          <span aria-hidden="true">/</span>
-          <span className="text-foreground">Kundenkonto</span>
-        </nav>
+        {!authNavigation && (
+          <nav
+            aria-label="Breadcrumb"
+            className="mb-6 flex items-center gap-2 text-[0.7rem] text-muted-foreground"
+          >
+            <Link className="transition-colors hover:text-foreground" href="/">
+              Startseite
+            </Link>
+            <span aria-hidden="true">/</span>
+            <span className="text-foreground">Kundenkonto</span>
+          </nav>
+        )}
 
         <div
           className={cn(
-            "grid overflow-hidden rounded-xl border border-border/70 bg-card",
+            "grid rounded-xl border border-border/70 bg-card",
             authNavigation
-              ? "h-[52rem] grid-rows-[11rem_minmax(0,1fr)] sm:grid-rows-[14rem_minmax(0,1fr)] lg:h-[38rem] lg:grid-cols-2 lg:grid-rows-1"
+              ? "min-h-[36.5rem] lg:grid-cols-2"
               : "lg:min-h-[36rem] lg:grid-cols-2",
           )}
         >
           <div
             className={cn(
               "relative overflow-hidden bg-muted",
-              authNavigation ? "h-full" : "h-44 sm:h-56 lg:h-auto",
+              authNavigation ? "hidden lg:block" : "h-44 sm:h-56 lg:h-auto",
             )}
           >
             <Image
@@ -74,7 +82,7 @@ export function AccountPageShell({
           <div
             className={cn(
               "min-w-0 px-5 py-7 sm:px-10 sm:py-9 lg:px-12",
-              authNavigation && "min-h-0 lg:py-4",
+              authNavigation && "py-2 sm:px-6 sm:py-2 lg:px-10 lg:py-2",
               !authNavigation && "lg:py-10",
             )}
           >
@@ -95,9 +103,7 @@ export function AccountPageShell({
                 </header>
               )}
 
-              <section
-                className={cn("min-h-[25rem]", !authNavigation && "mt-7")}
-              >
+              <section className={cn(!authNavigation && "mt-7 min-h-[25rem]")}>
                 {children}
               </section>
             </div>

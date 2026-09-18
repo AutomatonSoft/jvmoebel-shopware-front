@@ -3,20 +3,13 @@ import Image from "next/image";
 
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsColorWorldPickerData } from "@/features/cms/contracts/color-world-picker";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsColorWorldPickerData } from "@/features/cms/contracts/color-world-picker";
 
-export function CmsColorWorldPicker({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsColorWorldPickerData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { colors, description, title } = result.data;
+export function CmsColorWorldPicker({
+  data,
+}: CmsElementProps<CmsColorWorldPickerData>) {
+  const { colors, description, title } = data;
 
   return (
     <Container
@@ -35,14 +28,14 @@ export function CmsColorWorldPicker({ slot }: CmsSlotComponentProps) {
         )}
       </header>
 
-      <ul className="-mx-4 grid snap-x snap-mandatory scroll-px-4 auto-cols-[76vw] grid-flow-col gap-4 overflow-x-auto px-4 pb-4 [scrollbar-width:none] sm:-mx-8 sm:scroll-px-8 sm:auto-cols-[40vw] sm:px-8 lg:mx-0 lg:auto-cols-auto lg:grid-flow-row lg:grid-cols-4 lg:px-0 [&::-webkit-scrollbar]:hidden">
+      <ul className="-mx-4 grid snap-x snap-mandatory scroll-px-4 auto-cols-[76vw] grid-flow-col gap-4 overflow-x-auto px-4 pb-4 scrollbar-none sm:-mx-8 sm:scroll-px-8 sm:auto-cols-[40vw] sm:px-8 lg:mx-0 lg:auto-cols-auto lg:grid-flow-row lg:grid-cols-4 lg:px-0 [&::-webkit-scrollbar]:hidden">
         {colors.map((color) => (
           <li className="snap-start" key={color.id}>
             <CmsLink
               className="group block rounded-2xl border bg-card p-2 shadow-[0_14px_36px_-30px_rgba(21,21,19,0.7)] focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:ring-offset-4 focus-visible:outline-none"
               href={color.url}
             >
-              <span className="relative block aspect-[4/5] overflow-hidden rounded-xl bg-muted">
+              <span className="relative block aspect-4/5 overflow-hidden rounded-xl bg-muted">
                 <Image
                   alt={color.image.alt}
                   className="object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.035]"

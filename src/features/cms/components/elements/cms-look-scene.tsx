@@ -4,21 +4,10 @@ import Image from "next/image";
 import { Container } from "@/components/ui/container";
 import { CmsButton } from "@/features/cms/components/cms-button";
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsLookSceneData } from "@/features/cms/contracts/look-scene";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsLookSceneData } from "@/features/cms/contracts/look-scene";
 
-export function CmsLookScene({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsLookSceneData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const data = result.data;
-
+export function CmsLookScene({ data }: CmsElementProps<CmsLookSceneData>) {
   return (
     <Container
       as="section"
@@ -26,7 +15,7 @@ export function CmsLookScene({ slot }: CmsSlotComponentProps) {
       data-cms-element="jv-look-scene"
     >
       <div className="grid overflow-hidden rounded-3xl border bg-card shadow-[0_24px_60px_-44px_rgba(21,21,19,0.65)] lg:grid-cols-[minmax(0,1.7fr)_minmax(19rem,0.7fr)]">
-        <div className="relative min-h-80 bg-muted sm:min-h-[34rem]">
+        <div className="relative min-h-80 bg-muted sm:min-h-136">
           <Image
             alt={data.image.alt}
             className="object-cover"

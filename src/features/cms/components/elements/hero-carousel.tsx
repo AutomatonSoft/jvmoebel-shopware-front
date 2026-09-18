@@ -55,6 +55,178 @@ function CaptionPrimaryLink({ link }: { link: CmsHeroLink }) {
   );
 }
 
+function HeroSlideOverlay({ layout }: { layout: CmsHeroSlide["layout"] }) {
+  return (
+    <div
+      className={cn(
+        "absolute inset-0",
+        layout === "caption"
+          ? "bg-linear-to-t from-foreground/55 via-foreground/10 to-transparent"
+          : "bg-linear-to-r from-black/80 via-black/40 to-black/10",
+      )}
+    />
+  );
+}
+
+function HeroSlidePromotion({ slide }: { slide: CmsHeroSlide }) {
+  if (slide.layout !== "featured" || !slide.promotion) {
+    return null;
+  }
+
+  return (
+    <div className="pointer-events-none absolute top-5 right-5 z-20 rounded-2xl border border-white/25 bg-background/90 px-4 py-3 text-right text-foreground shadow-xl backdrop-blur-sm sm:top-8 sm:right-8 sm:px-5 sm:py-4 lg:top-12 lg:right-12">
+      {slide.promotion.label && (
+        <span className="block text-[0.625rem] font-semibold tracking-[0.12em] text-muted-foreground uppercase">
+          {slide.promotion.label}
+        </span>
+      )}
+      <strong className="mt-1 block text-xl leading-none font-semibold tracking-[-0.04em] sm:text-3xl">
+        {slide.promotion.value}
+      </strong>
+    </div>
+  );
+}
+
+function CaptionSlideContent({
+  active,
+  headingLevel: Heading,
+  slide,
+}: {
+  active: boolean;
+  headingLevel: CmsHeroData["headingLevel"];
+  slide: CmsHeroSlide;
+}) {
+  return (
+    <div className="pointer-events-none relative z-20 mx-auto flex min-h-136 max-w-360 items-end px-6 pt-32 pb-28 sm:min-h-168 sm:px-12 lg:px-20 lg:pb-12">
+      <div
+        className={cn(
+          "max-w-4xl transition-[opacity,transform] duration-700 ease-out lg:max-w-[calc(100%-22rem)]",
+          active ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0",
+        )}
+      >
+        {slide.eyebrow && (
+          <p className="mb-5 flex items-center gap-3 text-xs font-semibold tracking-[0.16em] uppercase before:block before:size-2 before:bg-primary">
+            {slide.eyebrow}
+          </p>
+        )}
+        <Heading className="text-3xl leading-tight font-normal tracking-[-0.035em] text-balance sm:text-4xl lg:text-5xl">
+          {slide.title}
+          {slide.promotion && (
+            <strong className="font-semibold">{` ${slide.promotion.value}`}</strong>
+          )}
+        </Heading>
+        {slide.promotion?.label && (
+          <p className="mt-2 text-xs font-medium tracking-[0.08em] text-white/70 uppercase">
+            {slide.promotion.label}
+          </p>
+        )}
+        {slide.description && (
+          <p className="mt-4 max-w-xl text-sm leading-7 text-white/85 sm:text-base">
+            {slide.description}
+          </p>
+        )}
+        {(slide.primaryLink || slide.secondaryLink) && (
+          <div className="pointer-events-auto mt-5 flex flex-wrap items-center gap-5">
+            {slide.primaryLink && (
+              <CaptionPrimaryLink link={slide.primaryLink} />
+            )}
+            {slide.secondaryLink && (
+              <CmsButton
+                href={slide.secondaryLink.url}
+                label={slide.secondaryLink.label}
+                size={slide.secondaryLink.size}
+                variant="link"
+              />
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function FeaturedSlideContent({
+  active,
+  headingLevel: Heading,
+  slide,
+}: {
+  active: boolean;
+  headingLevel: CmsHeroData["headingLevel"];
+  slide: CmsHeroSlide;
+}) {
+  return (
+    <div className="pointer-events-none relative z-20 mx-auto flex min-h-136 max-w-360 items-end px-6 pt-32 pb-28 sm:min-h-168 sm:items-center sm:px-12 sm:py-28 lg:px-20">
+      <div
+        className={cn(
+          "max-w-2xl transition-[opacity,transform] duration-700 ease-out",
+          active ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0",
+        )}
+      >
+        {slide.eyebrow && (
+          <p className="mb-5 flex items-center gap-3 text-xs font-semibold tracking-[0.16em] uppercase before:block before:size-2 before:bg-primary">
+            {slide.eyebrow}
+          </p>
+        )}
+        <Heading className="text-4xl leading-[0.98] font-semibold tracking-[-0.04em] text-balance sm:text-6xl lg:text-7xl">
+          {slide.title}
+        </Heading>
+        {slide.description && (
+          <p className="mt-6 max-w-xl text-sm leading-7 text-white/85 sm:text-base">
+            {slide.description}
+          </p>
+        )}
+        {(slide.primaryLink || slide.secondaryLink) && (
+          <div className="pointer-events-auto mt-8 flex flex-wrap items-center gap-5">
+            {slide.primaryLink && (
+              <CmsButton
+                href={slide.primaryLink.url}
+                label={slide.primaryLink.label}
+                size={slide.primaryLink.size}
+              />
+            )}
+            {slide.secondaryLink && (
+              <CmsButton
+                href={slide.secondaryLink.url}
+                label={slide.secondaryLink.label}
+                size={slide.secondaryLink.size}
+                variant="link"
+              />
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function HeroSlideContent({
+  active,
+  headingLevel,
+  slide,
+}: {
+  active: boolean;
+  headingLevel: CmsHeroData["headingLevel"];
+  slide: CmsHeroSlide;
+}) {
+  if (slide.layout === "caption") {
+    return (
+      <CaptionSlideContent
+        active={active}
+        headingLevel={headingLevel}
+        slide={slide}
+      />
+    );
+  }
+
+  return (
+    <FeaturedSlideContent
+      active={active}
+      headingLevel={headingLevel}
+      slide={slide}
+    />
+  );
+}
+
 function HeroSlide({
   active,
   headingLevel,
@@ -68,7 +240,7 @@ function HeroSlide({
   slide: CmsHeroSlide;
   total: number;
 }) {
-  const Heading = index === 0 ? headingLevel : "h2";
+  const slideHeadingLevel = index === 0 ? headingLevel : "h2";
 
   return (
     <li
@@ -90,15 +262,7 @@ function HeroSlide({
         sizes="100vw"
         src={slide.image.url}
       />
-      <div
-        className={cn(
-          "absolute inset-0",
-          slide.layout === "caption"
-            ? "bg-linear-to-t from-foreground/55 via-foreground/10 to-transparent"
-            : "bg-linear-to-r from-black/80 via-black/40 to-black/10",
-        )}
-      />
-
+      <HeroSlideOverlay layout={slide.layout} />
       {slide.url && (
         <CmsLink
           aria-label={slide.title}
@@ -106,99 +270,12 @@ function HeroSlide({
           href={slide.url}
         />
       )}
-
-      {slide.layout === "featured" && slide.promotion && (
-        <div className="pointer-events-none absolute top-5 right-5 z-20 rounded-2xl border border-white/25 bg-background/90 px-4 py-3 text-right text-foreground shadow-xl backdrop-blur-sm sm:top-8 sm:right-8 sm:px-5 sm:py-4 lg:top-12 lg:right-12">
-          {slide.promotion.label && (
-            <span className="block text-[0.625rem] font-semibold tracking-[0.12em] text-muted-foreground uppercase">
-              {slide.promotion.label}
-            </span>
-          )}
-          <strong className="mt-1 block text-xl leading-none font-semibold tracking-[-0.04em] sm:text-3xl">
-            {slide.promotion.value}
-          </strong>
-        </div>
-      )}
-
-      <div
-        className={cn(
-          "pointer-events-none relative z-20 mx-auto flex min-h-136 max-w-360 items-end px-6 pt-32 pb-28 sm:min-h-168 sm:px-12 lg:px-20",
-          slide.layout === "featured" && "sm:items-center sm:py-28",
-          slide.layout === "caption" && "lg:pb-12",
-        )}
-      >
-        <div
-          className={cn(
-            "transition-[opacity,transform] duration-700 ease-out",
-            slide.layout === "caption"
-              ? "max-w-4xl lg:max-w-[calc(100%-22rem)]"
-              : "max-w-2xl",
-            active ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0",
-          )}
-        >
-          {slide.eyebrow && (
-            <p className="mb-5 flex items-center gap-3 text-xs font-semibold tracking-[0.16em] uppercase before:block before:size-2 before:bg-primary">
-              {slide.eyebrow}
-            </p>
-          )}
-          {slide.layout === "caption" ? (
-            <Heading className="text-3xl leading-tight font-normal tracking-[-0.035em] text-balance sm:text-4xl lg:text-5xl">
-              {slide.title}
-              {slide.promotion && (
-                <strong className="font-semibold">
-                  {` ${slide.promotion.value}`}
-                </strong>
-              )}
-            </Heading>
-          ) : (
-            <Heading className="text-4xl leading-[0.98] font-semibold tracking-[-0.04em] text-balance sm:text-6xl lg:text-7xl">
-              {slide.title}
-            </Heading>
-          )}
-          {slide.layout === "caption" && slide.promotion?.label && (
-            <p className="mt-2 text-xs font-medium tracking-[0.08em] text-white/70 uppercase">
-              {slide.promotion.label}
-            </p>
-          )}
-          {slide.description && (
-            <p
-              className={cn(
-                "max-w-xl text-sm leading-7 text-white/85 sm:text-base",
-                slide.layout === "caption" ? "mt-4" : "mt-6",
-              )}
-            >
-              {slide.description}
-            </p>
-          )}
-          {slide.primaryLink || slide.secondaryLink ? (
-            <div
-              className={cn(
-                "pointer-events-auto flex flex-wrap items-center gap-5",
-                slide.layout === "caption" ? "mt-5" : "mt-8",
-              )}
-            >
-              {slide.primaryLink &&
-                (slide.layout === "caption" ? (
-                  <CaptionPrimaryLink link={slide.primaryLink} />
-                ) : (
-                  <CmsButton
-                    href={slide.primaryLink.url}
-                    label={slide.primaryLink.label}
-                    size={slide.primaryLink.size}
-                  />
-                ))}
-              {slide.secondaryLink && (
-                <CmsButton
-                  href={slide.secondaryLink.url}
-                  label={slide.secondaryLink.label}
-                  size={slide.secondaryLink.size}
-                  variant="link"
-                />
-              )}
-            </div>
-          ) : null}
-        </div>
-      </div>
+      <HeroSlidePromotion slide={slide} />
+      <HeroSlideContent
+        active={active}
+        headingLevel={slideHeadingLevel}
+        slide={slide}
+      />
     </li>
   );
 }

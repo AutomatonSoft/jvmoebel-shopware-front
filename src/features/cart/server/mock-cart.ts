@@ -125,3 +125,7 @@ export async function addMockProduct(id: string) {
     },
   });
 }
+
+export async function clearMockCart() {
+  await persistMockCartState({ quantities: {} });
+}

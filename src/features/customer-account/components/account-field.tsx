@@ -16,24 +16,30 @@ import { cn } from "@/lib/utils";
 type AccountFieldProps = Readonly<{
   autoComplete: string;
   className?: string;
+  defaultValue?: string;
   icon?: LucideIcon;
   id: string;
   invalid?: true;
   label: string;
+  maxLength?: number;
   minLength?: number;
   name?: string;
+  readOnly?: boolean;
   type?: "email" | "password" | "text";
 }>;
 
 export function AccountField({
   autoComplete,
   className,
+  defaultValue,
   icon,
   id,
   invalid,
   label,
+  maxLength,
   minLength,
   name = id,
+  readOnly = false,
   type = "text",
 }: AccountFieldProps) {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -47,19 +53,22 @@ export function AccountField({
         aria-invalid={invalid}
         autoComplete={autoComplete}
         className={cn(
-          "peer h-14 rounded-lg border-border/80 bg-card/80 pt-5 pb-1 pl-11 text-foreground shadow-none transition-[border-color,background-color,box-shadow] focus-visible:border-primary focus-visible:bg-card focus-visible:ring-2 focus-visible:ring-primary/10 motion-reduce:transition-none",
+          "peer h-11 rounded-lg border-border/80 bg-card/80 pt-5 pb-1 pl-11 text-foreground shadow-none transition-[border-color,background-color,box-shadow] focus-visible:border-primary focus-visible:bg-card focus-visible:ring-2 focus-visible:ring-primary/10 motion-reduce:transition-none",
           type === "password" ? "pr-12" : "pr-3",
         )}
+        defaultValue={defaultValue}
         id={id}
+        maxLength={maxLength}
         minLength={minLength}
         name={name}
         placeholder=" "
         required
+        readOnly={readOnly}
         type={type === "password" && passwordVisible ? "text" : type}
       />
       <Icon
         aria-hidden="true"
-        className="pointer-events-none absolute top-5 left-3.5 size-4 text-muted-foreground/70 transition-colors peer-focus:text-primary peer-aria-invalid:text-destructive motion-reduce:transition-none"
+        className="pointer-events-none absolute top-3.5 left-3.5 size-4 text-muted-foreground/70 transition-colors peer-focus:text-primary peer-aria-invalid:text-destructive motion-reduce:transition-none"
         strokeWidth={1.5}
       />
       <label
@@ -73,7 +82,7 @@ export function AccountField({
           aria-controls={id}
           aria-label="Passwort anzeigen"
           aria-pressed={passwordVisible}
-          className="absolute top-1 right-1 grid size-12 place-items-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="absolute top-0 right-0 grid size-11 place-items-center rounded-md text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           onClick={() => setPasswordVisible((visible) => !visible)}
           type="button"
         >

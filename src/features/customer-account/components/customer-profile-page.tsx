@@ -1,13 +1,14 @@
 import {
-  BadgeCheck,
-  ChevronDown,
-  CircleCheck,
+  ArrowRight,
+  Bell,
+  BellRing,
+  CircleHelp,
   Gift,
-  Heart,
   LogOut,
   MapPin,
+  PackageCheck,
   ShoppingBag,
-  Sofa,
+  Sparkles,
   UserRound,
 } from "lucide-react";
 import Link from "next/link";
@@ -15,101 +16,139 @@ import type { ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import type { CustomerAccountSummary } from "@/features/customer-account/model/account";
+import { AccountWishlistSummary } from "@/features/customer-account/components/account-wishlist-summary";
+import type {
+  CustomerAccountSummary,
+  CustomerOrderSummary,
+} from "@/features/customer-account/model/account";
 import { logoutCustomer } from "@/features/customer-account/server/actions";
 
 type CustomerProfilePageProps = Readonly<{
   account: CustomerAccountSummary;
+  orders: readonly CustomerOrderSummary[] | null;
 }>;
 
-const accountNavigation = [
+const accountLinks = [
   {
-    href: "#personal-data",
+    description: "Bestellstatus und vergangene Einkäufe ansehen.",
+    href: "/kundenkonto/bestellungen",
+    icon: PackageCheck,
+    label: "Bestellungen",
+  },
+  {
+    description: "Persönliche Angaben und E-Mail-Adresse prüfen.",
+    href: "/kundenkonto/profil",
     icon: UserRound,
-    label: "Persönliche Daten",
+    label: "Kundenprofil",
   },
   {
-    href: "#billing-address",
+    description: "Rechnungs- und Lieferadresse ansehen.",
+    href: "/kundenkonto/adressen",
     icon: MapPin,
-    label: "Standardadresse",
+    label: "Adressen",
   },
-  { href: "/wunschliste", icon: Heart, label: "Wunschliste" },
-  { href: "/warenkorb", icon: ShoppingBag, label: "Warenkorb" },
-  { href: "/rabatt-angebote", icon: Gift, label: "Angebote" },
-  { href: "/moebel-sortiment", icon: Sofa, label: "Sortiment" },
+  {
+    description: "Informationen zu Aktionen und dem Kundenkonto.",
+    href: "/kundenkonto/benachrichtigungen",
+    icon: Bell,
+    label: "Benachrichtigungen",
+  },
 ] as const;
 
-type ProfileFieldProps = Readonly<{
-  label: string;
-  value: string;
-  verified?: boolean;
-}>;
-
-function ProfileField({ label, value, verified = false }: ProfileFieldProps) {
-  return (
-    <div className="relative min-h-16 rounded-xl border border-border/90 bg-card px-4 pt-2.5 pb-3">
-      <p className="text-[0.625rem] font-medium text-muted-foreground">
-        {label}
-      </p>
-      <p className="mt-1 truncate pr-7 text-sm font-medium text-foreground">
-        {value}
-      </p>
-      {verified && (
-        <CircleCheck
-          aria-label="Bestätigt"
-          className="absolute top-1/2 right-4 size-4 -translate-y-1/2 text-primary"
-        />
-      )}
-    </div>
-  );
-}
-
-type ProfileSectionProps = Readonly<{
-  children: ReactNode;
-  eyebrow?: string;
-  id: string;
-  title: string;
-}>;
-
-function ProfileSection({ children, eyebrow, id, title }: ProfileSectionProps) {
+function AccountSection({
+  children,
+  id,
+  title,
+}: Readonly<{ children: ReactNode; id: string; title: string }>) {
   return (
     <section aria-labelledby={`${id}-title`} className="scroll-mt-28" id={id}>
-      <details className="group" open>
-        <summary className="flex cursor-pointer list-none items-center justify-between gap-4 border-b border-border/80 pb-3 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 [&::-webkit-details-marker]:hidden">
-          <span>
-            {eyebrow && (
-              <span className="block text-[0.625rem] font-semibold tracking-[0.13em] text-muted-foreground uppercase">
-                {eyebrow}
-              </span>
-            )}
-            <h2
-              className="mt-0.5 text-base font-semibold tracking-[-0.02em]"
-              id={`${id}-title`}
-            >
-              {title}
-            </h2>
-          </span>
-          <ChevronDown
-            aria-hidden="true"
-            className="size-4 text-foreground transition-transform group-open:rotate-180"
-          />
-        </summary>
-        <div className="mt-4">{children}</div>
-      </details>
+      <h2
+        className="text-xl font-semibold tracking-[-0.03em]"
+        id={`${id}-title`}
+      >
+        {title}
+      </h2>
+      <div className="mt-4">{children}</div>
     </section>
   );
 }
 
-export function CustomerProfilePage({ account }: CustomerProfilePageProps) {
-  const initials = `${account.firstName.charAt(0)}${account.lastName.charAt(0)}`;
-  const fullName = `${account.firstName} ${account.lastName}`;
+function CustomerOrders({ orders }: Pick<CustomerProfilePageProps, "orders">) {
+  if (orders === null) {
+    return (
+      <p className="rounded-2xl border border-border bg-card p-5 text-sm leading-6 text-muted-foreground">
+        Ihre Bestellungen können gerade nicht geladen werden. Bitte versuchen
+        Sie es später erneut.
+      </p>
+    );
+  }
+
+  if (orders.length === 0) {
+    return (
+      <div className="rounded-2xl border border-border bg-card p-6 sm:flex sm:items-center sm:justify-between sm:gap-8">
+        <div>
+          <p className="font-semibold">Noch keine aktuellen Bestellungen</p>
+          <p className="mt-1 text-sm leading-6 text-muted-foreground">
+            Entdecken Sie Möbel, die zu Ihrem Zuhause passen.
+          </p>
+        </div>
+        <Button
+          className="mt-5 sm:mt-0"
+          nativeButton={false}
+          render={<Link href="/moebel-sortiment" />}
+          variant="outline"
+        >
+          Sortiment entdecken <ArrowRight aria-hidden="true" />
+        </Button>
+      </div>
+    );
+  }
 
   return (
-    <main className="flex-1 bg-[#f8f8f6]">
-      <Container className="py-8 sm:py-10">
+    <div className="overflow-hidden rounded-2xl border border-border bg-card">
+      {orders.map((order) => {
+        const date = new Intl.DateTimeFormat("de-DE", {
+          dateStyle: "medium",
+        }).format(new Date(order.date));
+        const total = new Intl.NumberFormat("de-DE", {
+          currency: order.currency,
+          style: "currency",
+        }).format(order.total);
+        return (
+          <article
+            className="flex flex-wrap items-center gap-x-5 gap-y-3 border-b border-border px-5 py-4 last:border-b-0"
+            key={order.number}
+          >
+            <span className="grid size-10 place-items-center rounded-xl bg-secondary text-primary">
+              <ShoppingBag aria-hidden="true" className="size-4" />
+            </span>
+            <div className="min-w-40 flex-1">
+              <p className="text-sm font-semibold">Bestellung {order.number}</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">{date}</p>
+            </div>
+            <span className="rounded-full bg-accent px-3 py-1 text-xs font-semibold">
+              {order.status}
+            </span>
+            <p className="ml-auto text-sm font-semibold">{total}</p>
+          </article>
+        );
+      })}
+    </div>
+  );
+}
+
+export function CustomerProfilePage({
+  account,
+  orders,
+}: CustomerProfilePageProps) {
+  const fullName = `${account.firstName} ${account.lastName}`.trim();
+
+  return (
+    <main className="flex-1 bg-background">
+      <Container className="py-8 sm:py-10 lg:py-14">
         <nav
           aria-label="Breadcrumb"
-          className="flex items-center gap-2 text-[0.6875rem] text-muted-foreground"
+          className="flex items-center gap-2 text-xs text-muted-foreground"
         >
           <Link className="transition-colors hover:text-primary" href="/">
             Startseite
@@ -117,155 +156,171 @@ export function CustomerProfilePage({ account }: CustomerProfilePageProps) {
           <span aria-hidden="true">/</span>
           <strong className="font-medium text-foreground">Kundenkonto</strong>
         </nav>
+        <header className="mt-8 border-b border-border pb-8 sm:mt-10 sm:pb-10">
+          <h1 className="text-3xl font-semibold tracking-[-0.05em] sm:text-5xl">
+            Hallo {account.firstName}, willkommen zurück!
+          </h1>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Kundennummer {account.customerNumber}
+          </p>
+        </header>
 
-        <div className="mt-7 grid items-start lg:grid-cols-[15rem_minmax(0,1fr)]">
-          <aside className="border-b border-border/80 pb-7 lg:sticky lg:top-24 lg:border-r lg:border-b-0 lg:pr-7 lg:pb-10">
-            <div className="flex items-center gap-3.5">
-              <div className="grid size-14 shrink-0 place-items-center rounded-full bg-primary/12 text-base font-semibold text-primary">
-                <span aria-label={`Initialen ${initials}`}>{initials}</span>
+        <nav
+          aria-label="Bereiche im Kundenkonto"
+          className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
+        >
+          {accountLinks.map(({ description, href, icon: Icon, label }) => (
+            <Link
+              className="group rounded-2xl border border-border bg-card p-5 transition-[border-color,box-shadow,transform] hover:border-primary/45 hover:shadow-[0_16px_36px_-28px_rgba(21,21,19,0.7)] motion-safe:hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/40"
+              href={href}
+              key={href}
+            >
+              <span className="grid size-10 place-items-center rounded-xl bg-secondary text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                <Icon aria-hidden="true" className="size-4" />
+              </span>
+              <p className="mt-6 text-sm font-semibold">{label}</p>
+              <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                {description}
+              </p>
+            </Link>
+          ))}
+        </nav>
+
+        <div className="mt-12 grid gap-12 lg:grid-cols-[minmax(0,1.5fr)_minmax(17rem,0.7fr)] lg:gap-16">
+          <div className="space-y-12">
+            <AccountSection id="orders" title="Ihre Bestellungen">
+              <CustomerOrders orders={orders} />
+              <Link
+                className="mt-4 inline-flex items-center gap-2 text-xs font-semibold text-primary hover:underline"
+                href="/kundenkonto/bestellungen"
+              >
+                Alle Bestellungen ansehen{" "}
+                <ArrowRight aria-hidden="true" className="size-3.5" />
+              </Link>
+            </AccountSection>
+            <AccountSection id="profile" title="Kundenprofil">
+              <div className="grid gap-3 rounded-2xl border border-border bg-card p-5 sm:grid-cols-2">
+                <div>
+                  <p className="text-xs text-muted-foreground">Name</p>
+                  <p className="mt-1 text-sm font-semibold">{fullName}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">
+                    E-Mail-Adresse
+                  </p>
+                  <p className="mt-1 truncate text-sm font-semibold">
+                    {account.email}
+                  </p>
+                </div>
               </div>
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold">{fullName}</p>
-                <p className="mt-1 truncate text-[0.6875rem] text-muted-foreground">
-                  Kunde #{account.customerNumber}
+            </AccountSection>
+            <AccountSection id="addresses" title="Ihre Adresse">
+              {account.billingAddress ? (
+                <div className="rounded-2xl border border-border bg-card p-5 text-sm leading-6">
+                  <p className="font-semibold">
+                    {account.billingAddress.firstName}{" "}
+                    {account.billingAddress.lastName}
+                  </p>
+                  <p className="mt-2 text-muted-foreground">
+                    {account.billingAddress.street}
+                    <br />
+                    {account.billingAddress.zipcode}{" "}
+                    {account.billingAddress.city}
+                    {account.billingAddress.country && (
+                      <>
+                        <br />
+                        {account.billingAddress.country}
+                      </>
+                    )}
+                  </p>
+                </div>
+              ) : (
+                <p className="rounded-2xl border border-dashed border-border bg-card p-5 text-sm leading-6 text-muted-foreground">
+                  Für dieses Kundenkonto ist noch keine Adresse hinterlegt.
+                </p>
+              )}
+            </AccountSection>
+          </div>
+
+          <aside className="space-y-8 lg:pt-1">
+            <AccountSection id="notifications" title="Benachrichtigungen">
+              <div className="rounded-2xl bg-secondary p-5">
+                <BellRing aria-hidden="true" className="size-5 text-primary" />
+                <p className="mt-5 text-sm font-semibold">
+                  Konto- und Bestellupdates
+                </p>
+                <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                  Bestellbestätigungen, Lieferstatus und wichtige Änderungen
+                  senden wir Ihnen per E-Mail.
+                </p>
+                <Link
+                  className="mt-5 inline-flex items-center gap-2 text-xs font-semibold text-primary hover:underline"
+                  href="/kundenkonto/benachrichtigungen"
+                >
+                  Benachrichtigungen öffnen{" "}
+                  <ArrowRight aria-hidden="true" className="size-3.5" />
+                </Link>
+              </div>
+            </AccountSection>
+            <AccountSection id="advantages" title="Vorteile & Angebote">
+              <div className="rounded-2xl bg-secondary p-5">
+                <Gift aria-hidden="true" className="size-5 text-primary" />
+                <p className="mt-5 text-sm font-semibold">Exklusive Aktionen</p>
+                <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                  Entdecken Sie laufende Rabatte und neue Lieblingsstücke.
+                </p>
+                <Link
+                  className="mt-5 inline-flex items-center gap-2 text-xs font-semibold text-primary hover:underline"
+                  href="/rabatt-angebote"
+                >
+                  Angebote ansehen{" "}
+                  <ArrowRight aria-hidden="true" className="size-3.5" />
+                </Link>
+              </div>
+            </AccountSection>
+            <AccountWishlistSummary />
+            <AccountSection id="help" title="Hilfe & Kontakt">
+              <div className="rounded-2xl border border-border bg-card p-5">
+                <CircleHelp
+                  aria-hidden="true"
+                  className="size-5 text-primary"
+                />
+                <p className="mt-5 text-sm font-semibold">
+                  Wir helfen gern weiter
+                </p>
+                <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                  Antworten auf häufige Fragen und persönliche Beratung finden
+                  Sie im Servicebereich.
                 </p>
               </div>
-            </div>
-
-            <nav
-              aria-label="Navigation im Kundenkonto"
-              className="mt-7 grid gap-1 border-t border-border/80 pt-5 sm:grid-cols-2 lg:grid-cols-1"
-            >
-              {accountNavigation.map((item, index) => {
-                const Icon = item.icon;
-
-                return (
-                  <Link
-                    aria-current={index === 0 ? "page" : undefined}
-                    className={`flex min-h-10 items-center gap-3 rounded-lg px-3 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50 ${
-                      index === 0
-                        ? "bg-card text-foreground shadow-sm"
-                        : "text-muted-foreground hover:bg-card hover:text-foreground"
-                    }`}
-                    href={item.href}
-                    key={item.href}
-                  >
-                    <Icon
-                      aria-hidden="true"
-                      className={`size-4 ${index === 0 ? "text-primary" : ""}`}
-                    />
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </nav>
-
-            <form
-              action={logoutCustomer}
-              className="mt-5 border-t border-border/80 pt-5"
-            >
-              <Button
-                className="w-full justify-start px-3 text-xs"
-                type="submit"
-                variant="ghost"
-              >
+            </AccountSection>
+            <form action={logoutCustomer}>
+              <Button className="w-full" type="submit" variant="outline">
                 <LogOut aria-hidden="true" />
                 Abmelden
               </Button>
             </form>
           </aside>
-
-          <div className="pt-8 lg:max-w-4xl lg:pt-0 lg:pl-12 xl:pl-16">
-            <header>
-              <p className="text-[0.625rem] font-semibold tracking-[0.15em] text-primary uppercase">
-                Mein JVMöbel
-              </p>
-              <h1 className="mt-2 text-2xl font-semibold tracking-[-0.035em] sm:text-3xl">
-                Mein Kundenkonto
-              </h1>
-              <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
-                Verwalten Sie hier Ihre Kontaktdaten und sehen Sie Ihre
-                hinterlegte Standardadresse.
-              </p>
-            </header>
-
-            <section className="mt-7 flex flex-col gap-4 rounded-xl border border-border/80 bg-card p-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-              <div className="flex items-start gap-3">
-                <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-accent text-accent-foreground">
-                  <BadgeCheck aria-hidden="true" className="size-4" />
-                </span>
-                <div>
-                  <p className="text-sm font-semibold">Kundenkonto aktiv</p>
-                  <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                    Ihre persönlichen Angaben sind sicher hinterlegt.
-                  </p>
-                </div>
-              </div>
-              <span className="w-fit rounded-full bg-muted px-3 py-1.5 text-[0.6875rem] font-semibold whitespace-nowrap">
-                Kundennummer {account.customerNumber}
-              </span>
-            </section>
-
-            <div className="mt-8 grid gap-9">
-              <ProfileSection id="contact-data" title="Kontaktdaten">
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <ProfileField
-                    label="E-Mail-Adresse"
-                    value={account.email}
-                    verified
-                  />
-                  <ProfileField
-                    label="Kundennummer"
-                    value={account.customerNumber}
-                  />
-                </div>
-              </ProfileSection>
-
-              <ProfileSection id="personal-data" title="Persönliche Daten">
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <ProfileField label="Vorname" value={account.firstName} />
-                  <ProfileField label="Nachname" value={account.lastName} />
-                </div>
-              </ProfileSection>
-
-              <ProfileSection
-                eyebrow="Lieferung & Rechnung"
-                id="billing-address"
-                title="Standardadresse"
-              >
-                {account.billingAddress ? (
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <div className="sm:col-span-2">
-                      <ProfileField
-                        label="Straße und Hausnummer"
-                        value={account.billingAddress.street}
-                      />
-                    </div>
-                    <ProfileField
-                      label="Postleitzahl"
-                      value={account.billingAddress.zipcode ?? "—"}
-                    />
-                    <ProfileField
-                      label="Stadt"
-                      value={account.billingAddress.city}
-                    />
-                    <div className="sm:col-span-2">
-                      <ProfileField
-                        label="Land"
-                        value={account.billingAddress.country ?? "—"}
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <p className="rounded-xl border border-border/80 bg-card p-4 text-sm leading-6 text-muted-foreground">
-                    Für dieses Kundenkonto ist noch keine Standardadresse
-                    hinterlegt.
-                  </p>
-                )}
-              </ProfileSection>
-            </div>
-          </div>
         </div>
+
+        <section className="mt-12 rounded-3xl bg-accent px-6 py-8 sm:flex sm:items-center sm:justify-between sm:gap-8 sm:px-8">
+          <div>
+            <p className="flex items-center gap-2 text-xs font-semibold tracking-[0.12em] uppercase">
+              <Sparkles aria-hidden="true" className="size-4" />
+              Für Ihr Zuhause
+            </p>
+            <h2 className="mt-3 text-2xl font-semibold tracking-[-0.035em]">
+              Neue Ideen für Ihre Einrichtung
+            </h2>
+          </div>
+          <Button
+            className="mt-5 sm:mt-0"
+            nativeButton={false}
+            render={<Link href="/inspiration" />}
+          >
+            Inspiration entdecken <ArrowRight aria-hidden="true" />
+          </Button>
+        </section>
       </Container>
     </main>
   );

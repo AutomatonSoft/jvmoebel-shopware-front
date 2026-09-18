@@ -1,35 +1,28 @@
 # `jv-page-header`
 
-Page heading for an internal storefront page. The component renders the only
-`h1` owned by the CMS page body.
+## Скриншот
 
-## `slot.data`
+> Добавьте сюда скриншот компонента из Shopware.
 
-```json
-{
-  "eyebrow": "Preisvorteile für dein Zuhause",
-  "title": "Sale im Überblick",
-  "description": "Entdecke reduzierte Möbel, Wohnaccessoires und ausgewählte Bestseller zum Vorteilspreis."
-}
-```
+## Назначение
 
-## Field contract
+Заголовок внутренней страницы с необязательным надзаголовком и описанием.
 
-| Field         | Required | Rule                                     |
-| ------------- | -------- | ---------------------------------------- |
-| `title`       | yes      | Non-empty page heading rendered as `h1`. |
-| `eyebrow`     | no       | Short text displayed above the heading.  |
-| `description` | no       | Supporting plain text.                   |
+## Настройка в Shopware
 
-The whole element is omitted when `title` is missing or empty. The component
-does not accept HTML.
+| Поле         | Где отображается       | Обязательно |
+| ------------ | ---------------------- | ----------- |
+| Заголовок    | Главный `h1` страницы  | Да          |
+| Надзаголовок | Над главным заголовком | Нет         |
+| Описание     | Под главным заголовком | Нет         |
 
-Breadcrumbs, route metadata, layout, responsive behavior and visual styling
-remain owned by the frontend. A CMS page should contain at most one
-`jv-page-header` element so it does not render multiple primary headings.
+## Технический контракт Shopware
 
-## Shopware Administration
+- `slot.type`: `jv-page-header`; данные передаются в `slot.data`.
 
-Register the `jv-page-header` element and block. Editors should be able to
-change the title, eyebrow and description. The Administration form should
-mark `title` as required and resolve all values into `slot.data`.
+| Поле                     | Тип      | Правило                |
+| ------------------------ | -------- | ---------------------- |
+| `title`                  | `string` | Непустая строка.       |
+| `eyebrow`, `description` | `string` | Необязательные тексты. |
+
+При отсутствии `title` элемент не рендерится.

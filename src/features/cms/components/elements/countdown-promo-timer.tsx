@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
+import { useCountdownNow } from "@/features/offers/hooks/use-countdown-now";
 import {
   formatCountdownLabel,
   getCountdownParts,
@@ -15,19 +14,7 @@ const countdownUnits = [
 ] as const;
 
 export function CountdownPromoTimer({ endsAt }: { endsAt: string }) {
-  const [now, setNow] = useState<number | null>(null);
-
-  useEffect(() => {
-    function updateNow() {
-      setNow(Date.now());
-    }
-
-    updateNow();
-    const timer = window.setInterval(updateNow, 1000);
-
-    return () => window.clearInterval(timer);
-  }, []);
-
+  const now = useCountdownNow(endsAt);
   const parts = now === null ? null : getCountdownParts(endsAt, now);
 
   if (now !== null && !parts) {

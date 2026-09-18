@@ -22,6 +22,7 @@ describe("mapShopwareCustomerAccount", () => {
           name: "Deutschland",
           translated: { name: "Deutschland" },
         },
+        countryId: "country-id",
         firstName: "Greta",
         lastName: "Groß",
         street: "Neue Straße 12",
@@ -36,6 +37,7 @@ describe("mapShopwareCustomerAccount", () => {
       billingAddress: {
         city: "Düsseldorf",
         country: "Deutschland",
+        countryId: "country-id",
         firstName: "Greta",
         lastName: "Groß",
         street: "Neue Straße 12",
@@ -50,5 +52,31 @@ describe("mapShopwareCustomerAccount", () => {
 
   test("returns null when there is no authenticated customer", () => {
     expect(mapShopwareCustomerAccount(undefined)).toBeNull();
+  });
+
+  test("does not expose a checkout guest as a registered account", () => {
+    expect(
+      mapShopwareCustomerAccount({ guest: true } as ShopwareCustomer),
+    ).toBeNull();
+  });
+
+  test("hides the technical address used before checkout", () => {
+    const customer = {
+      customerNumber: "10043",
+      defaultBillingAddress: {
+        city: "Noch nicht angegeben",
+        firstName: "Greta",
+        lastName: "Groß",
+        street: "Noch nicht angegeben",
+        zipcode: "00000",
+      },
+      email: "greta@example.com",
+      firstName: "Greta",
+      lastName: "Groß",
+    } as ShopwareCustomer;
+
+    expect(
+      mapShopwareCustomerAccount(customer)?.billingAddress,
+    ).toBeUndefined();
   });
 });

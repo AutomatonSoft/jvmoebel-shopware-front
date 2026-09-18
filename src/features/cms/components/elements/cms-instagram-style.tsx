@@ -3,20 +3,13 @@ import Image from "next/image";
 
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsInstagramStyleData } from "@/features/cms/contracts/instagram-style";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsInstagramStyleData } from "@/features/cms/contracts/instagram-style";
 
-export function CmsInstagramStyle({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsInstagramStyleData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { caption, handle, image, link } = result.data;
+export function CmsInstagramStyle({
+  data,
+}: CmsElementProps<CmsInstagramStyleData>) {
+  const { caption, handle, image, link } = data;
 
   return (
     <Container
@@ -29,7 +22,7 @@ export function CmsInstagramStyle({ slot }: CmsSlotComponentProps) {
         className="group grid overflow-hidden rounded-3xl border bg-card shadow-[0_22px_55px_-42px_rgba(21,21,19,0.7)] focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:ring-offset-4 focus-visible:outline-none md:grid-cols-[minmax(18rem,0.9fr)_minmax(0,1.1fr)]"
         href={link.url}
       >
-        <span className="relative block aspect-square min-h-72 overflow-hidden bg-muted md:aspect-auto md:min-h-[30rem]">
+        <span className="relative block aspect-square min-h-72 overflow-hidden bg-muted md:aspect-auto md:min-h-120">
           <Image
             alt={image.alt}
             className="object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.035]"

@@ -12,6 +12,7 @@ import {
   formatCountdownValue,
   getCountdownParts,
 } from "@/features/offers/model/countdown";
+import { useCountdownNow } from "@/features/offers/hooks/use-countdown-now";
 import { cn } from "@/lib/utils";
 
 type ScrollState = Readonly<{
@@ -24,13 +25,10 @@ const initialScrollState: ScrollState = {
   canScrollForward: false,
 };
 
-function OfferCountdown({
-  endsAt,
-  now,
-}: {
-  endsAt: string;
-  now: number | null;
-}) {
+const maximumTimeoutDelay = 2_147_483_647;
+
+function OfferCountdown({ endsAt }: { endsAt: string }) {
+  const now = useCountdownNow(endsAt);
   const parts = now === null ? null : getCountdownParts(endsAt, now);
 
   return (
@@ -55,15 +53,9 @@ function OfferCountdown({
   );
 }
 
-function OfferCard({
-  now,
-  offer,
-}: {
-  now: number | null;
-  offer: CmsOfferRailData["offers"][number];
-}) {
+function OfferCard({ offer }: { offer: CmsOfferRailData["offers"][number] }) {
   return (
-    <article className="group relative isolate aspect-[3/4] overflow-hidden rounded-2xl bg-foreground text-white shadow-[0_18px_45px_-30px_rgba(21,21,19,0.72)]">
+    <article className="group relative isolate aspect-3/4 overflow-hidden rounded-2xl bg-foreground text-white shadow-[0_18px_45px_-30px_rgba(21,21,19,0.72)]">
       <Image
         alt={offer.image.alt}
         className="object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.035]"
@@ -81,7 +73,7 @@ function OfferCard({
       />
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 p-5 sm:p-6">
-        {offer.endsAt && <OfferCountdown endsAt={offer.endsAt} now={now} />}
+        {offer.endsAt && <OfferCountdown endsAt={offer.endsAt} />}
         <h3 className="mt-2 text-2xl leading-tight font-semibold tracking-[-0.035em] text-balance sm:text-3xl">
           {offer.title}
         </h3>
@@ -109,43 +101,50 @@ function OfferCard({
 
 export function OfferRailCarousel({ data }: { data: CmsOfferRailData }) {
   const railRef = useRef<HTMLUListElement>(null);
-  const [now, setNow] = useState<number | null>(null);
+  const [expirationTime, setExpirationTime] = useState<number | null>(null);
   const [scrollState, setScrollState] =
     useState<ScrollState>(initialScrollState);
-  const deadlines = data.offers.flatMap((offer) =>
-    offer.endsAt ? [Date.parse(offer.endsAt)] : [],
-  );
-  const latestDeadline = deadlines.length > 0 ? Math.max(...deadlines) : null;
   const activeOffers = data.offers.filter(
-    (offer) => !offer.endsAt || now === null || Date.parse(offer.endsAt) > now,
+    (offer) =>
+      !offer.endsAt ||
+      expirationTime === null ||
+      Date.parse(offer.endsAt) > expirationTime,
   );
+  const nextDeadline = activeOffers.reduce<number | null>((nearest, offer) => {
+    if (!offer.endsAt) {
+      return nearest;
+    }
+
+    const deadline = Date.parse(offer.endsAt);
+
+    return nearest === null || deadline < nearest ? deadline : nearest;
+  }, null);
   const showControls =
     scrollState.canScrollBack || scrollState.canScrollForward;
 
   useEffect(() => {
-    if (latestDeadline === null) {
+    const initialTick = window.setTimeout(() => {
+      setExpirationTime(Date.now());
+    }, 0);
+
+    return () => window.clearTimeout(initialTick);
+  }, [data.offers]);
+
+  useEffect(() => {
+    if (expirationTime === null || nextDeadline === null) {
       return;
     }
 
-    const deadline = latestDeadline;
+    const delay = Math.min(
+      Math.max(nextDeadline - Date.now() + 50, 0),
+      maximumTimeoutDelay,
+    );
+    const timer = window.setTimeout(() => {
+      setExpirationTime(Date.now());
+    }, delay);
 
-    function updateNow() {
-      const currentNow = Date.now();
-      setNow(currentNow);
-
-      if (currentNow >= deadline) {
-        window.clearInterval(timer);
-      }
-    }
-
-    const timer = window.setInterval(updateNow, 1000);
-    const initialTick = window.setTimeout(updateNow, 0);
-
-    return () => {
-      window.clearInterval(timer);
-      window.clearTimeout(initialTick);
-    };
-  }, [latestDeadline]);
+    return () => window.clearTimeout(timer);
+  }, [expirationTime, nextDeadline]);
 
   useEffect(() => {
     const rail = railRef.current;
@@ -154,26 +153,50 @@ export function OfferRailCarousel({ data }: { data: CmsOfferRailData }) {
       return;
     }
 
+    const railElement: HTMLUListElement = rail;
+    let animationFrame: number | null = null;
+
     function updateScrollState() {
-      if (!rail) {
-        return;
-      }
+      animationFrame = null;
 
-      const maximumScrollLeft = rail.scrollWidth - rail.clientWidth;
+      const maximumScrollLeft =
+        railElement.scrollWidth - railElement.clientWidth;
+      const canScrollBack = railElement.scrollLeft > 2;
+      const canScrollForward = railElement.scrollLeft < maximumScrollLeft - 2;
 
-      setScrollState({
-        canScrollBack: rail.scrollLeft > 2,
-        canScrollForward: rail.scrollLeft < maximumScrollLeft - 2,
+      setScrollState((currentState) => {
+        if (
+          currentState.canScrollBack === canScrollBack &&
+          currentState.canScrollForward === canScrollForward
+        ) {
+          return currentState;
+        }
+
+        return { canScrollBack, canScrollForward };
       });
     }
 
-    updateScrollState();
-    rail.addEventListener("scroll", updateScrollState, { passive: true });
-    window.addEventListener("resize", updateScrollState);
+    function requestScrollStateUpdate() {
+      if (animationFrame !== null) {
+        return;
+      }
+
+      animationFrame = window.requestAnimationFrame(updateScrollState);
+    }
+
+    requestScrollStateUpdate();
+    railElement.addEventListener("scroll", requestScrollStateUpdate, {
+      passive: true,
+    });
+    window.addEventListener("resize", requestScrollStateUpdate);
 
     return () => {
-      rail.removeEventListener("scroll", updateScrollState);
-      window.removeEventListener("resize", updateScrollState);
+      railElement.removeEventListener("scroll", requestScrollStateUpdate);
+      window.removeEventListener("resize", requestScrollStateUpdate);
+
+      if (animationFrame !== null) {
+        window.cancelAnimationFrame(animationFrame);
+      }
     };
   }, [activeOffers.length]);
 
@@ -244,12 +267,12 @@ export function OfferRailCarousel({ data }: { data: CmsOfferRailData }) {
 
       <ul
         aria-label={data.title}
-        className="-mx-4 grid snap-x snap-mandatory scroll-px-4 auto-cols-[82vw] grid-flow-col gap-3 overflow-x-auto overscroll-x-contain px-4 pb-5 [scrollbar-width:none] sm:-mx-8 sm:scroll-px-8 sm:auto-cols-[minmax(18rem,45vw)] sm:gap-4 sm:px-8 lg:mx-0 lg:scroll-px-0 lg:auto-cols-[calc((100%-2rem)/3)] lg:px-0 [&::-webkit-scrollbar]:hidden"
+        className="-mx-4 grid snap-x snap-mandatory scroll-px-4 auto-cols-[82vw] grid-flow-col gap-3 overflow-x-auto overscroll-x-contain px-4 pb-5 scrollbar-none sm:-mx-8 sm:scroll-px-8 sm:auto-cols-[minmax(18rem,45vw)] sm:gap-4 sm:px-8 lg:mx-0 lg:scroll-px-0 lg:auto-cols-[calc((100%-2rem)/3)] lg:px-0 [&::-webkit-scrollbar]:hidden"
         ref={railRef}
       >
         {activeOffers.map((offer) => (
           <li className="snap-start" key={offer.id}>
-            <OfferCard now={now} offer={offer} />
+            <OfferCard offer={offer} />
           </li>
         ))}
       </ul>

@@ -5,30 +5,54 @@ import type { components } from "@shopware/api-client/store-api-types";
 import type {
   CustomerAccountSummary,
   CustomerLogin,
+  CustomerOrderDetail,
+  CustomerOrderSummary,
   CustomerRegistration,
   RegistrationOptions,
 } from "@/features/customer-account/model/account";
 import type { ShopwareClient } from "@/integrations/shopware/client";
 import { getShopwareContext } from "@/integrations/shopware/context";
+import { pendingCustomerAddressValues } from "@/integrations/shopware/customer-address";
 import { mapShopwareCustomerAccount } from "@/integrations/shopware/mappers/customer-account";
+import { mapShopwareCustomerOrders } from "@/integrations/shopware/mappers/customer-orders";
 
 export async function getShopwareRegistrationOptions(
   client: ShopwareClient,
 ): Promise<RegistrationOptions> {
-  const countryResponse = await client.invoke("readCountry post /country", {
-    body: {
-      filter: [{ field: "active", type: "equals", value: true }],
-      limit: 100,
-      sort: [{ field: "position", order: "ASC" }],
-    },
-    fetchOptions: { cache: "no-store" },
-  });
+  const [context, salutationResponse] = await Promise.all([
+    getShopwareContext(client),
+    client.invoke("readSalutation post /salutation", {
+      body: {
+        limit: 100,
+        sort: [{ field: "position", order: "ASC" }],
+      },
+      fetchOptions: { cache: "no-store" },
+    }),
+  ]);
+
+  const salutationOrder = new Map([
+    ["mrs", 0],
+    ["mr", 1],
+    ["not_specified", 2],
+  ]);
 
   return {
-    countries: (countryResponse.data.elements ?? []).map((country) => ({
-      id: country.id,
-      label: country.translated.name,
-    })),
+    defaultCountryId: context.salesChannel.countryId,
+    salutations: (salutationResponse.data.elements ?? [])
+      .map((salutation) => ({
+        id: salutation.id,
+        key: salutation.salutationKey,
+        label:
+          salutation.salutationKey === "not_specified"
+            ? "Neutrale Anrede"
+            : salutation.translated.displayName || salutation.displayName,
+      }))
+      .sort(
+        (left, right) =>
+          (salutationOrder.get(left.key) ?? 99) -
+          (salutationOrder.get(right.key) ?? 99),
+      )
+      .map(({ id, label }) => ({ id, label })),
   };
 }
 
@@ -59,25 +83,40 @@ export async function registerShopwareCustomer(
   }
 
   const billingAddress = {
-    city: registration.city,
+    city: pendingCustomerAddressValues.city,
+    company: registration.company,
     countryId: registration.countryId,
     firstName: registration.firstName,
     lastName: registration.lastName,
-    street: registration.street,
-    zipcode: registration.zipcode,
+    salutationId: registration.salutationId,
+    street: pendingCustomerAddressValues.street,
+    zipcode: pendingCustomerAddressValues.zipcode,
   } as components["schemas"]["CustomerAddress"];
 
+  const commonBody = {
+    acceptedDataProtection: registration.acceptedDataProtection,
+    billingAddress,
+    email: registration.email,
+    firstName: registration.firstName,
+    lastName: registration.lastName,
+    password: registration.password,
+    salutationId: registration.salutationId,
+    storefrontUrl,
+  };
+
   await client.invoke("register post /account/register", {
-    body: {
-      acceptedDataProtection: registration.acceptedDataProtection,
-      accountType: "private",
-      billingAddress,
-      email: registration.email,
-      firstName: registration.firstName,
-      lastName: registration.lastName,
-      password: registration.password,
-      storefrontUrl,
-    },
+    body:
+      registration.accountType === "business"
+        ? {
+            ...commonBody,
+            accountType: "business",
+            company: registration.company!,
+            vatIds: [registration.vatId!],
+          }
+        : {
+            ...commonBody,
+            accountType: "private",
+          },
     fetchOptions: { cache: "no-store" },
   });
 }
@@ -88,6 +127,75 @@ export async function getShopwareCustomerAccount(
   const context = await getShopwareContext(client);
 
   return mapShopwareCustomerAccount(context.customer);
+}
+
+export async function getShopwareCustomerOrders(
+  client: ShopwareClient,
+  limit = 3,
+): Promise<CustomerOrderSummary[]> {
+  const response = await client.invoke("readOrder post /order", {
+    body: {
+      associations: { stateMachineState: {} },
+      limit,
+      sort: [{ field: "orderDateTime", order: "DESC" }],
+    },
+    fetchOptions: { cache: "no-store" },
+  });
+
+  return mapShopwareCustomerOrders(response.data.orders.elements);
+}
+
+export async function getShopwareCustomerOrderDetail(
+  client: ShopwareClient,
+  number: string,
+): Promise<CustomerOrderDetail | null> {
+  const response = await client.invoke("readOrder post /order", {
+    body: {
+      associations: {
+        deliveries: {
+          associations: { shippingMethod: {}, shippingOrderAddress: {} },
+        },
+        lineItems: {},
+        stateMachineState: {},
+        transactions: { associations: { paymentMethod: {} } },
+      },
+      limit: 100,
+      sort: [{ field: "orderDateTime", order: "DESC" }],
+    },
+    fetchOptions: { cache: "no-store" },
+  });
+  const order = response.data.orders.elements.find(
+    (item) => (item.orderNumber || item.id) === number,
+  );
+  if (!order) return null;
+  const [summary] = mapShopwareCustomerOrders([order]);
+  const delivery = order.deliveries?.[0];
+  const address = delivery?.shippingOrderAddress;
+  const transaction = order.transactions?.[0];
+
+  return {
+    ...summary,
+    delivery:
+      delivery?.shippingMethod?.translated.name ||
+      delivery?.shippingMethod?.name,
+    items: (order.lineItems ?? []).map((item) => ({
+      label: item.label || "Artikel",
+      quantity: item.quantity,
+      total: (item.priceDefinition?.price ?? 0) * item.quantity,
+    })),
+    payment:
+      transaction?.paymentMethod?.translated.name ||
+      transaction?.paymentMethod?.name,
+    shippingAddress: address
+      ? {
+          city: address.city,
+          firstName: address.firstName,
+          lastName: address.lastName,
+          street: address.street,
+          zipcode: address.zipcode,
+        }
+      : undefined,
+  };
 }
 
 export async function logoutShopwareCustomer(client: ShopwareClient) {

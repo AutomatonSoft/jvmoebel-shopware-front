@@ -1,4 +1,5 @@
-import type { ShopProductListing } from "@/features/catalog/model/product-listing";
+import type { ShopProductListingPage } from "@/features/catalog/model/product-listing-page";
+import type { CmsPage } from "@/features/cms/model/page";
 import type { StoreNavigationItem } from "@/features/storefront-shell/model/navigation";
 
 export type CategoryBreadcrumb = Readonly<{
@@ -18,5 +19,12 @@ export type ShopCategoryPage = Readonly<{
     name: string;
   }>;
   children: readonly StoreNavigationItem[];
-  listing: ShopProductListing | null;
+  cmsPage: CmsPage | null;
+  listing: ShopProductListingPage | null;
 }>;
+
+export type ShopCategoryPageContent = Readonly<
+  Omit<ShopCategoryPage, "listing"> & {
+    hasProductListing: boolean;
+  }
+>;

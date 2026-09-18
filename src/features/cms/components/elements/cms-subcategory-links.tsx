@@ -2,21 +2,15 @@ import { ArrowRight } from "lucide-react";
 
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsSubcategoryLinksData } from "@/features/cms/contracts/subcategory-links";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsSubcategoryLinksData } from "@/features/cms/contracts/subcategory-links";
 
-export function CmsSubcategoryLinks({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsSubcategoryLinksData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { links, title } = result.data;
-  const headingId = `subcategory-links-${slot.id}`;
+export function CmsSubcategoryLinks({
+  data,
+  id,
+}: CmsElementProps<CmsSubcategoryLinksData>) {
+  const { links, title } = data;
+  const headingId = `subcategory-links-${id}`;
 
   return (
     <Container

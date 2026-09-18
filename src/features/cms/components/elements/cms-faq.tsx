@@ -1,22 +1,13 @@
 import { ChevronDown } from "lucide-react";
 
 import { Container } from "@/components/ui/container";
-import type { CmsSlotComponentProps } from "@/features/cms/components/cms-page-renderer";
-import { parseCmsFaqData } from "@/features/cms/contracts/faq";
+import type { CmsElementProps } from "@/features/cms/components/cms-element";
+import type { CmsFaqData } from "@/features/cms/contracts/faq";
 import { sanitizeCmsHtml } from "@/features/cms/lib/sanitize-html";
-import { reportCmsContractIssues } from "@/features/cms/server/report-rendering-issue";
 
-export function CmsFaq({ slot }: CmsSlotComponentProps) {
-  const result = parseCmsFaqData(slot.data);
-
-  reportCmsContractIssues(slot, result.issues);
-
-  if (!result.data) {
-    return null;
-  }
-
-  const { description, eyebrow, items, title } = result.data;
-  const headingId = `faq-${slot.id}`;
+export function CmsFaq({ data, id }: CmsElementProps<CmsFaqData>) {
+  const { description, eyebrow, items, title } = data;
+  const headingId = `faq-${id}`;
 
   return (
     <Container

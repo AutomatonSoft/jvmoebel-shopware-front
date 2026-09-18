@@ -7,15 +7,40 @@ import type { ShopwareClient } from "@/integrations/shopware/client";
 import { getShopwareContext } from "@/integrations/shopware/context";
 
 type ShopwareCart = components["schemas"]["Cart"];
+type ShopwareLineItem = components["schemas"]["LineItem"];
 
-function getCartMessages(errors: ShopwareCart["errors"]) {
+export type ShopwareProductAddResult = Readonly<{
+  messages: readonly string[];
+  succeeded: boolean;
+}>;
+
+function getCartErrors(errors: ShopwareCart["errors"]) {
   if (!errors) {
     return [];
   }
 
-  const entries = Array.isArray(errors) ? errors : Object.values(errors);
+  return Array.isArray(errors) ? errors : Object.values(errors);
+}
 
-  return entries.map((error) => error.message).filter(Boolean);
+function getCartMessages(errors: ShopwareCart["errors"]) {
+  return getCartErrors(errors)
+    .filter((error) => error.level >= 10)
+    .map((error) => error.message)
+    .filter(Boolean);
+}
+
+function hasProductLineItem(
+  lineItems: readonly ShopwareLineItem[] | undefined,
+  productId: string,
+): boolean {
+  return Boolean(
+    lineItems?.some(
+      (lineItem) =>
+        (lineItem.type === "product" &&
+          (lineItem.referencedId === productId || lineItem.id === productId)) ||
+        hasProductLineItem(lineItem.children, productId),
+    ),
+  );
 }
 
 function getDeliveryLabel(
@@ -153,18 +178,29 @@ export async function addShopwarePromotion(
 export async function addShopwareProduct(
   client: ShopwareClient,
   productId: string,
-) {
-  await client.invoke("addLineItem post /checkout/cart/line-item", {
-    body: {
-      items: [
-        {
-          id: productId,
-          quantity: 1,
-          referencedId: productId,
-          type: "product",
-        },
-      ],
+): Promise<ShopwareProductAddResult> {
+  const response = await client.invoke(
+    "addLineItem post /checkout/cart/line-item",
+    {
+      body: {
+        items: [
+          {
+            id: productId,
+            quantity: 1,
+            referencedId: productId,
+            type: "product",
+          },
+        ],
+      },
+      fetchOptions: { cache: "no-store" },
     },
-    fetchOptions: { cache: "no-store" },
-  });
+  );
+  const messages = getCartMessages(response.data.errors);
+
+  return {
+    messages,
+    succeeded:
+      messages.length === 0 &&
+      hasProductLineItem(response.data.lineItems, productId),
+  };
 }

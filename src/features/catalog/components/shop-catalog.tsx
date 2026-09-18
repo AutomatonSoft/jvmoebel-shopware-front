@@ -3,6 +3,7 @@
 import { Dialog } from "@base-ui/react/dialog";
 import { SlidersHorizontal, X } from "lucide-react";
 import Link from "next/link";
+import { useSyncExternalStore } from "react";
 
 import { ProductFilterPanel } from "@/features/catalog/components/product-filter-panel";
 import { ShopProductResults } from "@/features/catalog/components/product-results";
@@ -21,6 +22,24 @@ import type { ProductFilterOption } from "@/features/catalog/model/filter-option
 import type { ShopProductSort } from "@/features/catalog/model/filter-products";
 import type { ShopProductListing } from "@/features/catalog/model/product-listing";
 import type { ShopProductListingPage } from "@/features/catalog/model/product-listing-page";
+
+const desktopCatalogQuery = "(min-width: 64rem)";
+
+function subscribeToDesktopCatalog(onChange: () => void) {
+  const mediaQuery = window.matchMedia(desktopCatalogQuery);
+
+  mediaQuery.addEventListener("change", onChange);
+
+  return () => mediaQuery.removeEventListener("change", onChange);
+}
+
+function getDesktopCatalogSnapshot() {
+  return window.matchMedia(desktopCatalogQuery).matches;
+}
+
+function getServerDesktopCatalogSnapshot() {
+  return false;
+}
 
 export type ShopCatalogProps = {
   hideHeader?: boolean;
@@ -77,6 +96,11 @@ function ShopCatalogContent({
   isLoading: boolean;
   listing: ShopProductListing;
 }) {
+  const isDesktopCatalog = useSyncExternalStore(
+    subscribeToDesktopCatalog,
+    getDesktopCatalogSnapshot,
+    getServerDesktopCatalogSnapshot,
+  );
   const {
     clearFilters,
     filterPanelProps,
@@ -122,7 +146,7 @@ function ShopCatalogContent({
 
       <div className="grid gap-8 pt-8 lg:grid-cols-[13.75rem_minmax(0,1fr)] lg:gap-10 xl:gap-12">
         <aside className="sticky top-24 hidden max-h-[calc(100dvh-7rem)] self-start overflow-y-auto rounded-xl border bg-card/70 p-4 scrollbar-width:none lg:block [&::-webkit-scrollbar]:hidden">
-          <ProductFilterPanel {...filterPanelProps} />
+          {isDesktopCatalog && <ProductFilterPanel {...filterPanelProps} />}
         </aside>
 
         <section aria-label="Produktliste" className="min-w-0">
@@ -130,64 +154,70 @@ function ShopCatalogContent({
             <span className="text-xs font-medium text-muted-foreground">
               {paginationProps.totalProducts} Produkte
             </span>
-            <Dialog.Root>
-              <Dialog.Trigger
-                render={
-                  <Button className="lg:hidden" size="sm" variant="secondary" />
-                }
-              >
-                <SlidersHorizontal className="size-4" />
-                Filter
-                {activeFilterCount > 0 && (
-                  <span className="flex size-5 items-center justify-center rounded-full bg-primary text-[0.625rem] font-bold text-primary-foreground">
-                    {activeFilterCount}
-                  </span>
-                )}
-              </Dialog.Trigger>
-              <Dialog.Portal>
-                <Dialog.Backdrop className="fixed inset-0 z-60 min-h-dvh bg-foreground/45 transition-opacity duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-[-webkit-touch-callout:none]:absolute" />
-                <Dialog.Viewport className="fixed inset-0 z-70 flex min-h-dvh justify-end">
-                  <Dialog.Popup className="flex h-dvh w-[min(24rem,92vw)] flex-col rounded-l-2xl border-l bg-background shadow-2xl transition-transform ease-out data-ending-style:translate-x-full data-starting-style:translate-x-full">
-                    <div className="flex items-start justify-between gap-4 border-b px-5 py-5">
-                      <div>
-                        <Dialog.Title className="text-2xl font-semibold tracking-tight">
-                          Filter
-                        </Dialog.Title>
-                        <Dialog.Description className="mt-1 text-sm text-muted-foreground">
-                          Möbelkollektion eingrenzen.
-                        </Dialog.Description>
+            {!isDesktopCatalog && (
+              <Dialog.Root>
+                <Dialog.Trigger
+                  render={
+                    <Button
+                      className="lg:hidden"
+                      size="sm"
+                      variant="secondary"
+                    />
+                  }
+                >
+                  <SlidersHorizontal className="size-4" />
+                  Filter
+                  {activeFilterCount > 0 && (
+                    <span className="flex size-5 items-center justify-center rounded-full bg-primary text-[0.625rem] font-bold text-primary-foreground">
+                      {activeFilterCount}
+                    </span>
+                  )}
+                </Dialog.Trigger>
+                <Dialog.Portal>
+                  <Dialog.Backdrop className="fixed inset-0 z-60 min-h-dvh bg-foreground/45 transition-opacity duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0 supports-[-webkit-touch-callout:none]:absolute" />
+                  <Dialog.Viewport className="fixed inset-0 z-70 flex min-h-dvh justify-end">
+                    <Dialog.Popup className="flex h-dvh w-[min(24rem,92vw)] flex-col rounded-l-2xl border-l bg-background shadow-2xl transition-transform ease-out data-ending-style:translate-x-full data-starting-style:translate-x-full">
+                      <div className="flex items-start justify-between gap-4 border-b px-5 py-5">
+                        <div>
+                          <Dialog.Title className="text-2xl font-semibold tracking-tight">
+                            Filter
+                          </Dialog.Title>
+                          <Dialog.Description className="mt-1 text-sm text-muted-foreground">
+                            Möbelkollektion eingrenzen.
+                          </Dialog.Description>
+                        </div>
+                        <Dialog.Close
+                          aria-label="Filter schließen"
+                          render={
+                            <Button
+                              className="rounded-full"
+                              size="icon-lg"
+                              type="button"
+                              variant="ghost"
+                            />
+                          }
+                        >
+                          <X className="size-5" />
+                        </Dialog.Close>
                       </div>
-                      <Dialog.Close
-                        aria-label="Filter schließen"
-                        render={
-                          <Button
-                            className="rounded-full"
-                            size="icon-lg"
-                            type="button"
-                            variant="ghost"
-                          />
-                        }
-                      >
-                        <X className="size-5" />
-                      </Dialog.Close>
-                    </div>
-                    <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5">
-                      <ProductFilterPanel {...filterPanelProps} />
-                    </div>
-                    <div className="border-t p-5">
-                      <Dialog.Close
-                        render={<Button className="w-full" size="lg" />}
-                      >
-                        {paginationProps.totalProducts}{" "}
-                        {paginationProps.totalProducts === 1
-                          ? "Produkt anzeigen"
-                          : "Produkte anzeigen"}
-                      </Dialog.Close>
-                    </div>
-                  </Dialog.Popup>
-                </Dialog.Viewport>
-              </Dialog.Portal>
-            </Dialog.Root>
+                      <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5">
+                        <ProductFilterPanel {...filterPanelProps} />
+                      </div>
+                      <div className="border-t p-5">
+                        <Dialog.Close
+                          render={<Button className="w-full" size="lg" />}
+                        >
+                          {paginationProps.totalProducts}{" "}
+                          {paginationProps.totalProducts === 1
+                            ? "Produkt anzeigen"
+                            : "Produkte anzeigen"}
+                        </Dialog.Close>
+                      </div>
+                    </Dialog.Popup>
+                  </Dialog.Viewport>
+                </Dialog.Portal>
+              </Dialog.Root>
+            )}
 
             <div className="ml-auto flex items-center gap-2 text-xs">
               <span className="hidden text-muted-foreground sm:inline">

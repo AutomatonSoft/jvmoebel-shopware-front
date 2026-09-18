@@ -32,10 +32,12 @@ describe("parseCmsHomeEditorialData", () => {
       "first-section",
       "second",
     ]);
-    expect(result.data?.introduction).toEqual([
-      "First introduction.",
-      "Second introduction.",
-    ]);
+    expect(
+      result.data?.introduction.map((paragraph) => paragraph.content),
+    ).toEqual(["First introduction.", "Second introduction."]);
+    expect(
+      new Set(result.data?.introduction.map((paragraph) => paragraph.id)).size,
+    ).toBe(2);
   });
 
   test("omits invalid paragraphs and sections", () => {
@@ -50,7 +52,9 @@ describe("parseCmsHomeEditorialData", () => {
 
     expect(result.data?.sections).toHaveLength(1);
     expect(result.data?.appearance).toBe("card");
-    expect(result.data?.introduction).toEqual(["Valid introduction."]);
+    expect(
+      result.data?.introduction.map((paragraph) => paragraph.content),
+    ).toEqual(["Valid introduction."]);
     expect(result.issues.map((issue) => issue.path)).toEqual([
       "introduction.1",
       "sections.1.paragraphs",

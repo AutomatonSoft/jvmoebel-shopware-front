@@ -8,13 +8,17 @@ import { ProductSpecifications } from "@/features/catalog/components/product-spe
 import { ShopProductCard } from "@/features/catalog/components/shop-product-card";
 import type { ShopProductPageData } from "@/features/catalog/model/product-detail";
 
-export type ProductDetailProps = ShopProductPageData;
+export type ProductDetailProps = ShopProductPageData &
+  Readonly<{
+    variantSelectionFailed?: boolean;
+  }>;
 
 export function ProductDetail({
   currency,
   locale,
   product,
   relatedProducts,
+  variantSelectionFailed,
 }: ProductDetailProps) {
   return (
     <main className="flex-1">
@@ -48,6 +52,7 @@ export function ProductDetail({
             currency={currency}
             locale={locale}
             product={product}
+            variantSelectionFailed={variantSelectionFailed}
           />
         </section>
 
