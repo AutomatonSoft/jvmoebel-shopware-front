@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import type { ShopProductListing } from "@/features/catalog/model/product-listing";
 
@@ -31,7 +31,11 @@ export function useWishlistRecommendations(
     const controller = new AbortController();
 
     async function loadWishlistRecommendations() {
-      setRequest({ productIdsKey, status: "loading" });
+      setRequest((currentRequest) => ({
+        productIdsKey,
+        response: currentRequest.response,
+        status: "loading",
+      }));
 
       try {
         const response = await fetch("/bff/wishlist/recommendations", {
@@ -59,7 +63,11 @@ export function useWishlistRecommendations(
           return;
         }
 
-        setRequest({ productIdsKey, status: "error" });
+        setRequest((currentRequest) => ({
+          productIdsKey,
+          response: currentRequest.response,
+          status: "error",
+        }));
       }
     }
 
@@ -68,11 +76,23 @@ export function useWishlistRecommendations(
     return () => controller.abort();
   }, [isWishlistReady, productIds, productIdsKey]);
 
-  const hasCurrentResponse = request.productIdsKey === productIdsKey;
+  const listing = useMemo(() => {
+    if (!request.response) {
+      return undefined;
+    }
+
+    const excludedProductIds = new Set(productIds);
+
+    return {
+      ...request.response,
+      products: request.response.products.filter(
+        (product) => !excludedProductIds.has(product.id),
+      ),
+    };
+  }, [productIds, request.response]);
 
   return {
-    isLoading:
-      isWishlistReady && (!hasCurrentResponse || request.status === "loading"),
-    listing: hasCurrentResponse ? request.response : undefined,
+    isLoading: isWishlistReady && !listing && request.status !== "error",
+    listing,
   };
 }

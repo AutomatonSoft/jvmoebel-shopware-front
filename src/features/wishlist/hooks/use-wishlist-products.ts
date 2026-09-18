@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import type { ShopProductListing } from "@/features/catalog/model/product-listing";
 
@@ -32,7 +32,11 @@ export function useWishlistProducts(
     const controller = new AbortController();
 
     async function loadWishlistProducts() {
-      setRequest({ productIdsKey, status: "loading" });
+      setRequest((currentRequest) => ({
+        productIdsKey,
+        response: currentRequest.response,
+        status: "loading",
+      }));
 
       try {
         const response = await fetch("/bff/wishlist/products", {
@@ -58,12 +62,13 @@ export function useWishlistProducts(
           return;
         }
 
-        setRequest({
+        setRequest((currentRequest) => ({
           errorMessage:
             "Die Wunschliste konnte nicht geladen werden. Bitte versuchen Sie es erneut.",
           productIdsKey,
+          response: currentRequest.response,
           status: "error",
-        });
+        }));
       }
     }
 
@@ -72,17 +77,32 @@ export function useWishlistProducts(
     return () => controller.abort();
   }, [isWishlistReady, productIds, productIdsKey]);
 
-  const hasCurrentResponse = request.productIdsKey === productIdsKey;
+  const listing = useMemo(() => {
+    if (!request.response) {
+      return undefined;
+    }
+
+    const visibleProductIds = new Set(productIds);
+
+    return {
+      ...request.response,
+      products: request.response.products.filter((product) =>
+        visibleProductIds.has(product.id),
+      ),
+    };
+  }, [productIds, request.response]);
+  const hasCurrentRequest = request.productIdsKey === productIdsKey;
 
   return {
     errorMessage:
-      hasCurrentResponse && request.status === "error"
+      hasCurrentRequest && request.status === "error" && !listing
         ? request.errorMessage
         : undefined,
     isLoading:
       isWishlistReady &&
       productIds.length > 0 &&
-      (!hasCurrentResponse || request.status === "loading"),
-    listing: hasCurrentResponse ? request.response : undefined,
+      !listing &&
+      request.status !== "error",
+    listing,
   };
 }
