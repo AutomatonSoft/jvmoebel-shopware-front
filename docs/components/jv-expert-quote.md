@@ -2,7 +2,7 @@
 
 ## Скриншот
 
-> Добавьте сюда скриншот компонента из Shopware.
+![Скриншот Component](./screenshots/jv-expert-quote.png)
 
 ## Назначение
 
