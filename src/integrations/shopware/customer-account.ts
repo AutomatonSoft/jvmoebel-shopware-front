@@ -5,6 +5,7 @@ import type { components } from "@shopware/api-client/store-api-types";
 import type {
   CustomerAccountSummary,
   CustomerLogin,
+  CustomerOrderSummary,
   CustomerRegistration,
   RegistrationOptions,
 } from "@/features/customer-account/model/account";
@@ -12,6 +13,7 @@ import type { ShopwareClient } from "@/integrations/shopware/client";
 import { getShopwareContext } from "@/integrations/shopware/context";
 import { pendingCustomerAddressValues } from "@/integrations/shopware/customer-address";
 import { mapShopwareCustomerAccount } from "@/integrations/shopware/mappers/customer-account";
+import { mapShopwareCustomerOrders } from "@/integrations/shopware/mappers/customer-orders";
 
 export async function getShopwareRegistrationOptions(
   client: ShopwareClient,
@@ -124,6 +126,21 @@ export async function getShopwareCustomerAccount(
   const context = await getShopwareContext(client);
 
   return mapShopwareCustomerAccount(context.customer);
+}
+
+export async function getShopwareCustomerOrders(
+  client: ShopwareClient,
+): Promise<CustomerOrderSummary[]> {
+  const response = await client.invoke("readOrder post /order", {
+    body: {
+      associations: { stateMachineState: {} },
+      limit: 3,
+      sort: [{ field: "orderDateTime", order: "DESC" }],
+    },
+    fetchOptions: { cache: "no-store" },
+  });
+
+  return mapShopwareCustomerOrders(response.data.orders.elements);
 }
 
 export async function logoutShopwareCustomer(client: ShopwareClient) {

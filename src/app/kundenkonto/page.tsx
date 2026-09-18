@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { AccountToast } from "@/features/customer-account/components/account-toast";
 import { CustomerProfilePage } from "@/features/customer-account/components/customer-profile-page";
 import { getCustomerAccount } from "@/features/customer-account/server/account";
+import { getCustomerAccountOrders } from "@/features/customer-account/server/account";
 
 export const metadata: Metadata = {
   description: "Verwalten Sie Ihr persönliches Kundenkonto bei JVMöbel.",
@@ -17,8 +18,12 @@ type CustomerAccountPageProps = Readonly<{
 export default async function CustomerAccountPage({
   searchParams,
 }: CustomerAccountPageProps) {
-  const [account, params] = await Promise.all([
+  const [account, orders, params] = await Promise.all([
     getCustomerAccount(),
+    getCustomerAccountOrders().catch((error: unknown) => {
+      console.error("Customer order lookup failed.", error);
+      return null;
+    }),
     searchParams,
   ]);
 
@@ -41,7 +46,7 @@ export default async function CustomerAccountPage({
 
   return (
     <>
-      <CustomerProfilePage account={account} />
+      <CustomerProfilePage account={account} orders={orders} />
       {successToast && (
         <AccountToast
           {...successToast}

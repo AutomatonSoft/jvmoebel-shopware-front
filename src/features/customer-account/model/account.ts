@@ -15,6 +15,14 @@ export type CustomerAccountSummary = Readonly<{
   lastName: string;
 }>;
 
+export type CustomerOrderSummary = Readonly<{
+  currency: string;
+  date: string;
+  number: string;
+  status: string;
+  total: number;
+}>;
+
 export type RegistrationOption = Readonly<{
   id: string;
   label: string;
