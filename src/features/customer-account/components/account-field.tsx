@@ -24,6 +24,7 @@ type AccountFieldProps = Readonly<{
   maxLength?: number;
   minLength?: number;
   name?: string;
+  readOnly?: boolean;
   type?: "email" | "password" | "text";
 }>;
 
@@ -38,6 +39,7 @@ export function AccountField({
   maxLength,
   minLength,
   name = id,
+  readOnly = false,
   type = "text",
 }: AccountFieldProps) {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -61,6 +63,7 @@ export function AccountField({
         name={name}
         placeholder=" "
         required
+        readOnly={readOnly}
         type={type === "password" && passwordVisible ? "text" : type}
       />
       <Icon

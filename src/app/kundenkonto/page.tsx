@@ -12,7 +12,14 @@ export const metadata: Metadata = {
 };
 
 type CustomerAccountPageProps = Readonly<{
-  searchParams: Promise<{ angemeldet?: string; registriert?: string }>;
+  searchParams: Promise<{
+    angemeldet?: string;
+    registriert?: string;
+    profil?: string;
+    adresse?: string;
+    email?: string;
+    einstellungen?: string;
+  }>;
 }>;
 
 export default async function CustomerAccountPage({
@@ -37,12 +44,32 @@ export default async function CustomerAccountPage({
           description: "Willkommen bei JVMöbel.",
           title: "Konto erfolgreich erstellt",
         }
-      : params.angemeldet === "1"
+      : params.einstellungen === "1"
         ? {
-            description: `Willkommen zurück, ${account.firstName}.`,
-            title: "Erfolgreich angemeldet",
+            description: "Ihre Angaben wurden aktualisiert.",
+            title: "Profil gespeichert",
           }
-        : null;
+        : params.profil === "1"
+          ? {
+              description: "Ihre persönlichen Daten wurden aktualisiert.",
+              title: "Profil gespeichert",
+            }
+          : params.adresse === "1"
+            ? {
+                description: "Ihre Adresse wurde aktualisiert.",
+                title: "Adresse gespeichert",
+              }
+            : params.email === "1"
+              ? {
+                  description: "Ihre E-Mail-Adresse wurde aktualisiert.",
+                  title: "E-Mail-Adresse gespeichert",
+                }
+              : params.angemeldet === "1"
+                ? {
+                    description: `Willkommen zurück, ${account.firstName}.`,
+                    title: "Erfolgreich angemeldet",
+                  }
+                : null;
 
   return (
     <>

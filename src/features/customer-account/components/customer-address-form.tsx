@@ -28,7 +28,7 @@ export function CustomerAddressForm({
   return (
     <form
       action={formAction}
-      className="rounded-3xl border border-border bg-card p-5 sm:p-7"
+      className="rounded-2xl border border-border bg-card p-4 sm:p-5"
     >
       <AccountToast
         description={state.message}

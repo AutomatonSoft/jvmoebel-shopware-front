@@ -182,7 +182,118 @@ export async function saveCustomerProfile(
   revalidatePath("/");
   revalidatePath("/kundenkonto");
   revalidatePath("/kundenkonto/profil");
-  return { message: "Ihr Profil wurde gespeichert.", status: "success" };
+  redirect("/kundenkonto?profil=1");
+}
+
+export async function changeCustomerEmail(
+  _previousState: AccountActionState,
+  formData: FormData,
+): Promise<AccountActionState> {
+  const email = formData.get("email");
+  const emailConfirmation = formData.get("emailConfirmation");
+  const password = formData.get("password");
+
+  if (
+    typeof email !== "string" ||
+    typeof emailConfirmation !== "string" ||
+    typeof password !== "string" ||
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ||
+    email.trim() !== emailConfirmation.trim() ||
+    password.length === 0 ||
+    password.length > 4096
+  ) {
+    return {
+      message: "Bitte prüfen Sie E-Mail-Adresse und Passwort.",
+      status: "invalid",
+    };
+  }
+
+  try {
+    const session = await createCustomerSession();
+
+    await session.client.invoke("changeEmail post /account/change-email", {
+      body: {
+        email: email.trim(),
+        emailConfirmation: emailConfirmation.trim(),
+        password,
+      },
+      fetchOptions: { cache: "no-store" },
+    });
+    await persistCustomerContext(session.getContextToken());
+  } catch (error) {
+    console.error("Customer email update failed.", error);
+    return {
+      message: "Die E-Mail-Adresse konnte nicht geändert werden.",
+      status: "error",
+    };
+  }
+
+  revalidatePath("/");
+  revalidatePath("/kundenkonto");
+  redirect("/kundenkonto?email=1");
+}
+
+export async function saveCustomerSettings(
+  _previousState: AccountActionState,
+  formData: FormData,
+): Promise<AccountActionState> {
+  const firstName = formData.get("firstName");
+  const lastName = formData.get("lastName");
+  const currentEmail = formData.get("currentEmail");
+  const email = formData.get("email");
+  if (
+    typeof firstName !== "string" ||
+    typeof lastName !== "string" ||
+    typeof currentEmail !== "string" ||
+    typeof email !== "string" ||
+    !firstName.trim() ||
+    !lastName.trim() ||
+    firstName.trim().length > 255 ||
+    lastName.trim().length > 255
+  )
+    return { message: "Bitte prüfen Sie Ihre Angaben.", status: "invalid" };
+  try {
+    const session = await createCustomerSession();
+    await session.client.invoke("changeProfile post /account/change-profile", {
+      body: { firstName: firstName.trim(), lastName: lastName.trim() },
+      fetchOptions: { cache: "no-store" },
+    });
+    if (email.trim() !== currentEmail) {
+      const emailConfirmation = formData.get("emailConfirmation");
+      const password = formData.get("password");
+      if (
+        typeof emailConfirmation !== "string" ||
+        typeof password !== "string" ||
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ||
+        email.trim() !== emailConfirmation.trim() ||
+        !password ||
+        password.length > 4096
+      )
+        return {
+          message:
+            "Bitte bestätigen Sie die neue E-Mail-Adresse und Ihr Passwort.",
+          status: "invalid",
+        };
+      await session.client.invoke("changeEmail post /account/change-email", {
+        body: {
+          email: email.trim(),
+          emailConfirmation: emailConfirmation.trim(),
+          password,
+        },
+        fetchOptions: { cache: "no-store" },
+      });
+    }
+    await persistCustomerContext(session.getContextToken());
+  } catch (error) {
+    console.error("Customer settings update failed.", error);
+    return {
+      message: "Ihre Änderungen konnten nicht gespeichert werden.",
+      status: "error",
+    };
+  }
+  revalidatePath("/");
+  revalidatePath("/kundenkonto");
+  redirect("/kundenkonto?einstellungen=1");
 }
 
 export async function saveCustomerAccountAddress(
@@ -223,5 +334,5 @@ export async function saveCustomerAccountAddress(
 
   revalidatePath("/kundenkonto");
   revalidatePath("/kundenkonto/adressen");
-  return { message: "Ihre Adresse wurde gespeichert.", status: "success" };
+  redirect("/kundenkonto?adresse=1");
 }
