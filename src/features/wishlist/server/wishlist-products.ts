@@ -2,11 +2,14 @@ import "server-only";
 
 import { shopProductListingMock } from "@/features/catalog/fixtures/product-listing";
 import type { ShopProductListing } from "@/features/catalog/model/product-listing";
+import { defaultShopProductPageRequest } from "@/features/catalog/model/product-listing-page";
+import { getShopProductListingPage } from "@/features/catalog/server/product-listing";
 import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
 import { getShopwareRequestSession } from "@/integrations/shopware/session";
 import { getShopwareWishlistProducts } from "@/integrations/shopware/wishlist";
 
 const maximumWishlistProducts = 50;
+const wishlistRecommendationLimit = 6;
 
 export function normalizeWishlistProductIds(productIds: unknown): string[] {
   if (!Array.isArray(productIds)) return [];
@@ -47,4 +50,21 @@ export async function getWishlistProducts(
     getShopwareRequestSession().client,
     normalizedProductIds,
   );
+}
+
+export async function getWishlistRecommendations(
+  productIds: unknown,
+): Promise<ShopProductListing> {
+  const excludedProductIds = new Set(normalizeWishlistProductIds(productIds));
+  const listing = await getShopProductListingPage({
+    ...defaultShopProductPageRequest,
+    sort: "newest",
+  });
+
+  return {
+    ...listing,
+    products: listing.products
+      .filter((product) => !excludedProductIds.has(product.id))
+      .slice(0, wishlistRecommendationLimit),
+  };
 }
