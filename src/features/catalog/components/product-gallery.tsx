@@ -82,7 +82,7 @@ export function ProductGallery({ badge, images }: ProductGalleryProps) {
       )}
 
       <Dialog.Root>
-        <div className="relative order-1 aspect-[0.92] min-w-0 overflow-hidden rounded-2xl bg-muted shadow-[0_0_0_1px_rgba(21,21,19,0.04)] sm:order-2">
+        <div className="relative order-1 aspect-[0.92] min-w-0 overflow-hidden rounded-2xl bg-muted shadow-[0_0_0_1px_rgba(21,21,19,0.04)] sm:order-2 lg:aspect-[1.25]">
           <Dialog.Trigger
             aria-label={`Produktbild vergr\u00f6\u00dfern: ${activeImage.alt}`}
             className="group absolute inset-0 z-0 block cursor-zoom-in overflow-hidden focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
