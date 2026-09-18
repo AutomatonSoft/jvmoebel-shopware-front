@@ -2,6 +2,7 @@
 
 import { ApiClientError } from "@shopware/api-client";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 import type { AccountActionState } from "@/features/customer-account/model/account";
 import {
@@ -19,6 +20,11 @@ import {
   logoutShopwareCustomer,
   registerShopwareCustomer,
 } from "@/integrations/shopware/customer-account";
+import { parseCheckoutAddress } from "@/features/checkout/model/validation";
+import {
+  getShopwareCheckoutOptions,
+  updateShopwareCustomerAddress,
+} from "@/integrations/shopware/checkout";
 
 function getRedirectPath(formData: FormData) {
   const redirectTo = formData.get("redirectTo");
@@ -137,4 +143,85 @@ export async function logoutCustomer() {
   }
 
   redirect("/kundenkonto/anmelden");
+}
+
+export async function saveCustomerProfile(
+  _previousState: AccountActionState,
+  formData: FormData,
+): Promise<AccountActionState> {
+  const firstName = formData.get("firstName");
+  const lastName = formData.get("lastName");
+
+  if (
+    typeof firstName !== "string" ||
+    typeof lastName !== "string" ||
+    !firstName.trim() ||
+    !lastName.trim() ||
+    firstName.trim().length > 255 ||
+    lastName.trim().length > 255
+  ) {
+    return { message: "Bitte prüfen Sie Ihren Namen.", status: "invalid" };
+  }
+
+  try {
+    const session = await createCustomerSession();
+
+    await session.client.invoke("changeProfile post /account/change-profile", {
+      body: { firstName: firstName.trim(), lastName: lastName.trim() },
+      fetchOptions: { cache: "no-store" },
+    });
+    await persistCustomerContext(session.getContextToken());
+  } catch (error) {
+    console.error("Customer profile update failed.", error);
+    return {
+      message: "Ihr Profil konnte nicht gespeichert werden.",
+      status: "error",
+    };
+  }
+
+  revalidatePath("/");
+  revalidatePath("/kundenkonto");
+  revalidatePath("/kundenkonto/profil");
+  return { message: "Ihr Profil wurde gespeichert.", status: "success" };
+}
+
+export async function saveCustomerAccountAddress(
+  _previousState: AccountActionState,
+  formData: FormData,
+): Promise<AccountActionState> {
+  const address = parseCheckoutAddress(formData);
+
+  if (!address) {
+    return {
+      message: "Bitte füllen Sie alle Pflichtfelder aus.",
+      status: "invalid",
+    };
+  }
+
+  try {
+    const session = await createCustomerSession();
+    const options = await getShopwareCheckoutOptions(session.client);
+
+    if (
+      !options.countries.some((country) => country.id === address.countryId)
+    ) {
+      return {
+        message: "Bitte wählen Sie ein gültiges Land.",
+        status: "invalid",
+      };
+    }
+
+    await updateShopwareCustomerAddress(session.client, address);
+    await persistCustomerContext(session.getContextToken());
+  } catch (error) {
+    console.error("Customer account address update failed.", error);
+    return {
+      message: "Ihre Adresse konnte nicht gespeichert werden.",
+      status: "error",
+    };
+  }
+
+  revalidatePath("/kundenkonto");
+  revalidatePath("/kundenkonto/adressen");
+  return { message: "Ihre Adresse wurde gespeichert.", status: "success" };
 }

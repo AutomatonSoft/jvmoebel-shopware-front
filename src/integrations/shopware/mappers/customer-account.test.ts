@@ -22,6 +22,7 @@ describe("mapShopwareCustomerAccount", () => {
           name: "Deutschland",
           translated: { name: "Deutschland" },
         },
+        countryId: "country-id",
         firstName: "Greta",
         lastName: "Groß",
         street: "Neue Straße 12",
@@ -36,6 +37,7 @@ describe("mapShopwareCustomerAccount", () => {
       billingAddress: {
         city: "Düsseldorf",
         country: "Deutschland",
+        countryId: "country-id",
         firstName: "Greta",
         lastName: "Groß",
         street: "Neue Straße 12",

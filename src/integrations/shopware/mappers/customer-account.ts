@@ -24,6 +24,7 @@ export function mapShopwareCustomerAccount(
               address.country?.translated.name ||
               address.country?.name ||
               undefined,
+            countryId: address.countryId,
             firstName: address.firstName,
             lastName: address.lastName,
             street: address.street,

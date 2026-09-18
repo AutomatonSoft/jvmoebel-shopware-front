@@ -9,6 +9,7 @@ import {
   getShopwareRegistrationOptions,
 } from "@/integrations/shopware/customer-account";
 import { createCustomerSession } from "@/features/customer-account/server/session";
+import { getShopwareCheckoutOptions } from "@/integrations/shopware/checkout";
 import { shopwareCacheTtlSeconds } from "@/integrations/shopware/cache-policy";
 import { getShopwareRequestSession } from "@/integrations/shopware/session";
 
@@ -31,6 +32,13 @@ export const getCustomerAccountOrders = cache(async () => {
   const session = await createCustomerSession();
 
   return getShopwareCustomerOrders(session.client);
+});
+
+export const getCustomerAddressOptions = cache(async () => {
+  const session = await createCustomerSession();
+  const options = await getShopwareCheckoutOptions(session.client);
+
+  return options.countries;
 });
 
 export async function getRegistrationOptions() {

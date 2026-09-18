@@ -1,6 +1,7 @@
 export type CustomerAddressSummary = Readonly<{
   city: string;
   country?: string;
+  countryId: string;
   firstName: string;
   lastName: string;
   street: string;
@@ -35,7 +36,7 @@ export type RegistrationOptions = Readonly<{
 
 export type AccountActionState = Readonly<{
   message?: string;
-  status: "idle" | "invalid" | "error";
+  status: "idle" | "invalid" | "error" | "success";
 }>;
 
 export type CustomerLogin = Readonly<{

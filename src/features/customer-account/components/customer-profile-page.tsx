@@ -36,13 +36,13 @@ const accountLinks = [
   },
   {
     description: "Persönliche Angaben und E-Mail-Adresse prüfen.",
-    href: "#profile",
+    href: "/kundenkonto/profil",
     icon: UserRound,
     label: "Kundenprofil",
   },
   {
     description: "Rechnungs- und Lieferadresse ansehen.",
-    href: "#addresses",
+    href: "/kundenkonto/adressen",
     icon: MapPin,
     label: "Adressen",
   },
