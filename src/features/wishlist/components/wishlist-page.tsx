@@ -6,23 +6,16 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { ShopProductCard } from "@/features/catalog/components/shop-product-card";
-import type { ShopProductListing } from "@/features/catalog/model/product-listing";
 import { useWishlist } from "@/features/wishlist/hooks/use-wishlist";
+import { useWishlistProducts } from "@/features/wishlist/hooks/use-wishlist-products";
 
-type WishlistPageProps = Readonly<{
-  listing: ShopProductListing;
-}>;
-
-export function WishlistPage({ listing }: WishlistPageProps) {
+export function WishlistPage() {
   const { isReady, productIds } = useWishlist();
-  const productsById = new Map(
-    listing.products.map((product) => [product.id, product]),
+  const { errorMessage, isLoading, listing } = useWishlistProducts(
+    productIds,
+    isReady,
   );
-  const products = productIds.flatMap((productId) => {
-    const product = productsById.get(productId);
-
-    return product ? [product] : [];
-  });
+  const products = listing?.products ?? [];
   const productCountLabel =
     products.length === 1
       ? "1 Lieblingsstück"
@@ -63,7 +56,7 @@ export function WishlistPage({ listing }: WishlistPageProps) {
           )}
         </header>
 
-        {!isReady ? (
+        {!isReady || isLoading ? (
           <div
             aria-label="Wunschliste wird geladen"
             className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4"
@@ -77,7 +70,14 @@ export function WishlistPage({ listing }: WishlistPageProps) {
               />
             ))}
           </div>
-        ) : products.length > 0 ? (
+        ) : errorMessage ? (
+          <section className="mt-8 rounded-3xl border border-destructive/25 bg-destructive/5 px-6 py-10 text-center">
+            <h2 className="text-xl font-semibold">
+              Wunschliste nicht verfügbar
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground">{errorMessage}</p>
+          </section>
+        ) : products.length > 0 && listing ? (
           <section aria-label={productCountLabel} className="mt-8">
             <div className="grid grid-cols-2 gap-x-3 gap-y-9 md:grid-cols-3 md:gap-x-4 xl:grid-cols-4">
               {products.map((product, index) => (
