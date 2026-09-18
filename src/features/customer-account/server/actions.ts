@@ -6,8 +6,12 @@ import { revalidatePath } from "next/cache";
 
 import type { AccountActionState } from "@/features/customer-account/model/account";
 import {
+  getCustomerRegistrationFieldErrors,
+  parseCustomerEmailChange,
   parseCustomerLogin,
-  parseCustomerRegistration,
+  parseCustomerProfileUpdate,
+  parseCustomerSettingsUpdate,
+  validateCustomerRegistration,
 } from "@/features/customer-account/model/validation";
 import { getRegistrationOptions } from "@/features/customer-account/server/account";
 import {
@@ -80,15 +84,18 @@ export async function registerCustomer(
   _previousState: AccountActionState,
   formData: FormData,
 ): Promise<AccountActionState> {
-  const registration = parseCustomerRegistration(formData);
+  const validation = validateCustomerRegistration(formData);
   const redirectPath = getRedirectPath(formData);
 
-  if (!registration) {
+  if (!validation.success) {
     return {
+      fieldErrors: getCustomerRegistrationFieldErrors(validation.error),
       message: "Bitte prüfen Sie Ihre Angaben.",
       status: "invalid",
     };
   }
+
+  const registration = validation.data;
 
   try {
     const options = await getRegistrationOptions();
@@ -149,17 +156,9 @@ export async function saveCustomerProfile(
   _previousState: AccountActionState,
   formData: FormData,
 ): Promise<AccountActionState> {
-  const firstName = formData.get("firstName");
-  const lastName = formData.get("lastName");
+  const profile = parseCustomerProfileUpdate(formData);
 
-  if (
-    typeof firstName !== "string" ||
-    typeof lastName !== "string" ||
-    !firstName.trim() ||
-    !lastName.trim() ||
-    firstName.trim().length > 255 ||
-    lastName.trim().length > 255
-  ) {
+  if (!profile) {
     return { message: "Bitte prüfen Sie Ihren Namen.", status: "invalid" };
   }
 
@@ -167,7 +166,7 @@ export async function saveCustomerProfile(
     const session = await createCustomerSession();
 
     await session.client.invoke("changeProfile post /account/change-profile", {
-      body: { firstName: firstName.trim(), lastName: lastName.trim() },
+      body: profile,
       fetchOptions: { cache: "no-store" },
     });
     await persistCustomerContext(session.getContextToken());
@@ -189,19 +188,9 @@ export async function changeCustomerEmail(
   _previousState: AccountActionState,
   formData: FormData,
 ): Promise<AccountActionState> {
-  const email = formData.get("email");
-  const emailConfirmation = formData.get("emailConfirmation");
-  const password = formData.get("password");
+  const emailChange = parseCustomerEmailChange(formData);
 
-  if (
-    typeof email !== "string" ||
-    typeof emailConfirmation !== "string" ||
-    typeof password !== "string" ||
-    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ||
-    email.trim() !== emailConfirmation.trim() ||
-    password.length === 0 ||
-    password.length > 4096
-  ) {
+  if (!emailChange) {
     return {
       message: "Bitte prüfen Sie E-Mail-Adresse und Passwort.",
       status: "invalid",
@@ -212,11 +201,7 @@ export async function changeCustomerEmail(
     const session = await createCustomerSession();
 
     await session.client.invoke("changeEmail post /account/change-email", {
-      body: {
-        email: email.trim(),
-        emailConfirmation: emailConfirmation.trim(),
-        password,
-      },
+      body: emailChange,
       fetchOptions: { cache: "no-store" },
     });
     await persistCustomerContext(session.getContextToken());
@@ -237,49 +222,27 @@ export async function saveCustomerSettings(
   _previousState: AccountActionState,
   formData: FormData,
 ): Promise<AccountActionState> {
-  const firstName = formData.get("firstName");
-  const lastName = formData.get("lastName");
-  const currentEmail = formData.get("currentEmail");
-  const email = formData.get("email");
-  if (
-    typeof firstName !== "string" ||
-    typeof lastName !== "string" ||
-    typeof currentEmail !== "string" ||
-    typeof email !== "string" ||
-    !firstName.trim() ||
-    !lastName.trim() ||
-    firstName.trim().length > 255 ||
-    lastName.trim().length > 255
-  )
+  const settings = parseCustomerSettingsUpdate(formData);
+
+  if (!settings)
     return { message: "Bitte prüfen Sie Ihre Angaben.", status: "invalid" };
   try {
     const session = await createCustomerSession();
     await session.client.invoke("changeProfile post /account/change-profile", {
-      body: { firstName: firstName.trim(), lastName: lastName.trim() },
+      body: { firstName: settings.firstName, lastName: settings.lastName },
       fetchOptions: { cache: "no-store" },
     });
-    if (email.trim() !== currentEmail) {
-      const emailConfirmation = formData.get("emailConfirmation");
-      const password = formData.get("password");
-      if (
-        typeof emailConfirmation !== "string" ||
-        typeof password !== "string" ||
-        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ||
-        email.trim() !== emailConfirmation.trim() ||
-        !password ||
-        password.length > 4096
-      )
+    if (settings.email.trim() !== settings.currentEmail) {
+      const emailChange = parseCustomerEmailChange(formData);
+
+      if (!emailChange)
         return {
           message:
             "Bitte bestätigen Sie die neue E-Mail-Adresse und Ihr Passwort.",
           status: "invalid",
         };
       await session.client.invoke("changeEmail post /account/change-email", {
-        body: {
-          email: email.trim(),
-          emailConfirmation: emailConfirmation.trim(),
-          password,
-        },
+        body: emailChange,
         fetchOptions: { cache: "no-store" },
       });
     }

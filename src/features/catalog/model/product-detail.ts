@@ -36,6 +36,13 @@ export type ShopProductVariantGroup = Readonly<{
   options: readonly ShopProductVariantOption[];
 }>;
 
+export type ShopProductVariantSelection = Readonly<{
+  currentProductId: string;
+  optionIds: readonly string[];
+  parentProductId: string;
+  switchedGroupId: string;
+}>;
+
 export type ShopProductService = Readonly<{
   available: boolean;
   description: string;

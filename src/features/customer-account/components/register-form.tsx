@@ -27,7 +27,9 @@ export function RegisterForm({
     registerCustomer,
     initialState,
   );
-  const invalid = state.status === "invalid" || undefined;
+  const fieldErrors = state.fieldErrors ?? {};
+  const invalid =
+    state.status === "invalid" && !state.fieldErrors ? true : undefined;
 
   return (
     <form action={formAction} className="space-y-2">
@@ -105,6 +107,7 @@ export function RegisterForm({
           </legend>
           <AccountField
             autoComplete="organization"
+            error={fieldErrors.company}
             icon={Building2}
             id="company"
             invalid={invalid}
@@ -112,6 +115,7 @@ export function RegisterForm({
           />
           <AccountField
             autoComplete="off"
+            error={fieldErrors.vatId}
             icon={ReceiptText}
             id="vatId"
             invalid={invalid}
@@ -124,12 +128,14 @@ export function RegisterForm({
         <legend className="sr-only">Persönliche Angaben</legend>
         <AccountField
           autoComplete="given-name"
+          error={fieldErrors.firstName}
           id="firstName"
           invalid={invalid}
           label="Vorname"
         />
         <AccountField
           autoComplete="family-name"
+          error={fieldErrors.lastName}
           id="lastName"
           invalid={invalid}
           label="Nachname"
@@ -137,6 +143,7 @@ export function RegisterForm({
         <AccountField
           autoComplete="email"
           className="sm:col-span-2"
+          error={fieldErrors.email}
           id="email"
           invalid={invalid}
           label="E-Mail-Adresse"
@@ -145,6 +152,7 @@ export function RegisterForm({
         <AccountField
           autoComplete="new-password"
           className="sm:col-span-2"
+          error={fieldErrors.password}
           id="password"
           invalid={invalid}
           label="Passwort"

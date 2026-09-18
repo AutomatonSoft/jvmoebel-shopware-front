@@ -1,8 +1,13 @@
 import { describe, expect, test } from "bun:test";
 
 import {
+  getCustomerRegistrationFieldErrors,
+  parseCustomerEmailChange,
   parseCustomerLogin,
+  parseCustomerProfileUpdate,
   parseCustomerRegistration,
+  parseCustomerSettingsUpdate,
+  validateCustomerRegistration,
 } from "@/features/customer-account/model/validation";
 
 function createRegistrationForm() {
@@ -66,6 +71,69 @@ describe("customer account validation", () => {
       accountType: "business",
       company: "Muster GmbH",
       vatId: "DE123456789",
+    });
+  });
+
+  test("maps invalid registration fields to user-facing messages", () => {
+    const formData = createRegistrationForm();
+
+    formData.set("accountType", "business");
+    formData.set("email", "invalid-email");
+    const result = validateCustomerRegistration(formData);
+
+    expect(result.success).toBeFalse();
+    if (!result.success) {
+      expect(getCustomerRegistrationFieldErrors(result.error)).toEqual({
+        company: "Bitte geben Sie Ihren Firmennamen ein.",
+        email: "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+        vatId: "Bitte geben Sie Ihre Steuer- oder USt-IdNr. ein.",
+      });
+    }
+  });
+
+  test("normalizes a valid profile update and rejects an empty name", () => {
+    const formData = new FormData();
+
+    formData.set("firstName", " Greta ");
+    formData.set("lastName", " GroÃŸ ");
+    expect(parseCustomerProfileUpdate(formData)).toEqual({
+      firstName: "Greta",
+      lastName: "GroÃŸ",
+    });
+
+    formData.set("lastName", " ");
+    expect(parseCustomerProfileUpdate(formData)).toBeNull();
+  });
+
+  test("requires a confirmed email and password for an email change", () => {
+    const formData = new FormData();
+
+    formData.set("email", " neue@example.com ");
+    formData.set("emailConfirmation", "neue@example.com");
+    formData.set("password", "geheim");
+    expect(parseCustomerEmailChange(formData)).toEqual({
+      email: "neue@example.com",
+      emailConfirmation: "neue@example.com",
+      password: "geheim",
+    });
+
+    formData.set("emailConfirmation", "andere@example.com");
+    expect(parseCustomerEmailChange(formData)).toBeNull();
+  });
+
+  test("parses settings before checking a changed email", () => {
+    const formData = new FormData();
+
+    formData.set("currentEmail", "kunde@example.com");
+    formData.set("email", "kunde@example.com");
+    formData.set("firstName", " Greta ");
+    formData.set("lastName", " GroÃŸ ");
+
+    expect(parseCustomerSettingsUpdate(formData)).toEqual({
+      currentEmail: "kunde@example.com",
+      email: "kunde@example.com",
+      firstName: "Greta",
+      lastName: "GroÃŸ",
     });
   });
 });

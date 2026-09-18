@@ -21,6 +21,7 @@ const initialState: CheckoutActionState = { status: "idle" };
 function OptionalField({
   autoComplete,
   defaultValue,
+  error,
   id,
   icon: Icon = Phone,
   label,
@@ -29,6 +30,7 @@ function OptionalField({
 }: Readonly<{
   autoComplete: string;
   defaultValue?: string;
+  error?: string;
   id: string;
   icon?: LucideIcon;
   label: string;
@@ -38,6 +40,8 @@ function OptionalField({
   return (
     <div className="relative sm:col-span-2">
       <Input
+        aria-describedby={error ? `${id}-error` : undefined}
+        aria-invalid={Boolean(error) || undefined}
         autoComplete={autoComplete}
         className="peer h-14 rounded-lg border-border/80 bg-card pt-5 pr-3 pb-1 pl-11 shadow-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/10"
         defaultValue={defaultValue}
@@ -57,26 +61,39 @@ function OptionalField({
       >
         {label}
       </label>
+      {error && (
+        <p
+          className="mt-1 text-xs leading-4 text-destructive"
+          id={`${id}-error`}
+          role="alert"
+        >
+          {error}
+        </p>
+      )}
     </div>
   );
 }
 
 export function AddressFields({
   countries,
+  fieldErrors,
   initialAddress,
   prefix = "",
 }: Readonly<{
   countries: readonly CheckoutOption[];
+  fieldErrors?: Readonly<Partial<Record<string, string>>>;
   initialAddress?: Partial<CheckoutAddress>;
   prefix?: string;
 }>) {
   const idPrefix = prefix || "billing";
+  const getError = (field: string) => fieldErrors?.[`${prefix}${field}`];
 
   return (
     <div className="grid gap-3 sm:grid-cols-2">
       <AccountField
         autoComplete="given-name"
         defaultValue={initialAddress?.firstName}
+        error={getError("firstName")}
         id={`${idPrefix}-firstName`}
         label="Vorname"
         name={`${prefix}firstName`}
@@ -84,6 +101,7 @@ export function AddressFields({
       <AccountField
         autoComplete="family-name"
         defaultValue={initialAddress?.lastName}
+        error={getError("lastName")}
         id={`${idPrefix}-lastName`}
         label="Nachname"
         name={`${prefix}lastName`}
@@ -92,6 +110,7 @@ export function AddressFields({
         autoComplete="street-address"
         className="sm:col-span-2"
         defaultValue={initialAddress?.street}
+        error={getError("street")}
         id={`${idPrefix}-street`}
         label="Straße und Hausnummer"
         name={`${prefix}street`}
@@ -99,6 +118,7 @@ export function AddressFields({
       <OptionalField
         autoComplete="address-line2"
         defaultValue={initialAddress?.additionalAddressLine1}
+        error={getError("additionalAddressLine1")}
         id={`${idPrefix}-additionalAddressLine1`}
         icon={MapPin}
         label="Adresszusatz (optional)"
@@ -107,6 +127,7 @@ export function AddressFields({
       <AccountField
         autoComplete="postal-code"
         defaultValue={initialAddress?.zipcode}
+        error={getError("zipcode")}
         id={`${idPrefix}-zipcode`}
         label="Postleitzahl"
         name={`${prefix}zipcode`}
@@ -114,6 +135,7 @@ export function AddressFields({
       <AccountField
         autoComplete="address-level2"
         defaultValue={initialAddress?.city}
+        error={getError("city")}
         id={`${idPrefix}-city`}
         label="Ort"
         name={`${prefix}city`}
@@ -121,6 +143,7 @@ export function AddressFields({
       <CheckoutCountrySelect
         countries={countries}
         defaultValue={initialAddress?.countryId}
+        error={getError("countryId")}
         name={`${prefix}countryId`}
       />
     </div>
@@ -135,6 +158,8 @@ export function GuestCheckoutForm({
     registerCheckoutGuest,
     initialState,
   );
+  const fieldErrors = state.fieldErrors ?? {};
+  const dataProtectionError = fieldErrors.acceptedDataProtection;
 
   return (
     <form action={formAction}>
@@ -172,6 +197,7 @@ export function GuestCheckoutForm({
             <AccountField
               autoComplete="email"
               className="sm:col-span-2"
+              error={fieldErrors.email}
               id="checkout-email"
               label="E-Mail-Adresse"
               name="email"
@@ -179,13 +205,14 @@ export function GuestCheckoutForm({
             />
             <OptionalField
               autoComplete="tel"
+              error={fieldErrors.phoneNumber}
               id="checkout-phone"
               label="Telefonnummer (optional)"
               name="phoneNumber"
               type="tel"
             />
           </div>
-          <AddressFields countries={countries} />
+          <AddressFields countries={countries} fieldErrors={fieldErrors} />
         </fieldset>
 
         <label className="mt-6 flex items-start gap-3 rounded-2xl bg-secondary/70 p-4 text-sm leading-6">
@@ -206,12 +233,22 @@ export function GuestCheckoutForm({
             <legend className="mb-5 text-xl font-semibold tracking-[-0.03em]">
               Abweichende Lieferadresse
             </legend>
-            <AddressFields countries={countries} prefix="shipping" />
+            <AddressFields
+              countries={countries}
+              fieldErrors={fieldErrors}
+              prefix="shipping"
+            />
           </fieldset>
         )}
 
         <label className="mt-7 flex items-start gap-3 text-xs leading-5 text-muted-foreground">
           <input
+            aria-describedby={
+              dataProtectionError
+                ? "checkout-accepted-data-protection-error"
+                : undefined
+            }
+            aria-invalid={Boolean(dataProtectionError) || undefined}
             className="mt-0.5 size-4 shrink-0 accent-primary"
             name="acceptedDataProtection"
             required
@@ -229,6 +266,15 @@ export function GuestCheckoutForm({
             Bestellung zu.
           </span>
         </label>
+        {dataProtectionError && (
+          <p
+            className="mt-2 text-xs leading-4 text-destructive"
+            id="checkout-accepted-data-protection-error"
+            role="alert"
+          >
+            {dataProtectionError}
+          </p>
+        )}
 
         <Button
           className="mt-7 w-full justify-between disabled:cursor-wait"

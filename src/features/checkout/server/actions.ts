@@ -9,10 +9,11 @@ import { redirect } from "next/navigation";
 import { clearMockCart } from "@/features/cart/server/mock-cart";
 import type { CheckoutActionState } from "@/features/checkout/model/checkout";
 import {
+  getGuestCheckoutRegistrationFieldErrors,
   parseCheckoutAddress,
   parseCheckoutMethodSelection,
-  parseGuestCheckoutRegistration,
   parseGuestPassword,
+  validateGuestCheckoutRegistration,
 } from "@/features/checkout/model/validation";
 import {
   convertMockCheckoutGuest,
@@ -84,14 +85,17 @@ export async function registerCheckoutGuest(
   _previousState: CheckoutActionState,
   formData: FormData,
 ): Promise<CheckoutActionState> {
-  const registration = parseGuestCheckoutRegistration(formData);
+  const validation = validateGuestCheckoutRegistration(formData);
 
-  if (!registration) {
+  if (!validation.success) {
     return {
+      fieldErrors: getGuestCheckoutRegistrationFieldErrors(validation.error),
       message: "Bitte füllen Sie alle Pflichtfelder vollständig aus.",
       status: "invalid",
     };
   }
+
+  const registration = validation.data;
 
   try {
     if (shouldUseShopwareMocks()) {

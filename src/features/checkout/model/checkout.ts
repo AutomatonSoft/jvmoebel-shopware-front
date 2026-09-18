@@ -48,6 +48,7 @@ export type CheckoutPageData = Readonly<{
 }>;
 
 export type CheckoutActionState = Readonly<{
+  fieldErrors?: Readonly<Partial<Record<string, string>>>;
   message?: string;
   status: "idle" | "invalid" | "error";
 }>;

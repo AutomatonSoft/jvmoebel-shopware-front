@@ -1,9 +1,11 @@
 import { describe, expect, test } from "bun:test";
 
 import {
+  getGuestCheckoutRegistrationFieldErrors,
   parseCheckoutMethodSelection,
   parseGuestCheckoutRegistration,
   parseGuestPassword,
+  validateGuestCheckoutRegistration,
 } from "@/features/checkout/model/validation";
 
 function createGuestForm() {
@@ -54,6 +56,27 @@ describe("checkout validation", () => {
     formData.set("countryId", "country-de");
 
     expect(parseGuestCheckoutRegistration(formData)).toBeNull();
+  });
+
+  test("maps invalid guest checkout fields to their form names", () => {
+    const formData = createGuestForm();
+
+    formData.set("shippingSameAsBilling", "on");
+    formData.set("email", "invalid-email");
+    const result = validateGuestCheckoutRegistration(formData);
+
+    expect(result.success).toBeFalse();
+    if (!result.success) {
+      expect(
+        getGuestCheckoutRegistrationFieldErrors(result.error),
+      ).toMatchObject({
+        acceptedDataProtection:
+          "Bitte stimmen Sie der Verarbeitung Ihrer Daten zu.",
+        city: "Bitte geben Sie Ihren Ort ein.",
+        email: "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+        firstName: "Bitte geben Sie Ihren Vornamen ein.",
+      });
+    }
   });
 
   test("parses the selected delivery and payment methods", () => {
