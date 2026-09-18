@@ -16,8 +16,8 @@ const mockLandingPages: Readonly<Record<string, MockLandingPageRoute>> = {
       cmsPage: inspirationCmsPageMock,
       id: "mock-inspiration-landing-page",
       metaDescription:
-        "Entdecken Sie Wohnideen, Einrichtungstrends und abgestimmte Möbel für jeden Raum bei JVMöbel.",
-      metaTitle: "Wohnideen & Inspiration | JVMöbel",
+        "Entdecken Sie Wohnideen, Einrichtungstrends und abgestimmte Moebel für jeden Raum bei JVMoebel.",
+      metaTitle: "Wohnideen & Inspiration | JVMoebel",
       name: "Inspiration",
     },
   },
@@ -27,8 +27,8 @@ const mockLandingPages: Readonly<Record<string, MockLandingPageRoute>> = {
       cmsPage: discountOffersCmsPageMock,
       id: "mock-discount-offers-landing-page",
       metaDescription:
-        "Entdecke reduzierte Möbel und Wohnaccessoires im JVMöbel Sale.",
-      metaTitle: "Möbel Sale & Rabattangebote | JVMöbel",
+        "Entdecke reduzierte Moebel und Wohnaccessoires im JVMoebel Sale.",
+      metaTitle: "Moebel Sale & Rabattangebote | JVMoebel",
       name: "Angebote",
     },
   },
@@ -38,8 +38,8 @@ const mockLandingPages: Readonly<Record<string, MockLandingPageRoute>> = {
       cmsPage: aboutCmsPageMock,
       id: "mock-about-landing-page",
       metaDescription:
-        "Erfahren Sie mehr über JVMöbel, unsere Auswahl, unseren Service und unsere Philosophie.",
-      metaTitle: "Über uns | JVMöbel",
+        "Erfahren Sie mehr über JVMoebel, unsere Auswahl, unseren Service und unsere Philosophie.",
+      metaTitle: "Über uns | JVMoebel",
       name: "Über uns",
     },
   },
@@ -49,8 +49,8 @@ const mockLandingPages: Readonly<Record<string, MockLandingPageRoute>> = {
       cmsPage: videoShopCmsPageMock,
       id: "mock-video-shop-landing-page",
       metaDescription:
-        "Entdecken Sie Möbel, Wohnwelten und Einrichtungsideen von JVMöbel im Video.",
-      metaTitle: "Video Shop | JVMöbel",
+        "Entdecken Sie Moebel, Wohnwelten und Einrichtungsideen von JVMoebel im Video.",
+      metaTitle: "Video Shop | JVMoebel",
       name: "Video Shop",
     },
   },

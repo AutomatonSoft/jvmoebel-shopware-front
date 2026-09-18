@@ -7,8 +7,8 @@ import { ErrorExperience } from "@/features/storefront-shell/components/error-ex
 
 export const metadata: Metadata = {
   description:
-    "Bestellen Sie Ihre Möbel sicher mit Kundenkonto oder ohne Registrierung.",
-  title: "Kasse | JVMöbel",
+    "Bestellen Sie Ihre Moebel sicher mit Kundenkonto oder ohne Registrierung.",
+  title: "Kasse | JVMoebel",
 };
 
 type CheckoutRouteProps = Readonly<{

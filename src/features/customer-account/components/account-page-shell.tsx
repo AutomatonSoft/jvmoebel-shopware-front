@@ -71,7 +71,7 @@ export function AccountPageShell({
             />
             <div className="absolute inset-x-0 bottom-0 p-6 text-white sm:p-8 lg:p-10">
               <p className="text-[0.6rem] font-medium tracking-[0.2em] uppercase">
-                JVMöbel · Zuhause ankommen
+                JVMoebel · Zuhause ankommen
               </p>
               <p className="mt-2 text-xl leading-snug font-medium tracking-tight lg:text-3xl">
                 Schön, dass Sie da sind.

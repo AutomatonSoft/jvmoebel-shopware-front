@@ -9,7 +9,7 @@ import {
   getCustomerAddressOptions,
 } from "@/features/customer-account/server/account";
 
-export const metadata: Metadata = { title: "Meine Adressen | JVMöbel" };
+export const metadata: Metadata = { title: "Meine Adressen | JVMoebel" };
 
 export default async function CustomerAddressesRoute() {
   const [account, countries] = await Promise.all([

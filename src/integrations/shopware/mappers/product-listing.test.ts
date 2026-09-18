@@ -37,8 +37,8 @@ describe("mapShopwareProductListing", () => {
       description: "<p>Ein bequemes Sofa.</p>",
       id: "product-id",
       manufacturer: {
-        name: "JV Möbel",
-        translated: { name: "JV Möbel" },
+        name: "JV Moebel",
+        translated: { name: "JV Moebel" },
       },
       markAsTopseller: true,
       name: "Sofa Alba",
@@ -122,7 +122,7 @@ describe("mapShopwareProductListing", () => {
       category: "sofas",
       categoryLabel: "Sofas",
       colors: [{ hex: "#ded6c8", label: "Beige", value: "beige" }],
-      company: "JV Möbel",
+      company: "JV Moebel",
       description: "Ein bequemes Sofa.",
       image: {
         alt: "Beiges Sofa",

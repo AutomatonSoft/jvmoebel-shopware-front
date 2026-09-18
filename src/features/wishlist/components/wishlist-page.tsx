@@ -45,7 +45,7 @@ export function WishlistPage() {
               Meine Wunschliste
             </h1>
             <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base">
-              Sammeln Sie Ihre Möbel-Favoriten an einem Ort und vergleichen Sie
+              Sammeln Sie Ihre Moebel-Favoriten an einem Ort und vergleichen Sie
               sie in Ruhe.
             </p>
           </div>
@@ -122,7 +122,7 @@ export function WishlistPage() {
               size="lg"
             >
               <Sparkles aria-hidden="true" />
-              Möbel entdecken
+              Moebel entdecken
             </Button>
           </section>
         )}

@@ -304,11 +304,11 @@ export function createShopwareProductListing(
   return {
     currency,
     description:
-      "Entdecken Sie Möbel für Wohnzimmer, Esszimmer und erholsame Räume.",
+      "Entdecken Sie Moebel für Wohnzimmer, Esszimmer und erholsame Räume.",
     eyebrow: "Unser Sortiment",
     locale,
     products: products.map(mapProduct),
-    title: "Möbelkollektion",
+    title: "Moebelkollektion",
   };
 }
 

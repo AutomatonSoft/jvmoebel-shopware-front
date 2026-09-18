@@ -21,5 +21,5 @@ export type StorefrontBrandingResult = Readonly<{
 }>;
 
 export const defaultStorefrontBranding: StorefrontBranding = {
-  name: "JVMöbel",
+  name: "JVMoebel",
 };

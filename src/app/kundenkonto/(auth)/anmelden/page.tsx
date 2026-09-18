@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import { LoginForm } from "@/features/customer-account/components/login-form";
 
 export const metadata: Metadata = {
-  description: "Melden Sie sich bei Ihrem JVMöbel Kundenkonto an.",
-  title: "Anmelden | JVMöbel",
+  description: "Melden Sie sich bei Ihrem JVMoebel Kundenkonto an.",
+  title: "Anmelden | JVMoebel",
 };
 
 type CustomerLoginPageProps = Readonly<{

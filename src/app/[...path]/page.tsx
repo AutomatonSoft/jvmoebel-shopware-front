@@ -61,7 +61,7 @@ export async function generateMetadata({
     return {
       alternates: { canonical: result.route.canonicalPath },
       description: result.page.product.longDescription,
-      title: `${result.page.product.name} | JVMöbel`,
+      title: `${result.page.product.name} | JVMoebel`,
     };
   }
 
@@ -69,7 +69,7 @@ export async function generateMetadata({
     return {
       alternates: { canonical: result.route.canonicalPath },
       description: result.page.metaDescription,
-      title: result.page.metaTitle || `${result.page.name} | JVMöbel`,
+      title: result.page.metaTitle || `${result.page.name} | JVMoebel`,
     };
   }
 
@@ -78,7 +78,7 @@ export async function generateMetadata({
   return {
     alternates: { canonical: result.route.canonicalPath },
     description: category.metaDescription || category.description,
-    title: category.metaTitle || `${category.name} | JVMöbel`,
+    title: category.metaTitle || `${category.name} | JVMoebel`,
   };
 }
 

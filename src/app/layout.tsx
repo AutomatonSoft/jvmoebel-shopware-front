@@ -15,8 +15,8 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "JVMöbel",
-  description: "JVMöbel",
+  title: "JVMoebel",
+  description: "JVMoebel",
 };
 
 export const dynamic = "force-dynamic";

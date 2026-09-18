@@ -25,7 +25,7 @@ export function HomePreparationState() {
         <section className="max-w-2xl">
           <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-border bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground shadow-sm backdrop-blur-xl">
             <span className="size-2 rounded-full bg-accent-foreground motion-safe:animate-pulse" />
-            JVMöbel Storefront
+            JVMoebel Storefront
           </div>
 
           <h1 className="max-w-2xl text-balance text-4xl font-black tracking-[-0.055em] text-foreground sm:text-5xl lg:text-6xl">

@@ -24,8 +24,8 @@ describe("parseCmsWhyJvmoebelData", () => {
       },
       mark: "JVM",
       tagline: "Für Räume mit Persönlichkeit",
-      title: "Warum JVMöbel?",
-      viewAll: { label: "Mehr über JVMöbel", url: "/ueber-uns" },
+      title: "Warum JVMoebel?",
+      viewAll: { label: "Mehr über JVMoebel", url: "/ueber-uns" },
     });
 
     expect(result.data?.benefits.map((benefit) => benefit.id)).toEqual([
@@ -33,7 +33,7 @@ describe("parseCmsWhyJvmoebelData", () => {
       "Persönliche Beratung-0",
     ]);
     expect(result.data?.viewAll).toEqual({
-      label: "Mehr über JVMöbel",
+      label: "Mehr über JVMoebel",
       url: "/ueber-uns",
     });
     expect(result.issues).toEqual([]);
@@ -58,8 +58,8 @@ describe("parseCmsWhyJvmoebelData", () => {
       ],
       mark: "JVM",
       tagline: "Für Räume mit Persönlichkeit",
-      title: "Warum JVMöbel?",
-      viewAll: { label: "Mehr über JVMöbel" },
+      title: "Warum JVMoebel?",
+      viewAll: { label: "Mehr über JVMoebel" },
     });
 
     expect(result.data?.benefits).toHaveLength(1);

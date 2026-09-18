@@ -72,13 +72,13 @@ export const footerNavigationMock = [
       },
       {
         id: "footer-ready-to-ship",
-        label: "Möbel sofort lieferbar",
+        label: "Moebel sofort lieferbar",
         href: "/neuheiten",
         children: [],
       },
       {
         id: "footer-classic-furniture",
-        label: "Klassische Möbel",
+        label: "Klassische Moebel",
         href: "/klassische-moebel",
         children: [],
       },
@@ -114,19 +114,19 @@ export const footerNavigationMock = [
       },
       {
         id: "footer-steel-furniture",
-        label: "Stahlmöbel",
+        label: "Stahlmoebel",
         href: "/stahlmoebel",
         children: [],
       },
       {
         id: "footer-italian-furniture",
-        label: "Italienische Möbel",
+        label: "Italienische Moebel",
         href: "/italienische-moebel",
         children: [],
       },
       {
         id: "footer-solid-wood-furniture",
-        label: "Massivholzmöbel",
+        label: "Massivholzmoebel",
         href: "/massivholzmoebel",
         children: [],
       },

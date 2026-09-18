@@ -7,8 +7,8 @@ import { getCustomerAccount } from "@/features/customer-account/server/account";
 import { getCustomerAccountOrders } from "@/features/customer-account/server/account";
 
 export const metadata: Metadata = {
-  description: "Verwalten Sie Ihr persönliches Kundenkonto bei JVMöbel.",
-  title: "Mein Kundenkonto | JVMöbel",
+  description: "Verwalten Sie Ihr persönliches Kundenkonto bei JVMoebel.",
+  title: "Mein Kundenkonto | JVMoebel",
 };
 
 type CustomerAccountPageProps = Readonly<{
@@ -41,7 +41,7 @@ export default async function CustomerAccountPage({
   const successToast =
     params.registriert === "1"
       ? {
-          description: "Willkommen bei JVMöbel.",
+          description: "Willkommen bei JVMoebel.",
           title: "Konto erfolgreich erstellt",
         }
       : params.einstellungen === "1"

@@ -89,7 +89,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
           className="h-auto min-w-0 flex-1 rounded-none border-0 bg-transparent px-0 py-0 text-sm shadow-none focus-visible:border-0 focus-visible:ring-0 [&::-webkit-search-cancel-button]:hidden"
           name="query"
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Möbel suchen"
+          placeholder="Moebel suchen"
           type="search"
           value={query}
         />
@@ -146,7 +146,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
                       className="h-auto min-w-0 flex-1 rounded-none border-0 bg-transparent px-0 py-0 text-sm shadow-none focus-visible:border-0 focus-visible:ring-0 [&::-webkit-search-cancel-button]:hidden"
                       name="query"
                       onChange={(event) => setQuery(event.target.value)}
-                      placeholder="Möbel suchen"
+                      placeholder="Moebel suchen"
                       ref={overlayInputRef}
                       type="search"
                       value={query}

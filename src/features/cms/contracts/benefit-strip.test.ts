@@ -10,7 +10,7 @@ describe("parseCmsBenefitStripData", () => {
           description: "Lieferung bis zum Wunschort.",
           icon: "delivery",
           position: 2,
-          title: "Möbelspedition",
+          title: "Moebelspedition",
         },
         price: {
           id: "fair-price",
@@ -24,7 +24,7 @@ describe("parseCmsBenefitStripData", () => {
 
     expect(result.data?.items.map((item) => item.id)).toEqual([
       "fair-price",
-      "Möbelspedition-0",
+      "Moebelspedition-0",
     ]);
     expect(result.issues).toEqual([]);
   });

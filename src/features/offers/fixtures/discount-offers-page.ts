@@ -74,8 +74,8 @@ const categories = [
   ["armchairs", "Sessel", "/images/main/lounge-chair.webp"],
   ["sideboards", "Sideboards", "/images/main/media-console.webp"],
   ["dressers", "Kommoden", "/images/main/dining-room.webp"],
-  ["tv-furniture", "TV-Möbel", "/images/main/media-console.webp"],
-  ["bathroom-furniture", "Badmöbel", "/images/main/bedroom.webp"],
+  ["tv-furniture", "TV-Moebel", "/images/main/media-console.webp"],
+  ["bathroom-furniture", "Badmoebel", "/images/main/bedroom.webp"],
   ["rugs", "Teppiche", "/images/main/hero-editorial.webp"],
   ["textiles", "Textilien", "/images/main/bedroom.webp"],
   ["accessories", "Accessoires", "/images/main/dining-room.webp"],
@@ -94,19 +94,19 @@ export const discountOffersCmsPageMock: CmsPage = {
       blocks: [
         createCmsBlock("jv-page-header", 0, {
           description:
-            "Entdecke reduzierte Möbel, Wohnaccessoires und ausgewählte Bestseller zum Vorteilspreis.",
+            "Entdecke reduzierte Moebel, Wohnaccessoires und ausgewählte Bestseller zum Vorteilspreis.",
           eyebrow: "Preisvorteile für dein Zuhause",
           title: "Sale im Überblick",
         }),
         createCmsBlock("jv-hero", 1, {
-          ariaLabel: "JVMöbel Sale",
+          ariaLabel: "JVMoebel Sale",
           autoplay: false,
           headingLevel: "h2",
           slides: [
             {
               description:
-                "Entdecke Sofas, Sessel, Tische und Stauraummöbel mit direktem Preisvorteil.",
-              eyebrow: "JVMöbel Sale",
+                "Entdecke Sofas, Sessel, Tische und Stauraummoebel mit direktem Preisvorteil.",
+              eyebrow: "JVMoebel Sale",
               id: "sale-overview",
               image: {
                 alt: "Helles Wohnzimmer mit modularer Couch, Loungesessel und Couchtisch",
@@ -120,7 +120,7 @@ export const discountOffersCmsPageMock: CmsPage = {
                 url: "#sale-products",
               },
               promotion: { value: "Bis zu 35 %" },
-              title: "Ausgewählte Möbel zum Vorteilspreis",
+              title: "Ausgewählte Moebel zum Vorteilspreis",
             },
           ],
         }),
@@ -149,7 +149,7 @@ export const discountOffersCmsPageMock: CmsPage = {
         createCmsBlock("jv-promo-banner", 4, {
           contentPosition: "right",
           description:
-            "Wir helfen dir, das passende Möbel und die richtige Ausführung für deinen Raum auszuwählen.",
+            "Wir helfen dir, das passende Moebel und die richtige Ausführung für deinen Raum auszuwählen.",
           eyebrow: "Persönlich geplant",
           image: {
             alt: "Einrichtungstisch mit Stoff-, Holz- und Materialmustern",
@@ -165,7 +165,7 @@ export const discountOffersCmsPageMock: CmsPage = {
         createCmsBlock("jv-benefit-strip", 5, {
           items: [
             {
-              description: "Ausgewählte Möbel mit transparentem Preisvorteil.",
+              description: "Ausgewählte Moebel mit transparentem Preisvorteil.",
               icon: "price",
               id: "fair-prices",
               position: 0,
@@ -180,11 +180,11 @@ export const discountOffersCmsPageMock: CmsPage = {
               title: "30 Tage Rückgaberecht",
             },
             {
-              description: "Große Möbel liefern wir bequem bis zum Wunschort.",
+              description: "Große Moebel liefern wir bequem bis zum Wunschort.",
               icon: "delivery",
               id: "delivery",
               position: 2,
-              title: "Möbelspedition und Aufbauservice",
+              title: "Moebelspedition und Aufbauservice",
             },
           ],
         }),
@@ -198,7 +198,7 @@ export const discountOffersCmsPageMock: CmsPage = {
                 "Lege die gewünschten Produkte in den Warenkorb und gib den Aktionscode im vorgesehenen Feld ein. Der gültige Nachlass wird direkt in der Bestellübersicht angezeigt.",
               id: "redeem-code",
               position: 0,
-              question: "Wie kann ich einen JVMöbel Rabattcode einlösen?",
+              question: "Wie kann ich einen JVMoebel Rabattcode einlösen?",
             },
             {
               answer:
@@ -238,10 +238,10 @@ export const discountOffersCmsPageMock: CmsPage = {
             },
             {
               answer:
-                "Ja. Auf dieser Seite bündeln wir dauerhaft reduzierte Möbel und wechselnde Aktionen. Das Sortiment kann sich ändern, sobald Artikel ausverkauft sind.",
+                "Ja. Auf dieser Seite bündeln wir dauerhaft reduzierte Moebel und wechselnde Aktionen. Das Sortiment kann sich ändern, sobald Artikel ausverkauft sind.",
               id: "permanent-sale",
               position: 6,
-              question: "Gibt es bei JVMöbel einen dauerhaften Sale?",
+              question: "Gibt es bei JVMoebel einen dauerhaften Sale?",
             },
           ],
           title: "Häufige Fragen zu Rabattcodes",
@@ -249,7 +249,7 @@ export const discountOffersCmsPageMock: CmsPage = {
         createCmsBlock("jv-home-editorial", 7, {
           appearance: "plain",
           introduction: [
-            "Bei JVMöbel findest du das ganze Jahr über ausgewählte Möbel und Wohnaccessoires zu reduzierten Preisen. Aktueller Preis und vorheriger Vergleichspreis zeigen den Vorteil direkt am Produkt.",
+            "Bei JVMoebel findest du das ganze Jahr über ausgewählte Moebel und Wohnaccessoires zu reduzierten Preisen. Aktueller Preis und vorheriger Vergleichspreis zeigen den Vorteil direkt am Produkt.",
           ],
           sections: [
             {
@@ -259,7 +259,7 @@ export const discountOffersCmsPageMock: CmsPage = {
                 "<strong>Sale und Rabattaktionen:</strong> Reduzierte Produkte sind mit dem gültigen Vorteilspreis ausgezeichnet. Aktionscodes können für ausgewählte Produkte, Kategorien oder ab einem bestimmten Bestellwert gelten.",
               ],
               position: 0,
-              title: "So kannst du bei JVMöbel sparen",
+              title: "So kannst du bei JVMoebel sparen",
             },
             {
               id: "rooms",
@@ -267,12 +267,12 @@ export const discountOffersCmsPageMock: CmsPage = {
                 "Im Sale findest du Sofas, Sessel, Tische, Betten, Schränke, Regale, Leuchten, Teppiche und Wohnaccessoires für unterschiedliche Räume und Einrichtungsstile.",
               ],
               position: 1,
-              title: "Reduzierte Möbel für jeden Raum",
+              title: "Reduzierte Moebel für jeden Raum",
             },
             {
               id: "filters",
               paragraphs: [
-                "Nutze im Shop die Filter für Kategorie, Eigenschaften, Marke und Preis, um passende Möbel miteinander zu vergleichen.",
+                "Nutze im Shop die Filter für Kategorie, Eigenschaften, Marke und Preis, um passende Moebel miteinander zu vergleichen.",
               ],
               position: 2,
               title: "Schneller das passende Angebot finden",
@@ -280,7 +280,7 @@ export const discountOffersCmsPageMock: CmsPage = {
             {
               id: "design",
               paragraphs: [
-                "Ein reduzierter Preis schränkt die Auswahl nicht auf einen Stil ein. Vergleiche klare moderne Formen, warme Naturmaterialien und markante Polstermöbel direkt miteinander.",
+                "Ein reduzierter Preis schränkt die Auswahl nicht auf einen Stil ein. Vergleiche klare moderne Formen, warme Naturmaterialien und markante Polstermoebel direkt miteinander.",
               ],
               position: 3,
               title: "Preisvorteil ohne Kompromisse beim Design",
@@ -297,7 +297,7 @@ export const discountOffersCmsPageMock: CmsPage = {
           showLessLabel: "Weniger anzeigen",
           showMoreLabel: "Mehr über Sale, Auswahl und Lieferung",
           statement: "Ratgeber & Service",
-          title: "Möbel im Sale bequem online bestellen",
+          title: "Moebel im Sale bequem online bestellen",
         }),
       ],
       id: "mock-discount-offers-section",

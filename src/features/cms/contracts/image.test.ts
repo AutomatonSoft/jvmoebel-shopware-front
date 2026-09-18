@@ -8,7 +8,7 @@ describe("parseCmsImageData", () => {
       data: {
         media: {
           metaData: { height: 800, width: 1200 },
-          translated: { alt: "Showroom", title: "JVMöbel showroom" },
+          translated: { alt: "Showroom", title: "JVMoebel showroom" },
           url: "https://shop.example.com/media/showroom.webp",
         },
       },
@@ -33,7 +33,7 @@ describe("parseCmsImageData", () => {
         image: {
           alt: "Showroom",
           height: 800,
-          title: "JVMöbel showroom",
+          title: "JVMoebel showroom",
           url: "https://shop.example.com/media/showroom.webp",
           width: 1200,
         },

@@ -1,14 +1,14 @@
 import type { CmsBlock, CmsPage } from "@/features/cms/model/page";
 
 const sourceVideos = [
-  { id: "BrAtCRDwYhI", title: "Moderne Luxusmöbel" },
+  { id: "BrAtCRDwYhI", title: "Moderne Luxusmoebel" },
   { id: "1MQxaMMG4a8", title: "Wohnzimmer Inspiration" },
   { id: "1uanE8qHM4w", title: "Ecksofa Design" },
   { id: "DcoWk3OUlWM", title: "Esszimmer Einrichtung" },
-  { id: "taL61SdrlPU", title: "TV-Wand Möbel" },
+  { id: "taL61SdrlPU", title: "TV-Wand Moebel" },
   { id: "zPf78C9PYok", title: "Chesterfield Sofa Set" },
   { id: "5Cd73Tbh3LQ", title: "Moderne Wohnwand Kombination" },
-  { id: "AsU5irbNfq8", title: "Luxus Esszimmermöbel" },
+  { id: "AsU5irbNfq8", title: "Luxus Esszimmermoebel" },
   { id: "_VtLqI5LIj4", title: "Bequeme Sessel und Sofas" },
   { id: "Oord4V4plM0", title: "Goldene Wohnzimmer Inspiration" },
 ] as const;
@@ -53,9 +53,9 @@ export const videoShopCmsPageMock: CmsPage = {
             {
               data: {
                 description:
-                  "Entdecken Sie ausgewählte Möbel, Wohnwelten und Designideen direkt im Video.",
+                  "Entdecken Sie ausgewählte Moebel, Wohnwelten und Designideen direkt im Video.",
                 eyebrow: "Video Shop",
-                title: "Unsere Möbel in Aktion.",
+                title: "Unsere Moebel in Aktion.",
               },
               id: "mock-video-shop-header-slot",
               slot: "content",

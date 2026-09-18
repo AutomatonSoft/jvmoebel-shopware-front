@@ -222,7 +222,7 @@ function EmptyCart() {
         Ihr Warenkorb ist leer
       </h1>
       <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-muted-foreground">
-        Entdecken Sie Möbel, die zu Ihrem Zuhause passen, und stellen Sie Ihre
+        Entdecken Sie Moebel, die zu Ihrem Zuhause passen, und stellen Sie Ihre
         persönliche Auswahl zusammen.
       </p>
       <Button

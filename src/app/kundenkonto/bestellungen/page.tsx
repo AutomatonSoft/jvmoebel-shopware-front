@@ -10,7 +10,7 @@ import {
   getCustomerAccountOrderHistory,
 } from "@/features/customer-account/server/account";
 
-export const metadata: Metadata = { title: "Meine Bestellungen | JVMöbel" };
+export const metadata: Metadata = { title: "Meine Bestellungen | JVMoebel" };
 
 export default async function CustomerOrdersRoute() {
   const [account, orders] = await Promise.all([

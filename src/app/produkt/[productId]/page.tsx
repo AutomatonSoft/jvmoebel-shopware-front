@@ -20,13 +20,13 @@ export async function generateMetadata({
   const pageData = await getShopProductPageData(productId);
 
   if (!pageData) {
-    return { title: "Produkt nicht gefunden | JVMöbel" };
+    return { title: "Produkt nicht gefunden | JVMoebel" };
   }
 
   return {
     alternates: { canonical: pageData.product.url },
     description: pageData.product.longDescription,
-    title: `${pageData.product.name} | JVMöbel`,
+    title: `${pageData.product.name} | JVMoebel`,
   };
 }
 
