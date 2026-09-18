@@ -4,8 +4,13 @@ import type { CheckoutOption } from "@/features/checkout/model/checkout";
 
 export function CheckoutCountrySelect({
   countries,
+  defaultValue,
   name,
-}: Readonly<{ countries: readonly CheckoutOption[]; name: string }>) {
+}: Readonly<{
+  countries: readonly CheckoutOption[];
+  defaultValue?: string;
+  name: string;
+}>) {
   if (countries.length === 1) {
     return <input name={name} type="hidden" value={countries[0].id} />;
   }
@@ -20,7 +25,7 @@ export function CheckoutCountrySelect({
       </label>
       <select
         className="h-14 w-full appearance-none rounded-lg border border-border/80 bg-card pt-5 pr-10 pb-1 pl-11 text-base outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/10 md:text-sm"
-        defaultValue=""
+        defaultValue={defaultValue ?? ""}
         id={name}
         name={name}
         required

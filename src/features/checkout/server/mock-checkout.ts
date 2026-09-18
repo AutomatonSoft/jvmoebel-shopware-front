@@ -43,7 +43,9 @@ function parseMockCustomer(value?: string): MockCheckoutCustomer | null {
   try {
     const parsed = JSON.parse(value) as MockCheckoutCustomer;
 
-    return parsed.email && parsed.firstName && parsed.lastName ? parsed : null;
+    return parsed.email && parsed.firstName && parsed.lastName
+      ? { ...parsed, addressComplete: parsed.addressComplete ?? true }
+      : null;
   } catch {
     return null;
   }
@@ -70,6 +72,7 @@ export async function registerMockCheckoutGuest(
   registration: GuestCheckoutRegistration,
 ) {
   await persistMockCustomer({
+    addressComplete: true,
     email: registration.email,
     firstName: registration.billingAddress.firstName,
     guest: true,

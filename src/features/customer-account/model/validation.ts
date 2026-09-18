@@ -35,7 +35,13 @@ export function parseCustomerLogin(formData: FormData): CustomerLogin | null {
   const email = getEmail(formData);
   const password = getPassword(formData, "password");
 
-  return email && password ? { email, password } : null;
+  return email && password
+    ? {
+        email,
+        password,
+        rememberMe: formData.get("rememberMe") === "on",
+      }
+    : null;
 }
 
 export function parseCustomerRegistration(
@@ -43,39 +49,41 @@ export function parseCustomerRegistration(
 ): CustomerRegistration | null {
   const acceptedDataProtection =
     formData.get("acceptedDataProtection") === "on";
-  const city = getValue(formData, "city", 255);
+  const accountType = formData.get("accountType");
+  const company = getValue(formData, "company", 255);
   const countryId = getValue(formData, "countryId", 64);
   const email = getEmail(formData);
   const firstName = getValue(formData, "firstName", 255);
   const lastName = getValue(formData, "lastName", 255);
   const password = getPassword(formData, "password");
-  const street = getValue(formData, "street", 255);
-  const zipcode = getValue(formData, "zipcode", 50);
+  const salutationId = getValue(formData, "salutationId", 64);
+  const vatId = getValue(formData, "vatId", 50);
 
   if (
     !acceptedDataProtection ||
-    !city ||
+    (accountType !== "private" && accountType !== "business") ||
+    (accountType === "business" && (!company || !vatId)) ||
     !countryId ||
     !email ||
     !firstName ||
     !lastName ||
     !password ||
     password.length < 8 ||
-    !street ||
-    !zipcode
+    password.length > 72
   ) {
     return null;
   }
 
   return {
     acceptedDataProtection: true,
-    city,
+    accountType,
+    company: accountType === "business" ? company : undefined,
     countryId,
     email,
     firstName,
     lastName,
     password,
-    street,
-    zipcode,
+    salutationId,
+    vatId: accountType === "business" ? vatId : undefined,
   };
 }

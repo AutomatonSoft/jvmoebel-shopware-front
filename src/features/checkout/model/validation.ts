@@ -34,7 +34,10 @@ function getOptionalValue(formData: FormData, name: string, maxLength: number) {
     : undefined;
 }
 
-function parseAddress(formData: FormData, prefix = ""): CheckoutAddress | null {
+export function parseCheckoutAddress(
+  formData: FormData,
+  prefix = "",
+): CheckoutAddress | null {
   const additionalAddressLine1 = getOptionalValue(
     formData,
     `${prefix}additionalAddressLine1`,
@@ -69,12 +72,12 @@ export function parseGuestCheckoutRegistration(
 ): GuestCheckoutRegistration | null {
   const acceptedDataProtection =
     formData.get("acceptedDataProtection") === "on";
-  const billingAddress = parseAddress(formData);
+  const billingAddress = parseCheckoutAddress(formData);
   const email = getValue(formData, "email", 254);
   const shippingSameAsBilling = formData.get("shippingSameAsBilling") === "on";
   const shippingAddress = shippingSameAsBilling
     ? undefined
-    : parseAddress(formData, "shipping");
+    : parseCheckoutAddress(formData, "shipping");
 
   if (
     !acceptedDataProtection ||

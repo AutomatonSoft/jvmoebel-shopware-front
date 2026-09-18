@@ -34,8 +34,8 @@ export function SocialAuthButtons({
   const noteId = `social-${mode}-note`;
 
   return (
-    <div className="space-y-3">
-      <div className="grid gap-3 sm:grid-cols-2">
+    <div className="space-y-2">
+      <div className="grid gap-2 sm:grid-cols-2">
         <Button
           aria-describedby={noteId}
           className="w-full gap-2.5"
@@ -60,7 +60,7 @@ export function SocialAuthButtons({
       <p className="sr-only" id={noteId}>
         Diese Anmeldeart ist noch nicht verfügbar.
       </p>
-      <div className="flex items-center gap-3 py-1 text-[0.65rem] font-medium tracking-[0.12em] text-muted-foreground uppercase before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
+      <div className="flex items-center gap-3 py-0.5 text-[0.65rem] font-medium tracking-[0.12em] text-muted-foreground uppercase before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
         oder mit E-Mail
       </div>
     </div>

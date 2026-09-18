@@ -19,7 +19,7 @@ export function LoginForm({ redirectTo }: Readonly<{ redirectTo?: string }>) {
   );
 
   return (
-    <form action={formAction} className="space-y-3">
+    <form action={formAction} className="space-y-2">
       {redirectTo && (
         <input name="redirectTo" type="hidden" value={redirectTo} />
       )}
@@ -56,8 +56,17 @@ export function LoginForm({ redirectTo }: Readonly<{ redirectTo?: string }>) {
         type="password"
       />
 
+      <label className="flex min-h-9 cursor-pointer items-center gap-3 text-sm text-foreground">
+        <input
+          className="size-4 shrink-0 accent-primary"
+          name="rememberMe"
+          type="checkbox"
+        />
+        Angemeldet bleiben
+      </label>
+
       <Button
-        className="mt-3 w-full justify-between rounded-lg bg-foreground text-background hover:bg-foreground/85 disabled:cursor-wait"
+        className="mt-2 w-full justify-between rounded-lg bg-foreground text-background hover:bg-foreground/85 disabled:cursor-wait"
         disabled={pending}
         type="submit"
       >

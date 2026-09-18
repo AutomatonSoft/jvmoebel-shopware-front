@@ -8,6 +8,7 @@ import {
   parseCustomerLogin,
   parseCustomerRegistration,
 } from "@/features/customer-account/model/validation";
+import { getRegistrationOptions } from "@/features/customer-account/server/account";
 import {
   clearCustomerContext,
   createCustomerSession,
@@ -46,7 +47,9 @@ export async function loginCustomer(
     const session = await createCustomerSession();
 
     await loginShopwareCustomer(session.client, login);
-    await persistCustomerContext(session.getContextToken());
+    await persistCustomerContext(session.getContextToken(), {
+      persistent: login.rememberMe,
+    });
   } catch (error) {
     if (error instanceof ApiClientError && [400, 401].includes(error.status)) {
       return {
@@ -82,6 +85,21 @@ export async function registerCustomer(
   }
 
   try {
+    const options = await getRegistrationOptions();
+
+    if (
+      registration.countryId !== options.defaultCountryId ||
+      (registration.salutationId &&
+        !options.salutations.some(
+          (salutation) => salutation.id === registration.salutationId,
+        ))
+    ) {
+      return {
+        message: "Bitte prÃ¼fen Sie Ihre Angaben.",
+        status: "invalid",
+      };
+    }
+
     const session = await createCustomerSession();
 
     await registerShopwareCustomer(session.client, registration);

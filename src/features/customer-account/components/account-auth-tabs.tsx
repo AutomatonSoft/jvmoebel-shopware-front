@@ -18,7 +18,7 @@ export function AccountAuthTabs() {
   return (
     <nav
       aria-label="Anmeldung und Registrierung"
-      className="mb-5 grid grid-cols-2 border-b border-border"
+      className="mb-3 grid grid-cols-2 border-b border-border"
     >
       {tabs.map((tab) => {
         const active = pathname === tab.href;

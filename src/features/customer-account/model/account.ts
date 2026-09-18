@@ -21,7 +21,8 @@ export type RegistrationOption = Readonly<{
 }>;
 
 export type RegistrationOptions = Readonly<{
-  countries: RegistrationOption[];
+  defaultCountryId: string;
+  salutations: RegistrationOption[];
 }>;
 
 export type AccountActionState = Readonly<{
@@ -32,16 +33,18 @@ export type AccountActionState = Readonly<{
 export type CustomerLogin = Readonly<{
   email: string;
   password: string;
+  rememberMe: boolean;
 }>;
 
 export type CustomerRegistration = Readonly<{
   acceptedDataProtection: true;
-  city: string;
+  accountType: "business" | "private";
+  company?: string;
   countryId: string;
   email: string;
   firstName: string;
   lastName: string;
   password: string;
-  street: string;
-  zipcode: string;
+  salutationId?: string;
+  vatId?: string;
 }>;

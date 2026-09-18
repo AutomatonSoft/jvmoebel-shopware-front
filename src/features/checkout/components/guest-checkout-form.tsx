@@ -10,6 +10,7 @@ import { CheckoutCountrySelect } from "@/features/checkout/components/checkout-c
 import { AccountField } from "@/features/customer-account/components/account-field";
 import { AccountToast } from "@/features/customer-account/components/account-toast";
 import type {
+  CheckoutAddress,
   CheckoutActionState,
   CheckoutOption,
 } from "@/features/checkout/model/checkout";
@@ -19,6 +20,7 @@ const initialState: CheckoutActionState = { status: "idle" };
 
 function OptionalField({
   autoComplete,
+  defaultValue,
   id,
   icon: Icon = Phone,
   label,
@@ -26,6 +28,7 @@ function OptionalField({
   type = "text",
 }: Readonly<{
   autoComplete: string;
+  defaultValue?: string;
   id: string;
   icon?: LucideIcon;
   label: string;
@@ -37,6 +40,7 @@ function OptionalField({
       <Input
         autoComplete={autoComplete}
         className="peer h-14 rounded-lg border-border/80 bg-card pt-5 pr-3 pb-1 pl-11 shadow-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/10"
+        defaultValue={defaultValue}
         id={id}
         name={name}
         placeholder=" "
@@ -57,11 +61,13 @@ function OptionalField({
   );
 }
 
-function AddressFields({
+export function AddressFields({
   countries,
+  initialAddress,
   prefix = "",
 }: Readonly<{
   countries: readonly CheckoutOption[];
+  initialAddress?: Partial<CheckoutAddress>;
   prefix?: string;
 }>) {
   const idPrefix = prefix || "billing";
@@ -70,12 +76,14 @@ function AddressFields({
     <div className="grid gap-3 sm:grid-cols-2">
       <AccountField
         autoComplete="given-name"
+        defaultValue={initialAddress?.firstName}
         id={`${idPrefix}-firstName`}
         label="Vorname"
         name={`${prefix}firstName`}
       />
       <AccountField
         autoComplete="family-name"
+        defaultValue={initialAddress?.lastName}
         id={`${idPrefix}-lastName`}
         label="Nachname"
         name={`${prefix}lastName`}
@@ -83,12 +91,14 @@ function AddressFields({
       <AccountField
         autoComplete="street-address"
         className="sm:col-span-2"
+        defaultValue={initialAddress?.street}
         id={`${idPrefix}-street`}
         label="Straße und Hausnummer"
         name={`${prefix}street`}
       />
       <OptionalField
         autoComplete="address-line2"
+        defaultValue={initialAddress?.additionalAddressLine1}
         id={`${idPrefix}-additionalAddressLine1`}
         icon={MapPin}
         label="Adresszusatz (optional)"
@@ -96,18 +106,21 @@ function AddressFields({
       />
       <AccountField
         autoComplete="postal-code"
+        defaultValue={initialAddress?.zipcode}
         id={`${idPrefix}-zipcode`}
         label="Postleitzahl"
         name={`${prefix}zipcode`}
       />
       <AccountField
         autoComplete="address-level2"
+        defaultValue={initialAddress?.city}
         id={`${idPrefix}-city`}
         label="Ort"
         name={`${prefix}city`}
       />
       <CheckoutCountrySelect
         countries={countries}
+        defaultValue={initialAddress?.countryId}
         name={`${prefix}countryId`}
       />
     </div>

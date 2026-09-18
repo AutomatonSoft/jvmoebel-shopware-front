@@ -13,7 +13,7 @@ import { getShopwareRequestSession } from "@/integrations/shopware/session";
 
 const getCachedShopwareRegistrationOptions = unstable_cache(
   () => getShopwareRegistrationOptions(getShopwareRequestSession().client),
-  ["shopware-registration-options"],
+  ["shopware-registration-options-v2"],
   {
     revalidate: shopwareCacheTtlSeconds.registrationOptions,
     tags: ["shopware:registration-options"],

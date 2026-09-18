@@ -9,6 +9,7 @@ import { redirect } from "next/navigation";
 import { clearMockCart } from "@/features/cart/server/mock-cart";
 import type { CheckoutActionState } from "@/features/checkout/model/checkout";
 import {
+  parseCheckoutAddress,
   parseCheckoutMethodSelection,
   parseGuestCheckoutRegistration,
   parseGuestPassword,
@@ -28,8 +29,10 @@ import {
 import {
   convertShopwareGuest,
   createShopwareCheckoutOrder,
+  getShopwareCheckoutCustomer,
   getShopwareCheckoutOptions,
   registerShopwareGuest,
+  updateShopwareCustomerAddress,
 } from "@/integrations/shopware/checkout";
 import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
 
@@ -145,6 +148,42 @@ export async function registerCheckoutGuest(
   redirect("/kasse?schritt=zahlung");
 }
 
+export async function saveCustomerCheckoutAddress(
+  _previousState: CheckoutActionState,
+  formData: FormData,
+): Promise<CheckoutActionState> {
+  const address = parseCheckoutAddress(formData);
+
+  if (!address) {
+    return {
+      message: "Bitte füllen Sie alle Pflichtfelder vollständig aus.",
+      status: "invalid",
+    };
+  }
+
+  try {
+    const session = await createCustomerSession();
+    const options = await getShopwareCheckoutOptions(session.client);
+
+    if (
+      !options.countries.some((country) => country.id === address.countryId)
+    ) {
+      return {
+        message: "Bitte wählen Sie ein gültiges Land.",
+        status: "invalid",
+      };
+    }
+
+    await updateShopwareCustomerAddress(session.client, address);
+    await persistCustomerContext(session.getContextToken());
+  } catch (error) {
+    return getActionError(error, "Customer checkout address update failed.");
+  }
+
+  revalidatePath("/kasse");
+  redirect("/kasse?schritt=zahlung");
+}
+
 export async function placeCheckoutOrder(
   _previousState: CheckoutActionState,
   formData: FormData,
@@ -174,7 +213,18 @@ export async function placeCheckoutOrder(
       await clearMockCart();
     } else {
       const session = await createCustomerSession();
-      const options = await getShopwareCheckoutOptions(session.client);
+      const [customer, options] = await Promise.all([
+        getShopwareCheckoutCustomer(session.client),
+        getShopwareCheckoutOptions(session.client),
+      ]);
+
+      if (!customer?.addressComplete) {
+        return {
+          message: "Bitte ergänzen Sie zuerst Ihre Lieferadresse.",
+          status: "invalid",
+        };
+      }
+
       const paymentMethodValid = options.paymentMethods.some(
         (method) => method.id === selection.paymentMethodId,
       );

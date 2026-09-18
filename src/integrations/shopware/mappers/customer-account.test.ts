@@ -57,4 +57,24 @@ describe("mapShopwareCustomerAccount", () => {
       mapShopwareCustomerAccount({ guest: true } as ShopwareCustomer),
     ).toBeNull();
   });
+
+  test("hides the technical address used before checkout", () => {
+    const customer = {
+      customerNumber: "10043",
+      defaultBillingAddress: {
+        city: "Noch nicht angegeben",
+        firstName: "Greta",
+        lastName: "Groß",
+        street: "Noch nicht angegeben",
+        zipcode: "00000",
+      },
+      email: "greta@example.com",
+      firstName: "Greta",
+      lastName: "Groß",
+    } as ShopwareCustomer;
+
+    expect(
+      mapShopwareCustomerAccount(customer)?.billingAddress,
+    ).toBeUndefined();
+  });
 });

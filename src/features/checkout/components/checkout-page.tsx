@@ -5,6 +5,7 @@ import { Container } from "@/components/ui/container";
 import { CheckoutPaymentForm } from "@/features/checkout/components/checkout-payment-form";
 import { CheckoutProgress } from "@/features/checkout/components/checkout-progress";
 import { CheckoutSummary } from "@/features/checkout/components/checkout-summary";
+import { CustomerCheckoutAddressForm } from "@/features/checkout/components/customer-checkout-address-form";
 import { GuestCheckoutForm } from "@/features/checkout/components/guest-checkout-form";
 import type { CheckoutPageData } from "@/features/checkout/model/checkout";
 
@@ -12,7 +13,7 @@ export function CheckoutPage({
   data,
   paymentError,
 }: Readonly<{ data: CheckoutPageData; paymentError: boolean }>) {
-  const step = data.customer ? "payment" : "address";
+  const step = data.customer?.addressComplete ? "payment" : "address";
 
   return (
     <main className="flex-1 bg-background">
@@ -67,8 +68,13 @@ export function CheckoutPage({
         )}
 
         <div className="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_23rem] xl:gap-12">
-          {step === "address" ? (
+          {!data.customer ? (
             <GuestCheckoutForm countries={data.options.countries} />
+          ) : step === "address" ? (
+            <CustomerCheckoutAddressForm
+              countries={data.options.countries}
+              customer={data.customer}
+            />
           ) : (
             <CheckoutPaymentForm
               paymentMethods={data.options.paymentMethods}
