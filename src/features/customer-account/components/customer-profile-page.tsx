@@ -1,6 +1,7 @@
 import {
   ArrowRight,
   Bell,
+  BellRing,
   CircleHelp,
   Gift,
   LogOut,
@@ -247,14 +248,21 @@ export function CustomerProfilePage({
           <aside className="space-y-8 lg:pt-1">
             <AccountSection id="notifications" title="Benachrichtigungen">
               <div className="rounded-2xl bg-secondary p-5">
-                <Gift aria-hidden="true" className="size-5 text-primary" />
+                <BellRing aria-hidden="true" className="size-5 text-primary" />
                 <p className="mt-5 text-sm font-semibold">
-                  Neuigkeiten von JVMöbel
+                  Konto- und Bestellupdates
                 </p>
                 <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                  Wichtige Informationen zu Ihrem Konto und Ihren Bestellungen
-                  erhalten Sie per E-Mail.
+                  Bestellbestätigungen, Lieferstatus und wichtige Änderungen
+                  senden wir Ihnen per E-Mail.
                 </p>
+                <Link
+                  className="mt-5 inline-flex items-center gap-2 text-xs font-semibold text-primary hover:underline"
+                  href="/kundenkonto/benachrichtigungen"
+                >
+                  Benachrichtigungen öffnen{" "}
+                  <ArrowRight aria-hidden="true" className="size-3.5" />
+                </Link>
               </div>
             </AccountSection>
             <AccountSection id="advantages" title="Vorteile & Angebote">
