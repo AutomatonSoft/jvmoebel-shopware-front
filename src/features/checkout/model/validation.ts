@@ -35,13 +35,17 @@ export const checkoutAddressSchema = z.object({
   zipcode: requiredString(50),
 });
 
-const guestCheckoutRegistrationSchema = z
+export const guestCheckoutRegistrationSchema = z
   .object({
-    acceptedDataProtection: z.literal(true),
+    acceptedDataProtection: z.union([z.literal(true), z.literal("on")]),
     billingAddress: checkoutAddressSchema,
     email: emailSchema,
     shippingAddress: checkoutAddressSchema.optional(),
-    shippingSameAsBilling: z.boolean(),
+    shippingSameAsBilling: z.union([
+      z.literal(true),
+      z.literal(false),
+      z.literal("on"),
+    ]),
   })
   .refine(
     ({ shippingAddress, shippingSameAsBilling }) =>
@@ -61,7 +65,7 @@ const guestCheckoutRegistrationSchema = z
     }),
   );
 
-const checkoutAddressFieldMessages = {
+export const checkoutAddressFieldMessages = {
   city: "Bitte geben Sie Ihren Ort ein.",
   countryId: "Bitte wählen Sie ein Land aus.",
   firstName: "Bitte geben Sie Ihren Vornamen ein.",
@@ -70,7 +74,7 @@ const checkoutAddressFieldMessages = {
   zipcode: "Bitte geben Sie Ihre Postleitzahl ein.",
 } as const;
 
-const guestCheckoutFieldMessages = {
+export const guestCheckoutFieldMessages = {
   acceptedDataProtection: "Bitte stimmen Sie der Verarbeitung Ihrer Daten zu.",
   email: "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
 } as const;

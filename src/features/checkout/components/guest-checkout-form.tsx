@@ -2,7 +2,10 @@
 
 import { ArrowRight, MapPin, Phone, type LucideIcon } from "lucide-react";
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { startTransition, useActionState } from "react";
+import { useForm, useWatch, type UseFormRegisterReturn } from "react-hook-form";
+import type { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,9 +17,19 @@ import type {
   CheckoutActionState,
   CheckoutOption,
 } from "@/features/checkout/model/checkout";
+import {
+  checkoutAddressFieldMessages,
+  guestCheckoutFieldMessages,
+  guestCheckoutRegistrationSchema,
+} from "@/features/checkout/model/validation";
 import { registerCheckoutGuest } from "@/features/checkout/server/actions";
 
 const initialState: CheckoutActionState = { status: "idle" };
+
+type GuestCheckoutFormInput = z.input<typeof guestCheckoutRegistrationSchema>;
+type GuestCheckoutFormOutput = z.output<typeof guestCheckoutRegistrationSchema>;
+
+type AddressField = keyof CheckoutAddress;
 
 function OptionalField({
   autoComplete,
@@ -26,6 +39,7 @@ function OptionalField({
   icon: Icon = Phone,
   label,
   name = id,
+  registration,
   type = "text",
 }: Readonly<{
   autoComplete: string;
@@ -35,11 +49,13 @@ function OptionalField({
   icon?: LucideIcon;
   label: string;
   name?: string;
+  registration?: UseFormRegisterReturn;
   type?: "tel" | "text";
 }>) {
   return (
     <div className="relative sm:col-span-2">
       <Input
+        {...registration}
         aria-describedby={error ? `${id}-error` : undefined}
         aria-invalid={Boolean(error) || undefined}
         autoComplete={autoComplete}
@@ -77,16 +93,21 @@ function OptionalField({
 export function AddressFields({
   countries,
   fieldErrors,
+  getClientError,
   initialAddress,
   prefix = "",
+  registerField,
 }: Readonly<{
   countries: readonly CheckoutOption[];
   fieldErrors?: Readonly<Partial<Record<string, string>>>;
+  getClientError?: (field: AddressField) => string | undefined;
   initialAddress?: Partial<CheckoutAddress>;
   prefix?: string;
+  registerField?: (field: AddressField) => UseFormRegisterReturn;
 }>) {
   const idPrefix = prefix || "billing";
-  const getError = (field: string) => fieldErrors?.[`${prefix}${field}`];
+  const getError = (field: AddressField) =>
+    getClientError?.(field) ?? fieldErrors?.[`${prefix}${field}`];
 
   return (
     <div className="grid gap-3 sm:grid-cols-2">
@@ -97,6 +118,7 @@ export function AddressFields({
         id={`${idPrefix}-firstName`}
         label="Vorname"
         name={`${prefix}firstName`}
+        registration={registerField?.("firstName")}
       />
       <AccountField
         autoComplete="family-name"
@@ -105,6 +127,7 @@ export function AddressFields({
         id={`${idPrefix}-lastName`}
         label="Nachname"
         name={`${prefix}lastName`}
+        registration={registerField?.("lastName")}
       />
       <AccountField
         autoComplete="street-address"
@@ -114,6 +137,7 @@ export function AddressFields({
         id={`${idPrefix}-street`}
         label="Straße und Hausnummer"
         name={`${prefix}street`}
+        registration={registerField?.("street")}
       />
       <OptionalField
         autoComplete="address-line2"
@@ -123,6 +147,7 @@ export function AddressFields({
         icon={MapPin}
         label="Adresszusatz (optional)"
         name={`${prefix}additionalAddressLine1`}
+        registration={registerField?.("additionalAddressLine1")}
       />
       <AccountField
         autoComplete="postal-code"
@@ -131,6 +156,7 @@ export function AddressFields({
         id={`${idPrefix}-zipcode`}
         label="Postleitzahl"
         name={`${prefix}zipcode`}
+        registration={registerField?.("zipcode")}
       />
       <AccountField
         autoComplete="address-level2"
@@ -139,12 +165,14 @@ export function AddressFields({
         id={`${idPrefix}-city`}
         label="Ort"
         name={`${prefix}city`}
+        registration={registerField?.("city")}
       />
       <CheckoutCountrySelect
         countries={countries}
         defaultValue={initialAddress?.countryId}
         error={getError("countryId")}
         name={`${prefix}countryId`}
+        registration={registerField?.("countryId")}
       />
     </div>
   );
@@ -153,16 +181,93 @@ export function AddressFields({
 export function GuestCheckoutForm({
   countries,
 }: Readonly<{ countries: readonly CheckoutOption[] }>) {
-  const [separateShippingAddress, setSeparateShippingAddress] = useState(false);
   const [state, formAction, pending] = useActionState(
     registerCheckoutGuest,
     initialState,
   );
+  const defaultCountryId = countries.length === 1 ? countries[0].id : "";
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+    register,
+  } = useForm<GuestCheckoutFormInput, undefined, GuestCheckoutFormOutput>({
+    defaultValues: {
+      billingAddress: {
+        additionalAddressLine1: "",
+        city: "",
+        countryId: defaultCountryId,
+        firstName: "",
+        lastName: "",
+        phoneNumber: "",
+        street: "",
+        zipcode: "",
+      },
+      email: "",
+      shippingAddress: {
+        additionalAddressLine1: "",
+        city: "",
+        countryId: defaultCountryId,
+        firstName: "",
+        lastName: "",
+        phoneNumber: "",
+        street: "",
+        zipcode: "",
+      },
+      shippingSameAsBilling: true,
+    },
+    mode: "onBlur",
+    reValidateMode: "onChange",
+    resolver: zodResolver(guestCheckoutRegistrationSchema),
+    shouldUnregister: true,
+  });
   const fieldErrors = state.fieldErrors ?? {};
-  const dataProtectionError = fieldErrors.acceptedDataProtection;
+  const shippingSameAsBilling = useWatch({
+    control,
+    name: "shippingSameAsBilling",
+  });
+  const separateShippingAddress = !shippingSameAsBilling;
+  const clientFieldErrors = errors as {
+    acceptedDataProtection?: unknown;
+    billingAddress?: Partial<Record<AddressField, unknown>>;
+    email?: unknown;
+    shippingAddress?: Partial<Record<AddressField, unknown>>;
+  };
+  const getAddressError = (
+    address: "billingAddress" | "shippingAddress",
+    field: AddressField,
+    prefix = "",
+  ) =>
+    clientFieldErrors[address]?.[field]
+      ? checkoutAddressFieldMessages[
+          field as keyof typeof checkoutAddressFieldMessages
+        ]
+      : fieldErrors[`${prefix}${field}`];
+  const dataProtectionError = clientFieldErrors.acceptedDataProtection
+    ? guestCheckoutFieldMessages.acceptedDataProtection
+    : fieldErrors.acceptedDataProtection;
+  const emailError = clientFieldErrors.email
+    ? guestCheckoutFieldMessages.email
+    : fieldErrors.email;
+  const registerAddressField = (
+    address: "billingAddress" | "shippingAddress",
+    field: AddressField,
+  ) => register(`${address}.${field}` as const);
+
+  const submitGuestCheckout = handleSubmit((_values, event) => {
+    if (pending || !event?.currentTarget) {
+      return;
+    }
+
+    const formData = new FormData(event.currentTarget);
+
+    startTransition(() => {
+      formAction(formData);
+    });
+  });
 
   return (
-    <form action={formAction}>
+    <form action={formAction} noValidate onSubmit={submitGuestCheckout}>
       <AccountToast
         description={state.message}
         id={`guest-checkout-${state.status}`}
@@ -197,10 +302,11 @@ export function GuestCheckoutForm({
             <AccountField
               autoComplete="email"
               className="sm:col-span-2"
-              error={fieldErrors.email}
+              error={emailError}
               id="checkout-email"
               label="E-Mail-Adresse"
               name="email"
+              registration={register("email")}
               type="email"
             />
             <OptionalField
@@ -209,20 +315,30 @@ export function GuestCheckoutForm({
               id="checkout-phone"
               label="Telefonnummer (optional)"
               name="phoneNumber"
+              registration={registerAddressField(
+                "billingAddress",
+                "phoneNumber",
+              )}
               type="tel"
             />
           </div>
-          <AddressFields countries={countries} fieldErrors={fieldErrors} />
+          <AddressFields
+            countries={countries}
+            fieldErrors={fieldErrors}
+            getClientError={(field) => getAddressError("billingAddress", field)}
+            registerField={(field) =>
+              registerAddressField("billingAddress", field)
+            }
+          />
         </fieldset>
 
         <label className="mt-6 flex items-start gap-3 rounded-2xl bg-secondary/70 p-4 text-sm leading-6">
           <input
-            checked={!separateShippingAddress}
-            className="mt-1 size-4 shrink-0 accent-primary"
-            name="shippingSameAsBilling"
-            onChange={(event) =>
-              setSeparateShippingAddress(!event.currentTarget.checked)
+            {...register("shippingSameAsBilling")}
+            checked={
+              shippingSameAsBilling === true || shippingSameAsBilling === "on"
             }
+            className="mt-1 size-4 shrink-0 accent-primary"
             type="checkbox"
           />
           Lieferadresse entspricht der Rechnungsadresse
@@ -236,13 +352,20 @@ export function GuestCheckoutForm({
             <AddressFields
               countries={countries}
               fieldErrors={fieldErrors}
+              getClientError={(field) =>
+                getAddressError("shippingAddress", field, "shipping")
+              }
               prefix="shipping"
+              registerField={(field) =>
+                registerAddressField("shippingAddress", field)
+              }
             />
           </fieldset>
         )}
 
         <label className="mt-7 flex items-start gap-3 text-xs leading-5 text-muted-foreground">
           <input
+            {...register("acceptedDataProtection")}
             aria-describedby={
               dataProtectionError
                 ? "checkout-accepted-data-protection-error"

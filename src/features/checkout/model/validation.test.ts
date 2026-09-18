@@ -4,6 +4,7 @@ import {
   getCheckoutMethodSelectionFieldErrors,
   getGuestCheckoutRegistrationFieldErrors,
   getGuestPasswordFieldErrors,
+  guestCheckoutRegistrationSchema,
   parseCheckoutMethodSelection,
   parseGuestCheckoutRegistration,
   parseGuestPassword,
@@ -45,6 +46,26 @@ describe("checkout validation", () => {
       email: "gast@example.com",
       shippingAddress: undefined,
     });
+  });
+
+  test("accepts browser values for client-side guest checkout validation", () => {
+    expect(
+      guestCheckoutRegistrationSchema.safeParse({
+        acceptedDataProtection: "on",
+        billingAddress: {
+          additionalAddressLine1: "",
+          city: "Köln",
+          countryId: "country-de",
+          firstName: "Greta",
+          lastName: "Groß",
+          phoneNumber: "",
+          street: "Musterstraße 8",
+          zipcode: "50667",
+        },
+        email: "gast@example.com",
+        shippingSameAsBilling: true,
+      }).success,
+    ).toBeTrue();
   });
 
   test("requires a complete separate shipping address", () => {

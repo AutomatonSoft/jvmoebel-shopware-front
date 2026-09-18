@@ -1,4 +1,5 @@
 import { ChevronDown, Globe2 } from "lucide-react";
+import type { UseFormRegisterReturn } from "react-hook-form";
 
 import type { CheckoutOption } from "@/features/checkout/model/checkout";
 
@@ -7,14 +8,23 @@ export function CheckoutCountrySelect({
   defaultValue,
   error,
   name,
+  registration,
 }: Readonly<{
   countries: readonly CheckoutOption[];
   defaultValue?: string;
   error?: string;
   name: string;
+  registration?: UseFormRegisterReturn;
 }>) {
   if (countries.length === 1) {
-    return <input name={name} type="hidden" value={countries[0].id} />;
+    return (
+      <input
+        {...registration}
+        name={name}
+        type="hidden"
+        value={countries[0].id}
+      />
+    );
   }
 
   return (
@@ -26,6 +36,7 @@ export function CheckoutCountrySelect({
         Land
       </label>
       <select
+        {...registration}
         aria-describedby={error ? `${name}-error` : undefined}
         aria-invalid={Boolean(error) || undefined}
         className="h-14 w-full appearance-none rounded-lg border border-border/80 bg-card pt-5 pr-10 pb-1 pl-11 text-base outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/10 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 md:text-sm"
