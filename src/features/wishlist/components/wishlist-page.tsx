@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart, ShieldCheck, Sparkles } from "lucide-react";
+import { Gem, Heart, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -121,7 +121,7 @@ export function WishlistPage() {
               render={<Link href="/moebel-sortiment" />}
               size="lg"
             >
-              <Sparkles aria-hidden="true" />
+              <Gem aria-hidden="true" />
               Moebel entdecken
             </Button>
           </section>
