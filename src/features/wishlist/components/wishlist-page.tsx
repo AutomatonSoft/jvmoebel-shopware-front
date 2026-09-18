@@ -6,8 +6,10 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { ShopProductCard } from "@/features/catalog/components/shop-product-card";
+import { WishlistRecommendations } from "@/features/wishlist/components/wishlist-recommendations";
 import { useWishlist } from "@/features/wishlist/hooks/use-wishlist";
 import { useWishlistProducts } from "@/features/wishlist/hooks/use-wishlist-products";
+import { useWishlistRecommendations } from "@/features/wishlist/hooks/use-wishlist-recommendations";
 
 export function WishlistPage() {
   const { isReady, productIds } = useWishlist();
@@ -15,6 +17,7 @@ export function WishlistPage() {
     productIds,
     isReady,
   );
+  const recommendations = useWishlistRecommendations(productIds, isReady);
   const products = listing?.products ?? [];
   const productCountLabel =
     products.length === 1
@@ -126,6 +129,11 @@ export function WishlistPage() {
             </Button>
           </section>
         )}
+
+        <WishlistRecommendations
+          isLoading={recommendations.isLoading}
+          listing={recommendations.listing}
+        />
       </Container>
     </main>
   );
