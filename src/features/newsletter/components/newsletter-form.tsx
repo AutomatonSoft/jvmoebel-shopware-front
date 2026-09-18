@@ -67,6 +67,8 @@ export function NewsletterForm({
     );
   }
 
+  const invalidEmail = state.status === "invalid";
+
   return (
     <div>
       <form
@@ -74,15 +76,30 @@ export function NewsletterForm({
         className="flex max-w-xl flex-col gap-2 sm:flex-row"
         onSubmit={handleSubmit}
       >
-        <Input
-          aria-label={placeholder}
-          autoComplete="email"
-          className="h-13 min-w-0 flex-1 rounded-xl border-foreground/15 bg-background px-5 shadow-none focus-visible:border-foreground/30 focus-visible:ring-primary/15"
-          name="email"
-          placeholder={placeholder}
-          required
-          type="email"
-        />
+        <div className="min-w-0 flex-1">
+          <Input
+            aria-describedby={
+              invalidEmail ? "newsletter-email-error" : undefined
+            }
+            aria-invalid={invalidEmail || undefined}
+            aria-label={placeholder}
+            autoComplete="email"
+            className="h-13 w-full rounded-xl border-foreground/15 bg-background px-5 shadow-none focus-visible:border-foreground/30 focus-visible:ring-primary/15"
+            name="email"
+            placeholder={placeholder}
+            required
+            type="email"
+          />
+          {invalidEmail && (
+            <p
+              className="mt-2 text-sm text-destructive"
+              id="newsletter-email-error"
+              role="alert"
+            >
+              {invalidEmailMessage}
+            </p>
+          )}
+        </div>
         <Button
           className="group w-full justify-between font-bold hover:bg-destructive disabled:cursor-wait motion-safe:active:scale-[.985] sm:w-auto"
           disabled={pending}
@@ -94,7 +111,6 @@ export function NewsletterForm({
         </Button>
       </form>
       <p aria-live="polite" className="mt-3 min-h-5 text-sm text-destructive">
-        {state.status === "invalid" && invalidEmailMessage}
         {state.status === "error" && errorMessage}
       </p>
     </div>

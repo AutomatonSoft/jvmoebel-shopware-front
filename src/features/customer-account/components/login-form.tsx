@@ -17,6 +17,8 @@ export function LoginForm({ redirectTo }: Readonly<{ redirectTo?: string }>) {
     loginCustomer,
     initialState,
   );
+  const fieldErrors = state.fieldErrors ?? {};
+  const invalid = state.status === "invalid" && !state.fieldErrors;
 
   return (
     <form action={formAction} className="space-y-2">
@@ -41,16 +43,18 @@ export function LoginForm({ redirectTo }: Readonly<{ redirectTo?: string }>) {
 
       <AccountField
         autoComplete="email"
+        error={fieldErrors.email}
         id="login-email"
-        invalid={state.status === "invalid" || undefined}
+        invalid={invalid || undefined}
         label="E-Mail-Adresse"
         name="email"
         type="email"
       />
       <AccountField
         autoComplete="current-password"
+        error={fieldErrors.password}
         id="login-password"
-        invalid={state.status === "invalid" || undefined}
+        invalid={invalid || undefined}
         label="Passwort"
         name="password"
         type="password"

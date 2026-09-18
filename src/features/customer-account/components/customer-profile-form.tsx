@@ -47,6 +47,7 @@ export function CustomerProfileForm({
     saveCustomerSettings,
     initialState,
   );
+  const fieldErrors = state.fieldErrors ?? {};
   const [editable, setEditable] = useState<
     "firstName" | "lastName" | "email" | null
   >(null);
@@ -80,6 +81,7 @@ export function CustomerProfileForm({
           <AccountField
             autoComplete="given-name"
             defaultValue={account.firstName}
+            error={fieldErrors.firstName}
             id="profile-first-name"
             label="Vorname"
             name="firstName"
@@ -93,6 +95,7 @@ export function CustomerProfileForm({
           <AccountField
             autoComplete="family-name"
             defaultValue={account.lastName}
+            error={fieldErrors.lastName}
             id="profile-last-name"
             label="Nachname"
             name="lastName"
@@ -108,6 +111,7 @@ export function CustomerProfileForm({
           <AccountField
             autoComplete="email"
             defaultValue={account.email}
+            error={fieldErrors.email}
             id="profile-email"
             label="E-Mail-Adresse"
             name="email"
@@ -119,6 +123,7 @@ export function CustomerProfileForm({
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             <AccountField
               autoComplete="email"
+              error={fieldErrors.emailConfirmation}
               id="profile-email-confirmation"
               label="E-Mail-Adresse wiederholen"
               name="emailConfirmation"
@@ -126,6 +131,7 @@ export function CustomerProfileForm({
             />
             <AccountField
               autoComplete="current-password"
+              error={fieldErrors.password}
               id="profile-current-password"
               label="Aktuelles Passwort"
               name="password"

@@ -84,6 +84,16 @@ const checkoutMethodSelectionSchema = z.object({
 
 const guestPasswordSchema = z.string().min(8).max(4096);
 
+const checkoutMethodFieldMessages = {
+  acceptedTerms: "Bitte stimmen Sie den Bedingungen zu.",
+  paymentMethodId: "Bitte wählen Sie eine Zahlungsart aus.",
+  shippingMethodId: "Bitte wählen Sie eine Versandart aus.",
+} as const;
+
+const guestPasswordFieldMessages = {
+  password: "Das Passwort muss mindestens acht Zeichen lang sein.",
+} as const;
+
 function getAddressInput(formData: FormData, prefix = "") {
   return {
     additionalAddressLine1: formData.get(`${prefix}additionalAddressLine1`),
@@ -148,13 +158,59 @@ export function getGuestCheckoutRegistrationFieldErrors(error: ZodError) {
   return fieldErrors satisfies NonNullable<CheckoutActionState["fieldErrors"]>;
 }
 
+function getFieldErrors(
+  error: ZodError,
+  messages: Readonly<Record<string, string>>,
+) {
+  const fieldErrors: Record<string, string> = {};
+
+  for (const issue of error.issues) {
+    const field = issue.path[0];
+
+    if (typeof field === "string" && field in messages) {
+      fieldErrors[field] ??= messages[field];
+    }
+  }
+
+  return fieldErrors satisfies NonNullable<CheckoutActionState["fieldErrors"]>;
+}
+
+export function validateCheckoutAddress(formData: FormData, prefix = "") {
+  return checkoutAddressSchema.safeParse(getAddressInput(formData, prefix));
+}
+
+export function getCheckoutAddressFieldErrors(error: ZodError) {
+  return getFieldErrors(error, checkoutAddressFieldMessages);
+}
+
+export function validateCheckoutMethodSelection(formData: FormData) {
+  return checkoutMethodSelectionSchema.safeParse({
+    acceptedTerms: formData.get("acceptedTerms") === "on",
+    customerComment: formData.get("customerComment"),
+    paymentMethodId: formData.get("paymentMethodId"),
+    shippingMethodId: formData.get("shippingMethodId"),
+  });
+}
+
+export function getCheckoutMethodSelectionFieldErrors(error: ZodError) {
+  return getFieldErrors(error, checkoutMethodFieldMessages);
+}
+
+export function validateGuestPassword(formData: FormData) {
+  return guestPasswordSchema.safeParse(formData.get("password"));
+}
+
+export function getGuestPasswordFieldErrors(_error: ZodError) {
+  return {
+    password: guestPasswordFieldMessages.password,
+  } satisfies NonNullable<CheckoutActionState["fieldErrors"]>;
+}
+
 export function parseCheckoutAddress(
   formData: FormData,
   prefix = "",
 ): CheckoutAddress | null {
-  const result = checkoutAddressSchema.safeParse(
-    getAddressInput(formData, prefix),
-  );
+  const result = validateCheckoutAddress(formData, prefix);
 
   return result.success ? result.data : null;
 }
@@ -170,18 +226,13 @@ export function parseGuestCheckoutRegistration(
 export function parseCheckoutMethodSelection(
   formData: FormData,
 ): CheckoutMethodSelection | null {
-  const result = checkoutMethodSelectionSchema.safeParse({
-    acceptedTerms: formData.get("acceptedTerms") === "on",
-    customerComment: formData.get("customerComment"),
-    paymentMethodId: formData.get("paymentMethodId"),
-    shippingMethodId: formData.get("shippingMethodId"),
-  });
+  const result = validateCheckoutMethodSelection(formData);
 
   return result.success ? result.data : null;
 }
 
 export function parseGuestPassword(formData: FormData) {
-  const result = guestPasswordSchema.safeParse(formData.get("password"));
+  const result = validateGuestPassword(formData);
 
   return result.success ? result.data : null;
 }

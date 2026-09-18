@@ -26,6 +26,7 @@ export function CustomerCheckoutAddressForm({
     saveCustomerCheckoutAddress,
     initialState,
   );
+  const fieldErrors = state.fieldErrors ?? {};
 
   return (
     <form action={formAction}>
@@ -60,6 +61,7 @@ export function CustomerCheckoutAddressForm({
           <legend className="sr-only">Liefer- und Rechnungsadresse</legend>
           <AddressFields
             countries={countries}
+            fieldErrors={fieldErrors}
             initialAddress={{
               countryId: customer.countryId,
               firstName: customer.firstName,

@@ -6,11 +6,15 @@ import { revalidatePath } from "next/cache";
 
 import type { AccountActionState } from "@/features/customer-account/model/account";
 import {
+  getCustomerEmailChangeFieldErrors,
+  getCustomerLoginFieldErrors,
+  getCustomerProfileUpdateFieldErrors,
   getCustomerRegistrationFieldErrors,
-  parseCustomerEmailChange,
-  parseCustomerLogin,
-  parseCustomerProfileUpdate,
-  parseCustomerSettingsUpdate,
+  getCustomerSettingsUpdateFieldErrors,
+  validateCustomerEmailChange,
+  validateCustomerLogin,
+  validateCustomerProfileUpdate,
+  validateCustomerSettingsUpdate,
   validateCustomerRegistration,
 } from "@/features/customer-account/model/validation";
 import { getRegistrationOptions } from "@/features/customer-account/server/account";
@@ -24,7 +28,10 @@ import {
   logoutShopwareCustomer,
   registerShopwareCustomer,
 } from "@/integrations/shopware/customer-account";
-import { parseCheckoutAddress } from "@/features/checkout/model/validation";
+import {
+  getCheckoutAddressFieldErrors,
+  validateCheckoutAddress,
+} from "@/features/checkout/model/validation";
 import {
   getShopwareCheckoutOptions,
   updateShopwareCustomerAddress,
@@ -42,16 +49,19 @@ export async function loginCustomer(
   _previousState: AccountActionState,
   formData: FormData,
 ): Promise<AccountActionState> {
-  const login = parseCustomerLogin(formData);
+  const validation = validateCustomerLogin(formData);
   const redirectPath = getRedirectPath(formData);
 
-  if (!login) {
+  if (!validation.success) {
     return {
+      fieldErrors: getCustomerLoginFieldErrors(validation.error),
       message:
         "Bitte geben Sie eine gültige E-Mail-Adresse und Ihr Passwort ein.",
       status: "invalid",
     };
   }
+
+  const login = validation.data;
 
   try {
     const session = await createCustomerSession();
@@ -156,11 +166,17 @@ export async function saveCustomerProfile(
   _previousState: AccountActionState,
   formData: FormData,
 ): Promise<AccountActionState> {
-  const profile = parseCustomerProfileUpdate(formData);
+  const validation = validateCustomerProfileUpdate(formData);
 
-  if (!profile) {
-    return { message: "Bitte prüfen Sie Ihren Namen.", status: "invalid" };
+  if (!validation.success) {
+    return {
+      fieldErrors: getCustomerProfileUpdateFieldErrors(validation.error),
+      message: "Bitte prüfen Sie Ihren Namen.",
+      status: "invalid",
+    };
   }
+
+  const profile = validation.data;
 
   try {
     const session = await createCustomerSession();
@@ -188,14 +204,17 @@ export async function changeCustomerEmail(
   _previousState: AccountActionState,
   formData: FormData,
 ): Promise<AccountActionState> {
-  const emailChange = parseCustomerEmailChange(formData);
+  const validation = validateCustomerEmailChange(formData);
 
-  if (!emailChange) {
+  if (!validation.success) {
     return {
+      fieldErrors: getCustomerEmailChangeFieldErrors(validation.error),
       message: "Bitte prüfen Sie E-Mail-Adresse und Passwort.",
       status: "invalid",
     };
   }
+
+  const emailChange = validation.data;
 
   try {
     const session = await createCustomerSession();
@@ -222,27 +241,41 @@ export async function saveCustomerSettings(
   _previousState: AccountActionState,
   formData: FormData,
 ): Promise<AccountActionState> {
-  const settings = parseCustomerSettingsUpdate(formData);
+  const validation = validateCustomerSettingsUpdate(formData);
 
-  if (!settings)
-    return { message: "Bitte prüfen Sie Ihre Angaben.", status: "invalid" };
+  if (!validation.success) {
+    return {
+      fieldErrors: getCustomerSettingsUpdateFieldErrors(validation.error),
+      message: "Bitte prüfen Sie Ihre Angaben.",
+      status: "invalid",
+    };
+  }
+
+  const settings = validation.data;
+  const emailChangeValidation =
+    settings.email.trim() === settings.currentEmail
+      ? null
+      : validateCustomerEmailChange(formData);
+
+  if (emailChangeValidation && !emailChangeValidation.success) {
+    return {
+      fieldErrors: getCustomerEmailChangeFieldErrors(
+        emailChangeValidation.error,
+      ),
+      message: "Bitte bestätigen Sie die neue E-Mail-Adresse und Ihr Passwort.",
+      status: "invalid",
+    };
+  }
+
   try {
     const session = await createCustomerSession();
     await session.client.invoke("changeProfile post /account/change-profile", {
       body: { firstName: settings.firstName, lastName: settings.lastName },
       fetchOptions: { cache: "no-store" },
     });
-    if (settings.email.trim() !== settings.currentEmail) {
-      const emailChange = parseCustomerEmailChange(formData);
-
-      if (!emailChange)
-        return {
-          message:
-            "Bitte bestätigen Sie die neue E-Mail-Adresse und Ihr Passwort.",
-          status: "invalid",
-        };
+    if (emailChangeValidation) {
       await session.client.invoke("changeEmail post /account/change-email", {
-        body: emailChange,
+        body: emailChangeValidation.data,
         fetchOptions: { cache: "no-store" },
       });
     }
@@ -263,14 +296,17 @@ export async function saveCustomerAccountAddress(
   _previousState: AccountActionState,
   formData: FormData,
 ): Promise<AccountActionState> {
-  const address = parseCheckoutAddress(formData);
+  const validation = validateCheckoutAddress(formData);
 
-  if (!address) {
+  if (!validation.success) {
     return {
+      fieldErrors: getCheckoutAddressFieldErrors(validation.error),
       message: "Bitte füllen Sie alle Pflichtfelder aus.",
       status: "invalid",
     };
   }
+
+  const address = validation.data;
 
   try {
     const session = await createCustomerSession();
@@ -280,6 +316,7 @@ export async function saveCustomerAccountAddress(
       !options.countries.some((country) => country.id === address.countryId)
     ) {
       return {
+        fieldErrors: { countryId: "Bitte wählen Sie ein gültiges Land." },
         message: "Bitte wählen Sie ein gültiges Land.",
         status: "invalid",
       };

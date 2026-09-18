@@ -1,6 +1,8 @@
 import { describe, expect, test } from "bun:test";
 
 import {
+  getCustomerEmailChangeFieldErrors,
+  getCustomerLoginFieldErrors,
   getCustomerRegistrationFieldErrors,
   parseCustomerEmailChange,
   parseCustomerLogin,
@@ -8,6 +10,8 @@ import {
   parseCustomerRegistration,
   parseCustomerSettingsUpdate,
   validateCustomerRegistration,
+  validateCustomerEmailChange,
+  validateCustomerLogin,
 } from "@/features/customer-account/model/validation";
 
 function createRegistrationForm() {
@@ -38,6 +42,18 @@ describe("customer account validation", () => {
 
     formData.set("rememberMe", "on");
     expect(parseCustomerLogin(formData)?.rememberMe).toBeTrue();
+  });
+
+  test("maps invalid login fields to user-facing messages", () => {
+    const result = validateCustomerLogin(new FormData());
+
+    expect(result.success).toBeFalse();
+    if (!result.success) {
+      expect(getCustomerLoginFieldErrors(result.error)).toEqual({
+        email: "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+        password: "Bitte geben Sie Ihr Passwort ein.",
+      });
+    }
   });
 
   test("parses the home24-style private registration fields", () => {
@@ -119,6 +135,21 @@ describe("customer account validation", () => {
 
     formData.set("emailConfirmation", "andere@example.com");
     expect(parseCustomerEmailChange(formData)).toBeNull();
+  });
+
+  test("maps a mismatched email confirmation to the confirmation field", () => {
+    const formData = new FormData();
+    formData.set("email", "neue@example.com");
+    formData.set("emailConfirmation", "andere@example.com");
+    formData.set("password", "geheim");
+    const result = validateCustomerEmailChange(formData);
+
+    expect(result.success).toBeFalse();
+    if (!result.success) {
+      expect(getCustomerEmailChangeFieldErrors(result.error)).toEqual({
+        emailConfirmation: "Die E-Mail-Adressen stimmen nicht überein.",
+      });
+    }
   });
 
   test("parses settings before checking a changed email", () => {

@@ -1,11 +1,15 @@
 import { describe, expect, test } from "bun:test";
 
 import {
+  getCheckoutMethodSelectionFieldErrors,
   getGuestCheckoutRegistrationFieldErrors,
+  getGuestPasswordFieldErrors,
   parseCheckoutMethodSelection,
   parseGuestCheckoutRegistration,
   parseGuestPassword,
   validateGuestCheckoutRegistration,
+  validateCheckoutMethodSelection,
+  validateGuestPassword,
 } from "@/features/checkout/model/validation";
 
 function createGuestForm() {
@@ -95,6 +99,19 @@ describe("checkout validation", () => {
     });
   });
 
+  test("maps missing delivery, payment, and terms to their fields", () => {
+    const result = validateCheckoutMethodSelection(new FormData());
+
+    expect(result.success).toBeFalse();
+    if (!result.success) {
+      expect(getCheckoutMethodSelectionFieldErrors(result.error)).toEqual({
+        acceptedTerms: "Bitte stimmen Sie den Bedingungen zu.",
+        paymentMethodId: "Bitte wählen Sie eine Zahlungsart aus.",
+        shippingMethodId: "Bitte wählen Sie eine Versandart aus.",
+      });
+    }
+  });
+
   test("requires at least eight characters when converting a guest", () => {
     const formData = new FormData();
 
@@ -103,5 +120,18 @@ describe("checkout validation", () => {
 
     formData.set("password", "sicheres-passwort");
     expect(parseGuestPassword(formData)).toBe("sicheres-passwort");
+  });
+
+  test("maps an invalid guest password to the password field", () => {
+    const formData = new FormData();
+    formData.set("password", "kurz");
+    const result = validateGuestPassword(formData);
+
+    expect(result.success).toBeFalse();
+    if (!result.success) {
+      expect(getGuestPasswordFieldErrors(result.error)).toEqual({
+        password: "Das Passwort muss mindestens acht Zeichen lang sein.",
+      });
+    }
   });
 });

@@ -24,6 +24,7 @@ export function CustomerAddressForm({
     initialState,
   );
   const address = account.billingAddress;
+  const fieldErrors = state.fieldErrors ?? {};
 
   return (
     <form
@@ -47,6 +48,7 @@ export function CustomerAddressForm({
       />
       <AddressFields
         countries={countries}
+        fieldErrors={fieldErrors}
         initialAddress={{
           city: address?.city,
           countryId: address?.countryId,

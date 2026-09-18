@@ -44,7 +44,9 @@ const customerEmailChangeSchema = z
     emailConfirmation: z.string().trim(),
     password: z.string().min(1).max(4096),
   })
-  .refine(({ email, emailConfirmation }) => email === emailConfirmation);
+  .refine(({ email, emailConfirmation }) => email === emailConfirmation, {
+    path: ["emailConfirmation"],
+  });
 
 const customerSettingsUpdateSchema = customerProfileUpdateSchema.extend({
   currentEmail: z.string(),
@@ -99,6 +101,22 @@ const registrationFieldMessages = {
   vatId: "Bitte geben Sie Ihre Steuer- oder USt-IdNr. ein.",
 } as const;
 
+const loginFieldMessages = {
+  email: "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+  password: "Bitte geben Sie Ihr Passwort ein.",
+} as const;
+
+const profileFieldMessages = {
+  firstName: "Bitte geben Sie Ihren Vornamen ein.",
+  lastName: "Bitte geben Sie Ihren Nachnamen ein.",
+} as const;
+
+const emailChangeFieldMessages = {
+  email: "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+  emailConfirmation: "Die E-Mail-Adressen stimmen nicht überein.",
+  password: "Bitte geben Sie Ihr aktuelles Passwort ein.",
+} as const;
+
 function getCustomerRegistrationInput(formData: FormData) {
   return {
     acceptedDataProtection: formData.get("acceptedDataProtection") === "on",
@@ -121,32 +139,79 @@ export function validateCustomerRegistration(formData: FormData) {
 }
 
 export function getCustomerRegistrationFieldErrors(error: ZodError) {
+  return getFieldErrors(error, registrationFieldMessages);
+}
+
+function getFieldErrors(
+  error: ZodError,
+  messages: Readonly<Record<string, string>>,
+) {
   const fieldErrors: Record<string, string> = {};
 
   for (const issue of error.issues) {
     const field = issue.path[0];
 
-    if (
-      typeof field === "string" &&
-      field in registrationFieldMessages &&
-      !fieldErrors[field]
-    ) {
-      fieldErrors[field] =
-        registrationFieldMessages[
-          field as keyof typeof registrationFieldMessages
-        ];
+    if (typeof field === "string" && field in messages && !fieldErrors[field]) {
+      fieldErrors[field] = messages[field];
     }
   }
 
   return fieldErrors satisfies NonNullable<AccountActionState["fieldErrors"]>;
 }
 
-export function parseCustomerLogin(formData: FormData): CustomerLogin | null {
-  const result = customerLoginSchema.safeParse({
+export function validateCustomerLogin(formData: FormData) {
+  return customerLoginSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
     rememberMe: formData.get("rememberMe") === "on",
   });
+}
+
+export function getCustomerLoginFieldErrors(error: ZodError) {
+  return getFieldErrors(error, loginFieldMessages);
+}
+
+export function validateCustomerProfileUpdate(formData: FormData) {
+  return customerProfileUpdateSchema.safeParse({
+    firstName: formData.get("firstName"),
+    lastName: formData.get("lastName"),
+  });
+}
+
+export function getCustomerProfileUpdateFieldErrors(error: ZodError) {
+  return getFieldErrors(error, profileFieldMessages);
+}
+
+export function validateCustomerEmailChange(formData: FormData) {
+  return customerEmailChangeSchema.safeParse({
+    email: formData.get("email"),
+    emailConfirmation: formData.get("emailConfirmation"),
+    password: formData.get("password"),
+  });
+}
+
+export function getCustomerEmailChangeFieldErrors(error: ZodError) {
+  return getFieldErrors(error, emailChangeFieldMessages);
+}
+
+export function validateCustomerSettingsUpdate(formData: FormData) {
+  return customerSettingsUpdateSchema.safeParse({
+    currentEmail: formData.get("currentEmail"),
+    email: formData.get("email"),
+    firstName: formData.get("firstName"),
+    lastName: formData.get("lastName"),
+  });
+}
+
+export function getCustomerSettingsUpdateFieldErrors(error: ZodError) {
+  return getFieldErrors(error, {
+    ...profileFieldMessages,
+    email: emailChangeFieldMessages.email,
+  });
+}
+
+export function parseCustomerLogin(formData: FormData): CustomerLogin | null {
+  const result = validateCustomerLogin(formData);
 
   return result.success ? result.data : null;
 }
@@ -162,10 +227,7 @@ export function parseCustomerRegistration(
 export function parseCustomerProfileUpdate(
   formData: FormData,
 ): CustomerProfileUpdate | null {
-  const result = customerProfileUpdateSchema.safeParse({
-    firstName: formData.get("firstName"),
-    lastName: formData.get("lastName"),
-  });
+  const result = validateCustomerProfileUpdate(formData);
 
   return result.success ? result.data : null;
 }
@@ -173,11 +235,7 @@ export function parseCustomerProfileUpdate(
 export function parseCustomerEmailChange(
   formData: FormData,
 ): CustomerEmailChange | null {
-  const result = customerEmailChangeSchema.safeParse({
-    email: formData.get("email"),
-    emailConfirmation: formData.get("emailConfirmation"),
-    password: formData.get("password"),
-  });
+  const result = validateCustomerEmailChange(formData);
 
   return result.success ? result.data : null;
 }
@@ -185,12 +243,7 @@ export function parseCustomerEmailChange(
 export function parseCustomerSettingsUpdate(
   formData: FormData,
 ): CustomerSettingsUpdate | null {
-  const result = customerSettingsUpdateSchema.safeParse({
-    currentEmail: formData.get("currentEmail"),
-    email: formData.get("email"),
-    firstName: formData.get("firstName"),
-    lastName: formData.get("lastName"),
-  });
+  const result = validateCustomerSettingsUpdate(formData);
 
   return result.success ? result.data : null;
 }
