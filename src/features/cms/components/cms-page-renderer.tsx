@@ -13,6 +13,7 @@ import { CmsCategoryName } from "@/features/cms/components/elements/cms-category
 import { CmsCategoryRail } from "@/features/cms/components/elements/cms-category-rail";
 import { CmsChipRail } from "@/features/cms/components/elements/cms-chip-rail";
 import { CmsColorWorldPicker } from "@/features/cms/components/elements/cms-color-world-picker";
+import { CmsContactForm } from "@/features/cms/components/elements/cms-contact-form";
 import { CmsCountdownPromo } from "@/features/cms/components/elements/cms-countdown-promo";
 import { CmsCrossRoomSection } from "@/features/cms/components/elements/cms-cross-room-section";
 import { CmsEditorialTeamGrid } from "@/features/cms/components/elements/cms-editorial-team-grid";
@@ -53,6 +54,7 @@ import { parseCmsBenefitStripData } from "@/features/cms/contracts/benefit-strip
 import { parseCmsCategoryRailData } from "@/features/cms/contracts/category-rail";
 import { parseCmsChipRailData } from "@/features/cms/contracts/chip-rail";
 import { parseCmsColorWorldPickerData } from "@/features/cms/contracts/color-world-picker";
+import { parseCmsContactFormData } from "@/features/cms/contracts/contact-form";
 import { parseCmsCountdownPromoData } from "@/features/cms/contracts/countdown-promo";
 import { parseCmsCrossRoomSectionData } from "@/features/cms/contracts/cross-room-section";
 import { parseCmsEditorialTeamGridData } from "@/features/cms/contracts/editorial-team-grid";
@@ -156,6 +158,10 @@ const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {
   "jv-color-world-picker": createCmsDataElementRenderer(
     parseCmsColorWorldPickerData,
     CmsColorWorldPicker,
+  ),
+  form: createCmsElementRenderer(
+    (slot) => parseCmsContactFormData(slot.config),
+    CmsContactForm,
   ),
   "jv-countdown-promo": createCmsDataElementRenderer(
     parseCmsCountdownPromoData,
