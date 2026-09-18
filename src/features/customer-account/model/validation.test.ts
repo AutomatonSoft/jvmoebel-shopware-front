@@ -9,6 +9,7 @@ import {
   parseCustomerProfileUpdate,
   parseCustomerRegistration,
   parseCustomerSettingsUpdate,
+  registrationInputSchema,
   validateCustomerRegistration,
   validateCustomerEmailChange,
   validateCustomerLogin,
@@ -73,6 +74,21 @@ describe("customer account validation", () => {
       salutationId: "salutation-mrs",
       vatId: undefined,
     });
+  });
+
+  test("accepts browser values for client-side registration validation", () => {
+    expect(
+      registrationInputSchema.safeParse({
+        acceptedDataProtection: "on",
+        accountType: "private",
+        countryId: "country-de",
+        email: "kunde@example.com",
+        firstName: "Greta",
+        lastName: "Groß",
+        password: "sicheres-passwort",
+        salutationId: "",
+      }).success,
+    ).toBeTrue();
   });
 
   test("requires company and tax number for a business registration", () => {

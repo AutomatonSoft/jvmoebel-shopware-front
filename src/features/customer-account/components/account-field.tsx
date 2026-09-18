@@ -9,6 +9,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useState } from "react";
+import type { UseFormRegisterReturn } from "react-hook-form";
 
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -26,6 +27,7 @@ type AccountFieldProps = Readonly<{
   minLength?: number;
   name?: string;
   readOnly?: boolean;
+  registration?: UseFormRegisterReturn;
   type?: "email" | "password" | "text";
 }>;
 
@@ -42,6 +44,7 @@ export function AccountField({
   minLength,
   name = id,
   readOnly = false,
+  registration,
   type = "text",
 }: AccountFieldProps) {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -53,6 +56,7 @@ export function AccountField({
   return (
     <div className={cn("group relative min-w-0", className)}>
       <Input
+        {...registration}
         aria-describedby={error ? errorId : undefined}
         aria-invalid={Boolean(error) || invalid || undefined}
         autoComplete={autoComplete}

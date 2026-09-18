@@ -54,7 +54,7 @@ const customerSettingsUpdateSchema = customerProfileUpdateSchema.extend({
 });
 
 const registrationBaseSchema = z.object({
-  acceptedDataProtection: z.literal(true),
+  acceptedDataProtection: z.union([z.literal(true), z.literal("on")]),
   countryId: requiredString(64),
   email: emailSchema,
   firstName: requiredString(255),
@@ -63,7 +63,7 @@ const registrationBaseSchema = z.object({
   salutationId: optionalString(64),
 });
 
-const registrationInputSchema = z.discriminatedUnion("accountType", [
+export const registrationInputSchema = z.discriminatedUnion("accountType", [
   registrationBaseSchema.extend({ accountType: z.literal("private") }),
   registrationBaseSchema.extend({
     accountType: z.literal("business"),
@@ -91,7 +91,7 @@ const customerRegistrationSchema = registrationInputSchema.transform(
   }),
 );
 
-const registrationFieldMessages = {
+export const customerRegistrationFieldMessages = {
   accountType: "Bitte wählen Sie eine Kontoart aus.",
   company: "Bitte geben Sie Ihren Firmennamen ein.",
   email: "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
@@ -139,7 +139,7 @@ export function validateCustomerRegistration(formData: FormData) {
 }
 
 export function getCustomerRegistrationFieldErrors(error: ZodError) {
-  return getFieldErrors(error, registrationFieldMessages);
+  return getFieldErrors(error, customerRegistrationFieldMessages);
 }
 
 function getFieldErrors(
