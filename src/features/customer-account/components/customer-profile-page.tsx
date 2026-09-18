@@ -157,10 +157,7 @@ export function CustomerProfilePage({
           <strong className="font-medium text-foreground">Kundenkonto</strong>
         </nav>
         <header className="mt-8 border-b border-border pb-8 sm:mt-10 sm:pb-10">
-          <p className="text-xs font-semibold tracking-[0.14em] text-primary uppercase">
-            Mein JVMöbel
-          </p>
-          <h1 className="mt-3 text-3xl font-semibold tracking-[-0.05em] sm:text-5xl">
+          <h1 className="text-3xl font-semibold tracking-[-0.05em] sm:text-5xl">
             Hallo {account.firstName}, willkommen zurück!
           </h1>
           <p className="mt-3 text-sm text-muted-foreground">

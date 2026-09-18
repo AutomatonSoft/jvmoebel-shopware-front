@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 
 import { Container } from "@/components/ui/container";
+import { AccountBackButton } from "@/features/customer-account/components/account-back-button";
 import {
   getCustomerAccount,
   getCustomerAccountOrderHistory,
@@ -22,10 +23,8 @@ export default async function CustomerOrdersRoute() {
   return (
     <main className="flex-1">
       <Container className="max-w-4xl py-10 sm:py-14">
-        <p className="text-xs font-semibold tracking-[0.14em] text-primary uppercase">
-          Mein JVMöbel
-        </p>
-        <h1 className="mt-3 text-3xl font-semibold tracking-[-0.05em] sm:text-4xl">
+        <AccountBackButton />
+        <h1 className="text-3xl font-semibold tracking-[-0.05em] sm:text-4xl">
           Meine Bestellungen
         </h1>
         <p className="mt-3 text-sm leading-6 text-muted-foreground">
