@@ -130,11 +130,12 @@ export async function getShopwareCustomerAccount(
 
 export async function getShopwareCustomerOrders(
   client: ShopwareClient,
+  limit = 3,
 ): Promise<CustomerOrderSummary[]> {
   const response = await client.invoke("readOrder post /order", {
     body: {
       associations: { stateMachineState: {} },
-      limit: 3,
+      limit,
       sort: [{ field: "orderDateTime", order: "DESC" }],
     },
     fetchOptions: { cache: "no-store" },

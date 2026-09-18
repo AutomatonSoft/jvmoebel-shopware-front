@@ -30,7 +30,7 @@ type CustomerProfilePageProps = Readonly<{
 const accountLinks = [
   {
     description: "Bestellstatus und vergangene Einkäufe ansehen.",
-    href: "#orders",
+    href: "/kundenkonto/bestellungen",
     icon: PackageCheck,
     label: "Bestellungen",
   },
@@ -48,7 +48,7 @@ const accountLinks = [
   },
   {
     description: "Informationen zu Aktionen und dem Kundenkonto.",
-    href: "#notifications",
+    href: "/kundenkonto/benachrichtigungen",
     icon: Bell,
     label: "Benachrichtigungen",
   },
@@ -192,6 +192,13 @@ export function CustomerProfilePage({
           <div className="space-y-12">
             <AccountSection id="orders" title="Ihre Bestellungen">
               <CustomerOrders orders={orders} />
+              <Link
+                className="mt-4 inline-flex items-center gap-2 text-xs font-semibold text-primary hover:underline"
+                href="/kundenkonto/bestellungen"
+              >
+                Alle Bestellungen ansehen{" "}
+                <ArrowRight aria-hidden="true" className="size-3.5" />
+              </Link>
             </AccountSection>
             <AccountSection id="profile" title="Kundenprofil">
               <div className="grid gap-3 rounded-2xl border border-border bg-card p-5 sm:grid-cols-2">

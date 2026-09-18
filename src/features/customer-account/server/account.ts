@@ -34,6 +34,12 @@ export const getCustomerAccountOrders = cache(async () => {
   return getShopwareCustomerOrders(session.client);
 });
 
+export const getCustomerAccountOrderHistory = cache(async () => {
+  const session = await createCustomerSession();
+
+  return getShopwareCustomerOrders(session.client, 100);
+});
+
 export const getCustomerAddressOptions = cache(async () => {
   const session = await createCustomerSession();
   const options = await getShopwareCheckoutOptions(session.client);
