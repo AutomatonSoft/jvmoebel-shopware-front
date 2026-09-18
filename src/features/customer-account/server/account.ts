@@ -6,6 +6,7 @@ import { cache } from "react";
 import {
   getShopwareCustomerAccount,
   getShopwareCustomerOrders,
+  getShopwareCustomerOrderDetail,
   getShopwareRegistrationOptions,
 } from "@/integrations/shopware/customer-account";
 import { createCustomerSession } from "@/features/customer-account/server/session";
@@ -38,6 +39,11 @@ export const getCustomerAccountOrderHistory = cache(async () => {
   const session = await createCustomerSession();
 
   return getShopwareCustomerOrders(session.client, 100);
+});
+
+export const getCustomerOrderDetail = cache(async (number: string) => {
+  const session = await createCustomerSession();
+  return getShopwareCustomerOrderDetail(session.client, number);
 });
 
 export const getCustomerAddressOptions = cache(async () => {

@@ -5,6 +5,7 @@ import type { components } from "@shopware/api-client/store-api-types";
 import type {
   CustomerAccountSummary,
   CustomerLogin,
+  CustomerOrderDetail,
   CustomerOrderSummary,
   CustomerRegistration,
   RegistrationOptions,
@@ -142,6 +143,33 @@ export async function getShopwareCustomerOrders(
   });
 
   return mapShopwareCustomerOrders(response.data.orders.elements);
+}
+
+export async function getShopwareCustomerOrderDetail(
+  client: ShopwareClient,
+  number: string,
+): Promise<CustomerOrderDetail | null> {
+  const response = await client.invoke("readOrder post /order", {
+    body: {
+      associations: { lineItems: {}, stateMachineState: {} },
+      limit: 100,
+      sort: [{ field: "orderDateTime", order: "DESC" }],
+    },
+    fetchOptions: { cache: "no-store" },
+  });
+  const order = response.data.orders.elements.find(
+    (item) => (item.orderNumber || item.id) === number,
+  );
+  if (!order) return null;
+  const [summary] = mapShopwareCustomerOrders([order]);
+  return {
+    ...summary,
+    items: (order.lineItems ?? []).map((item) => ({
+      label: item.label || "Artikel",
+      quantity: item.quantity,
+      total: (item.priceDefinition?.price ?? 0) * item.quantity,
+    })),
+  };
 }
 
 export async function logoutShopwareCustomer(client: ShopwareClient) {

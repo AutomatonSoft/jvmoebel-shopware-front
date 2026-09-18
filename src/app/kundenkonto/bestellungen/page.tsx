@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PackageCheck } from "lucide-react";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 import { Container } from "@/components/ui/container";
 import {
@@ -45,8 +46,9 @@ export default async function CustomerOrdersRoute() {
             </div>
           ) : (
             orders.map((order) => (
-              <article
+              <Link
                 className="flex flex-wrap items-center gap-4 border-b border-border px-5 py-5 last:border-b-0"
+                href={`/kundenkonto/bestellungen/${encodeURIComponent(order.number)}`}
                 key={order.number}
               >
                 <PackageCheck
@@ -72,7 +74,7 @@ export default async function CustomerOrdersRoute() {
                     style: "currency",
                   }).format(order.total)}
                 </p>
-              </article>
+              </Link>
             ))
           )}
         </section>

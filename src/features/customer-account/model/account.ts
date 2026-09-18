@@ -24,6 +24,15 @@ export type CustomerOrderSummary = Readonly<{
   total: number;
 }>;
 
+export type CustomerOrderDetail = CustomerOrderSummary &
+  Readonly<{
+    items: readonly Readonly<{
+      label: string;
+      quantity: number;
+      total: number;
+    }>[];
+  }>;
+
 export type RegistrationOption = Readonly<{
   id: string;
   label: string;
