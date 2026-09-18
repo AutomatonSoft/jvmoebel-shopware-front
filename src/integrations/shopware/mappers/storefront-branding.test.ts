@@ -9,23 +9,23 @@ describe("parseStorefrontBranding", () => {
       parseStorefrontBranding({
         jvStorefrontBranding: {
           logo: {
-            alt: "JVMöbel home",
+            alt: "JVMoebel home",
             height: 48,
             url: "/images/logo.svg",
             width: 180,
           },
-          name: "JVMöbel",
+          name: "JVMoebel",
         },
       }),
     ).toEqual({
       data: {
         logo: {
-          alt: "JVMöbel home",
+          alt: "JVMoebel home",
           height: 48,
           url: "/images/logo.svg",
           width: 180,
         },
-        name: "JVMöbel",
+        name: "JVMoebel",
       },
       issues: [],
     });
@@ -43,7 +43,7 @@ describe("parseStorefrontBranding", () => {
         },
       }).data.logo,
     ).toEqual({
-      alt: "JVMöbel",
+      alt: "JVMoebel",
       height: 40,
       url: "https://media.example.com/logo.svg",
       width: 160,

@@ -21,7 +21,7 @@ describe("getShopwareLandingPage", () => {
             id: "landing-page-id",
             name: "Über uns",
             translated: {
-              metaDescription: "Über JVMöbel",
+              metaDescription: "Über JVMoebel",
               metaTitle: "Über uns",
               name: "Über uns",
             },

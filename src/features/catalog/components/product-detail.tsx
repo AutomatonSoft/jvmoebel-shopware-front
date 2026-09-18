@@ -43,7 +43,7 @@ export function ProductDetail({
           </strong>
         </nav>
 
-        <section className="grid gap-8 py-8 sm:py-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(32rem,1.1fr)] lg:items-start lg:gap-10 xl:gap-12">
+        <section className="grid gap-8 py-8 sm:py-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(32rem,1.1fr)] lg:items-start lg:gap-8 lg:py-6 xl:gap-10">
           <div className="lg:sticky lg:top-24">
             <ProductGallery badge={product.badge} images={product.gallery} />
           </div>

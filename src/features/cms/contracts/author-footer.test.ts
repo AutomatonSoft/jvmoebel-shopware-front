@@ -6,7 +6,7 @@ describe("parseCmsAuthorFooterData", () => {
   test("parses the Store API author footer contract", () => {
     const result = parseCmsAuthorFooterData({
       authorName: "Anna M.",
-      bio: "Redaktion JVMöbel.",
+      bio: "Redaktion JVMoebel.",
       expertise: "Einrichtung",
       image: { alt: "Anna M.", url: "/media/author-anna.webp" },
       link: { label: "Profil", url: "/autor/anna" },
@@ -14,7 +14,7 @@ describe("parseCmsAuthorFooterData", () => {
 
     expect(result.data).toEqual({
       authorName: "Anna M.",
-      bio: "Redaktion JVMöbel.",
+      bio: "Redaktion JVMoebel.",
       expertise: "Einrichtung",
       image: { alt: "Anna M.", url: "/media/author-anna.webp" },
       link: { label: "Profil", size: "medium", url: "/autor/anna" },
@@ -25,7 +25,7 @@ describe("parseCmsAuthorFooterData", () => {
   test("rejects an incomplete author footer", () => {
     const result = parseCmsAuthorFooterData({
       authorName: "Anna M.",
-      bio: "Redaktion JVMöbel.",
+      bio: "Redaktion JVMoebel.",
       image: {},
       link: { label: "Profil" },
     });

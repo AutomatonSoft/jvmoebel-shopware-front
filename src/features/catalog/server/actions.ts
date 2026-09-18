@@ -3,30 +3,15 @@
 import type { Route } from "next";
 import { redirect } from "next/navigation";
 
+import { parseProductVariantSelection } from "@/features/catalog/model/validation";
 import { getCanonicalProductPath } from "@/features/storefront-shell/server/storefront-route";
 import { findShopwareProductVariant } from "@/integrations/shopware/product-detail";
 import { getShopwareRequestSession } from "@/integrations/shopware/session";
 
-function getRequiredString(formData: FormData, name: string) {
-  const value = formData.get(name);
-
-  return typeof value === "string" && value.trim() ? value.trim() : null;
-}
-
 export async function selectProductVariant(formData: FormData) {
-  const currentProductId = getRequiredString(formData, "currentProductId");
-  const parentProductId = getRequiredString(formData, "parentProductId");
-  const switchedGroupId = getRequiredString(formData, "switchedGroupId");
-  const optionIds = formData
-    .getAll("optionId")
-    .filter((value): value is string => typeof value === "string" && !!value);
+  const selection = parseProductVariantSelection(formData);
 
-  if (
-    !currentProductId ||
-    !parentProductId ||
-    !switchedGroupId ||
-    optionIds.length === 0
-  ) {
+  if (!selection) {
     redirect("/moebel-sortiment");
   }
 
@@ -36,15 +21,15 @@ export async function selectProductVariant(formData: FormData) {
   try {
     variantId = await findShopwareProductVariant(
       client,
-      parentProductId,
-      optionIds,
-      switchedGroupId,
+      selection.parentProductId,
+      selection.optionIds,
+      selection.switchedGroupId,
     );
   } catch (error) {
     console.error("Product variant selection failed.", error);
   }
 
-  const destinationProductId = variantId ?? currentProductId;
+  const destinationProductId = variantId ?? selection.currentProductId;
   let destination = `/produkt/${encodeURIComponent(destinationProductId)}`;
 
   try {

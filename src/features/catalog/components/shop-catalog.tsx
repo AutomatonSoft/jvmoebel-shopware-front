@@ -183,7 +183,7 @@ function ShopCatalogContent({
                             Filter
                           </Dialog.Title>
                           <Dialog.Description className="mt-1 text-sm text-muted-foreground">
-                            Möbelkollektion eingrenzen.
+                            Moebelkollektion eingrenzen.
                           </Dialog.Description>
                         </div>
                         <Dialog.Close

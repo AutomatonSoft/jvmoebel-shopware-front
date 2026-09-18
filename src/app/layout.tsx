@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 
 import { Toaster } from "@/components/ui/sonner";
+import { getShopCartItemCount } from "@/features/cart/model/cart";
+import { getShopCart } from "@/features/cart/server/cart";
 import { getCustomerAccount } from "@/features/customer-account/server/account";
 import { StoreFooter } from "@/features/storefront-shell/components/store-footer";
 import { StoreHeader } from "@/features/storefront-shell/components/store-header";
@@ -15,17 +17,21 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "JVMöbel",
-  description: "JVMöbel",
+  title: "JVMoebel",
+  description: "JVMoebel",
 };
 
 export const dynamic = "force-dynamic";
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const [storefront, customer] = await Promise.all([
+  const [storefront, customer, cart] = await Promise.all([
     getStorefrontShellData(),
     getCustomerAccount().catch((error: unknown) => {
       console.error("Header customer account lookup failed.", error);
+      return null;
+    }),
+    getShopCart().catch((error: unknown) => {
+      console.error("Header cart lookup failed.", error);
       return null;
     }),
   ]);
@@ -35,6 +41,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col">
         <StoreHeader
           branding={storefront.branding}
+          cartItemCount={cart ? getShopCartItemCount(cart) : 0}
           customer={customer}
           navigation={storefront.navigation}
         />

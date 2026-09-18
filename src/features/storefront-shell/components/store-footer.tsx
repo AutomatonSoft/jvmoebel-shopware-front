@@ -2,6 +2,7 @@ import { Container } from "@/components/ui/container";
 import { FooterAbout } from "@/features/storefront-shell/components/footer-about";
 import { FooterNavigation } from "@/features/storefront-shell/components/footer-navigation";
 import { FooterTrustSection } from "@/features/storefront-shell/components/footer-trust-section";
+import { ContactWidget } from "@/features/storefront-shell/components/contact-widget";
 import type { StorefrontBranding } from "@/features/storefront-shell/model/branding";
 import type { StorefrontFooterContent } from "@/features/storefront-shell/model/footer";
 import type { StoreNavigationItem } from "@/features/storefront-shell/model/navigation";
@@ -60,6 +61,7 @@ export function StoreFooter({
           </div>
         </div>
       </Container>
+      <ContactWidget channels={content.contactWidget?.channels} />
     </footer>
   );
 }

@@ -1,28 +1,24 @@
 "use client";
 
-import { Heart, ShieldCheck, Sparkles } from "lucide-react";
+import { Gem, Heart, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { ShopProductCard } from "@/features/catalog/components/shop-product-card";
-import type { ShopProductListing } from "@/features/catalog/model/product-listing";
+import { WishlistRecommendations } from "@/features/wishlist/components/wishlist-recommendations";
 import { useWishlist } from "@/features/wishlist/hooks/use-wishlist";
+import { useWishlistProducts } from "@/features/wishlist/hooks/use-wishlist-products";
+import { useWishlistRecommendations } from "@/features/wishlist/hooks/use-wishlist-recommendations";
 
-type WishlistPageProps = Readonly<{
-  listing: ShopProductListing;
-}>;
-
-export function WishlistPage({ listing }: WishlistPageProps) {
+export function WishlistPage() {
   const { isReady, productIds } = useWishlist();
-  const productsById = new Map(
-    listing.products.map((product) => [product.id, product]),
+  const { errorMessage, isLoading, listing } = useWishlistProducts(
+    productIds,
+    isReady,
   );
-  const products = productIds.flatMap((productId) => {
-    const product = productsById.get(productId);
-
-    return product ? [product] : [];
-  });
+  const recommendations = useWishlistRecommendations(productIds, isReady);
+  const products = listing?.products ?? [];
   const productCountLabel =
     products.length === 1
       ? "1 Lieblingsstück"
@@ -42,17 +38,17 @@ export function WishlistPage({ listing }: WishlistPageProps) {
           <strong className="font-medium text-foreground">Wunschliste</strong>
         </nav>
 
-        <header className="mt-8 flex flex-col gap-4 border-b border-border/80 pb-8 sm:flex-row sm:items-end sm:justify-between">
+        <header className="mt-6 flex flex-col gap-3 border-b border-border/80 pb-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="flex items-center gap-2 text-[0.6875rem] font-semibold tracking-[0.15em] text-primary uppercase">
               <Heart aria-hidden="true" className="size-4 fill-primary" />
               Ihre Auswahl
             </p>
-            <h1 className="mt-3 text-3xl font-semibold tracking-[-0.045em] sm:text-5xl">
+            <h1 className="mt-2 text-3xl font-semibold tracking-[-0.045em] sm:text-4xl">
               Meine Wunschliste
             </h1>
-            <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base">
-              Sammeln Sie Ihre Möbel-Favoriten an einem Ort und vergleichen Sie
+            <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base">
+              Sammeln Sie Ihre Moebel-Favoriten an einem Ort und vergleichen Sie
               sie in Ruhe.
             </p>
           </div>
@@ -63,10 +59,10 @@ export function WishlistPage({ listing }: WishlistPageProps) {
           )}
         </header>
 
-        {!isReady ? (
+        {!isReady || isLoading ? (
           <div
             aria-label="Wunschliste wird geladen"
-            className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4"
+            className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4"
             role="status"
           >
             {Array.from({ length: 4 }, (_, index) => (
@@ -77,8 +73,15 @@ export function WishlistPage({ listing }: WishlistPageProps) {
               />
             ))}
           </div>
-        ) : products.length > 0 ? (
-          <section aria-label={productCountLabel} className="mt-8">
+        ) : errorMessage ? (
+          <section className="mt-6 rounded-3xl border border-destructive/25 bg-destructive/5 px-6 py-10 text-center">
+            <h2 className="text-xl font-semibold">
+              Wunschliste nicht verfügbar
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground">{errorMessage}</p>
+          </section>
+        ) : products.length > 0 && listing ? (
+          <section aria-label={productCountLabel} className="mt-6">
             <div className="grid grid-cols-2 gap-x-3 gap-y-9 md:grid-cols-3 md:gap-x-4 xl:grid-cols-4">
               {products.map((product, index) => (
                 <ShopProductCard
@@ -101,7 +104,7 @@ export function WishlistPage({ listing }: WishlistPageProps) {
             </p>
           </section>
         ) : (
-          <section className="mt-8 rounded-3xl border border-dashed border-border bg-card px-6 py-16 text-center sm:py-24">
+          <section className="mt-6 rounded-3xl border border-dashed border-border bg-card px-6 py-16 text-center sm:py-24">
             <span className="mx-auto grid size-16 place-items-center rounded-full bg-muted text-primary">
               <Heart aria-hidden="true" className="size-7" />
             </span>
@@ -121,11 +124,16 @@ export function WishlistPage({ listing }: WishlistPageProps) {
               render={<Link href="/moebel-sortiment" />}
               size="lg"
             >
-              <Sparkles aria-hidden="true" />
-              Möbel entdecken
+              <Gem aria-hidden="true" />
+              Moebel entdecken
             </Button>
           </section>
         )}
+
+        <WishlistRecommendations
+          isLoading={recommendations.isLoading}
+          listing={recommendations.listing}
+        />
       </Container>
     </main>
   );

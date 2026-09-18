@@ -7,8 +7,8 @@ import { getCustomerAccount } from "@/features/customer-account/server/account";
 import { ErrorExperience } from "@/features/storefront-shell/components/error-experience";
 
 export const metadata: Metadata = {
-  description: "Prüfen Sie Ihre Möbelauswahl und gehen Sie sicher zur Kasse.",
-  title: "Warenkorb | JVMöbel",
+  description: "Prüfen Sie Ihre Moebelauswahl und gehen Sie sicher zur Kasse.",
+  title: "Warenkorb | JVMoebel",
 };
 
 type CartRouteProps = Readonly<{

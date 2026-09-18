@@ -53,6 +53,7 @@ export type RegistrationOptions = Readonly<{
 }>;
 
 export type AccountActionState = Readonly<{
+  fieldErrors?: Readonly<Partial<Record<string, string>>>;
   message?: string;
   status: "idle" | "invalid" | "error" | "success";
 }>;
@@ -75,3 +76,20 @@ export type CustomerRegistration = Readonly<{
   salutationId?: string;
   vatId?: string;
 }>;
+
+export type CustomerProfileUpdate = Readonly<{
+  firstName: string;
+  lastName: string;
+}>;
+
+export type CustomerEmailChange = Readonly<{
+  email: string;
+  emailConfirmation: string;
+  password: string;
+}>;
+
+export type CustomerSettingsUpdate = CustomerProfileUpdate &
+  Readonly<{
+    currentEmail: string;
+    email: string;
+  }>;

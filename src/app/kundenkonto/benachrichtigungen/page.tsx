@@ -7,7 +7,7 @@ import { Container } from "@/components/ui/container";
 import { AccountBackButton } from "@/features/customer-account/components/account-back-button";
 import { getCustomerAccount } from "@/features/customer-account/server/account";
 
-export const metadata: Metadata = { title: "Benachrichtigungen | JVMöbel" };
+export const metadata: Metadata = { title: "Benachrichtigungen | JVMoebel" };
 
 export default async function CustomerNotificationsRoute() {
   const account = await getCustomerAccount();

@@ -8,8 +8,8 @@ import { ShopProductListingCatalog } from "@/features/catalog/components/shop-ca
 import { getShopProductListingPage } from "@/features/catalog/server/product-listing";
 
 export const metadata: Metadata = {
-  description: "Entdecken Sie das Möbelsortiment von JVMöbel.",
-  title: "Möbel-Sortiment | JVMöbel",
+  description: "Entdecken Sie das Moebelsortiment von JVMoebel.",
+  title: "Moebel-Sortiment | JVMoebel",
 };
 
 type FurnitureRangePageProps = Readonly<{

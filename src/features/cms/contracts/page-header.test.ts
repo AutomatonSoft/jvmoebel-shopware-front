@@ -5,13 +5,13 @@ import { parseCmsPageHeaderData } from "@/features/cms/contracts/page-header";
 describe("parseCmsPageHeaderData", () => {
   test("parses the page heading content", () => {
     const result = parseCmsPageHeaderData({
-      description: "Entdecke reduzierte Möbel und Wohnaccessoires.",
+      description: "Entdecke reduzierte Moebel und Wohnaccessoires.",
       eyebrow: "Preisvorteile für dein Zuhause",
       title: "Sale im Überblick",
     });
 
     expect(result.data).toEqual({
-      description: "Entdecke reduzierte Möbel und Wohnaccessoires.",
+      description: "Entdecke reduzierte Moebel und Wohnaccessoires.",
       eyebrow: "Preisvorteile für dein Zuhause",
       title: "Sale im Überblick",
     });

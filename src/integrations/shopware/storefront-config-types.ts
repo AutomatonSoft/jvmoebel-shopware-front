@@ -27,6 +27,18 @@ export type ShopwareStorefrontConfigResponse = Readonly<{
     }>;
     apiAlias?: string;
     categoryNavigation: readonly ShopwareStorefrontNavigationItem[];
+    contactWidget?: Readonly<{
+      apiAlias?: string;
+      channels: readonly Readonly<{
+        apiAlias?: string;
+        icon?: ShopwareStorefrontMedia | null;
+        id: string;
+        label?: string | null;
+        position?: number;
+        type: string;
+        url: string;
+      }>[];
+    }>;
     copyrightText: string;
     internationalLinks: readonly Readonly<{
       apiAlias?: string;

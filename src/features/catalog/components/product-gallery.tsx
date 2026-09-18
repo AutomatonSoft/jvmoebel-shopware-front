@@ -51,10 +51,10 @@ export function ProductGallery({ badge, images }: ProductGalleryProps) {
 
   return (
     <div
-      className={`grid min-w-0 gap-3 ${hasMultipleImages ? "sm:grid-cols-[5rem_minmax(0,1fr)]" : ""}`}
+      className={`grid min-w-0 gap-3 ${hasMultipleImages ? "sm:relative sm:block sm:pl-[5.75rem]" : ""}`}
     >
       {hasMultipleImages && (
-        <div className="order-2 flex gap-2 overflow-x-auto pb-1 sm:order-1 sm:flex-col sm:overflow-x-visible sm:overflow-y-auto sm:pb-0">
+        <div className="order-2 flex gap-2 overflow-x-auto pb-1 sm:absolute sm:inset-y-0 sm:left-0 sm:w-20 sm:flex-col sm:overflow-x-visible sm:overflow-y-auto sm:pb-0 sm:[scrollbar-width:none] sm:[&::-webkit-scrollbar]:hidden">
           {images.map((image, index) => {
             const isActive = index === activeImageIndex;
 
@@ -82,7 +82,7 @@ export function ProductGallery({ badge, images }: ProductGalleryProps) {
       )}
 
       <Dialog.Root>
-        <div className="relative order-1 aspect-[0.92] min-w-0 overflow-hidden rounded-2xl bg-muted shadow-[0_0_0_1px_rgba(21,21,19,0.04)] sm:order-2">
+        <div className="relative order-1 aspect-[0.92] min-w-0 overflow-hidden rounded-2xl bg-muted shadow-[0_0_0_1px_rgba(21,21,19,0.04)] sm:order-2 lg:aspect-[1.25]">
           <Dialog.Trigger
             aria-label={`Produktbild vergr\u00f6\u00dfern: ${activeImage.alt}`}
             className="group absolute inset-0 z-0 block cursor-zoom-in overflow-hidden focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"

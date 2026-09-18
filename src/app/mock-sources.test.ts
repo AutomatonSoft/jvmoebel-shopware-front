@@ -5,6 +5,7 @@ import { shopProductListingMock } from "@/features/catalog/fixtures/product-list
 import { getShopProductListing } from "@/features/catalog/server/product-listing";
 import { homeCmsPageMock } from "@/features/cms/fixtures/home-page";
 import { getHomeCmsPage } from "@/features/cms/server/home-page";
+import { contactCmsPageMock } from "@/features/contact/fixtures/contact-page";
 import { inspirationCmsPageMock } from "@/features/inspiration/fixtures/inspiration-page";
 import { discountOffersCmsPageMock } from "@/features/offers/fixtures/discount-offers-page";
 import {
@@ -45,6 +46,7 @@ describe("Shopware mock sources", () => {
       listing,
       page,
       aboutPage,
+      contactPage,
       inspirationPage,
       offersPage,
       videoShopPage,
@@ -53,6 +55,7 @@ describe("Shopware mock sources", () => {
       getShopProductListing(),
       getHomeCmsPage(),
       getStorefrontPageByPath("/ueber-uns"),
+      getStorefrontPageByPath("/kontakt"),
       getStorefrontPageByPath("/inspiration"),
       getStorefrontPageByPath("/rabatt-angebote"),
       getStorefrontPageByPath("/video-shop"),
@@ -64,6 +67,7 @@ describe("Shopware mock sources", () => {
 
     if (
       aboutPage?.kind !== "landing-page" ||
+      contactPage?.kind !== "landing-page" ||
       inspirationPage?.kind !== "landing-page" ||
       offersPage?.kind !== "landing-page" ||
       videoShopPage?.kind !== "landing-page"
@@ -74,10 +78,12 @@ describe("Shopware mock sources", () => {
     }
 
     expect(aboutPage.page.cmsPage).toBe(aboutCmsPageMock);
+    expect(contactPage.page.cmsPage).toBe(contactCmsPageMock);
     expect(inspirationPage.page.cmsPage).toBe(inspirationCmsPageMock);
     expect(offersPage.page.cmsPage).toBe(discountOffersCmsPageMock);
     expect(videoShopPage.page.cmsPage).toBe(videoShopCmsPageMock);
     expect(aboutPage.route.canonicalPath).toBe("/ueber-uns");
+    expect(contactPage.route.canonicalPath).toBe("/kontakt");
     expect(inspirationPage.route.canonicalPath).toBe("/inspiration");
     expect(offersPage.route.canonicalPath).toBe("/rabatt-angebote");
     expect(videoShopPage.route.canonicalPath).toBe("/video-shop");

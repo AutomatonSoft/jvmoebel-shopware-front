@@ -16,19 +16,21 @@ const initialState: CheckoutActionState = { status: "idle" };
 
 function MethodOptions({
   defaultValue,
+  error,
   icon: Icon,
   legend,
   name,
   options,
 }: Readonly<{
   defaultValue?: string;
+  error?: string;
   icon: typeof Truck;
   legend: string;
   name: "paymentMethodId" | "shippingMethodId";
   options: readonly CheckoutOption[];
 }>) {
   return (
-    <fieldset>
+    <fieldset aria-describedby={error ? `${name}-error` : undefined}>
       <legend className="flex items-center gap-3 text-xl font-semibold tracking-[-0.03em]">
         <span className="grid size-10 place-items-center rounded-xl bg-primary/10 text-primary">
           <Icon aria-hidden="true" className="size-4.5" />
@@ -64,6 +66,15 @@ function MethodOptions({
           </label>
         ))}
       </div>
+      {error && (
+        <p
+          className="mt-2 text-xs leading-4 text-destructive"
+          id={`${name}-error`}
+          role="alert"
+        >
+          {error}
+        </p>
+      )}
     </fieldset>
   );
 }
@@ -85,6 +96,8 @@ export function CheckoutPaymentForm({
   );
   const unavailable =
     paymentMethods.length === 0 || shippingMethods.length === 0;
+  const fieldErrors = state.fieldErrors ?? {};
+  const acceptedTermsError = fieldErrors.acceptedTerms;
 
   return (
     <form action={formAction}>
@@ -106,6 +119,7 @@ export function CheckoutPaymentForm({
         <div className="grid gap-8 divide-y sm:gap-9">
           <MethodOptions
             defaultValue={selectedShippingMethodId}
+            error={fieldErrors.shippingMethodId}
             icon={Truck}
             legend="Versandart"
             name="shippingMethodId"
@@ -114,6 +128,7 @@ export function CheckoutPaymentForm({
           <div className="pt-8 sm:pt-9">
             <MethodOptions
               defaultValue={selectedPaymentMethodId}
+              error={fieldErrors.paymentMethodId}
               icon={CreditCard}
               legend="Zahlungsart"
               name="paymentMethodId"
@@ -150,6 +165,10 @@ export function CheckoutPaymentForm({
 
         <label className="mt-7 flex items-start gap-3 text-xs leading-5 text-muted-foreground">
           <input
+            aria-describedby={
+              acceptedTermsError ? "checkout-accepted-terms-error" : undefined
+            }
+            aria-invalid={Boolean(acceptedTermsError) || undefined}
             className="mt-0.5 size-4 shrink-0 accent-primary"
             name="acceptedTerms"
             required
@@ -166,6 +185,15 @@ export function CheckoutPaymentForm({
             und habe die Widerrufsbelehrung zur Kenntnis genommen.
           </span>
         </label>
+        {acceptedTermsError && (
+          <p
+            className="mt-2 text-xs leading-4 text-destructive"
+            id="checkout-accepted-terms-error"
+            role="alert"
+          >
+            {acceptedTermsError}
+          </p>
+        )}
 
         <Button
           className="mt-7 w-full justify-between disabled:cursor-wait"

@@ -32,7 +32,7 @@ export const inspirationCmsPageMock = {
           slides: {
             inspiration: {
               description:
-                "Entdecken Sie harmonische Raumkonzepte, aktuelle Wohntrends und Möbel, die aus einzelnen Ideen ein persönliches Zuhause machen.",
+                "Entdecken Sie harmonische Raumkonzepte, aktuelle Wohntrends und Moebel, die aus einzelnen Ideen ein persönliches Zuhause machen.",
               eyebrow: "Wohnideen & Inspiration",
               id: "inspiration-welcome",
               image: {
@@ -47,7 +47,7 @@ export const inspirationCmsPageMock = {
                 url: "/wohnzimmer",
               },
               secondaryLink: {
-                label: "Alle Möbel ansehen",
+                label: "Alle Moebel ansehen",
                 size: "medium",
                 url: "/moebel-sortiment",
               },
@@ -128,7 +128,7 @@ export const inspirationCmsPageMock = {
             },
             {
               description:
-                "Tische, Stühle und Stauraummöbel für lange Abende in guter Gesellschaft.",
+                "Tische, Stühle und Stauraummoebel für lange Abende in guter Gesellschaft.",
               id: "dining-room",
               image: {
                 alt: "Esszimmer mit rundem Holztisch und Polsterstühlen",
@@ -149,7 +149,7 @@ export const inspirationCmsPageMock = {
                 "Weiche Formen, warme Naturtöne und großzügiger Komfort.",
               id: "soft-living",
               image: {
-                alt: "Wohnzimmer mit weichen Formen und hellen Polstermöbeln",
+                alt: "Wohnzimmer mit weichen Formen und hellen Polstermoebeln",
                 url: "/images/main/hero-editorial.webp",
               },
               position: 0,
@@ -181,10 +181,10 @@ export const inspirationCmsPageMock = {
             },
             {
               description:
-                "Ausgewählte Möbel mit Preisvorteil stilvoll kombinieren.",
+                "Ausgewählte Moebel mit Preisvorteil stilvoll kombinieren.",
               id: "design-sale",
               image: {
-                alt: "Stilvoll eingerichtetes Wohnzimmer mit Designmöbeln",
+                alt: "Stilvoll eingerichtetes Wohnzimmer mit Designmoebeln",
                 url: "/images/offers/sale-living-room.webp",
               },
               position: 3,
@@ -263,7 +263,7 @@ export const inspirationCmsPageMock = {
               hex: "#5b4033",
               id: "walnut",
               image: {
-                alt: "Esszimmer mit Möbeln aus dunklem Holz",
+                alt: "Esszimmer mit Moebeln aus dunklem Holz",
                 url: "/images/main/dining-room.webp",
               },
               name: "Walnuss",
@@ -283,7 +283,7 @@ export const inspirationCmsPageMock = {
             },
           ],
           description:
-            "Beginnen Sie mit einer Farbstimmung und entdecken Sie Möbel, die sich harmonisch kombinieren lassen.",
+            "Beginnen Sie mit einer Farbstimmung und entdecken Sie Moebel, die sich harmonisch kombinieren lassen.",
           title: "Finden Sie Ihre Farbwelt.",
         }),
         createCmsBlock("jv-guide-hub-cards", 6, {
@@ -302,10 +302,10 @@ export const inspirationCmsPageMock = {
             },
             {
               description:
-                "Vergleichen Sie Möbel für unterschiedliche Räume, Stile und Anforderungen.",
+                "Vergleichen Sie Moebel für unterschiedliche Räume, Stile und Anforderungen.",
               id: "furniture-range",
               image: {
-                alt: "Auswahl verschiedener Möbel für das Zuhause",
+                alt: "Auswahl verschiedener Moebel für das Zuhause",
                 url: "/images/main/hero-editorial.webp",
               },
               position: 1,
@@ -317,7 +317,7 @@ export const inspirationCmsPageMock = {
                 "Lassen Sie sich bei der Auswahl und Planung persönlich unterstützen.",
               id: "interior-consultation",
               image: {
-                alt: "Persönliche Beratung zu Möbeln und Raumgestaltung",
+                alt: "Persönliche Beratung zu Moebeln und Raumgestaltung",
                 url: "/images/offers/design-consultation.webp",
               },
               position: 2,
@@ -333,7 +333,7 @@ export const inspirationCmsPageMock = {
             "Neue Wohnwelten, besondere Einzelstücke und Einblicke in unsere aktuellen Kollektionen.",
           handle: "@home_luxus_style_design",
           image: {
-            alt: "Elegantes Wohnzimmer aus der JVMöbel Community",
+            alt: "Elegantes Wohnzimmer aus der JVMoebel Community",
             url: "/images/about/about-showroom.png",
           },
           link: {

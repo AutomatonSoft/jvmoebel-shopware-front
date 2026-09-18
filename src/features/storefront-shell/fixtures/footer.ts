@@ -3,9 +3,9 @@ import type { StorefrontFooterContent } from "@/features/storefront-shell/model/
 export const defaultStorefrontFooterContent = {
   about: {
     description:
-      "Wir bieten unseren Kunden schönes und praktisches für Haus und Garten. Die Produktpalette ist breit gefächert. Von handgefertigten Ledersofas über klassische Chesterfield wie stylische Wohnmöbel bis zu den eigen gefertigten Designer Garnituren ist alles dabei, was das Einrichterherz begehrt. Das stetig wachsende Auftragsvolumen schultert das Team von jvmoebel.de mittels modernster Technologien und durchdachten Strukturen mit Spaß und Motivation. Masse – aber bitte mit Klasse ist das Motto, das von unseren Mitarbeitern Tag für Tag gelebt wird. Schließen Sie sich der Gemeinschaft unserer zufriedenen Kunden an. Ihr gemütliches Heim ist unser Ziel!",
+      "Wir bieten unseren Kunden schönes und praktisches für Haus und Garten. Die Produktpalette ist breit gefächert. Von handgefertigten Ledersofas über klassische Chesterfield wie stylische Wohnmoebel bis zu den eigen gefertigten Designer Garnituren ist alles dabei, was das Einrichterherz begehrt. Das stetig wachsende Auftragsvolumen schultert das Team von jvmoebel.de mittels modernster Technologien und durchdachten Strukturen mit Spaß und Motivation. Masse – aber bitte mit Klasse ist das Motto, das von unseren Mitarbeitern Tag für Tag gelebt wird. Schließen Sie sich der Gemeinschaft unserer zufriedenen Kunden an. Ihr gemütliches Heim ist unser Ziel!",
     eyebrow: "Über uns",
-    title: "Möbel mit Charakter, gemacht für das echte Leben.",
+    title: "Moebel mit Charakter, gemacht für das echte Leben.",
   },
   copyright: "© {year} {storeName}. Alle Rechte vorbehalten.",
   headings: {
@@ -52,7 +52,7 @@ export const defaultStorefrontFooterContent = {
   revocation: {
     buttonLabel: "Vertrag widerrufen",
     description:
-      "Geben Sie Ihre Vertragsdaten ein. Wir bereiten daraus eine E-Mail an JVMöbel vor.",
+      "Geben Sie Ihre Vertragsdaten ein. Wir bereiten daraus eine E-Mail an JVMoebel vor.",
     disclaimer:
       "Der Widerruf wird erst versendet, wenn Sie die vorbereitete E-Mail in Ihrem E-Mail-Programm abschicken.",
     enabled: true,
@@ -61,6 +61,34 @@ export const defaultStorefrontFooterContent = {
     title: "Vertrag widerrufen",
   },
   shippingBadges: [],
+  contactWidget: {
+    channels: [
+      {
+        id: "telegram",
+        type: "telegram",
+        url: "https://t.me/XLANDJV",
+        label: "Telegram",
+      },
+      {
+        id: "whatsapp",
+        type: "whatsapp",
+        url: "https://api.whatsapp.com/message/I5VAPEHCQNQTM1?autoload=1&app_absent=0",
+        label: "WhatsApp",
+      },
+      {
+        id: "phone",
+        type: "phone",
+        url: "tel:+49015112345678",
+        label: "Anrufen",
+      },
+      {
+        id: "email",
+        type: "email",
+        url: "mailto:info@jvmoebel.de",
+        label: "E-Mail senden",
+      },
+    ],
+  },
   socialLinks: [
     {
       id: "facebook",

@@ -30,8 +30,8 @@ describe("mapShopwareProductDetail", () => {
       ean: "4260123456789",
       id: "product-id",
       manufacturer: {
-        name: "JV Möbel",
-        translated: { name: "JV Möbel" },
+        name: "JV Moebel",
+        translated: { name: "JV Moebel" },
       },
       measurements: {
         height: { unit: "cm", value: 82 },
@@ -106,7 +106,7 @@ describe("mapShopwareProductDetail", () => {
     expect(pageData.product.specifications).toEqual([
       { id: "article-number", label: "Artikelnummer", value: "SW-10001" },
       { id: "ean", label: "EAN", value: "4260123456789" },
-      { id: "manufacturer", label: "Hersteller", value: "JV Möbel" },
+      { id: "manufacturer", label: "Hersteller", value: "JV Moebel" },
       { id: "category", label: "Kategorie", value: "Sofas" },
       { id: "purchase-unit", label: "Verkaufseinheit", value: "1 Stück" },
       { id: "weight", label: "Gewicht", value: "42 kg" },

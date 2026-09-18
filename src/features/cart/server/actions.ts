@@ -8,6 +8,12 @@ import {
   persistCustomerContext,
 } from "@/features/customer-account/server/session";
 import {
+  parseCartItemRemoval,
+  parseCartItemUpdate,
+  parseProductId,
+  parsePromotionCode,
+} from "@/features/cart/model/validation";
+import {
   addMockProduct,
   applyMockPromotionCode,
   removeMockCartItem,
@@ -23,12 +29,6 @@ import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
 import { isShopwareProductAvailable } from "@/integrations/shopware/product-detail";
 
 class ProductUnavailableError extends Error {}
-
-function getRequiredString(formData: FormData, name: string) {
-  const value = formData.get(name);
-
-  return typeof value === "string" && value.trim() ? value.trim() : null;
-}
 
 async function runCartMutation<Result>(
   mutation: (
@@ -65,19 +65,19 @@ async function runMockCartMutation(mutation: () => Promise<void>) {
 }
 
 export async function updateCartItem(formData: FormData) {
-  const id = getRequiredString(formData, "id");
-  const quantityValue = getRequiredString(formData, "quantity");
-  const quantity = quantityValue ? Number(quantityValue) : Number.NaN;
+  const cartItem = parseCartItemUpdate(formData);
 
-  if (!id || !Number.isSafeInteger(quantity) || quantity < 1) {
+  if (!cartItem) {
     redirect("/warenkorb?fehler=eingabe");
   }
 
   if (shouldUseShopwareMocks()) {
-    await runMockCartMutation(() => updateMockCartItem(id, quantity));
+    await runMockCartMutation(() =>
+      updateMockCartItem(cartItem.id, cartItem.quantity),
+    );
   } else {
     await runCartMutation((session) =>
-      updateShopwareCartItem(session.client, id, quantity),
+      updateShopwareCartItem(session.client, cartItem.id, cartItem.quantity),
     );
   }
 
@@ -85,7 +85,7 @@ export async function updateCartItem(formData: FormData) {
 }
 
 export async function removeCartItem(formData: FormData) {
-  const id = getRequiredString(formData, "id");
+  const id = parseCartItemRemoval(formData);
 
   if (!id) {
     redirect("/warenkorb?fehler=eingabe");
@@ -103,7 +103,7 @@ export async function removeCartItem(formData: FormData) {
 }
 
 export async function applyPromotionCode(formData: FormData) {
-  const code = getRequiredString(formData, "code");
+  const code = parsePromotionCode(formData);
 
   if (!code) {
     redirect("/warenkorb?fehler=gutschein");
@@ -121,7 +121,7 @@ export async function applyPromotionCode(formData: FormData) {
 }
 
 export async function addProductToCart(formData: FormData) {
-  const productId = getRequiredString(formData, "productId");
+  const productId = parseProductId(formData);
 
   if (!productId) {
     redirect("/warenkorb?fehler=eingabe");

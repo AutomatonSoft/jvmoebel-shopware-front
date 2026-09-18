@@ -139,7 +139,7 @@ export function ShopProductResults({
           </span>
           <h2 className="text-lg font-semibold">Keine passenden Produkte</h2>
           <p className="mt-2 max-w-sm text-sm leading-6 text-muted-foreground">
-            Entfernen Sie einen oder mehrere Filter, um weitere Möbel zu sehen.
+            Entfernen Sie einen oder mehrere Filter, um weitere Moebel zu sehen.
           </p>
           <Button className="mt-5" onClick={onClearFilters} variant="outline">
             Filter löschen

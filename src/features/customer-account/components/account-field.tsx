@@ -9,6 +9,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useState } from "react";
+import type { UseFormRegisterReturn } from "react-hook-form";
 
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -17,6 +18,7 @@ type AccountFieldProps = Readonly<{
   autoComplete: string;
   className?: string;
   defaultValue?: string;
+  error?: string;
   icon?: LucideIcon;
   id: string;
   invalid?: true;
@@ -25,6 +27,7 @@ type AccountFieldProps = Readonly<{
   minLength?: number;
   name?: string;
   readOnly?: boolean;
+  registration?: UseFormRegisterReturn;
   type?: "email" | "password" | "text";
 }>;
 
@@ -32,6 +35,7 @@ export function AccountField({
   autoComplete,
   className,
   defaultValue,
+  error,
   icon,
   id,
   invalid,
@@ -40,9 +44,11 @@ export function AccountField({
   minLength,
   name = id,
   readOnly = false,
+  registration,
   type = "text",
 }: AccountFieldProps) {
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const errorId = `${id}-error`;
   const Icon =
     icon ??
     (type === "email" ? Mail : type === "password" ? KeyRound : UserRound);
@@ -50,7 +56,9 @@ export function AccountField({
   return (
     <div className={cn("group relative min-w-0", className)}>
       <Input
-        aria-invalid={invalid}
+        {...registration}
+        aria-describedby={error ? errorId : undefined}
+        aria-invalid={Boolean(error) || invalid || undefined}
         autoComplete={autoComplete}
         className={cn(
           "peer h-11 rounded-lg border-border/80 bg-card/80 pt-5 pb-1 pl-11 text-foreground shadow-none transition-[border-color,background-color,box-shadow] focus-visible:border-primary focus-visible:bg-card focus-visible:ring-2 focus-visible:ring-primary/10 motion-reduce:transition-none",
@@ -77,6 +85,15 @@ export function AccountField({
       >
         {label}
       </label>
+      {error && (
+        <p
+          className="mt-1 text-xs leading-4 text-destructive"
+          id={errorId}
+          role="alert"
+        >
+          {error}
+        </p>
+      )}
       {type === "password" && (
         <button
           aria-controls={id}
