@@ -61,6 +61,34 @@ export const defaultStorefrontFooterContent = {
     title: "Vertrag widerrufen",
   },
   shippingBadges: [],
+  contactWidget: {
+    channels: [
+      {
+        id: "telegram",
+        type: "telegram",
+        url: "https://t.me/XLANDJV",
+        label: "Telegram",
+      },
+      {
+        id: "whatsapp",
+        type: "whatsapp",
+        url: "https://api.whatsapp.com/message/I5VAPEHCQNQTM1?autoload=1&app_absent=0",
+        label: "WhatsApp",
+      },
+      {
+        id: "phone",
+        type: "phone",
+        url: "tel:+49015112345678",
+        label: "Anrufen",
+      },
+      {
+        id: "email",
+        type: "email",
+        url: "mailto:info@jvmoebel.de",
+        label: "E-Mail senden",
+      },
+    ],
+  },
   socialLinks: [
     {
       id: "facebook",

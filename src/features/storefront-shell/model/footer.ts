@@ -32,6 +32,14 @@ export type StorefrontFooterInternationalLink = Readonly<{
   url: string;
 }>;
 
+export type ContactWidgetChannel = Readonly<{
+  id: string;
+  type: string;
+  url: string;
+  label?: string;
+  icon?: string;
+}>;
+
 export type StorefrontFooterContent = Readonly<{
   about: Readonly<{
     description: string;
@@ -60,4 +68,7 @@ export type StorefrontFooterContent = Readonly<{
   }>;
   shippingBadges: readonly StorefrontFooterShippingBadge[];
   socialLinks: readonly StorefrontFooterLink[];
+  contactWidget?: Readonly<{
+    channels: readonly ContactWidgetChannel[];
+  }>;
 }>;
