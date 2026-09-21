@@ -153,6 +153,26 @@ function CartItemRow({
             {item.deliveryLabel}
           </p>
         )}
+        {item.selectedOptions.length > 0 && (
+          <dl
+            aria-label={`Ausgewählte Variante für ${item.label}`}
+            className="mt-3 flex flex-wrap gap-1.5"
+          >
+            {item.selectedOptions.map((option) => (
+              <div
+                className="flex items-baseline gap-1 rounded-md bg-secondary px-2 py-1 text-xs"
+                key={`${option.label}-${option.value}`}
+              >
+                <dt className="font-medium text-muted-foreground">
+                  {option.label}:
+                </dt>
+                <dd className="font-semibold text-foreground">
+                  {option.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        )}
         <div className="mt-auto hidden items-end gap-3 pt-4 sm:flex">
           {editable ? (
             <QuantityControl item={item} />

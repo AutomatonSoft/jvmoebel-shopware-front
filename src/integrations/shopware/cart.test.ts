@@ -26,6 +26,13 @@ describe("mapShopwareCart", () => {
         {
           id: "product-line-item",
           label: "Sofa Oxford",
+          payload: {
+            options: [
+              { group: "Farbe", option: "Schwarz" },
+              { group: "Größe", option: "220 × 90 cm" },
+              { group: "Farbe", option: "Schwarz" },
+            ],
+          },
           price: { quantity: 2, totalPrice: 2400, unitPrice: 1200 },
           quantity: 2,
           referencedId: "product-id",
@@ -47,6 +54,10 @@ describe("mapShopwareCart", () => {
       expect.objectContaining({
         id: "product-line-item",
         quantity: 2,
+        selectedOptions: [
+          { label: "Farbe", value: "Schwarz" },
+          { label: "Größe", value: "220 × 90 cm" },
+        ],
         totalPrice: 2400,
         unitPrice: 1200,
         url: "/produkt/product-id",
