@@ -5,25 +5,30 @@ import Link from "next/link";
 import { useRef } from "react";
 
 import { Button } from "@/components/ui/button";
+import { CartPayPalCheckoutButton } from "@/features/cart/components/cart-paypal-checkout-button";
 
 export function CartCheckoutDialog({
+  onPayPalCheckout,
   signedIn,
-}: Readonly<{ signedIn: boolean }>) {
+}: Readonly<{ onPayPalCheckout?: () => void; signedIn: boolean }>) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   if (signedIn) {
     return (
-      <Button
-        className="mt-7 w-full justify-between"
-        nativeButton={false}
-        render={<Link href="/kasse" />}
-        size="lg"
-      >
-        Zur Kasse gehen
-        <span className="grid size-7 place-items-center rounded-full bg-primary-foreground/20">
-          <ArrowRight aria-hidden="true" className="size-4" />
-        </span>
-      </Button>
+      <>
+        <Button
+          className="mt-7 w-full justify-between"
+          nativeButton={false}
+          render={<Link href="/kasse" />}
+          size="lg"
+        >
+          Zur Kasse gehen
+          <span className="grid size-7 place-items-center rounded-full bg-primary-foreground/20">
+            <ArrowRight aria-hidden="true" className="size-4" />
+          </span>
+        </Button>
+        <CartPayPalCheckoutButton onCheckout={onPayPalCheckout} />
+      </>
     );
   }
 
@@ -40,6 +45,7 @@ export function CartCheckoutDialog({
           <ArrowRight aria-hidden="true" className="size-4" />
         </span>
       </Button>
+      <CartPayPalCheckoutButton onCheckout={onPayPalCheckout} />
 
       <dialog
         aria-labelledby="checkout-dialog-title"
