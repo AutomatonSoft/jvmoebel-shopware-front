@@ -29,7 +29,7 @@ export function CustomerCheckoutDeliveryAddressForm({
   const fieldErrors = state.fieldErrors ?? {};
 
   return (
-    <form action={formAction}>
+    <form action={formAction} id="customer-checkout-delivery-address-form">
       <AccountToast
         description={state.message}
         id={`customer-checkout-delivery-address-${state.status}`}
@@ -71,12 +71,7 @@ export function CustomerCheckoutDeliveryAddressForm({
           />
         </fieldset>
 
-        <Button
-          className="mt-7 w-full justify-between disabled:cursor-wait"
-          disabled={pending}
-          size="lg"
-          type="submit"
-        >
+        <Button className="hidden" disabled={pending} size="lg" type="submit">
           {pending ? "Adresse wird gespeichert …" : "Lieferadresse verwenden"}
           <ArrowRight aria-hidden="true" />
         </Button>

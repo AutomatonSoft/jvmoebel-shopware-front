@@ -5,7 +5,10 @@ import { Container } from "@/components/ui/container";
 import { CheckoutPaymentForm } from "@/features/checkout/components/checkout-payment-form";
 import { CheckoutProgress } from "@/features/checkout/components/checkout-progress";
 import { CheckoutReview } from "@/features/checkout/components/checkout-review";
-import { CheckoutSummary } from "@/features/checkout/components/checkout-summary";
+import {
+  CheckoutSummary,
+  type CheckoutSummaryAction,
+} from "@/features/checkout/components/checkout-summary";
 import { CustomerCheckoutDeliveryAddressForm } from "@/features/checkout/components/customer-checkout-delivery-address-form";
 import { CustomerCheckoutAddressForm } from "@/features/checkout/components/customer-checkout-address-form";
 import { GuestCheckoutForm } from "@/features/checkout/components/guest-checkout-form";
@@ -42,6 +45,33 @@ export function CheckoutPage({
         !showNewDeliveryAddressStep
       ? "payment"
       : "address";
+  const summaryAction: CheckoutSummaryAction = !data.customer
+    ? {
+        formId: "guest-checkout-form",
+        label: "Weiter zu Versand und Zahlung",
+      }
+    : showNewDeliveryAddressStep
+      ? {
+          formId: "customer-checkout-delivery-address-form",
+          label: "Lieferadresse verwenden",
+        }
+      : step === "address"
+        ? {
+            formId: "customer-checkout-address-form",
+            label: "Weiter zu Versand und Zahlung",
+          }
+        : hasConfirmationSelection
+          ? {
+              formId: "checkout-order-review-form",
+              label: "Zahlungspflichtig bestellen",
+            }
+          : {
+              disabled:
+                data.options.paymentMethods.length === 0 ||
+                data.options.shippingMethods.length === 0,
+              formId: "checkout-payment-form",
+              label: "Weiter zur Bestellübersicht",
+            };
 
   return (
     <main className="flex-1 bg-background">
@@ -135,7 +165,7 @@ export function CheckoutPage({
               shippingMethods={data.options.shippingMethods}
             />
           )}
-          <CheckoutSummary cart={data.cart} />
+          <CheckoutSummary action={summaryAction} cart={data.cart} />
         </div>
       </Container>
     </main>

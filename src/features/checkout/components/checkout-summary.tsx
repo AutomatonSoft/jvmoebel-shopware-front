@@ -1,8 +1,21 @@
-import { Check, PackageCheck, ShieldCheck } from "lucide-react";
+import { ArrowRight, Check, PackageCheck, ShieldCheck } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import type { ShopCart } from "@/features/cart/model/cart";
 
-export function CheckoutSummary({ cart }: Readonly<{ cart: ShopCart }>) {
+export type CheckoutSummaryAction = Readonly<{
+  disabled?: boolean;
+  formId: string;
+  label: string;
+}>;
+
+export function CheckoutSummary({
+  action,
+  cart,
+}: Readonly<{
+  action: CheckoutSummaryAction;
+  cart: ShopCart;
+}>) {
   const formatter = new Intl.NumberFormat(cart.locale, {
     currency: cart.currency,
     minimumFractionDigits: 2,
@@ -69,6 +82,17 @@ export function CheckoutSummary({ cart }: Readonly<{ cart: ShopCart }>) {
           </dd>
         </div>
       </dl>
+
+      <Button
+        className="mt-6 w-full justify-between"
+        disabled={action.disabled}
+        form={action.formId}
+        size="lg"
+        type="submit"
+      >
+        {action.label}
+        <ArrowRight aria-hidden="true" />
+      </Button>
 
       <ul className="mt-6 grid gap-3 border-t pt-6 text-xs text-muted-foreground">
         <li className="flex items-center gap-2.5">

@@ -268,7 +268,12 @@ export function GuestCheckoutForm({
   };
 
   return (
-    <form action={formAction} noValidate onSubmit={submitGuestCheckout}>
+    <form
+      action={formAction}
+      id="guest-checkout-form"
+      noValidate
+      onSubmit={submitGuestCheckout}
+    >
       <AccountToast
         description={state.message}
         id={`guest-checkout-${state.status}`}
@@ -401,12 +406,7 @@ export function GuestCheckoutForm({
           </p>
         )}
 
-        <Button
-          className="mt-7 w-full justify-between disabled:cursor-wait"
-          disabled={pending}
-          size="lg"
-          type="submit"
-        >
+        <Button className="hidden" disabled={pending} size="lg" type="submit">
           {pending
             ? "Adresse wird gespeichert …"
             : "Weiter zu Versand und Zahlung"}

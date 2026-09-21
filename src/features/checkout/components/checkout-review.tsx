@@ -181,7 +181,11 @@ export function CheckoutReview({
 
       <CheckoutCartReview cart={cart} />
 
-      <form action={formAction} className="mt-4 rounded-2xl border bg-card p-5">
+      <form
+        action={formAction}
+        className="mt-4 rounded-2xl border bg-card p-5"
+        id="checkout-order-review-form"
+      >
         <label className="flex items-start gap-3 text-xs leading-5 text-muted-foreground">
           <input
             aria-describedby={
@@ -214,12 +218,7 @@ export function CheckoutReview({
           </p>
         )}
 
-        <Button
-          className="mt-7 w-full justify-between disabled:cursor-wait"
-          disabled={pending}
-          size="lg"
-          type="submit"
-        >
+        <Button className="hidden" disabled={pending} size="lg" type="submit">
           {pending
             ? "Bestellung wird übermittelt …"
             : "Zahlungspflichtig bestellen"}

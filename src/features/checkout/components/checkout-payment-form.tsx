@@ -107,7 +107,7 @@ export function CheckoutPaymentForm({
   const fieldErrors = state.fieldErrors ?? {};
 
   return (
-    <form action={formAction}>
+    <form action={formAction} id="checkout-payment-form">
       <AccountToast
         description={state.message}
         id={`checkout-payment-${state.status}`}
@@ -181,7 +181,7 @@ export function CheckoutPaymentForm({
         )}
 
         <Button
-          className="mt-7 w-full justify-between disabled:cursor-wait"
+          className="hidden"
           disabled={pending || unavailable}
           size="lg"
           type="submit"
