@@ -144,6 +144,43 @@ export async function updateShopwareCustomerAddress(
   }
 }
 
+export async function createShopwareCheckoutDeliveryAddress(
+  client: ShopwareClient,
+  address: GuestCheckoutRegistration["billingAddress"],
+) {
+  const customer = (await getShopwareContext(client)).customer;
+  const billingAddress =
+    customer?.defaultBillingAddress ?? customer?.activeBillingAddress;
+
+  if (!customer || customer.guest) {
+    throw new Error("The customer has no editable delivery address.");
+  }
+
+  const response = await client.invoke(
+    "createCustomerAddress post /account/address",
+    {
+      body: {
+        ...mapAddress(address),
+        company: billingAddress?.company,
+        salutationId: billingAddress?.salutationId,
+      },
+      fetchOptions: { cache: "no-store" },
+    },
+  );
+
+  if (!response.data.id) {
+    throw new Error("Shopware did not return the new delivery address.");
+  }
+
+  await client.invoke(
+    "defaultShippingAddress patch /account/address/default-shipping/{addressId}",
+    {
+      fetchOptions: { cache: "no-store" },
+      pathParams: { addressId: response.data.id },
+    },
+  );
+}
+
 export async function getShopwareCheckoutOptions(
   client: ShopwareClient,
 ): Promise<CheckoutOptions> {

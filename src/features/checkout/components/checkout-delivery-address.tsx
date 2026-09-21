@@ -15,12 +15,20 @@ export function CheckoutDeliveryAddress({
           Lieferadresse
         </h2>
         {canChange && (
-          <Link
-            className="text-xs font-semibold text-primary underline-offset-4 hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-primary"
-            href="/kasse?schritt=adresse"
-          >
-            Ändern
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              className="text-xs font-semibold text-primary underline-offset-4 hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-primary"
+              href="/kasse?schritt=adresse"
+            >
+              Ändern
+            </Link>
+            <Link
+              className="text-xs font-semibold text-primary underline-offset-4 hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-primary"
+              href="/kasse?schritt=neue-lieferadresse"
+            >
+              Neue Adresse
+            </Link>
+          </div>
         )}
       </div>
       <address className="mt-4 text-sm leading-6 not-italic text-muted-foreground">

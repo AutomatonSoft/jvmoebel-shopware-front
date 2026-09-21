@@ -19,6 +19,7 @@ import {
   validateGuestPassword,
 } from "@/features/checkout/model/validation";
 import {
+  addMockCheckoutDeliveryAddress,
   convertMockCheckoutGuest,
   createMockCheckoutReceipt,
   mockCheckoutOptions,
@@ -32,6 +33,7 @@ import {
 } from "@/features/customer-account/server/session";
 import {
   convertShopwareGuest,
+  createShopwareCheckoutDeliveryAddress,
   createShopwareCheckoutOrder,
   getShopwareCheckoutCustomer,
   getShopwareCheckoutOptions,
@@ -189,6 +191,50 @@ export async function saveCustomerCheckoutAddress(
     await persistCustomerContext(session.getContextToken());
   } catch (error) {
     return getActionError(error, "Customer checkout address update failed.");
+  }
+
+  revalidatePath("/kasse");
+  redirect("/kasse?schritt=zahlung");
+}
+
+export async function addCustomerCheckoutDeliveryAddress(
+  _previousState: CheckoutActionState,
+  formData: FormData,
+): Promise<CheckoutActionState> {
+  const validation = validateCheckoutAddress(formData);
+
+  if (!validation.success) {
+    return {
+      fieldErrors: getCheckoutAddressFieldErrors(validation.error),
+      message: "Bitte fÃ¼llen Sie alle Pflichtfelder vollstÃ¤ndig aus.",
+      status: "invalid",
+    };
+  }
+
+  const address = validation.data;
+
+  try {
+    if (shouldUseShopwareMocks()) {
+      await addMockCheckoutDeliveryAddress(address);
+    } else {
+      const session = await createCustomerSession();
+      const options = await getShopwareCheckoutOptions(session.client);
+
+      if (
+        !options.countries.some((country) => country.id === address.countryId)
+      ) {
+        return {
+          fieldErrors: { countryId: "Bitte wÃ¤hlen Sie ein gÃ¼ltiges Land." },
+          message: "Bitte wÃ¤hlen Sie ein gÃ¼ltiges Land.",
+          status: "invalid",
+        };
+      }
+
+      await createShopwareCheckoutDeliveryAddress(session.client, address);
+      await persistCustomerContext(session.getContextToken());
+    }
+  } catch (error) {
+    return getActionError(error, "Customer delivery address creation failed.");
   }
 
   revalidatePath("/kasse");

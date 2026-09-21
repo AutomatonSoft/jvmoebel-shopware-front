@@ -5,6 +5,7 @@ import { Container } from "@/components/ui/container";
 import { CheckoutPaymentForm } from "@/features/checkout/components/checkout-payment-form";
 import { CheckoutProgress } from "@/features/checkout/components/checkout-progress";
 import { CheckoutSummary } from "@/features/checkout/components/checkout-summary";
+import { CustomerCheckoutDeliveryAddressForm } from "@/features/checkout/components/customer-checkout-delivery-address-form";
 import { CustomerCheckoutAddressForm } from "@/features/checkout/components/customer-checkout-address-form";
 import { GuestCheckoutForm } from "@/features/checkout/components/guest-checkout-form";
 import type { CheckoutPageData } from "@/features/checkout/model/checkout";
@@ -12,14 +13,22 @@ import type { CheckoutPageData } from "@/features/checkout/model/checkout";
 export function CheckoutPage({
   addressStep,
   data,
+  newDeliveryAddressStep,
   paymentError,
 }: Readonly<{
   addressStep: boolean;
   data: CheckoutPageData;
+  newDeliveryAddressStep: boolean;
   paymentError: boolean;
 }>) {
+  const showNewDeliveryAddressStep =
+    newDeliveryAddressStep && !data.customer?.guest;
   const step =
-    data.customer?.addressComplete && !addressStep ? "payment" : "address";
+    data.customer?.addressComplete &&
+    !addressStep &&
+    !showNewDeliveryAddressStep
+      ? "payment"
+      : "address";
 
   return (
     <main className="flex-1 bg-background">
@@ -76,6 +85,11 @@ export function CheckoutPage({
         <div className="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_23rem] xl:gap-12">
           {!data.customer ? (
             <GuestCheckoutForm countries={data.options.countries} />
+          ) : showNewDeliveryAddressStep ? (
+            <CustomerCheckoutDeliveryAddressForm
+              countries={data.options.countries}
+              customer={data.customer}
+            />
           ) : step === "address" ? (
             <CustomerCheckoutAddressForm
               countries={data.options.countries}

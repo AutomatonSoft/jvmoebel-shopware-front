@@ -1,6 +1,9 @@
 import { describe, expect, test } from "bun:test";
 
-import { getShopwareCheckoutCustomer } from "@/integrations/shopware/checkout";
+import {
+  createShopwareCheckoutDeliveryAddress,
+  getShopwareCheckoutCustomer,
+} from "@/integrations/shopware/checkout";
 import type { ShopwareClient } from "@/integrations/shopware/client";
 
 function createClient(customer: unknown) {
@@ -45,5 +48,47 @@ describe("getShopwareCheckoutCustomer", () => {
         street: "Rheinufer 8",
       },
     });
+  });
+});
+
+describe("createShopwareCheckoutDeliveryAddress", () => {
+  test("creates an address and uses it as the default shipping address", async () => {
+    const operations: string[] = [];
+    const client = {
+      invoke: async (operation: string) => {
+        operations.push(operation);
+
+        if (operation === "readContext get /context") {
+          return {
+            data: {
+              customer: {
+                defaultBillingAddress: {
+                  id: "billing-address-id",
+                  salutationId: "salutation-id",
+                },
+                guest: false,
+              },
+            },
+          };
+        }
+
+        return { data: { id: "delivery-address-id" } };
+      },
+    } as unknown as ShopwareClient;
+
+    await createShopwareCheckoutDeliveryAddress(client, {
+      city: "KÃ¶ln",
+      countryId: "country-id",
+      firstName: "Greta",
+      lastName: "GroÃŸ",
+      street: "DomstraÃŸe 1",
+      zipcode: "50667",
+    });
+
+    expect(operations).toEqual([
+      "readContext get /context",
+      "createCustomerAddress post /account/address",
+      "defaultShippingAddress patch /account/address/default-shipping/{addressId}",
+    ]);
   });
 });
