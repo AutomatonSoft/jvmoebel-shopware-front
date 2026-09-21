@@ -1,12 +1,14 @@
 import { ArrowRight, Check, PackageCheck, ShieldCheck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { CheckoutOrderSubmit } from "@/features/checkout/components/checkout-order-submit";
 import type { ShopCart } from "@/features/cart/model/cart";
 
 export type CheckoutSummaryAction = Readonly<{
   disabled?: boolean;
   formId: string;
   label: string;
+  requiresTerms?: boolean;
 }>;
 
 export function CheckoutSummary({
@@ -67,16 +69,20 @@ export function CheckoutSummary({
         </div>
       </dl>
 
-      <Button
-        className="mt-6 w-full justify-between"
-        disabled={action.disabled}
-        form={action.formId}
-        size="lg"
-        type="submit"
-      >
-        {action.label}
-        <ArrowRight aria-hidden="true" />
-      </Button>
+      {action.requiresTerms ? (
+        <CheckoutOrderSubmit formId={action.formId} />
+      ) : (
+        <Button
+          className="mt-6 w-full justify-between"
+          disabled={action.disabled}
+          form={action.formId}
+          size="lg"
+          type="submit"
+        >
+          {action.label}
+          <ArrowRight aria-hidden="true" />
+        </Button>
+      )}
 
       <ul className="mt-6 grid gap-3 border-t pt-6 text-xs text-muted-foreground">
         <li className="flex items-center gap-2.5">

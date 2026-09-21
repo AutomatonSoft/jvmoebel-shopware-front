@@ -1,7 +1,4 @@
-"use client";
-
 import {
-  ArrowRight,
   CreditCard,
   MapPin,
   MessageSquareText,
@@ -10,21 +7,15 @@ import {
 } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
-import { useActionState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 
-import { Button } from "@/components/ui/button";
-import { AccountToast } from "@/features/customer-account/components/account-toast";
 import { CartLineItem } from "@/features/cart/components/cart-line-item";
 import type {
-  CheckoutActionState,
   CheckoutDisplayAddress,
   CheckoutMethodSelection,
   CheckoutOption,
 } from "@/features/checkout/model/checkout";
 import type { ShopCart } from "@/features/cart/model/cart";
-import { placeCheckoutOrder } from "@/features/checkout/server/actions";
-
-const initialState: CheckoutActionState = { status: "idle" };
 
 function AddressDetails({
   address,
@@ -95,28 +86,8 @@ export function CheckoutReview({
   selection: CheckoutMethodSelection;
   shippingMethods: readonly CheckoutOption[];
 }>) {
-  const [state, formAction, pending] = useActionState(
-    placeCheckoutOrder,
-    initialState,
-  );
-  const acceptedTermsError = state.fieldErrors?.acceptedTerms;
-
   return (
     <>
-      <AccountToast
-        description={state.message}
-        id={`checkout-review-${state.status}`}
-        title={
-          state.status === "invalid"
-            ? "Bestellung prüfen"
-            : state.status === "error"
-              ? "Bestellung nicht möglich"
-              : undefined
-        }
-        trigger={state}
-        type="error"
-      />
-
       <section className="rounded-3xl border bg-card p-5 shadow-[0_24px_70px_-58px_rgba(21,21,19,0.7)] sm:p-7">
         <div className="flex gap-4 border-b pb-6">
           <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-primary/10 text-primary">
@@ -200,51 +171,6 @@ export function CheckoutReview({
           ))}
         </div>
       </section>
-
-      <form
-        action={formAction}
-        className="mt-4 rounded-2xl border bg-card p-5"
-        id="checkout-order-review-form"
-      >
-        <label className="flex items-start gap-3 text-xs leading-5 text-muted-foreground">
-          <input
-            aria-describedby={
-              acceptedTermsError ? "checkout-accepted-terms-error" : undefined
-            }
-            aria-invalid={Boolean(acceptedTermsError) || undefined}
-            className="mt-0.5 size-4 shrink-0 accent-primary"
-            name="acceptedTerms"
-            required
-            type="checkbox"
-          />
-          <span>
-            Ich akzeptiere die{" "}
-            <Link
-              className="font-medium text-foreground underline decoration-border underline-offset-4 hover:decoration-primary"
-              href="/agb"
-            >
-              Allgemeinen Geschäftsbedingungen
-            </Link>{" "}
-            und habe die Widerrufsbelehrung zur Kenntnis genommen.
-          </span>
-        </label>
-        {acceptedTermsError && (
-          <p
-            className="mt-2 text-xs leading-4 text-destructive"
-            id="checkout-accepted-terms-error"
-            role="alert"
-          >
-            {acceptedTermsError}
-          </p>
-        )}
-
-        <Button className="hidden" disabled={pending} size="lg" type="submit">
-          {pending
-            ? "Bestellung wird übermittelt …"
-            : "Zahlungspflichtig bestellen"}
-          <ArrowRight aria-hidden="true" />
-        </Button>
-      </form>
     </>
   );
 }

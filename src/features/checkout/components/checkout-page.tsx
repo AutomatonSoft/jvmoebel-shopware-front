@@ -95,6 +95,7 @@ export function CheckoutPage({
               ? {
                   formId: "checkout-order-review-form",
                   label: "Zahlungspflichtig bestellen",
+                  requiresTerms: true,
                 }
               : {
                   disabled:
