@@ -9,6 +9,7 @@ import { ProductFilterPanel } from "@/features/catalog/components/product-filter
 import { ShopProductResults } from "@/features/catalog/components/product-results";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { PageHeader } from "@/components/ui/page-header";
 import {
   Select,
   SelectContent,
@@ -128,23 +129,20 @@ function ShopCatalogContent({
             <strong className="font-medium text-foreground">Sortiment</strong>
           </nav>
 
-          <header className="border-b pt-9 pb-6 sm:flex sm:items-end sm:justify-between sm:gap-8">
-            <div>
-              <p className="mb-3 flex items-center gap-2 text-[0.625rem] font-semibold tracking-[0.14em] text-muted-foreground uppercase before:block before:size-1.5 before:rounded-full before:bg-primary">
-                {listing.eyebrow}
+          <PageHeader
+            aside={
+              <p className="max-w-md text-sm leading-6 text-muted-foreground sm:text-right">
+                {listing.description}
               </p>
-              <h1 className="text-3xl leading-none font-semibold tracking-[-0.04em] text-balance sm:text-4xl">
-                {listing.title}
-              </h1>
-            </div>
-            <p className="mt-4 max-w-md text-sm leading-6 text-muted-foreground sm:mt-0 sm:text-right">
-              {listing.description}
-            </p>
-          </header>
+            }
+            className="pt-6"
+            eyebrow={listing.eyebrow}
+            title={listing.title}
+          />
         </>
       )}
 
-      <div className="grid gap-8 pt-8 lg:grid-cols-[13.75rem_minmax(0,1fr)] lg:gap-10 xl:gap-12">
+      <div className="grid gap-8 pt-6 lg:grid-cols-[13.75rem_minmax(0,1fr)] lg:gap-10 xl:gap-12">
         <aside className="sticky top-24 hidden max-h-[calc(100dvh-7rem)] self-start overflow-y-auto rounded-xl border bg-card/70 p-4 scrollbar-width:none lg:block [&::-webkit-scrollbar]:hidden">
           {isDesktopCatalog && <ProductFilterPanel {...filterPanelProps} />}
         </aside>

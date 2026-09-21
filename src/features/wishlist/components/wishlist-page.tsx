@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { PageHeader } from "@/components/ui/page-header";
 import { ShopProductCard } from "@/features/catalog/components/shop-product-card";
 import { WishlistRecommendations } from "@/features/wishlist/components/wishlist-recommendations";
 import { useWishlist } from "@/features/wishlist/hooks/use-wishlist";
@@ -26,7 +27,7 @@ export function WishlistPage() {
 
   return (
     <main className="flex-1">
-      <Container className="py-8 sm:py-12">
+      <Container className="py-6 sm:py-8">
         <nav
           aria-label="Breadcrumb"
           className="flex items-center gap-2 text-xs text-muted-foreground"
@@ -38,26 +39,19 @@ export function WishlistPage() {
           <strong className="font-medium text-foreground">Wunschliste</strong>
         </nav>
 
-        <header className="mt-6 flex flex-col gap-3 border-b border-border/80 pb-5 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="flex items-center gap-2 text-[0.6875rem] font-semibold tracking-[0.15em] text-primary uppercase">
-              <Heart aria-hidden="true" className="size-4 fill-primary" />
-              Ihre Auswahl
-            </p>
-            <h1 className="mt-2 text-3xl font-semibold tracking-[-0.045em] sm:text-4xl">
-              Meine Wunschliste
-            </h1>
-            <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base">
-              Sammeln Sie Ihre Moebel-Favoriten an einem Ort und vergleichen Sie
-              sie in Ruhe.
-            </p>
-          </div>
-          {isReady && products.length > 0 && (
-            <p className="w-fit rounded-full bg-accent px-3 py-1.5 text-xs font-semibold text-accent-foreground">
-              {productCountLabel}
-            </p>
-          )}
-        </header>
+        <PageHeader
+          aside={
+            isReady && products.length > 0 ? (
+              <p className="w-fit rounded-full bg-accent px-3 py-1.5 text-xs font-semibold text-accent-foreground">
+                {productCountLabel}
+              </p>
+            ) : undefined
+          }
+          className="mt-5"
+          description="Sammeln Sie Ihre Moebel-Favoriten an einem Ort und vergleichen Sie sie in Ruhe."
+          eyebrow="Ihre Auswahl"
+          title="Meine Wunschliste"
+        />
 
         {!isReady || isLoading ? (
           <div

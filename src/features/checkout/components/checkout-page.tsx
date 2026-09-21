@@ -3,6 +3,7 @@ import type { Route } from "next";
 import Link from "next/link";
 
 import { Container } from "@/components/ui/container";
+import { PageHeader } from "@/components/ui/page-header";
 import { CheckoutCartPreview } from "@/features/checkout/components/checkout-cart-preview";
 import { CheckoutEmailForm } from "@/features/checkout/components/checkout-email-form";
 import { GuestCheckoutFlow } from "@/features/checkout/components/guest-checkout-flow";
@@ -132,26 +133,20 @@ export function CheckoutPage({
         </Container>
       </section>
 
-      <Container className="py-8 sm:py-12">
-        <header className="flex flex-col gap-6 border-b pb-8 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-xs font-semibold tracking-[0.16em] text-primary uppercase">
-              Checkout
-            </p>
-            <h1 className="mt-3 text-4xl leading-none font-semibold tracking-[-0.05em] sm:text-5xl">
-              Kasse
-            </h1>
-            <p className="mt-3 text-sm text-muted-foreground">
-              {data.customer
-                ? `Bestellung für ${data.customer.firstName} ${data.customer.lastName}`
-                : "Schnell und sicher ohne Kundenkonto bestellen"}
-            </p>
-          </div>
-          <CheckoutProgress step={step} />
-        </header>
+      <Container className="py-6 sm:py-8">
+        <PageHeader
+          aside={<CheckoutProgress step={step} />}
+          description={
+            data.customer
+              ? `Bestellung für ${data.customer.firstName} ${data.customer.lastName}`
+              : "Schnell und sicher ohne Kundenkonto bestellen"
+          }
+          eyebrow="Checkout"
+          title="Kasse"
+        />
 
         {paymentError && (
-          <p className="mt-8 rounded-2xl border border-destructive/25 bg-destructive/5 p-4 text-sm leading-6 text-destructive">
+          <p className="mt-6 rounded-2xl border border-destructive/25 bg-destructive/5 p-4 text-sm leading-6 text-destructive">
             Die Zahlung konnte nicht abgeschlossen werden. Ihre Bestellung ist
             gespeichert; wählen Sie die Zahlungsart bitte erneut.
           </p>
@@ -165,7 +160,7 @@ export function CheckoutPage({
             shippingMethods={data.options.shippingMethods}
           />
         ) : (
-          <div className="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_23rem] xl:gap-12">
+          <div className="mt-6 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_23rem] xl:gap-12">
             <div>
               {showNewDeliveryAddressStep ? (
                 <CustomerCheckoutDeliveryAddressForm

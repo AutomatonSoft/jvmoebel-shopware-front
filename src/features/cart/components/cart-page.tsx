@@ -12,6 +12,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Input } from "@/components/ui/input";
+import { PageHeader } from "@/components/ui/page-header";
 import { CartCheckoutDialog } from "@/features/cart/components/cart-checkout-dialog";
 import { CartLineItem } from "@/features/cart/components/cart-line-item";
 import { CartProductRails } from "@/features/cart/components/cart-product-rail";
@@ -109,7 +110,7 @@ export function CartPage({ cart, recommendations, signedIn }: CartPageProps) {
   const itemCount = getShopCartItemCount(cart);
   return (
     <main className="flex-1 bg-[#faf7f2]">
-      <Container className="py-8 sm:py-12">
+      <Container className="py-6 sm:py-8">
         <nav
           aria-label="Breadcrumb"
           className="flex items-center gap-2 text-xs text-muted-foreground"
@@ -130,47 +131,44 @@ export function CartPage({ cart, recommendations, signedIn }: CartPageProps) {
           </div>
         ) : (
           <>
-            <header className="mt-8 flex flex-col gap-6 border-b pb-8 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <p className="flex items-center gap-3 text-xs font-semibold tracking-[0.16em] uppercase before:block before:size-2 before:bg-primary">
-                  Ihre Auswahl
-                </p>
-                <h1 className="mt-4 text-4xl leading-none font-semibold tracking-[-0.05em] sm:text-5xl">
-                  Warenkorb
-                </h1>
-                <p className="mt-3 text-sm text-muted-foreground">
-                  {itemCount} {itemCount === 1 ? "Artikel" : "Artikel"} für Ihr
-                  Zuhause
-                </p>
-              </div>
-              <ol className="flex items-center gap-2 text-[0.625rem] font-semibold tracking-wide uppercase sm:gap-3">
-                <li className="flex items-center gap-2 text-foreground">
-                  <span className="grid size-7 place-items-center rounded-full bg-primary text-primary-foreground">
-                    1
-                  </span>
-                  Warenkorb
-                </li>
-                <li aria-hidden="true" className="h-px w-5 bg-border sm:w-8" />
-                <li className="flex items-center gap-2 text-muted-foreground">
-                  <span className="grid size-7 place-items-center rounded-full border">
-                    2
-                  </span>
-                  Kasse
-                </li>
-                <li
-                  aria-hidden="true"
-                  className="hidden h-px w-8 bg-border sm:block"
-                />
-                <li className="hidden items-center gap-2 text-muted-foreground sm:flex">
-                  <span className="grid size-7 place-items-center rounded-full border">
-                    3
-                  </span>
-                  Bestätigung
-                </li>
-              </ol>
-            </header>
+            <PageHeader
+              aside={
+                <ol className="flex items-center gap-2 text-[0.625rem] font-semibold tracking-wide uppercase sm:gap-3">
+                  <li className="flex items-center gap-2 text-foreground">
+                    <span className="grid size-7 place-items-center rounded-full bg-primary text-primary-foreground">
+                      1
+                    </span>
+                    Warenkorb
+                  </li>
+                  <li
+                    aria-hidden="true"
+                    className="h-px w-5 bg-border sm:w-8"
+                  />
+                  <li className="flex items-center gap-2 text-muted-foreground">
+                    <span className="grid size-7 place-items-center rounded-full border">
+                      2
+                    </span>
+                    Kasse
+                  </li>
+                  <li
+                    aria-hidden="true"
+                    className="hidden h-px w-8 bg-border sm:block"
+                  />
+                  <li className="hidden items-center gap-2 text-muted-foreground sm:flex">
+                    <span className="grid size-7 place-items-center rounded-full border">
+                      3
+                    </span>
+                    Bestätigung
+                  </li>
+                </ol>
+              }
+              className="mt-5"
+              description={`${itemCount} ${itemCount === 1 ? "Artikel" : "Artikel"} für Ihr Zuhause`}
+              eyebrow="Ihre Auswahl"
+              title="Warenkorb"
+            />
 
-            <div className="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_23rem] xl:gap-12">
+            <div className="mt-6 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_23rem] xl:gap-12">
               <div>
                 <section className="divide-y rounded-3xl border bg-card p-5 shadow-[0_22px_70px_-55px_rgba(21,21,19,0.7)] sm:p-7">
                   {cart.items.map((item) => (

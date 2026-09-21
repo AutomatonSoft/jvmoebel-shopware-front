@@ -16,6 +16,7 @@ import type { ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { PageHeader } from "@/components/ui/page-header";
 import { AccountWishlistSummary } from "@/features/customer-account/components/account-wishlist-summary";
 import type {
   CustomerAccountSummary,
@@ -145,7 +146,7 @@ export function CustomerProfilePage({
 
   return (
     <main className="flex-1 bg-background">
-      <Container className="py-8 sm:py-10 lg:py-14">
+      <Container className="py-6 sm:py-8">
         <nav
           aria-label="Breadcrumb"
           className="flex items-center gap-2 text-xs text-muted-foreground"
@@ -156,18 +157,16 @@ export function CustomerProfilePage({
           <span aria-hidden="true">/</span>
           <strong className="font-medium text-foreground">Kundenkonto</strong>
         </nav>
-        <header className="mt-8 border-b border-border pb-8 sm:mt-10 sm:pb-10">
-          <h1 className="text-3xl font-semibold tracking-[-0.05em] sm:text-5xl">
-            Hallo {account.firstName}, willkommen zurück!
-          </h1>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Kundennummer {account.customerNumber}
-          </p>
-        </header>
+        <PageHeader
+          className="mt-5"
+          description={`Kundennummer ${account.customerNumber}`}
+          eyebrow="Kundenkonto"
+          title={`Hallo ${account.firstName}, willkommen zurück!`}
+        />
 
         <nav
           aria-label="Bereiche im Kundenkonto"
-          className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
+          className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
         >
           {accountLinks.map(({ description, href, icon: Icon, label }) => (
             <Link
