@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSyncExternalStore } from "react";
 
 import { ProductFilterPanel } from "@/features/catalog/components/product-filter-panel";
+import { ProductQuickFilters } from "@/features/catalog/components/product-quick-filters";
 import { ShopProductResults } from "@/features/catalog/components/product-results";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
@@ -43,10 +44,15 @@ function getServerDesktopCatalogSnapshot() {
 }
 
 export type ShopCatalogProps = {
+  breadcrumbLabel?: string;
+  description?: string;
+  eyebrow?: string;
   hideHeader?: boolean;
   isLoading?: boolean;
   initialCategory?: Pick<ProductFilterOption, "label" | "value">;
   listing: ShopProductListing;
+  showQuickFilters?: boolean;
+  title?: string;
 };
 
 export function ShopCatalog({
@@ -68,9 +74,14 @@ export function ShopCatalog({
 }
 
 export function ShopProductListingCatalog({
+  breadcrumbLabel,
+  description,
+  eyebrow,
   hideHeader = false,
   isLoading = false,
   listing,
+  showQuickFilters = false,
+  title,
 }: Omit<ShopCatalogProps, "initialCategory" | "listing"> & {
   listing: ShopProductListingPage;
 }) {
@@ -79,23 +90,38 @@ export function ShopProductListingCatalog({
   return (
     <ShopCatalogContent
       catalogState={catalogState}
+      breadcrumbLabel={breadcrumbLabel}
+      description={description}
+      eyebrow={eyebrow}
       hideHeader={hideHeader}
       isLoading={isLoading}
       listing={listing}
+      showQuickFilters={showQuickFilters}
+      title={title}
     />
   );
 }
 
 function ShopCatalogContent({
+  breadcrumbLabel,
   catalogState,
+  description,
+  eyebrow,
   hideHeader,
   isLoading,
   listing,
+  showQuickFilters = false,
+  title,
 }: {
+  breadcrumbLabel?: string;
   catalogState: ReturnType<typeof useCatalogState>;
+  description?: string;
+  eyebrow?: string;
   hideHeader: boolean;
   isLoading: boolean;
   listing: ShopProductListing;
+  showQuickFilters?: boolean;
+  title?: string;
 }) {
   const isDesktopCatalog = useSyncExternalStore(
     subscribeToDesktopCatalog,
@@ -126,23 +152,35 @@ function ShopCatalogContent({
               Startseite
             </Link>
             <span aria-hidden="true">/</span>
-            <strong className="font-medium text-foreground">Sortiment</strong>
+            <strong className="font-medium text-foreground">
+              {breadcrumbLabel ?? "Sortiment"}
+            </strong>
           </nav>
 
           <PageHeader
             aside={
               <p className="max-w-md text-sm leading-6 text-muted-foreground sm:text-right">
-                {listing.description}
+                {description ?? listing.description}
               </p>
             }
             className="pt-6"
-            eyebrow={listing.eyebrow}
-            title={listing.title}
+            eyebrow={eyebrow ?? listing.eyebrow}
+            title={title ?? listing.title}
           />
         </>
       )}
 
-      <div className="grid gap-8 pt-6 lg:grid-cols-[13.75rem_minmax(0,1fr)] lg:gap-10 xl:gap-12">
+      {showQuickFilters && (
+        <ProductQuickFilters
+          {...filterPanelProps}
+          currency={listing.currency}
+          locale={listing.locale}
+        />
+      )}
+
+      <div
+        className={`grid gap-8 lg:grid-cols-[13.75rem_minmax(0,1fr)] lg:gap-10 xl:gap-12 ${showQuickFilters ? "pt-4" : "pt-6"}`}
+      >
         <aside className="sticky top-24 hidden max-h-[calc(100dvh-7rem)] self-start overflow-y-auto rounded-xl border bg-card/70 p-4 scrollbar-width:none lg:block [&::-webkit-scrollbar]:hidden">
           {isDesktopCatalog && <ProductFilterPanel {...filterPanelProps} />}
         </aside>

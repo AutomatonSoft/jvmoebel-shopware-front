@@ -16,6 +16,7 @@ export type ShopProductPageRequest = Readonly<{
   page: number;
   propertyGroups: Readonly<Record<string, readonly string[]>>;
   propertyIds: readonly string[];
+  search?: string;
   sort: ShopProductSort;
 }>;
 

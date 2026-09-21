@@ -76,7 +76,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
   return (
     <>
       <form
-        action="/moebel-sortiment"
+        action="/suche"
         className={`group/search h-11 items-center rounded-full border bg-muted/80 p-1 pl-4 transition-[background,border-color,box-shadow] hover:border-foreground/15 hover:bg-card/70 focus-within:border-foreground/25 focus-within:bg-card focus-within:ring-3 focus-within:ring-primary/15 ${className}`}
         onFocus={() => {
           setIsOpen(true);
@@ -90,6 +90,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
           name="query"
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Moebel suchen"
+          required
           type="search"
           value={query}
         />
@@ -136,7 +137,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
                   variants={headerSearchPanelVariants}
                 >
                   <form
-                    action="/moebel-sortiment"
+                    action="/suche"
                     className="group/search flex h-11 items-center border-b bg-muted/80 px-4 py-1"
                     role="search"
                   >
@@ -148,6 +149,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
                       onChange={(event) => setQuery(event.target.value)}
                       placeholder="Moebel suchen"
                       ref={overlayInputRef}
+                      required
                       type="search"
                       value={query}
                     />

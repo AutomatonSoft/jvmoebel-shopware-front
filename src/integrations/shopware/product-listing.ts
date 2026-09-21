@@ -341,9 +341,6 @@ export async function getShopwareProductListingPage(
   requestedCategoryId?: string,
 ): Promise<ShopProductListingPage> {
   const contextPromise = getShopwareContext(client);
-  const categoryId =
-    requestedCategoryId ??
-    (await contextPromise).salesChannel.navigationCategoryId;
   const categoryFilter =
     request.categoryIds.length > 0
       ? [
@@ -354,31 +351,40 @@ export async function getShopwareProductListingPage(
           },
         ]
       : undefined;
+  const body = {
+    ...getShopwareProductSort(request.sort),
+    aggregations: getProductListingAggregations(request),
+    associations: productListingPageAssociations,
+    includes: productListingPageIncludes,
+    limit: shopProductPageSize,
+    manufacturer:
+      request.companyIds.length > 0 ? request.companyIds.join("|") : undefined,
+    "max-price": request.maximumPrice,
+    "min-price": request.minimumPrice,
+    page: request.page,
+    "post-filter": categoryFilter,
+    properties:
+      request.propertyIds.length > 0
+        ? request.propertyIds.join("|")
+        : undefined,
+  };
+  const responsePromise = request.search
+    ? client.invoke("searchPage post /search", {
+        body: { ...body, search: request.search },
+        fetchOptions: { cache: "no-store" },
+      })
+    : client.invoke("readProductListing post /product-listing/{categoryId}", {
+        body,
+        fetchOptions: { cache: "no-store" },
+        pathParams: {
+          categoryId:
+            requestedCategoryId ??
+            (await contextPromise).salesChannel.navigationCategoryId,
+        },
+      });
   const [context, response] = await Promise.all([
     contextPromise,
-    client.invoke("readProductListing post /product-listing/{categoryId}", {
-      body: {
-        ...getShopwareProductSort(request.sort),
-        aggregations: getProductListingAggregations(request),
-        associations: productListingPageAssociations,
-        includes: productListingPageIncludes,
-        limit: shopProductPageSize,
-        manufacturer:
-          request.companyIds.length > 0
-            ? request.companyIds.join("|")
-            : undefined,
-        "max-price": request.maximumPrice,
-        "min-price": request.minimumPrice,
-        page: request.page,
-        "post-filter": categoryFilter,
-        properties:
-          request.propertyIds.length > 0
-            ? request.propertyIds.join("|")
-            : undefined,
-      },
-      fetchOptions: { cache: "no-store" },
-      pathParams: { categoryId },
-    }),
+    responsePromise,
   ]);
 
   return mapShopwareProductListingPage(

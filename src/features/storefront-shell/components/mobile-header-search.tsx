@@ -84,7 +84,7 @@ export function MobileHeaderSearch() {
             transition={{ duration: 0.2, ease: "easeOut" }}
           >
             <form
-              action="/moebel-sortiment"
+              action="/suche"
               className="group/search flex h-12 items-center border-b bg-muted/80 p-1 pl-4"
               role="search"
             >
@@ -96,6 +96,7 @@ export function MobileHeaderSearch() {
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Moebel suchen"
                 ref={inputRef}
+                required
                 type="search"
                 value={query}
               />
