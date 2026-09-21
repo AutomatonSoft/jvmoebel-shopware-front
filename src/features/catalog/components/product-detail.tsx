@@ -1,10 +1,11 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
-import { ProductGallery } from "@/features/catalog/components/product-gallery";
 import { Container } from "@/components/ui/container";
+import { ProductGallery } from "@/features/catalog/components/product-gallery";
 import { ProductPurchasePanel } from "@/features/catalog/components/product-purchase-panel";
 import { ProductSpecifications } from "@/features/catalog/components/product-specifications";
+import { RecentlyViewedProduct } from "@/features/catalog/components/recently-viewed-product";
 import { ShopProductCard } from "@/features/catalog/components/shop-product-card";
 import type { ShopProductPageData } from "@/features/catalog/model/product-detail";
 
@@ -22,6 +23,7 @@ export function ProductDetail({
 }: ProductDetailProps) {
   return (
     <main className="flex-1">
+      <RecentlyViewedProduct product={product} />
       <Container className="py-6">
         <nav
           aria-label="Breadcrumb"

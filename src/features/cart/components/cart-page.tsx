@@ -7,6 +7,7 @@ import {
   Plus,
   ShieldCheck,
   ShoppingBag,
+  ShoppingCart,
   Trash2,
   Truck,
 } from "lucide-react";
@@ -18,6 +19,8 @@ import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Input } from "@/components/ui/input";
 import { CartCheckoutDialog } from "@/features/cart/components/cart-checkout-dialog";
+import { CartProductRails } from "@/features/cart/components/cart-product-rail";
+import type { ShopProductListing } from "@/features/catalog/model/product-listing";
 import {
   getShopCartItemCount,
   type ShopCart,
@@ -31,6 +34,7 @@ import {
 
 type CartPageProps = Readonly<{
   cart: ShopCart;
+  recommendations: ShopProductListing | null;
   signedIn: boolean;
 }>;
 
@@ -216,33 +220,79 @@ function CartItemRow({
   );
 }
 
-function EmptyCart() {
+function EmptyCart({ signedIn }: Readonly<{ signedIn: boolean }>) {
+  if (signedIn) {
+    return (
+      <section className="py-16 text-center sm:py-24">
+        <span className="mx-auto grid size-16 place-items-center rounded-full bg-muted">
+          <ShoppingBag className="size-7" />
+        </span>
+        <h1 className="mt-6 text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">
+          Ihr Warenkorb ist leer
+        </h1>
+        <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-muted-foreground">
+          Entdecken Sie Möbel, die zu Ihrem Zuhause passen, und stellen Sie Ihre
+          persönliche Auswahl zusammen.
+        </p>
+        <Button
+          className="mt-7"
+          nativeButton={false}
+          render={<Link href="/moebel-sortiment" />}
+          size="lg"
+        >
+          Sortiment entdecken
+          <ArrowRight />
+        </Button>
+      </section>
+    );
+  }
+
   return (
-    <section className="rounded-3xl border bg-card px-6 py-16 text-center shadow-[0_22px_70px_-55px_rgba(21,21,19,0.7)] sm:px-10 sm:py-24">
-      <span className="mx-auto grid size-16 place-items-center rounded-full bg-muted">
-        <ShoppingBag className="size-7" />
+    <section className="px-4 py-14 text-center sm:py-20">
+      <span className="relative mx-auto grid size-15 place-items-center rounded-full bg-accent/65 text-foreground">
+        <ShoppingCart className="size-7" strokeWidth={1.5} />
+        <span className="absolute -top-1.5 -right-2 h-5 w-px rotate-35 bg-primary" />
+        <span className="absolute -top-2 -right-0.5 h-6 w-px rotate-12 bg-primary" />
+        <span className="absolute -top-1.5 right-2 h-5 w-px -rotate-12 bg-primary" />
       </span>
-      <h1 className="mt-6 text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">
-        Ihr Warenkorb ist leer
+      <h1 className="mt-5 text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">
+        Dein Warenkorb ist leer.
       </h1>
-      <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-muted-foreground">
-        Entdecken Sie Moebel, die zu Ihrem Zuhause passen, und stellen Sie Ihre
-        persönliche Auswahl zusammen.
+      <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base">
+        Lass dich von unserer Auswahl inspirieren und fülle deinen Warenkorb mit
+        Lieblingsstücken. Du kannst dich auch mit deinem Kundenkonto anmelden,
+        um bereits gespeicherte Artikel zu sehen.
       </p>
-      <Button
-        className="mt-7"
-        nativeButton={false}
-        render={<Link href="/moebel-sortiment" />}
-        size="lg"
+      <div className="mx-auto mt-7 grid max-w-sm gap-3">
+        <Button
+          className="w-full"
+          nativeButton={false}
+          render={<Link href="/moebel-sortiment" />}
+          size="lg"
+        >
+          Weiter
+        </Button>
+        <Button
+          className="w-full"
+          nativeButton={false}
+          render={<Link href="/kundenkonto/anmelden" />}
+          size="lg"
+          variant="outline"
+        >
+          Anmelden
+        </Button>
+      </div>
+      <Link
+        className="mt-5 inline-flex text-sm font-medium text-muted-foreground underline underline-offset-4 transition-colors hover:text-primary"
+        href="/kundenkonto/registrieren"
       >
-        Sortiment entdecken
-        <ArrowRight />
-      </Button>
+        Noch kein Konto? Jetzt registrieren
+      </Link>
     </section>
   );
 }
 
-export function CartPage({ cart, signedIn }: CartPageProps) {
+export function CartPage({ cart, recommendations, signedIn }: CartPageProps) {
   const formatter = new Intl.NumberFormat(cart.locale, {
     currency: cart.currency,
     minimumFractionDigits: 2,
@@ -264,8 +314,11 @@ export function CartPage({ cart, signedIn }: CartPageProps) {
         </nav>
 
         {cart.items.length === 0 ? (
-          <div className="mt-8">
-            <EmptyCart />
+          <div className="mt-5">
+            <EmptyCart signedIn={signedIn} />
+            {!signedIn && recommendations && (
+              <CartProductRails recommendations={recommendations} />
+            )}
           </div>
         ) : (
           <>
