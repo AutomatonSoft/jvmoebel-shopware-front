@@ -126,7 +126,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
                   animate="visible"
                   aria-label="Produktsuche"
                   aria-modal="true"
-                  className="w-[min(50vw,48rem)] overflow-hidden rounded-[1.375rem] border bg-background shadow-2xl"
+                  className="w-[min(64rem,calc(100vw-2rem))] overflow-hidden rounded-[1.375rem] border bg-background shadow-2xl"
                   exit={shouldReduceMotion ? { opacity: 0 } : "hidden"}
                   initial={shouldReduceMotion ? false : "hidden"}
                   role="dialog"
@@ -167,7 +167,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
 
                   <div
                     aria-live="polite"
-                    className="max-h-[min(30rem,70dvh)] min-h-18 overflow-y-auto px-4 pt-3 pb-4"
+                    className="max-h-[min(38rem,75dvh)] min-h-18 overflow-y-auto px-5 pt-4 pb-5"
                   >
                     <SearchResults
                       currency={search.currency}

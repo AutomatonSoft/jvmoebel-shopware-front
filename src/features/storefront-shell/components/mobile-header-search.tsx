@@ -77,7 +77,7 @@ export function MobileHeaderSearch() {
         {isOpen && (
           <motion.div
             animate={{ opacity: 1, y: 0 }}
-            className="absolute left-1/2 top-[calc(100%+0.5rem)] z-10 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 overflow-hidden rounded-2xl border bg-background shadow-xl sm:max-w-130"
+            className="absolute left-1/2 top-[calc(100%+0.5rem)] z-10 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 overflow-hidden rounded-2xl border bg-background shadow-xl sm:max-w-2xl lg:max-w-3xl"
             exit={{ opacity: 0, y: -8 }}
             id={MOBILE_SEARCH_PANEL_ID}
             initial={{ opacity: 0, y: -8 }}
@@ -112,7 +112,7 @@ export function MobileHeaderSearch() {
 
             <div
               aria-live="polite"
-              className="max-h-[min(24rem,60dvh)] overflow-y-auto px-4 py-2 sm:px-5"
+              className="max-h-[min(36rem,70dvh)] overflow-y-auto px-4 py-3 sm:px-5 sm:py-4"
             >
               <SearchResults
                 currency={search.currency}

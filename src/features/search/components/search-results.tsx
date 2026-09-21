@@ -1,6 +1,6 @@
 "use client";
 
-import { LoaderCircle } from "lucide-react";
+import { ArrowRight, LoaderCircle, Search } from "lucide-react";
 import { motion } from "motion/react";
 import type { Route } from "next";
 import Image from "next/image";
@@ -18,6 +18,10 @@ export type SearchResultsProps = {
   query: string;
   results: readonly ProductSearchResult[];
 };
+
+function getSearchUrl(query: string) {
+  return `/suche?query=${encodeURIComponent(query)}` as Route;
+}
 
 export function SearchResults({
   currency,
@@ -67,45 +71,118 @@ export function SearchResults({
     maximumFractionDigits: 0,
     style: "currency",
   });
+  const categorySuggestions = Array.from(
+    new Set(
+      results
+        .map((product) => product.categoryLabel.trim())
+        .filter(
+          (category) =>
+            category &&
+            category.toLocaleLowerCase() !== "products" &&
+            category.toLocaleLowerCase() !==
+              debouncedQuery.trim().toLocaleLowerCase(),
+        ),
+    ),
+  ).slice(0, 5);
 
   return (
-    <ul className="divide-y">
-      {results.map((product) => (
-        <motion.li
-          animate={{ opacity: 1, y: 0 }}
-          initial={{ opacity: 0, y: 5 }}
-          key={product.id}
-          transition={{ duration: 0.2 }}
-        >
-          <Link
-            className="flex min-h-28 items-center gap-4 py-4 text-left transition-colors hover:text-primary"
-            href={product.url as Route}
-            onClick={onResultSelect}
+    <div>
+      <div className="grid gap-5 md:grid-cols-[minmax(12rem,0.8fr)_minmax(0,1.4fr)] md:gap-0 md:divide-x">
+        <section className="md:pr-5" aria-labelledby="search-suggestions-title">
+          <h2
+            className="mb-2 text-sm font-semibold"
+            id="search-suggestions-title"
           >
-            <span className="relative h-20 w-24 shrink-0 overflow-hidden rounded-xl bg-muted/60 sm:h-24 sm:w-32">
-              <Image
-                alt=""
-                className="object-contain p-2"
-                fill
-                sizes="(max-width: 639px) 96px, 128px"
-                src={product.image.url}
-                unoptimized
-              />
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="line-clamp-2 block text-sm leading-5 font-semibold sm:text-base">
-                {product.name}
-              </span>
-              <span className="mt-1 block truncate text-xs text-muted-foreground">
-                {product.categoryLabel} · {product.description}
-              </span>
-            </span>
-            <span className="shrink-0 text-sm font-semibold">
-              {priceFormatter.format(product.unitPrice)}
-            </span>
-          </Link>
-        </motion.li>
-      ))}
-    </ul>
+            Suchvorschläge
+          </h2>
+          <ul className="space-y-1">
+            <li>
+              <Link
+                className="group flex items-center gap-2 rounded-lg px-2 py-2.5 text-sm transition-colors hover:bg-muted hover:text-primary"
+                href={getSearchUrl(debouncedQuery)}
+                onClick={onResultSelect}
+              >
+                <Search className="size-3.5 shrink-0 text-muted-foreground group-hover:text-primary" />
+                <span className="min-w-0 flex-1 truncate font-semibold">
+                  {debouncedQuery}
+                </span>
+                <ArrowRight className="size-3.5 shrink-0 opacity-50" />
+              </Link>
+            </li>
+            {categorySuggestions.map((category) => (
+              <li key={category}>
+                <Link
+                  className="group flex items-center gap-2 rounded-lg px-2 py-2.5 text-sm transition-colors hover:bg-muted hover:text-primary"
+                  href={getSearchUrl(`${debouncedQuery} ${category}`)}
+                  onClick={onResultSelect}
+                >
+                  <Search className="size-3.5 shrink-0 text-muted-foreground group-hover:text-primary" />
+                  <span className="min-w-0 flex-1 truncate">
+                    {debouncedQuery} in <strong>{category}</strong>
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section
+          className="md:pl-5"
+          aria-labelledby="product-suggestions-title"
+        >
+          <h2
+            className="mb-3 text-sm font-semibold"
+            id="product-suggestions-title"
+          >
+            Produktvorschläge
+          </h2>
+          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {results.slice(0, 6).map((product, index) => (
+              <motion.li
+                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 5 }}
+                key={product.id}
+                transition={{ delay: index * 0.025, duration: 0.2 }}
+              >
+                <Link
+                  className="group block rounded-xl border bg-card p-2 transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+                  href={product.url as Route}
+                  onClick={onResultSelect}
+                >
+                  <span className="relative block aspect-[4/3] overflow-hidden rounded-lg bg-muted/60">
+                    <Image
+                      alt={product.image.alt}
+                      className="object-contain p-2 transition-transform duration-300 group-hover:scale-105"
+                      fill
+                      sizes="(max-width: 639px) 40vw, 160px"
+                      src={product.image.url}
+                      unoptimized
+                    />
+                  </span>
+                  <span className="mt-2 block text-xs font-semibold">
+                    {priceFormatter.format(product.unitPrice)}
+                  </span>
+                  <span className="mt-0.5 line-clamp-2 block text-xs leading-4 group-hover:text-primary">
+                    {product.name}
+                  </span>
+                  <span className="mt-1 block truncate text-[0.625rem] text-muted-foreground">
+                    {product.categoryLabel}
+                  </span>
+                </Link>
+              </motion.li>
+            ))}
+          </ul>
+        </section>
+      </div>
+
+      <Link
+        className="mt-4 flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-destructive"
+        href={getSearchUrl(debouncedQuery)}
+        onClick={onResultSelect}
+      >
+        Alle Ergebnisse anzeigen
+        <ArrowRight className="size-4" />
+      </Link>
+    </div>
   );
 }
