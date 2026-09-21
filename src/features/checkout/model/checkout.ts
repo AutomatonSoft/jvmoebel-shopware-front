@@ -11,6 +11,9 @@ export type CheckoutAddress = Readonly<{
   zipcode: string;
 }>;
 
+export type CheckoutDisplayAddress = CheckoutAddress &
+  Readonly<{ country?: string }>;
+
 export type GuestCheckoutRegistration = Readonly<{
   acceptedDataProtection: true;
   billingAddress: CheckoutAddress;
@@ -20,11 +23,13 @@ export type GuestCheckoutRegistration = Readonly<{
 
 export type CheckoutCustomer = Readonly<{
   addressComplete: boolean;
+  billingAddress?: CheckoutAddress;
   countryId?: string;
   email: string;
   firstName: string;
   guest: boolean;
   lastName: string;
+  shippingAddress?: CheckoutDisplayAddress;
 }>;
 
 export type CheckoutOption = Readonly<{

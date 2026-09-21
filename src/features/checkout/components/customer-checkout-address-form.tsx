@@ -62,11 +62,13 @@ export function CustomerCheckoutAddressForm({
           <AddressFields
             countries={countries}
             fieldErrors={fieldErrors}
-            initialAddress={{
-              countryId: customer.countryId,
-              firstName: customer.firstName,
-              lastName: customer.lastName,
-            }}
+            initialAddress={
+              customer.billingAddress ?? {
+                countryId: customer.countryId,
+                firstName: customer.firstName,
+                lastName: customer.lastName,
+              }
+            }
           />
         </fieldset>
 

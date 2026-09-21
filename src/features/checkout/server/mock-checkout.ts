@@ -64,8 +64,21 @@ async function persistMockCustomer(customer: MockCheckoutCustomer) {
 
 export async function getMockCheckoutCustomer() {
   const cookieStore = await cookies();
+  const customer = parseMockCustomer(
+    cookieStore.get(mockCheckoutCustomerCookie)?.value,
+  );
 
-  return parseMockCustomer(cookieStore.get(mockCheckoutCustomerCookie)?.value);
+  return customer
+    ? {
+        ...customer,
+        billingAddress:
+          customer.billingAddress ?? customer.registration.billingAddress,
+        shippingAddress:
+          customer.shippingAddress ??
+          customer.registration.shippingAddress ??
+          customer.registration.billingAddress,
+      }
+    : null;
 }
 
 export async function registerMockCheckoutGuest(
@@ -73,11 +86,14 @@ export async function registerMockCheckoutGuest(
 ) {
   await persistMockCustomer({
     addressComplete: true,
+    billingAddress: registration.billingAddress,
     email: registration.email,
     firstName: registration.billingAddress.firstName,
     guest: true,
     lastName: registration.billingAddress.lastName,
     registration,
+    shippingAddress:
+      registration.shippingAddress ?? registration.billingAddress,
   });
 }
 

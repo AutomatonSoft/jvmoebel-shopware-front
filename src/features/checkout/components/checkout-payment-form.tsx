@@ -6,7 +6,9 @@ import { useActionState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { AccountToast } from "@/features/customer-account/components/account-toast";
+import { CheckoutDeliveryAddress } from "@/features/checkout/components/checkout-delivery-address";
 import type {
+  CheckoutAddress,
   CheckoutActionState,
   CheckoutOption,
 } from "@/features/checkout/model/checkout";
@@ -80,11 +82,15 @@ function MethodOptions({
 }
 
 export function CheckoutPaymentForm({
+  canChangeDeliveryAddress,
+  deliveryAddress,
   paymentMethods,
   selectedPaymentMethodId,
   selectedShippingMethodId,
   shippingMethods,
 }: Readonly<{
+  canChangeDeliveryAddress: boolean;
+  deliveryAddress?: CheckoutAddress;
   paymentMethods: readonly CheckoutOption[];
   selectedPaymentMethodId?: string;
   selectedShippingMethodId?: string;
@@ -116,6 +122,14 @@ export function CheckoutPaymentForm({
       />
 
       <section className="rounded-3xl border bg-card p-5 shadow-[0_24px_70px_-58px_rgba(21,21,19,0.7)] sm:p-7">
+        {deliveryAddress && (
+          <div className="mb-8">
+            <CheckoutDeliveryAddress
+              address={deliveryAddress}
+              canChange={canChangeDeliveryAddress}
+            />
+          </div>
+        )}
         <div className="grid gap-8 divide-y sm:gap-9">
           <MethodOptions
             defaultValue={selectedShippingMethodId}

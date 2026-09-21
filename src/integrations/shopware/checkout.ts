@@ -4,6 +4,7 @@ import type { components } from "@shopware/api-client/store-api-types";
 
 import type {
   CheckoutCustomer,
+  CheckoutDisplayAddress,
   CheckoutMethodSelection,
   CheckoutOptions,
   CheckoutReceipt,
@@ -14,6 +15,27 @@ import { getShopwareContext } from "@/integrations/shopware/context";
 import { isPendingCustomerAddress } from "@/integrations/shopware/customer-address";
 
 type ShopwareAddress = components["schemas"]["CustomerAddress"];
+
+function mapCheckoutAddress(
+  address: ShopwareAddress | null | undefined,
+): CheckoutDisplayAddress | undefined {
+  if (!address || isPendingCustomerAddress(address)) {
+    return undefined;
+  }
+
+  return {
+    additionalAddressLine1: address.additionalAddressLine1 || undefined,
+    city: address.city,
+    country:
+      address.country?.translated.name || address.country?.name || undefined,
+    countryId: address.countryId,
+    firstName: address.firstName,
+    lastName: address.lastName,
+    phoneNumber: address.phoneNumber || undefined,
+    street: address.street,
+    zipcode: address.zipcode || "",
+  };
+}
 
 function mapAddress(
   address: GuestCheckoutRegistration["billingAddress"],
@@ -48,17 +70,26 @@ export async function getShopwareCheckoutCustomer(
   client: ShopwareClient,
 ): Promise<CheckoutCustomer | null> {
   const customer = (await getShopwareContext(client)).customer;
-  const address =
-    customer?.defaultBillingAddress ?? customer?.activeBillingAddress;
+  const billingAddress = mapCheckoutAddress(
+    customer?.defaultBillingAddress ?? customer?.activeBillingAddress,
+  );
+  const shippingAddress = mapCheckoutAddress(
+    customer?.activeShippingAddress ??
+      customer?.defaultShippingAddress ??
+      customer?.defaultBillingAddress ??
+      customer?.activeBillingAddress,
+  );
 
   return customer
     ? {
-        addressComplete: Boolean(address && !isPendingCustomerAddress(address)),
-        countryId: address?.countryId,
+        addressComplete: Boolean(billingAddress),
+        billingAddress,
+        countryId: billingAddress?.countryId,
         email: customer.email,
         firstName: customer.firstName,
         guest: customer.guest ?? false,
         lastName: customer.lastName,
+        shippingAddress,
       }
     : null;
 }
@@ -70,23 +101,47 @@ export async function updateShopwareCustomerAddress(
   const customer = (await getShopwareContext(client)).customer;
   const currentAddress =
     customer?.defaultBillingAddress ?? customer?.activeBillingAddress;
+  const currentShippingAddress =
+    customer?.activeShippingAddress ?? customer?.defaultShippingAddress;
 
-  if (!customer || customer.guest || !currentAddress?.id) {
+  if (
+    !customer ||
+    customer.guest ||
+    !currentAddress?.id ||
+    !currentShippingAddress?.id
+  ) {
     throw new Error("The customer has no editable billing address.");
   }
+
+  const body = {
+    ...mapAddress(address),
+    company: currentAddress.company,
+    salutationId: currentAddress.salutationId,
+  };
 
   await client.invoke(
     "updateCustomerAddress patch /account/address/{addressId}",
     {
-      body: {
-        ...mapAddress(address),
-        company: currentAddress.company,
-        salutationId: currentAddress.salutationId,
-      },
+      body,
       fetchOptions: { cache: "no-store" },
       pathParams: { addressId: currentAddress.id },
     },
   );
+
+  if (currentShippingAddress.id !== currentAddress.id) {
+    await client.invoke(
+      "updateCustomerAddress patch /account/address/{addressId}",
+      {
+        body: {
+          ...body,
+          company: currentShippingAddress.company,
+          salutationId: currentShippingAddress.salutationId,
+        },
+        fetchOptions: { cache: "no-store" },
+        pathParams: { addressId: currentShippingAddress.id },
+      },
+    );
+  }
 }
 
 export async function getShopwareCheckoutOptions(

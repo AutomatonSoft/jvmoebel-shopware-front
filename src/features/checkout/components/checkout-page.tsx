@@ -10,10 +10,16 @@ import { GuestCheckoutForm } from "@/features/checkout/components/guest-checkout
 import type { CheckoutPageData } from "@/features/checkout/model/checkout";
 
 export function CheckoutPage({
+  addressStep,
   data,
   paymentError,
-}: Readonly<{ data: CheckoutPageData; paymentError: boolean }>) {
-  const step = data.customer?.addressComplete ? "payment" : "address";
+}: Readonly<{
+  addressStep: boolean;
+  data: CheckoutPageData;
+  paymentError: boolean;
+}>) {
+  const step =
+    data.customer?.addressComplete && !addressStep ? "payment" : "address";
 
   return (
     <main className="flex-1 bg-background">
@@ -77,6 +83,10 @@ export function CheckoutPage({
             />
           ) : (
             <CheckoutPaymentForm
+              canChangeDeliveryAddress={!data.customer.guest}
+              deliveryAddress={
+                data.customer.shippingAddress ?? data.customer.billingAddress
+              }
               paymentMethods={data.options.paymentMethods}
               selectedPaymentMethodId={data.options.selectedPaymentMethodId}
               selectedShippingMethodId={data.options.selectedShippingMethodId}
