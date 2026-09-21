@@ -2,6 +2,7 @@ import { LockKeyhole, PackageCheck, RotateCcw } from "lucide-react";
 import Link from "next/link";
 
 import { Container } from "@/components/ui/container";
+import { CheckoutCartPreview } from "@/features/checkout/components/checkout-cart-preview";
 import { CheckoutPaymentForm } from "@/features/checkout/components/checkout-payment-form";
 import { CheckoutProgress } from "@/features/checkout/components/checkout-progress";
 import { CheckoutReview } from "@/features/checkout/components/checkout-review";
@@ -126,45 +127,50 @@ export function CheckoutPage({
         )}
 
         <div className="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_23rem] xl:gap-12">
-          {!data.customer ? (
-            <GuestCheckoutForm countries={data.options.countries} />
-          ) : showNewDeliveryAddressStep ? (
-            <CustomerCheckoutDeliveryAddressForm
-              countries={data.options.countries}
-              customer={data.customer}
-            />
-          ) : step === "address" ? (
-            <CustomerCheckoutAddressForm
-              countries={data.options.countries}
-              customer={data.customer}
-            />
-          ) : hasConfirmationSelection &&
-            data.customer.billingAddress &&
-            (data.customer.shippingAddress ?? data.customer.billingAddress) &&
-            data.selection ? (
-            <CheckoutReview
-              billingAddress={data.customer.billingAddress}
-              cart={data.cart}
-              deliveryAddress={
-                data.customer.shippingAddress ?? data.customer.billingAddress
-              }
-              paymentMethods={data.options.paymentMethods}
-              selection={data.selection}
-              shippingMethods={data.options.shippingMethods}
-            />
-          ) : (
-            <CheckoutPaymentForm
-              canChangeDeliveryAddress={!data.customer.guest}
-              deliveryAddress={
-                data.customer.shippingAddress ?? data.customer.billingAddress
-              }
-              deliveryAddresses={data.customer.shippingAddresses}
-              paymentMethods={data.options.paymentMethods}
-              selectedPaymentMethodId={data.options.selectedPaymentMethodId}
-              selectedShippingMethodId={data.options.selectedShippingMethodId}
-              shippingMethods={data.options.shippingMethods}
-            />
-          )}
+          <div>
+            {!data.customer ? (
+              <GuestCheckoutForm countries={data.options.countries} />
+            ) : showNewDeliveryAddressStep ? (
+              <CustomerCheckoutDeliveryAddressForm
+                countries={data.options.countries}
+                customer={data.customer}
+              />
+            ) : step === "address" ? (
+              <CustomerCheckoutAddressForm
+                countries={data.options.countries}
+                customer={data.customer}
+              />
+            ) : hasConfirmationSelection &&
+              data.customer.billingAddress &&
+              (data.customer.shippingAddress ?? data.customer.billingAddress) &&
+              data.selection ? (
+              <CheckoutReview
+                billingAddress={data.customer.billingAddress}
+                cart={data.cart}
+                deliveryAddress={
+                  data.customer.shippingAddress ?? data.customer.billingAddress
+                }
+                paymentMethods={data.options.paymentMethods}
+                selection={data.selection}
+                shippingMethods={data.options.shippingMethods}
+              />
+            ) : (
+              <CheckoutPaymentForm
+                canChangeDeliveryAddress={!data.customer.guest}
+                deliveryAddress={
+                  data.customer.shippingAddress ?? data.customer.billingAddress
+                }
+                deliveryAddresses={data.customer.shippingAddresses}
+                paymentMethods={data.options.paymentMethods}
+                selectedPaymentMethodId={data.options.selectedPaymentMethodId}
+                selectedShippingMethodId={data.options.selectedShippingMethodId}
+                shippingMethods={data.options.shippingMethods}
+              />
+            )}
+            {!hasConfirmationSelection && (
+              <CheckoutCartPreview cart={data.cart} />
+            )}
+          </div>
           <CheckoutSummary action={summaryAction} cart={data.cart} />
         </div>
       </Container>

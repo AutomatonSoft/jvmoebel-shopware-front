@@ -14,7 +14,7 @@ import { useActionState, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
 import { AccountToast } from "@/features/customer-account/components/account-toast";
-import { CheckoutCartReview } from "@/features/checkout/components/checkout-cart-review";
+import { CartLineItem } from "@/features/cart/components/cart-line-item";
 import type {
   CheckoutActionState,
   CheckoutDisplayAddress,
@@ -179,7 +179,27 @@ export function CheckoutReview({
         </div>
       </section>
 
-      <CheckoutCartReview cart={cart} />
+      <section className="mt-4 rounded-2xl border bg-card p-5">
+        <div className="flex items-center justify-between gap-4 border-b pb-4">
+          <h2 className="text-sm font-semibold">Dein Warenkorb</h2>
+          <span className="text-xs text-muted-foreground">
+            {cart.items.reduce((total, item) => total + item.quantity, 0)}
+            {" Artikel"}
+          </span>
+        </div>
+        <div className="divide-y">
+          {cart.items.map((item) => (
+            <CartLineItem
+              currency={cart.currency}
+              editable={cart.editable}
+              item={item}
+              key={item.id}
+              locale={cart.locale}
+              returnTo="/kasse?schritt=bestaetigung"
+            />
+          ))}
+        </div>
+      </section>
 
       <form
         action={formAction}

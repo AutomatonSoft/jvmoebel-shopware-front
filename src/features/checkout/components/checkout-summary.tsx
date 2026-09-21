@@ -37,23 +37,7 @@ export function CheckoutSummary({
         </span>
       </div>
 
-      <ul className="divide-y">
-        {cart.items.map((item) => (
-          <li className="flex justify-between gap-5 py-4 text-sm" key={item.id}>
-            <span className="min-w-0">
-              <strong className="line-clamp-2 font-medium">{item.label}</strong>
-              <span className="mt-1 block text-xs text-muted-foreground">
-                Menge {item.quantity}
-              </span>
-            </span>
-            <strong className="shrink-0 font-semibold">
-              {formatter.format(item.totalPrice)}
-            </strong>
-          </li>
-        ))}
-      </ul>
-
-      <dl className="space-y-3 border-t pt-5 text-sm">
+      <dl className="mt-6 space-y-3 text-sm">
         <div className="flex justify-between gap-4 text-muted-foreground">
           <dt>Zwischensumme</dt>
           <dd>{formatter.format(cart.subtotal)}</dd>
