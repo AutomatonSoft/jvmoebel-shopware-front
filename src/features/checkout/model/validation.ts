@@ -80,18 +80,24 @@ export const guestCheckoutFieldMessages = {
 } as const;
 
 const checkoutMethodSelectionSchema = z.object({
-  acceptedTerms: z.literal(true),
   customerComment: optionalString(1000),
   paymentMethodId: requiredString(64),
   shippingMethodId: requiredString(64),
 });
 
+const checkoutOrderConfirmationSchema = z.object({
+  acceptedTerms: z.literal(true),
+});
+
 const guestPasswordSchema = z.string().min(8).max(4096);
 
 const checkoutMethodFieldMessages = {
-  acceptedTerms: "Bitte stimmen Sie den Bedingungen zu.",
   paymentMethodId: "Bitte wählen Sie eine Zahlungsart aus.",
   shippingMethodId: "Bitte wählen Sie eine Versandart aus.",
+} as const;
+
+const checkoutOrderConfirmationFieldMessages = {
+  acceptedTerms: "Bitte stimmen Sie den Bedingungen zu.",
 } as const;
 
 const guestPasswordFieldMessages = {
@@ -116,11 +122,11 @@ function getGuestCheckoutRegistrationInput(formData: FormData) {
 
   return {
     acceptedDataProtection: formData.get("acceptedDataProtection") === "on",
-    billingAddress: getAddressInput(formData),
+    billingAddress: getAddressInput(formData, "billingAddress."),
     email: formData.get("email"),
     shippingAddress: shippingSameAsBilling
       ? undefined
-      : getAddressInput(formData, "shipping"),
+      : getAddressInput(formData, "shippingAddress."),
     shippingSameAsBilling,
   };
 }
@@ -142,7 +148,7 @@ export function getGuestCheckoutRegistrationFieldErrors(error: ZodError) {
       typeof field === "string" &&
       field in checkoutAddressFieldMessages
     ) {
-      const name = `${address === "shippingAddress" ? "shipping" : ""}${field}`;
+      const name = `${address}.${field}`;
 
       fieldErrors[name] ??=
         checkoutAddressFieldMessages[
@@ -189,7 +195,6 @@ export function getCheckoutAddressFieldErrors(error: ZodError) {
 
 export function validateCheckoutMethodSelection(formData: FormData) {
   return checkoutMethodSelectionSchema.safeParse({
-    acceptedTerms: formData.get("acceptedTerms") === "on",
     customerComment: formData.get("customerComment"),
     paymentMethodId: formData.get("paymentMethodId"),
     shippingMethodId: formData.get("shippingMethodId"),
@@ -198,6 +203,16 @@ export function validateCheckoutMethodSelection(formData: FormData) {
 
 export function getCheckoutMethodSelectionFieldErrors(error: ZodError) {
   return getFieldErrors(error, checkoutMethodFieldMessages);
+}
+
+export function validateCheckoutOrderConfirmation(formData: FormData) {
+  return checkoutOrderConfirmationSchema.safeParse({
+    acceptedTerms: formData.get("acceptedTerms") === "on",
+  });
+}
+
+export function getCheckoutOrderConfirmationFieldErrors(error: ZodError) {
+  return getFieldErrors(error, checkoutOrderConfirmationFieldMessages);
 }
 
 export function validateGuestPassword(formData: FormData) {

@@ -279,6 +279,22 @@ export async function getShopwareCheckoutOptions(
   };
 }
 
+export async function updateShopwareCheckoutMethodSelection(
+  client: ShopwareClient,
+  selection: Pick<
+    CheckoutMethodSelection,
+    "paymentMethodId" | "shippingMethodId"
+  >,
+) {
+  await client.invoke("updateContext patch /context", {
+    body: {
+      paymentMethodId: selection.paymentMethodId,
+      shippingMethodId: selection.shippingMethodId,
+    },
+    fetchOptions: { cache: "no-store" },
+  });
+}
+
 export async function registerShopwareGuest(
   client: ShopwareClient,
   registration: GuestCheckoutRegistration,
@@ -315,13 +331,7 @@ export async function createShopwareCheckoutOrder(
     redirectUrl?: string;
   }>
 > {
-  await client.invoke("updateContext patch /context", {
-    body: {
-      paymentMethodId: selection.paymentMethodId,
-      shippingMethodId: selection.shippingMethodId,
-    },
-    fetchOptions: { cache: "no-store" },
-  });
+  await updateShopwareCheckoutMethodSelection(client, selection);
 
   const orderResponse = await client.invoke(
     "createOrder post /checkout/order",

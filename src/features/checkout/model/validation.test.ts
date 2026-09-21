@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 
 import {
   getCheckoutMethodSelectionFieldErrors,
+  getCheckoutOrderConfirmationFieldErrors,
   getGuestCheckoutRegistrationFieldErrors,
   getGuestPasswordFieldErrors,
   guestCheckoutRegistrationSchema,
@@ -10,6 +11,7 @@ import {
   parseGuestPassword,
   validateGuestCheckoutRegistration,
   validateCheckoutMethodSelection,
+  validateCheckoutOrderConfirmation,
   validateGuestPassword,
 } from "@/features/checkout/model/validation";
 
@@ -24,12 +26,12 @@ describe("checkout validation", () => {
     formData.set("acceptedDataProtection", "on");
     formData.set("shippingSameAsBilling", "on");
     formData.set("email", "gast@example.com");
-    formData.set("firstName", "Greta");
-    formData.set("lastName", "Groß");
-    formData.set("street", "Musterstraße 8");
-    formData.set("zipcode", "50667");
-    formData.set("city", "Köln");
-    formData.set("countryId", "country-de");
+    formData.set("billingAddress.firstName", "Greta");
+    formData.set("billingAddress.lastName", "Groß");
+    formData.set("billingAddress.street", "Musterstraße 8");
+    formData.set("billingAddress.zipcode", "50667");
+    formData.set("billingAddress.city", "Köln");
+    formData.set("billingAddress.countryId", "country-de");
 
     expect(parseGuestCheckoutRegistration(formData)).toEqual({
       acceptedDataProtection: true,
@@ -73,12 +75,12 @@ describe("checkout validation", () => {
 
     formData.set("acceptedDataProtection", "on");
     formData.set("email", "gast@example.com");
-    formData.set("firstName", "Greta");
-    formData.set("lastName", "Groß");
-    formData.set("street", "Musterstraße 8");
-    formData.set("zipcode", "50667");
-    formData.set("city", "Köln");
-    formData.set("countryId", "country-de");
+    formData.set("billingAddress.firstName", "Greta");
+    formData.set("billingAddress.lastName", "Groß");
+    formData.set("billingAddress.street", "Musterstraße 8");
+    formData.set("billingAddress.zipcode", "50667");
+    formData.set("billingAddress.city", "Köln");
+    formData.set("billingAddress.countryId", "country-de");
 
     expect(parseGuestCheckoutRegistration(formData)).toBeNull();
   });
@@ -97,9 +99,9 @@ describe("checkout validation", () => {
       ).toMatchObject({
         acceptedDataProtection:
           "Bitte stimmen Sie der Verarbeitung Ihrer Daten zu.",
-        city: "Bitte geben Sie Ihren Ort ein.",
+        "billingAddress.city": "Bitte geben Sie Ihren Ort ein.",
         email: "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
-        firstName: "Bitte geben Sie Ihren Vornamen ein.",
+        "billingAddress.firstName": "Bitte geben Sie Ihren Vornamen ein.",
       });
     }
   });
@@ -107,28 +109,36 @@ describe("checkout validation", () => {
   test("parses the selected delivery and payment methods", () => {
     const formData = new FormData();
 
-    formData.set("acceptedTerms", "on");
     formData.set("paymentMethodId", "payment-id");
     formData.set("shippingMethodId", "shipping-id");
     formData.set("customerComment", "Bitte vorher anrufen.");
 
     expect(parseCheckoutMethodSelection(formData)).toEqual({
-      acceptedTerms: true,
       customerComment: "Bitte vorher anrufen.",
       paymentMethodId: "payment-id",
       shippingMethodId: "shipping-id",
     });
   });
 
-  test("maps missing delivery, payment, and terms to their fields", () => {
+  test("maps missing delivery and payment methods to their fields", () => {
     const result = validateCheckoutMethodSelection(new FormData());
 
     expect(result.success).toBeFalse();
     if (!result.success) {
       expect(getCheckoutMethodSelectionFieldErrors(result.error)).toEqual({
-        acceptedTerms: "Bitte stimmen Sie den Bedingungen zu.",
         paymentMethodId: "Bitte wählen Sie eine Zahlungsart aus.",
         shippingMethodId: "Bitte wählen Sie eine Versandart aus.",
+      });
+    }
+  });
+
+  test("requires accepting the terms when confirming the order", () => {
+    const result = validateCheckoutOrderConfirmation(new FormData());
+
+    expect(result.success).toBeFalse();
+    if (!result.success) {
+      expect(getCheckoutOrderConfirmationFieldErrors(result.error)).toEqual({
+        acceptedTerms: "Bitte stimmen Sie den Bedingungen zu.",
       });
     }
   });

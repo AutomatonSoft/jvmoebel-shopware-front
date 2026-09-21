@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { CheckoutPaymentForm } from "@/features/checkout/components/checkout-payment-form";
 import { CheckoutProgress } from "@/features/checkout/components/checkout-progress";
+import { CheckoutReview } from "@/features/checkout/components/checkout-review";
 import { CheckoutSummary } from "@/features/checkout/components/checkout-summary";
 import { CustomerCheckoutDeliveryAddressForm } from "@/features/checkout/components/customer-checkout-delivery-address-form";
 import { CustomerCheckoutAddressForm } from "@/features/checkout/components/customer-checkout-address-form";
@@ -12,21 +13,33 @@ import type { CheckoutPageData } from "@/features/checkout/model/checkout";
 
 export function CheckoutPage({
   addressStep,
+  confirmationStep,
   data,
   newDeliveryAddressStep,
   paymentError,
 }: Readonly<{
   addressStep: boolean;
+  confirmationStep: boolean;
   data: CheckoutPageData;
   newDeliveryAddressStep: boolean;
   paymentError: boolean;
 }>) {
   const showNewDeliveryAddressStep =
     newDeliveryAddressStep && !data.customer?.guest;
-  const step =
-    data.customer?.addressComplete &&
-    !addressStep &&
-    !showNewDeliveryAddressStep
+  const hasConfirmationSelection =
+    confirmationStep &&
+    Boolean(data.selection) &&
+    data.options.paymentMethods.some(
+      (method) => method.id === data.selection?.paymentMethodId,
+    ) &&
+    data.options.shippingMethods.some(
+      (method) => method.id === data.selection?.shippingMethodId,
+    );
+  const step = hasConfirmationSelection
+    ? "confirmation"
+    : data.customer?.addressComplete &&
+        !addressStep &&
+        !showNewDeliveryAddressStep
       ? "payment"
       : "address";
 
@@ -94,6 +107,20 @@ export function CheckoutPage({
             <CustomerCheckoutAddressForm
               countries={data.options.countries}
               customer={data.customer}
+            />
+          ) : hasConfirmationSelection &&
+            data.customer.billingAddress &&
+            (data.customer.shippingAddress ?? data.customer.billingAddress) &&
+            data.selection ? (
+            <CheckoutReview
+              billingAddress={data.customer.billingAddress}
+              cart={data.cart}
+              deliveryAddress={
+                data.customer.shippingAddress ?? data.customer.billingAddress
+              }
+              paymentMethods={data.options.paymentMethods}
+              selection={data.selection}
+              shippingMethods={data.options.shippingMethods}
             />
           ) : (
             <CheckoutPaymentForm

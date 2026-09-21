@@ -10,10 +10,12 @@ import { clearMockCart } from "@/features/cart/server/mock-cart";
 import type { CheckoutActionState } from "@/features/checkout/model/checkout";
 import {
   getCheckoutAddressFieldErrors,
+  getCheckoutOrderConfirmationFieldErrors,
   getCheckoutMethodSelectionFieldErrors,
   getGuestCheckoutRegistrationFieldErrors,
   getGuestPasswordFieldErrors,
   validateCheckoutAddress,
+  validateCheckoutOrderConfirmation,
   validateCheckoutMethodSelection,
   validateGuestCheckoutRegistration,
   validateGuestPassword,
@@ -26,6 +28,11 @@ import {
   registerMockCheckoutGuest,
   selectMockCheckoutDeliveryAddress,
 } from "@/features/checkout/server/mock-checkout";
+import {
+  clearCheckoutMethodSelection,
+  getCheckoutMethodSelection,
+  persistCheckoutMethodSelection,
+} from "@/features/checkout/server/method-selection";
 import { persistCheckoutReceipt } from "@/features/checkout/server/receipt";
 import { getShopCart } from "@/features/cart/server/cart";
 import {
@@ -40,6 +47,7 @@ import {
   getShopwareCheckoutOptions,
   registerShopwareGuest,
   selectShopwareCheckoutDeliveryAddress,
+  updateShopwareCheckoutMethodSelection,
   updateShopwareCustomerAddress,
 } from "@/integrations/shopware/checkout";
 import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
@@ -49,6 +57,26 @@ function optionsContainCountry(
   availableIds: readonly string[],
 ) {
   return countryIds.every((id) => availableIds.includes(id));
+}
+
+function optionsContainMethodSelection(
+  selection: Readonly<{
+    paymentMethodId: string;
+    shippingMethodId: string;
+  }>,
+  options: Readonly<{
+    paymentMethods: readonly { id: string }[];
+    shippingMethods: readonly { id: string }[];
+  }>,
+) {
+  return (
+    options.paymentMethods.some(
+      (method) => method.id === selection.paymentMethodId,
+    ) &&
+    options.shippingMethods.some(
+      (method) => method.id === selection.shippingMethodId,
+    )
+  );
 }
 
 function getActionError(error: unknown, fallback: string): CheckoutActionState {
@@ -273,7 +301,7 @@ export async function selectCustomerCheckoutDeliveryAddress(
   redirect("/kasse?schritt=zahlung");
 }
 
-export async function placeCheckoutOrder(
+export async function saveCheckoutMethodSelection(
   _previousState: CheckoutActionState,
   formData: FormData,
 ): Promise<CheckoutActionState> {
@@ -282,18 +310,92 @@ export async function placeCheckoutOrder(
   if (!validation.success) {
     return {
       fieldErrors: getCheckoutMethodSelectionFieldErrors(validation.error),
-      message:
-        "Bitte wählen Sie Versand und Zahlung und bestätigen Sie die Bedingungen.",
+      message: "Bitte wählen Sie Versand und Zahlung.",
       status: "invalid",
     };
   }
 
   const selection = validation.data;
 
+  try {
+    if (shouldUseShopwareMocks()) {
+      if (!optionsContainMethodSelection(selection, mockCheckoutOptions)) {
+        return {
+          message:
+            "Die gewählte Versand- oder Zahlungsart ist nicht mehr verfügbar.",
+          status: "invalid",
+        };
+      }
+    } else {
+      const session = await createCustomerSession();
+      const [customer, options] = await Promise.all([
+        getShopwareCheckoutCustomer(session.client),
+        getShopwareCheckoutOptions(session.client),
+      ]);
+
+      if (!customer?.addressComplete) {
+        return {
+          message: "Bitte ergänzen Sie zuerst Ihre Lieferadresse.",
+          status: "invalid",
+        };
+      }
+
+      if (!optionsContainMethodSelection(selection, options)) {
+        return {
+          message:
+            "Die gewählte Versand- oder Zahlungsart ist nicht mehr verfügbar.",
+          status: "invalid",
+        };
+      }
+
+      await updateShopwareCheckoutMethodSelection(session.client, selection);
+      await persistCustomerContext(session.getContextToken());
+    }
+
+    await persistCheckoutMethodSelection(selection);
+  } catch (error) {
+    return getActionError(error, "Checkout method selection failed.");
+  }
+
+  revalidatePath("/kasse");
+  redirect("/kasse?schritt=bestaetigung");
+}
+
+export async function placeCheckoutOrder(
+  _previousState: CheckoutActionState,
+  formData: FormData,
+): Promise<CheckoutActionState> {
+  const confirmation = validateCheckoutOrderConfirmation(formData);
+
+  if (!confirmation.success) {
+    return {
+      fieldErrors: getCheckoutOrderConfirmationFieldErrors(confirmation.error),
+      message: "Bitte bestätigen Sie die Bedingungen.",
+      status: "invalid",
+    };
+  }
+
+  const selection = await getCheckoutMethodSelection();
+
+  if (!selection) {
+    return {
+      message: "Bitte wählen Sie zuerst Versand und Zahlung.",
+      status: "invalid",
+    };
+  }
+
   let destination = "/bestellung/danke";
 
   try {
     if (shouldUseShopwareMocks()) {
+      if (!optionsContainMethodSelection(selection, mockCheckoutOptions)) {
+        return {
+          message:
+            "Die gewählte Versand- oder Zahlungsart ist nicht mehr verfügbar.",
+          status: "invalid",
+        };
+      }
+
       const cart = await getShopCart();
       const receipt = createMockCheckoutReceipt(
         selection,
@@ -317,14 +419,7 @@ export async function placeCheckoutOrder(
         };
       }
 
-      const paymentMethodValid = options.paymentMethods.some(
-        (method) => method.id === selection.paymentMethodId,
-      );
-      const shippingMethodValid = options.shippingMethods.some(
-        (method) => method.id === selection.shippingMethodId,
-      );
-
-      if (!paymentMethodValid || !shippingMethodValid) {
+      if (!optionsContainMethodSelection(selection, options)) {
         return {
           message:
             "Die gewählte Versand- oder Zahlungsart ist nicht mehr verfügbar.",
@@ -350,6 +445,8 @@ export async function placeCheckoutOrder(
           ? "/bestellung/danke?zahlung=offen"
           : destination;
     }
+
+    await clearCheckoutMethodSelection();
   } catch (error) {
     return getActionError(error, "Checkout order creation failed.");
   }

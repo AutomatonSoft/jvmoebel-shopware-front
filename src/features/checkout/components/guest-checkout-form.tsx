@@ -3,7 +3,7 @@
 import { ArrowRight, MapPin, Phone, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { startTransition, useActionState } from "react";
+import { startTransition, useActionState, type FormEvent } from "react";
 import { useForm, useWatch, type UseFormRegisterReturn } from "react-hook-form";
 import type { z } from "zod";
 
@@ -105,7 +105,7 @@ export function AddressFields({
   prefix?: string;
   registerField?: (field: AddressField) => UseFormRegisterReturn;
 }>) {
-  const idPrefix = prefix || "billing";
+  const idPrefix = prefix ? prefix.replace(/\.$/, "") : "billing";
   const getError = (field: AddressField) =>
     getClientError?.(field) ?? fieldErrors?.[`${prefix}${field}`];
 
@@ -236,13 +236,12 @@ export function GuestCheckoutForm({
   const getAddressError = (
     address: "billingAddress" | "shippingAddress",
     field: AddressField,
-    prefix = "",
   ) =>
     clientFieldErrors[address]?.[field]
       ? checkoutAddressFieldMessages[
           field as keyof typeof checkoutAddressFieldMessages
         ]
-      : fieldErrors[`${prefix}${field}`];
+      : fieldErrors[`${address}.${field}`];
   const dataProtectionError = clientFieldErrors.acceptedDataProtection
     ? guestCheckoutFieldMessages.acceptedDataProtection
     : fieldErrors.acceptedDataProtection;
@@ -254,17 +253,19 @@ export function GuestCheckoutForm({
     field: AddressField,
   ) => register(`${address}.${field}` as const);
 
-  const submitGuestCheckout = handleSubmit((_values, event) => {
-    if (pending || !event?.currentTarget) {
-      return;
-    }
-
+  const submitGuestCheckout = (event: FormEvent<HTMLFormElement>) => {
     const formData = new FormData(event.currentTarget);
 
-    startTransition(() => {
-      formAction(formData);
-    });
-  });
+    void handleSubmit(() => {
+      if (pending) {
+        return;
+      }
+
+      startTransition(() => {
+        formAction(formData);
+      });
+    })(event);
+  };
 
   return (
     <form action={formAction} noValidate onSubmit={submitGuestCheckout}>
@@ -314,7 +315,7 @@ export function GuestCheckoutForm({
               error={fieldErrors.phoneNumber}
               id="checkout-phone"
               label="Telefonnummer (optional)"
-              name="phoneNumber"
+              name="billingAddress.phoneNumber"
               registration={registerAddressField(
                 "billingAddress",
                 "phoneNumber",
@@ -326,6 +327,7 @@ export function GuestCheckoutForm({
             countries={countries}
             fieldErrors={fieldErrors}
             getClientError={(field) => getAddressError("billingAddress", field)}
+            prefix="billingAddress."
             registerField={(field) =>
               registerAddressField("billingAddress", field)
             }
@@ -353,9 +355,9 @@ export function GuestCheckoutForm({
               countries={countries}
               fieldErrors={fieldErrors}
               getClientError={(field) =>
-                getAddressError("shippingAddress", field, "shipping")
+                getAddressError("shippingAddress", field)
               }
-              prefix="shipping"
+              prefix="shippingAddress."
               registerField={(field) =>
                 registerAddressField("shippingAddress", field)
               }

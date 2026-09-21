@@ -52,6 +52,7 @@ export default async function CheckoutRoute({
   return (
     <CheckoutPage
       addressStep={step === "adresse"}
+      confirmationStep={step === "bestaetigung"}
       data={data}
       newDeliveryAddressStep={step === "neue-lieferadresse"}
       paymentError={error === "zahlung"}

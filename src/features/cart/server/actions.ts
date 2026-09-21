@@ -41,6 +41,7 @@ async function runCartMutation<Result>(
     const result = await mutation(session);
 
     await persistCustomerContext(session.getContextToken());
+    revalidatePath("/kasse");
     revalidatePath("/warenkorb");
 
     return result;
@@ -57,6 +58,7 @@ async function runCartMutation<Result>(
 async function runMockCartMutation(mutation: () => Promise<void>) {
   try {
     await mutation();
+    revalidatePath("/kasse");
     revalidatePath("/warenkorb");
   } catch (error) {
     console.error("Mock cart mutation failed.", error);
@@ -64,7 +66,14 @@ async function runMockCartMutation(mutation: () => Promise<void>) {
   }
 }
 
+function getCartReturnPath(formData: FormData) {
+  return formData.get("returnTo") === "/kasse?schritt=bestaetigung"
+    ? "/kasse?schritt=bestaetigung"
+    : "/warenkorb";
+}
+
 export async function updateCartItem(formData: FormData) {
+  const returnPath = getCartReturnPath(formData);
   const cartItem = parseCartItemUpdate(formData);
 
   if (!cartItem) {
@@ -81,10 +90,11 @@ export async function updateCartItem(formData: FormData) {
     );
   }
 
-  redirect("/warenkorb?meldung=menge");
+  redirect(returnPath);
 }
 
 export async function removeCartItem(formData: FormData) {
+  const returnPath = getCartReturnPath(formData);
   const id = parseCartItemRemoval(formData);
 
   if (!id) {
@@ -99,7 +109,7 @@ export async function removeCartItem(formData: FormData) {
     );
   }
 
-  redirect("/warenkorb?meldung=entfernt");
+  redirect(returnPath);
 }
 
 export async function applyPromotionCode(formData: FormData) {

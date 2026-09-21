@@ -54,6 +54,7 @@ export type CheckoutPageData = Readonly<{
   cart: ShopCart;
   customer: CheckoutCustomer | null;
   options: CheckoutOptions;
+  selection: CheckoutMethodSelection | null;
 }>;
 
 export type CheckoutActionState = Readonly<{
@@ -63,7 +64,6 @@ export type CheckoutActionState = Readonly<{
 }>;
 
 export type CheckoutMethodSelection = Readonly<{
-  acceptedTerms: true;
   customerComment?: string;
   paymentMethodId: string;
   shippingMethodId: string;

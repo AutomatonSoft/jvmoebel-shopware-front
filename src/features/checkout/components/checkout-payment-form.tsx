@@ -1,7 +1,6 @@
 "use client";
 
 import { ArrowRight, CreditCard, MessageSquareText, Truck } from "lucide-react";
-import Link from "next/link";
 import { useActionState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,7 @@ import type {
   CheckoutOption,
   CheckoutSelectableAddress,
 } from "@/features/checkout/model/checkout";
-import { placeCheckoutOrder } from "@/features/checkout/server/actions";
+import { saveCheckoutMethodSelection } from "@/features/checkout/server/actions";
 
 const initialState: CheckoutActionState = { status: "idle" };
 
@@ -100,13 +99,12 @@ export function CheckoutPaymentForm({
   shippingMethods: readonly CheckoutOption[];
 }>) {
   const [state, formAction, pending] = useActionState(
-    placeCheckoutOrder,
+    saveCheckoutMethodSelection,
     initialState,
   );
   const unavailable =
     paymentMethods.length === 0 || shippingMethods.length === 0;
   const fieldErrors = state.fieldErrors ?? {};
-  const acceptedTermsError = fieldErrors.acceptedTerms;
 
   return (
     <form action={formAction}>
@@ -182,38 +180,6 @@ export function CheckoutPaymentForm({
           </p>
         )}
 
-        <label className="mt-7 flex items-start gap-3 text-xs leading-5 text-muted-foreground">
-          <input
-            aria-describedby={
-              acceptedTermsError ? "checkout-accepted-terms-error" : undefined
-            }
-            aria-invalid={Boolean(acceptedTermsError) || undefined}
-            className="mt-0.5 size-4 shrink-0 accent-primary"
-            name="acceptedTerms"
-            required
-            type="checkbox"
-          />
-          <span>
-            Ich akzeptiere die{" "}
-            <Link
-              className="font-medium text-foreground underline decoration-border underline-offset-4 hover:decoration-primary"
-              href="/agb"
-            >
-              Allgemeinen Geschäftsbedingungen
-            </Link>{" "}
-            und habe die Widerrufsbelehrung zur Kenntnis genommen.
-          </span>
-        </label>
-        {acceptedTermsError && (
-          <p
-            className="mt-2 text-xs leading-4 text-destructive"
-            id="checkout-accepted-terms-error"
-            role="alert"
-          >
-            {acceptedTermsError}
-          </p>
-        )}
-
         <Button
           className="mt-7 w-full justify-between disabled:cursor-wait"
           disabled={pending || unavailable}
@@ -221,8 +187,8 @@ export function CheckoutPaymentForm({
           type="submit"
         >
           {pending
-            ? "Bestellung wird übermittelt …"
-            : "Zahlungspflichtig bestellen"}
+            ? "Auswahl wird gespeichert …"
+            : "Weiter zur Bestellübersicht"}
           <ArrowRight aria-hidden="true" />
         </Button>
       </section>

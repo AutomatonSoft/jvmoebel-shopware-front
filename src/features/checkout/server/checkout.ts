@@ -7,6 +7,7 @@ import {
   getMockCheckoutCustomer,
   mockCheckoutOptions,
 } from "@/features/checkout/server/mock-checkout";
+import { getCheckoutMethodSelection } from "@/features/checkout/server/method-selection";
 import { getShopCart } from "@/features/cart/server/cart";
 import { createCustomerSession } from "@/features/customer-account/server/session";
 import {
@@ -24,15 +25,17 @@ export const getCheckoutPageData = cache(
         cart,
         customer: await getMockCheckoutCustomer(),
         options: mockCheckoutOptions,
+        selection: await getCheckoutMethodSelection(),
       };
     }
 
     const session = await createCustomerSession();
-    const [customer, options] = await Promise.all([
+    const [customer, options, selection] = await Promise.all([
       getShopwareCheckoutCustomer(session.client),
       getShopwareCheckoutOptions(session.client),
+      getCheckoutMethodSelection(),
     ]);
 
-    return { cart, customer, options };
+    return { cart, customer, options, selection };
   },
 );

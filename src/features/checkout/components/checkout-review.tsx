@@ -1,0 +1,231 @@
+"use client";
+
+import {
+  ArrowRight,
+  CreditCard,
+  MapPin,
+  MessageSquareText,
+  ReceiptText,
+  Truck,
+} from "lucide-react";
+import type { Route } from "next";
+import Link from "next/link";
+import { useActionState, type ReactNode } from "react";
+
+import { Button } from "@/components/ui/button";
+import { AccountToast } from "@/features/customer-account/components/account-toast";
+import { CheckoutCartReview } from "@/features/checkout/components/checkout-cart-review";
+import type {
+  CheckoutActionState,
+  CheckoutDisplayAddress,
+  CheckoutMethodSelection,
+  CheckoutOption,
+} from "@/features/checkout/model/checkout";
+import type { ShopCart } from "@/features/cart/model/cart";
+import { placeCheckoutOrder } from "@/features/checkout/server/actions";
+
+const initialState: CheckoutActionState = { status: "idle" };
+
+function AddressDetails({
+  address,
+}: Readonly<{ address: CheckoutDisplayAddress }>) {
+  return (
+    <address className="mt-3 text-sm leading-6 not-italic text-muted-foreground">
+      <strong className="block font-semibold text-foreground">
+        {address.firstName} {address.lastName}
+      </strong>
+      <span className="block">{address.street}</span>
+      {address.additionalAddressLine1 && (
+        <span className="block">{address.additionalAddressLine1}</span>
+      )}
+      <span className="block">
+        {address.zipcode} {address.city}
+      </span>
+      {address.country && <span className="block">{address.country}</span>}
+    </address>
+  );
+}
+
+function ReviewSection({
+  action,
+  children,
+  icon: Icon,
+  title,
+}: Readonly<{
+  action: Route;
+  children: ReactNode;
+  icon: typeof MapPin;
+  title: string;
+}>) {
+  return (
+    <section className="rounded-2xl border bg-card p-5">
+      <div className="flex items-center justify-between gap-4">
+        <h2 className="flex items-center gap-2 text-sm font-semibold">
+          <Icon aria-hidden="true" className="size-4 text-primary" />
+          {title}
+        </h2>
+        <Link
+          className="text-xs font-semibold text-primary underline-offset-4 hover:underline focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-primary"
+          href={action}
+        >
+          Ändern
+        </Link>
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function getOptionLabel(options: readonly CheckoutOption[], id: string) {
+  return options.find((option) => option.id === id)?.label ?? "Nicht verfügbar";
+}
+
+export function CheckoutReview({
+  billingAddress,
+  cart,
+  deliveryAddress,
+  paymentMethods,
+  selection,
+  shippingMethods,
+}: Readonly<{
+  billingAddress: CheckoutDisplayAddress;
+  cart: ShopCart;
+  deliveryAddress: CheckoutDisplayAddress;
+  paymentMethods: readonly CheckoutOption[];
+  selection: CheckoutMethodSelection;
+  shippingMethods: readonly CheckoutOption[];
+}>) {
+  const [state, formAction, pending] = useActionState(
+    placeCheckoutOrder,
+    initialState,
+  );
+  const acceptedTermsError = state.fieldErrors?.acceptedTerms;
+
+  return (
+    <>
+      <AccountToast
+        description={state.message}
+        id={`checkout-review-${state.status}`}
+        title={
+          state.status === "invalid"
+            ? "Bestellung prüfen"
+            : state.status === "error"
+              ? "Bestellung nicht möglich"
+              : undefined
+        }
+        trigger={state}
+        type="error"
+      />
+
+      <section className="rounded-3xl border bg-card p-5 shadow-[0_24px_70px_-58px_rgba(21,21,19,0.7)] sm:p-7">
+        <div className="flex gap-4 border-b pb-6">
+          <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-primary/10 text-primary">
+            <ReceiptText aria-hidden="true" className="size-5" />
+          </span>
+          <div>
+            <h2 className="text-xl font-semibold tracking-[-0.03em]">
+              Bestellung prüfen
+            </h2>
+            <p className="mt-1 text-sm leading-6 text-muted-foreground">
+              Prüfen Sie alle Angaben, bevor Sie zahlungspflichtig bestellen.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-4">
+          <ReviewSection
+            action="/kasse?schritt=adresse"
+            icon={MapPin}
+            title="Lieferadresse"
+          >
+            <AddressDetails address={deliveryAddress} />
+          </ReviewSection>
+          <ReviewSection
+            action="/kasse?schritt=adresse"
+            icon={MapPin}
+            title="Rechnungsadresse"
+          >
+            <AddressDetails address={billingAddress} />
+          </ReviewSection>
+          <ReviewSection
+            action="/kasse?schritt=zahlung"
+            icon={Truck}
+            title="Versandart"
+          >
+            <p className="mt-3 text-sm font-medium">
+              {getOptionLabel(shippingMethods, selection.shippingMethodId)}
+            </p>
+          </ReviewSection>
+          <ReviewSection
+            action="/kasse?schritt=zahlung"
+            icon={CreditCard}
+            title="Zahlungsart"
+          >
+            <p className="mt-3 text-sm font-medium">
+              {getOptionLabel(paymentMethods, selection.paymentMethodId)}
+            </p>
+          </ReviewSection>
+          {selection.customerComment && (
+            <ReviewSection
+              action="/kasse?schritt=zahlung"
+              icon={MessageSquareText}
+              title="Hinweis zur Bestellung"
+            >
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                {selection.customerComment}
+              </p>
+            </ReviewSection>
+          )}
+        </div>
+      </section>
+
+      <CheckoutCartReview cart={cart} />
+
+      <form action={formAction} className="mt-4 rounded-2xl border bg-card p-5">
+        <label className="flex items-start gap-3 text-xs leading-5 text-muted-foreground">
+          <input
+            aria-describedby={
+              acceptedTermsError ? "checkout-accepted-terms-error" : undefined
+            }
+            aria-invalid={Boolean(acceptedTermsError) || undefined}
+            className="mt-0.5 size-4 shrink-0 accent-primary"
+            name="acceptedTerms"
+            required
+            type="checkbox"
+          />
+          <span>
+            Ich akzeptiere die{" "}
+            <Link
+              className="font-medium text-foreground underline decoration-border underline-offset-4 hover:decoration-primary"
+              href="/agb"
+            >
+              Allgemeinen Geschäftsbedingungen
+            </Link>{" "}
+            und habe die Widerrufsbelehrung zur Kenntnis genommen.
+          </span>
+        </label>
+        {acceptedTermsError && (
+          <p
+            className="mt-2 text-xs leading-4 text-destructive"
+            id="checkout-accepted-terms-error"
+            role="alert"
+          >
+            {acceptedTermsError}
+          </p>
+        )}
+
+        <Button
+          className="mt-7 w-full justify-between disabled:cursor-wait"
+          disabled={pending}
+          size="lg"
+          type="submit"
+        >
+          {pending
+            ? "Bestellung wird übermittelt …"
+            : "Zahlungspflichtig bestellen"}
+          <ArrowRight aria-hidden="true" />
+        </Button>
+      </form>
+    </>
+  );
+}
