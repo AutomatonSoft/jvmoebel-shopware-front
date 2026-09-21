@@ -42,7 +42,7 @@ export default async function CartRoute({ searchParams }: CartRouteProps) {
       }),
     ]);
 
-    if (!account && cart.items.length === 0) {
+    if (cart.items.length === 0) {
       recommendations = await getCartRecommendations().catch(
         (recommendationError: unknown) => {
           console.error(

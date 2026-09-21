@@ -316,7 +316,7 @@ export function CartPage({ cart, recommendations, signedIn }: CartPageProps) {
         {cart.items.length === 0 ? (
           <div className="mt-5">
             <EmptyCart signedIn={signedIn} />
-            {!signedIn && recommendations && (
+            {recommendations && (
               <CartProductRails recommendations={recommendations} />
             )}
           </div>
