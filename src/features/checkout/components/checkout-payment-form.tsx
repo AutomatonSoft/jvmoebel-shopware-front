@@ -40,11 +40,11 @@ function MethodOptions({
       <div className="mt-5 grid gap-3">
         {options.map((option, index) => (
           <label
-            className="group flex cursor-pointer items-start gap-4 rounded-2xl border p-4 transition-[border-color,background-color] has-checked:border-primary has-checked:bg-primary/[0.035] hover:border-foreground/25"
+            className="group flex min-h-17 cursor-pointer items-center gap-4 rounded-2xl border px-5 py-4 transition-[border-color,background-color] has-checked:border-primary has-checked:bg-primary/[0.035] hover:border-foreground/25"
             key={option.id}
           >
             <input
-              className="mt-1 size-4 shrink-0 accent-primary"
+              className="size-4 shrink-0 accent-primary"
               defaultChecked={
                 option.id === defaultValue || (!defaultValue && index === 0)
               }
