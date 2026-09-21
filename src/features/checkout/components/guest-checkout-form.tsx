@@ -16,6 +16,7 @@ import type {
   CheckoutAddress,
   CheckoutActionState,
   CheckoutOption,
+  GuestCheckoutRegistration,
 } from "@/features/checkout/model/checkout";
 import {
   checkoutAddressFieldMessages,
@@ -180,7 +181,13 @@ export function AddressFields({
 
 export function GuestCheckoutForm({
   countries,
-}: Readonly<{ countries: readonly CheckoutOption[] }>) {
+  initialRegistration,
+  onContinue,
+}: Readonly<{
+  countries: readonly CheckoutOption[];
+  initialRegistration?: GuestCheckoutRegistration;
+  onContinue?: (registration: GuestCheckoutRegistration) => void;
+}>) {
   const [state, formAction, pending] = useActionState(
     registerCheckoutGuest,
     initialState,
@@ -194,27 +201,31 @@ export function GuestCheckoutForm({
   } = useForm<GuestCheckoutFormInput, undefined, GuestCheckoutFormOutput>({
     defaultValues: {
       billingAddress: {
-        additionalAddressLine1: "",
-        city: "",
-        countryId: defaultCountryId,
-        firstName: "",
-        lastName: "",
-        phoneNumber: "",
-        street: "",
-        zipcode: "",
+        additionalAddressLine1:
+          initialRegistration?.billingAddress.additionalAddressLine1 ?? "",
+        city: initialRegistration?.billingAddress.city ?? "",
+        countryId:
+          initialRegistration?.billingAddress.countryId ?? defaultCountryId,
+        firstName: initialRegistration?.billingAddress.firstName ?? "",
+        lastName: initialRegistration?.billingAddress.lastName ?? "",
+        phoneNumber: initialRegistration?.billingAddress.phoneNumber ?? "",
+        street: initialRegistration?.billingAddress.street ?? "",
+        zipcode: initialRegistration?.billingAddress.zipcode ?? "",
       },
-      email: "",
+      email: initialRegistration?.email ?? "",
       shippingAddress: {
-        additionalAddressLine1: "",
-        city: "",
-        countryId: defaultCountryId,
-        firstName: "",
-        lastName: "",
-        phoneNumber: "",
-        street: "",
-        zipcode: "",
+        additionalAddressLine1:
+          initialRegistration?.shippingAddress?.additionalAddressLine1 ?? "",
+        city: initialRegistration?.shippingAddress?.city ?? "",
+        countryId:
+          initialRegistration?.shippingAddress?.countryId ?? defaultCountryId,
+        firstName: initialRegistration?.shippingAddress?.firstName ?? "",
+        lastName: initialRegistration?.shippingAddress?.lastName ?? "",
+        phoneNumber: initialRegistration?.shippingAddress?.phoneNumber ?? "",
+        street: initialRegistration?.shippingAddress?.street ?? "",
+        zipcode: initialRegistration?.shippingAddress?.zipcode ?? "",
       },
-      shippingSameAsBilling: true,
+      shippingSameAsBilling: !initialRegistration?.shippingAddress,
     },
     mode: "onBlur",
     reValidateMode: "onChange",
@@ -256,8 +267,13 @@ export function GuestCheckoutForm({
   const submitGuestCheckout = (event: FormEvent<HTMLFormElement>) => {
     const formData = new FormData(event.currentTarget);
 
-    void handleSubmit(() => {
+    void handleSubmit((registration) => {
       if (pending) {
+        return;
+      }
+
+      if (onContinue) {
+        onContinue(registration);
         return;
       }
 

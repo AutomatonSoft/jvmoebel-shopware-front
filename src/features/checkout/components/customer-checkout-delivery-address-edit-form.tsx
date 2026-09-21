@@ -7,35 +7,35 @@ import { CheckoutFormActions } from "@/features/checkout/components/checkout-for
 import { AddressFields } from "@/features/checkout/components/guest-checkout-form";
 import type {
   CheckoutActionState,
-  CheckoutCustomer,
+  CheckoutDisplayAddress,
   CheckoutOption,
 } from "@/features/checkout/model/checkout";
-import { addCustomerCheckoutDeliveryAddress } from "@/features/checkout/server/actions";
+import { saveCustomerCheckoutDeliveryAddress } from "@/features/checkout/server/actions";
 import { AccountToast } from "@/features/customer-account/components/account-toast";
 
 const initialState: CheckoutActionState = { status: "idle" };
 
-export function CustomerCheckoutDeliveryAddressForm({
+export function CustomerCheckoutDeliveryAddressEditForm({
+  address,
   backHref,
   countries,
-  customer,
 }: Readonly<{
+  address: CheckoutDisplayAddress;
   backHref: Route;
   countries: readonly CheckoutOption[];
-  customer: CheckoutCustomer;
 }>) {
   const [state, formAction, pending] = useActionState(
-    addCustomerCheckoutDeliveryAddress,
+    saveCustomerCheckoutDeliveryAddress,
     initialState,
   );
   const fieldErrors = state.fieldErrors ?? {};
 
   return (
-    <form action={formAction} id="customer-checkout-delivery-address-form">
+    <form action={formAction} id="customer-checkout-delivery-address-edit-form">
       <input name="returnTo" type="hidden" value={backHref} />
       <AccountToast
         description={state.message}
-        id={`customer-checkout-delivery-address-${state.status}`}
+        id={`customer-checkout-delivery-address-edit-${state.status}`}
         title={
           state.status === "invalid"
             ? "Adresse prüfen"
@@ -50,27 +50,19 @@ export function CustomerCheckoutDeliveryAddressForm({
       <section className="rounded-3xl border bg-card p-5 shadow-[0_24px_70px_-58px_rgba(21,21,19,0.7)] sm:p-7">
         <div className="border-b pb-5">
           <p className="text-[0.65rem] font-semibold tracking-[0.15em] text-primary uppercase">
-            Neue Lieferadresse
+            Lieferadresse
           </p>
           <h2 className="mt-2 text-2xl font-semibold tracking-[-0.04em]">
-            Wohin sollen wir liefern?
+            Lieferadresse bearbeiten
           </h2>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            Diese Adresse wird nur für die Lieferung dieser Bestellung
-            verwendet.
-          </p>
         </div>
 
         <fieldset className="mt-6">
-          <legend className="sr-only">Neue Lieferadresse</legend>
+          <legend className="sr-only">Lieferadresse</legend>
           <AddressFields
             countries={countries}
             fieldErrors={fieldErrors}
-            initialAddress={{
-              countryId: customer.countryId,
-              firstName: customer.firstName,
-              lastName: customer.lastName,
-            }}
+            initialAddress={address}
           />
         </fieldset>
 
@@ -78,7 +70,7 @@ export function CustomerCheckoutDeliveryAddressForm({
           backHref={backHref}
           pending={pending}
           pendingLabel="Adresse wird gespeichert …"
-          submitLabel="Lieferadresse verwenden"
+          submitLabel="Änderungen speichern"
         />
       </section>
     </form>

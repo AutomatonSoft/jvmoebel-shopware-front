@@ -1,8 +1,11 @@
 import { LockKeyhole, PackageCheck, RotateCcw } from "lucide-react";
+import type { Route } from "next";
 import Link from "next/link";
 
 import { Container } from "@/components/ui/container";
 import { CheckoutCartPreview } from "@/features/checkout/components/checkout-cart-preview";
+import { CheckoutEmailForm } from "@/features/checkout/components/checkout-email-form";
+import { GuestCheckoutFlow } from "@/features/checkout/components/guest-checkout-flow";
 import { CheckoutPaymentForm } from "@/features/checkout/components/checkout-payment-form";
 import { CheckoutProgress } from "@/features/checkout/components/checkout-progress";
 import { CheckoutReview } from "@/features/checkout/components/checkout-review";
@@ -11,25 +14,37 @@ import {
   type CheckoutSummaryAction,
 } from "@/features/checkout/components/checkout-summary";
 import { CustomerCheckoutDeliveryAddressForm } from "@/features/checkout/components/customer-checkout-delivery-address-form";
+import { CustomerCheckoutDeliveryAddressEditForm } from "@/features/checkout/components/customer-checkout-delivery-address-edit-form";
 import { CustomerCheckoutAddressForm } from "@/features/checkout/components/customer-checkout-address-form";
-import { GuestCheckoutForm } from "@/features/checkout/components/guest-checkout-form";
 import type { CheckoutPageData } from "@/features/checkout/model/checkout";
 
 export function CheckoutPage({
   addressStep,
   confirmationStep,
   data,
+  deliveryAddressStep,
+  emailStep,
   newDeliveryAddressStep,
   paymentError,
+  returnToConfirmation,
 }: Readonly<{
   addressStep: boolean;
   confirmationStep: boolean;
   data: CheckoutPageData;
+  deliveryAddressStep: boolean;
+  emailStep: boolean;
   newDeliveryAddressStep: boolean;
   paymentError: boolean;
+  returnToConfirmation: boolean;
 }>) {
+  const editBackHref: Route = returnToConfirmation
+    ? "/kasse?schritt=bestaetigung"
+    : "/kasse?schritt=zahlung";
   const showNewDeliveryAddressStep =
     newDeliveryAddressStep && !data.customer?.guest;
+  const showDeliveryAddressStep =
+    deliveryAddressStep && Boolean(data.customer?.shippingAddress);
+  const showEmailStep = emailStep && Boolean(data.customer);
   const hasConfirmationSelection =
     confirmationStep &&
     Boolean(data.selection) &&
@@ -43,36 +58,51 @@ export function CheckoutPage({
     ? "confirmation"
     : data.customer?.addressComplete &&
         !addressStep &&
+        !showDeliveryAddressStep &&
+        !showEmailStep &&
         !showNewDeliveryAddressStep
       ? "payment"
       : "address";
   const summaryAction: CheckoutSummaryAction = !data.customer
     ? {
         formId: "guest-checkout-form",
-        label: "Weiter zu Versand und Zahlung",
+        label: "Weiter",
       }
     : showNewDeliveryAddressStep
       ? {
           formId: "customer-checkout-delivery-address-form",
           label: "Lieferadresse verwenden",
         }
-      : step === "address"
+      : showDeliveryAddressStep
         ? {
-            formId: "customer-checkout-address-form",
-            label: "Weiter zu Versand und Zahlung",
+            formId: "customer-checkout-delivery-address-edit-form",
+            label: "Lieferadresse speichern",
           }
-        : hasConfirmationSelection
+        : showEmailStep
           ? {
-              formId: "checkout-order-review-form",
-              label: "Zahlungspflichtig bestellen",
+              formId: "checkout-email-form",
+              label: "E-Mail-Adresse speichern",
             }
-          : {
-              disabled:
-                data.options.paymentMethods.length === 0 ||
-                data.options.shippingMethods.length === 0,
-              formId: "checkout-payment-form",
-              label: "Weiter zur Bestellübersicht",
-            };
+          : step === "address"
+            ? {
+                formId: "customer-checkout-address-form",
+                label:
+                  addressStep && data.customer.addressComplete
+                    ? "Änderungen speichern"
+                    : "Weiter zu Versand und Zahlung",
+              }
+            : hasConfirmationSelection
+              ? {
+                  formId: "checkout-order-review-form",
+                  label: "Zahlungspflichtig bestellen",
+                }
+              : {
+                  disabled:
+                    data.options.paymentMethods.length === 0 ||
+                    data.options.shippingMethods.length === 0,
+                  formId: "checkout-payment-form",
+                  label: "Weiter zur Bestellübersicht",
+                };
 
   return (
     <main className="flex-1 bg-background">
@@ -126,53 +156,89 @@ export function CheckoutPage({
           </p>
         )}
 
-        <div className="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_23rem] xl:gap-12">
-          <div>
-            {!data.customer ? (
-              <GuestCheckoutForm countries={data.options.countries} />
-            ) : showNewDeliveryAddressStep ? (
-              <CustomerCheckoutDeliveryAddressForm
-                countries={data.options.countries}
-                customer={data.customer}
-              />
-            ) : step === "address" ? (
-              <CustomerCheckoutAddressForm
-                countries={data.options.countries}
-                customer={data.customer}
-              />
-            ) : hasConfirmationSelection &&
-              data.customer.billingAddress &&
-              (data.customer.shippingAddress ?? data.customer.billingAddress) &&
-              data.selection ? (
-              <CheckoutReview
-                billingAddress={data.customer.billingAddress}
-                cart={data.cart}
-                deliveryAddress={
-                  data.customer.shippingAddress ?? data.customer.billingAddress
-                }
-                paymentMethods={data.options.paymentMethods}
-                selection={data.selection}
-                shippingMethods={data.options.shippingMethods}
-              />
-            ) : (
-              <CheckoutPaymentForm
-                canChangeDeliveryAddress={!data.customer.guest}
-                deliveryAddress={
-                  data.customer.shippingAddress ?? data.customer.billingAddress
-                }
-                deliveryAddresses={data.customer.shippingAddresses}
-                paymentMethods={data.options.paymentMethods}
-                selectedPaymentMethodId={data.options.selectedPaymentMethodId}
-                selectedShippingMethodId={data.options.selectedShippingMethodId}
-                shippingMethods={data.options.shippingMethods}
-              />
-            )}
-            {!hasConfirmationSelection && (
-              <CheckoutCartPreview cart={data.cart} />
-            )}
+        {!data.customer ? (
+          <GuestCheckoutFlow
+            cart={data.cart}
+            countries={data.options.countries}
+            paymentMethods={data.options.paymentMethods}
+            shippingMethods={data.options.shippingMethods}
+          />
+        ) : (
+          <div className="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_23rem] xl:gap-12">
+            <div>
+              {showNewDeliveryAddressStep ? (
+                <CustomerCheckoutDeliveryAddressForm
+                  backHref={editBackHref}
+                  countries={data.options.countries}
+                  customer={data.customer}
+                />
+              ) : showDeliveryAddressStep && data.customer.shippingAddress ? (
+                <CustomerCheckoutDeliveryAddressEditForm
+                  address={data.customer.shippingAddress}
+                  backHref={editBackHref}
+                  countries={data.options.countries}
+                />
+              ) : showEmailStep ? (
+                <CheckoutEmailForm
+                  backHref={editBackHref}
+                  email={data.customer.email}
+                  guest={data.customer.guest}
+                />
+              ) : step === "address" ? (
+                <CustomerCheckoutAddressForm
+                  backHref={
+                    data.customer.addressComplete ? editBackHref : undefined
+                  }
+                  countries={data.options.countries}
+                  customer={data.customer}
+                />
+              ) : hasConfirmationSelection &&
+                data.customer.billingAddress &&
+                (data.customer.shippingAddress ??
+                  data.customer.billingAddress) &&
+                data.selection ? (
+                <CheckoutReview
+                  billingAddress={data.customer.billingAddress}
+                  cart={data.cart}
+                  deliveryAddress={
+                    data.customer.shippingAddress ??
+                    data.customer.billingAddress
+                  }
+                  paymentMethods={data.options.paymentMethods}
+                  selection={data.selection}
+                  shippingMethods={data.options.shippingMethods}
+                />
+              ) : (
+                <CheckoutPaymentForm
+                  billingAddress={data.customer.billingAddress}
+                  canAddDeliveryAddress={!data.customer.guest}
+                  canEditDeliveryAddress={Boolean(
+                    data.customer.shippingAddress,
+                  )}
+                  deliveryAddress={
+                    data.customer.shippingAddress ??
+                    data.customer.billingAddress
+                  }
+                  deliveryAddresses={data.customer.shippingAddresses}
+                  email={data.customer.email}
+                  paymentMethods={data.options.paymentMethods}
+                  selectedPaymentMethodId={data.options.selectedPaymentMethodId}
+                  selectedShippingMethodId={
+                    data.options.selectedShippingMethodId
+                  }
+                  selectedDeliveryAddressId={
+                    data.customer.activeShippingAddressId
+                  }
+                  shippingMethods={data.options.shippingMethods}
+                />
+              )}
+              {!hasConfirmationSelection && (
+                <CheckoutCartPreview cart={data.cart} />
+              )}
+            </div>
+            <CheckoutSummary action={summaryAction} cart={data.cart} />
           </div>
-          <CheckoutSummary action={summaryAction} cart={data.cart} />
-        </div>
+        )}
       </Container>
     </main>
   );

@@ -10,11 +10,13 @@ import { clearMockCart } from "@/features/cart/server/mock-cart";
 import type { CheckoutActionState } from "@/features/checkout/model/checkout";
 import {
   getCheckoutAddressFieldErrors,
+  getCheckoutEmailUpdateFieldErrors,
   getCheckoutOrderConfirmationFieldErrors,
   getCheckoutMethodSelectionFieldErrors,
   getGuestCheckoutRegistrationFieldErrors,
   getGuestPasswordFieldErrors,
   validateCheckoutAddress,
+  validateCheckoutEmailUpdate,
   validateCheckoutOrderConfirmation,
   validateCheckoutMethodSelection,
   validateGuestCheckoutRegistration,
@@ -48,6 +50,7 @@ import {
   registerShopwareGuest,
   selectShopwareCheckoutDeliveryAddress,
   updateShopwareCheckoutMethodSelection,
+  updateShopwareCheckoutDeliveryAddress,
   updateShopwareCustomerAddress,
 } from "@/integrations/shopware/checkout";
 import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
@@ -95,6 +98,12 @@ function getActionError(error: unknown, fallback: string): CheckoutActionState {
       "Der Checkout ist gerade nicht verfügbar. Bitte versuchen Sie es erneut.",
     status: "error",
   };
+}
+
+function getCheckoutReturnPath(formData: FormData): Route {
+  return formData.get("returnTo") === "/kasse?schritt=bestaetigung"
+    ? "/kasse?schritt=bestaetigung"
+    : "/kasse?schritt=zahlung";
 }
 
 async function getRequestOrigin() {
@@ -224,7 +233,7 @@ export async function saveCustomerCheckoutAddress(
   }
 
   revalidatePath("/kasse");
-  redirect("/kasse?schritt=zahlung");
+  redirect(getCheckoutReturnPath(formData));
 }
 
 export async function addCustomerCheckoutDeliveryAddress(
@@ -268,7 +277,94 @@ export async function addCustomerCheckoutDeliveryAddress(
   }
 
   revalidatePath("/kasse");
-  redirect("/kasse?schritt=zahlung");
+  redirect(getCheckoutReturnPath(formData));
+}
+
+export async function saveCustomerCheckoutDeliveryAddress(
+  _previousState: CheckoutActionState,
+  formData: FormData,
+): Promise<CheckoutActionState> {
+  const validation = validateCheckoutAddress(formData);
+
+  if (!validation.success) {
+    return {
+      fieldErrors: getCheckoutAddressFieldErrors(validation.error),
+      message: "Bitte füllen Sie alle Pflichtfelder vollständig aus.",
+      status: "invalid",
+    };
+  }
+
+  const address = validation.data;
+
+  try {
+    const session = await createCustomerSession();
+    const options = await getShopwareCheckoutOptions(session.client);
+
+    if (
+      !options.countries.some((country) => country.id === address.countryId)
+    ) {
+      return {
+        fieldErrors: { countryId: "Bitte wählen Sie ein gültiges Land." },
+        message: "Bitte wählen Sie ein gültiges Land.",
+        status: "invalid",
+      };
+    }
+
+    await updateShopwareCheckoutDeliveryAddress(session.client, address);
+    await persistCustomerContext(session.getContextToken());
+  } catch (error) {
+    return getActionError(error, "Customer delivery address update failed.");
+  }
+
+  revalidatePath("/kasse");
+  redirect(getCheckoutReturnPath(formData));
+}
+
+export async function saveCheckoutEmail(
+  _previousState: CheckoutActionState,
+  formData: FormData,
+): Promise<CheckoutActionState> {
+  const validation = validateCheckoutEmailUpdate(formData);
+
+  if (!validation.success) {
+    return {
+      fieldErrors: getCheckoutEmailUpdateFieldErrors(validation.error),
+      message: "Bitte prüfen Sie Ihre E-Mail-Adresse.",
+      status: "invalid",
+    };
+  }
+
+  const emailChange = validation.data;
+
+  try {
+    const session = await createCustomerSession();
+    const customer = await getShopwareCheckoutCustomer(session.client);
+
+    if (!customer) {
+      throw new Error("The checkout customer is missing.");
+    }
+
+    if (!customer.guest && !emailChange.password) {
+      return {
+        fieldErrors: {
+          password: "Bitte geben Sie Ihr aktuelles Passwort ein.",
+        },
+        message: "Bitte bestätigen Sie Ihr Passwort.",
+        status: "invalid",
+      };
+    }
+
+    await session.client.invoke("changeEmail post /account/change-email", {
+      body: emailChange,
+      fetchOptions: { cache: "no-store" },
+    });
+    await persistCustomerContext(session.getContextToken());
+  } catch (error) {
+    return getActionError(error, "Checkout email update failed.");
+  }
+
+  revalidatePath("/kasse");
+  redirect(getCheckoutReturnPath(formData));
 }
 
 export async function selectCustomerCheckoutDeliveryAddress(
@@ -449,6 +545,81 @@ export async function placeCheckoutOrder(
     await clearCheckoutMethodSelection();
   } catch (error) {
     return getActionError(error, "Checkout order creation failed.");
+  }
+
+  revalidatePath("/warenkorb");
+  redirect(destination as Route);
+}
+
+export async function placeGuestCheckoutOrder(
+  _previousState: CheckoutActionState,
+  formData: FormData,
+): Promise<CheckoutActionState> {
+  const registration = validateGuestCheckoutRegistration(formData);
+  const selection = validateCheckoutMethodSelection(formData);
+  const confirmation = validateCheckoutOrderConfirmation(formData);
+
+  if (!registration.success || !selection.success || !confirmation.success) {
+    return {
+      message:
+        "Bitte prüfen Sie Ihre Angaben und bestätigen Sie die Bedingungen.",
+      status: "invalid",
+    };
+  }
+
+  let destination = "/bestellung/danke";
+
+  try {
+    const session = await createCustomerSession();
+    const options = await getShopwareCheckoutOptions(session.client);
+    const countryIds = [
+      registration.data.billingAddress.countryId,
+      ...(registration.data.shippingAddress
+        ? [registration.data.shippingAddress.countryId]
+        : []),
+    ];
+
+    if (
+      !optionsContainCountry(
+        countryIds,
+        options.countries.map((country) => country.id),
+      )
+    ) {
+      return {
+        message: "Bitte wählen Sie ein gültiges Land.",
+        status: "invalid",
+      };
+    }
+
+    await registerShopwareGuest(session.client, registration.data);
+    const checkoutOptions = await getShopwareCheckoutOptions(session.client);
+
+    if (!optionsContainMethodSelection(selection.data, checkoutOptions)) {
+      return {
+        message:
+          "Die gewählte Versand- oder Zahlungsart ist nicht mehr verfügbar.",
+        status: "invalid",
+      };
+    }
+
+    const origin = await getRequestOrigin();
+    const result = await createShopwareCheckoutOrder(
+      session.client,
+      selection.data,
+      {
+        errorUrl: `${origin}/kasse?fehler=zahlung`,
+        finishUrl: `${origin}/bestellung/danke`,
+      },
+    );
+    await persistCustomerContext(session.getContextToken());
+    await persistCheckoutReceipt(result.receipt);
+    destination = result.redirectUrl
+      ? result.redirectUrl
+      : result.paymentPending
+        ? "/bestellung/danke?zahlung=offen"
+        : destination;
+  } catch (error) {
+    return getActionError(error, "Guest checkout order creation failed.");
   }
 
   revalidatePath("/warenkorb");

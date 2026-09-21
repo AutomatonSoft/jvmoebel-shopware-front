@@ -1,9 +1,9 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import type { Route } from "next";
 import { useActionState } from "react";
 
-import { Button } from "@/components/ui/button";
+import { CheckoutFormActions } from "@/features/checkout/components/checkout-form-actions";
 import { AddressFields } from "@/features/checkout/components/guest-checkout-form";
 import type {
   CheckoutActionState,
@@ -16,9 +16,11 @@ import { AccountToast } from "@/features/customer-account/components/account-toa
 const initialState: CheckoutActionState = { status: "idle" };
 
 export function CustomerCheckoutAddressForm({
+  backHref,
   countries,
   customer,
 }: Readonly<{
+  backHref?: Route;
   countries: readonly CheckoutOption[];
   customer: CheckoutCustomer;
 }>) {
@@ -30,6 +32,7 @@ export function CustomerCheckoutAddressForm({
 
   return (
     <form action={formAction} id="customer-checkout-address-form">
+      {backHref && <input name="returnTo" type="hidden" value={backHref} />}
       <AccountToast
         description={state.message}
         id={`customer-checkout-address-${state.status}`}
@@ -47,18 +50,22 @@ export function CustomerCheckoutAddressForm({
       <section className="rounded-3xl border bg-card p-5 shadow-[0_24px_70px_-58px_rgba(21,21,19,0.7)] sm:p-7">
         <div className="border-b pb-5">
           <p className="text-[0.65rem] font-semibold tracking-[0.15em] text-primary uppercase">
-            Kundenkonto
+            Rechnungsadresse
           </p>
           <h2 className="mt-2 text-2xl font-semibold tracking-[-0.04em]">
-            Liefer- und Rechnungsadresse
+            {backHref
+              ? "Rechnungsadresse bearbeiten"
+              : "Rechnungsadresse ergänzen"}
           </h2>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            Ergänzen Sie Ihre Adresse einmalig, um die Bestellung abzuschließen.
+            {backHref
+              ? "Prüfen Sie die Angaben und speichern Sie Ihre Änderungen."
+              : "Ergänzen Sie Ihre Adresse, um die Bestellung abzuschließen."}
           </p>
         </div>
 
         <fieldset className="mt-6">
-          <legend className="sr-only">Liefer- und Rechnungsadresse</legend>
+          <legend className="sr-only">Rechnungsadresse</legend>
           <AddressFields
             countries={countries}
             fieldErrors={fieldErrors}
@@ -72,12 +79,18 @@ export function CustomerCheckoutAddressForm({
           />
         </fieldset>
 
-        <Button className="hidden" disabled={pending} size="lg" type="submit">
-          {pending
-            ? "Adresse wird gespeichert …"
-            : "Weiter zu Versand und Zahlung"}
-          <ArrowRight aria-hidden="true" />
-        </Button>
+        {backHref ? (
+          <CheckoutFormActions
+            backHref={backHref}
+            pending={pending}
+            pendingLabel="Adresse wird gespeichert …"
+            submitLabel="Änderungen speichern"
+          />
+        ) : (
+          <button className="hidden" disabled={pending} type="submit">
+            Weiter zu Versand und Zahlung
+          </button>
+        )}
       </section>
     </form>
   );

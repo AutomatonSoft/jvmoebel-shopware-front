@@ -4,6 +4,8 @@ import {
   createShopwareCheckoutDeliveryAddress,
   getShopwareCheckoutCustomer,
   selectShopwareCheckoutDeliveryAddress,
+  updateShopwareCheckoutDeliveryAddress,
+  updateShopwareCustomerAddress,
 } from "@/integrations/shopware/checkout";
 import type { ShopwareClient } from "@/integrations/shopware/client";
 
@@ -18,6 +20,7 @@ describe("getShopwareCheckoutCustomer", () => {
     const customer = await getShopwareCheckoutCustomer(
       createClient({
         activeShippingAddress: {
+          id: "shipping-address-id",
           city: "DÃ¼sseldorf",
           country: { name: "Deutschland", translated: { name: "Deutschland" } },
           countryId: "country-id",
@@ -41,6 +44,7 @@ describe("getShopwareCheckoutCustomer", () => {
     );
 
     expect(customer).toMatchObject({
+      activeShippingAddressId: "shipping-address-id",
       addressComplete: true,
       billingAddress: { street: "DomstraÃŸe 1" },
       shippingAddress: {
@@ -49,6 +53,86 @@ describe("getShopwareCheckoutCustomer", () => {
         street: "Rheinufer 8",
       },
     });
+  });
+});
+
+describe("updateShopwareCustomerAddress", () => {
+  test("updates only the billing address when delivery uses another address", async () => {
+    const updatedAddressIds: string[] = [];
+    const client = {
+      invoke: async (operation: string, parameters: unknown) => {
+        if (operation === "readContext get /context") {
+          return {
+            data: {
+              customer: {
+                activeShippingAddress: { id: "shipping-address-id" },
+                defaultBillingAddress: {
+                  id: "billing-address-id",
+                  salutationId: "salutation-id",
+                },
+              },
+            },
+          };
+        }
+
+        updatedAddressIds.push(
+          (parameters as { pathParams: { addressId: string } }).pathParams
+            .addressId,
+        );
+        return { data: {} };
+      },
+    } as unknown as ShopwareClient;
+
+    await updateShopwareCustomerAddress(client, {
+      city: "Köln",
+      countryId: "country-id",
+      firstName: "Greta",
+      lastName: "Groß",
+      street: "Domstraße 1",
+      zipcode: "50667",
+    });
+
+    expect(updatedAddressIds).toEqual(["billing-address-id"]);
+  });
+});
+
+describe("updateShopwareCheckoutDeliveryAddress", () => {
+  test("updates the active delivery address", async () => {
+    const updatedAddressIds: string[] = [];
+    const client = {
+      invoke: async (operation: string, parameters: unknown) => {
+        if (operation === "readContext get /context") {
+          return {
+            data: {
+              customer: {
+                activeShippingAddress: {
+                  id: "shipping-address-id",
+                  salutationId: "salutation-id",
+                },
+                defaultBillingAddress: { id: "billing-address-id" },
+              },
+            },
+          };
+        }
+
+        updatedAddressIds.push(
+          (parameters as { pathParams: { addressId: string } }).pathParams
+            .addressId,
+        );
+        return { data: {} };
+      },
+    } as unknown as ShopwareClient;
+
+    await updateShopwareCheckoutDeliveryAddress(client, {
+      city: "Düsseldorf",
+      countryId: "country-id",
+      firstName: "Greta",
+      lastName: "Groß",
+      street: "Rheinufer 8",
+      zipcode: "40213",
+    });
+
+    expect(updatedAddressIds).toEqual(["shipping-address-id"]);
   });
 });
 

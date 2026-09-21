@@ -25,6 +25,7 @@ export type GuestCheckoutRegistration = Readonly<{
 }>;
 
 export type CheckoutCustomer = Readonly<{
+  activeShippingAddressId?: string;
   addressComplete: boolean;
   billingAddress?: CheckoutAddress;
   countryId?: string;

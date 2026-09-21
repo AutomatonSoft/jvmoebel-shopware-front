@@ -134,14 +134,14 @@ export function CheckoutReview({
 
         <div className="mt-6 grid gap-4">
           <ReviewSection
-            action="/kasse?schritt=adresse"
+            action="/kasse?schritt=lieferadresse&zurueck=bestaetigung"
             icon={MapPin}
             title="Lieferadresse"
           >
             <AddressDetails address={deliveryAddress} />
           </ReviewSection>
           <ReviewSection
-            action="/kasse?schritt=adresse"
+            action="/kasse?schritt=adresse&zurueck=bestaetigung"
             icon={MapPin}
             title="Rechnungsadresse"
           >

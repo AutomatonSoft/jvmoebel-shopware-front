@@ -15,6 +15,7 @@ type CheckoutRouteProps = Readonly<{
   searchParams: Promise<{
     fehler?: string | string[];
     schritt?: string | string[];
+    zurueck?: string | string[];
   }>;
 }>;
 
@@ -28,6 +29,9 @@ export default async function CheckoutRoute({
   const step = Array.isArray(parameters.schritt)
     ? parameters.schritt[0]
     : parameters.schritt;
+  const returnStep = Array.isArray(parameters.zurueck)
+    ? parameters.zurueck[0]
+    : parameters.zurueck;
   let data: Awaited<ReturnType<typeof getCheckoutPageData>>;
 
   try {
@@ -54,8 +58,11 @@ export default async function CheckoutRoute({
       addressStep={step === "adresse"}
       confirmationStep={step === "bestaetigung"}
       data={data}
+      deliveryAddressStep={step === "lieferadresse"}
+      emailStep={step === "email"}
       newDeliveryAddressStep={step === "neue-lieferadresse"}
       paymentError={error === "zahlung"}
+      returnToConfirmation={returnStep === "bestaetigung"}
     />
   );
 }

@@ -1,7 +1,17 @@
 "use client";
 
-import { ArrowRight, CreditCard, MessageSquareText, Truck } from "lucide-react";
-import { useActionState } from "react";
+import {
+  ArrowRight,
+  CreditCard,
+  Mail,
+  MapPin,
+  MessageSquareText,
+  Pencil,
+  Truck,
+} from "lucide-react";
+import type { Route } from "next";
+import Link from "next/link";
+import { useActionState, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
 import { AccountToast } from "@/features/customer-account/components/account-toast";
@@ -15,6 +25,37 @@ import type {
 import { saveCheckoutMethodSelection } from "@/features/checkout/server/actions";
 
 const initialState: CheckoutActionState = { status: "idle" };
+
+function EditableDetails({
+  children,
+  editHref,
+  icon: Icon,
+  label,
+}: Readonly<{
+  children: ReactNode;
+  editHref: Route;
+  icon: typeof Mail;
+  label: string;
+}>) {
+  return (
+    <section className="rounded-2xl border bg-secondary/35 p-5">
+      <div className="flex items-center justify-between gap-4">
+        <h2 className="flex items-center gap-2 text-sm font-semibold">
+          <Icon aria-hidden="true" className="size-3.5 text-primary" />
+          {label}
+        </h2>
+        <Link
+          aria-label={`${label} ändern`}
+          className="grid size-8 place-items-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-primary"
+          href={editHref}
+        >
+          <Pencil aria-hidden="true" className="size-3.5" />
+        </Link>
+      </div>
+      {children}
+    </section>
+  );
+}
 
 function MethodOptions({
   defaultValue,
@@ -33,20 +74,20 @@ function MethodOptions({
 }>) {
   return (
     <fieldset aria-describedby={error ? `${name}-error` : undefined}>
-      <legend className="flex items-center gap-3 text-xl font-semibold tracking-[-0.03em]">
-        <span className="grid size-10 place-items-center rounded-xl bg-primary/10 text-primary">
-          <Icon aria-hidden="true" className="size-4.5" />
+      <legend className="flex items-center gap-2.5 text-lg font-semibold tracking-[-0.03em]">
+        <span className="grid size-8 place-items-center rounded-lg bg-primary/10 text-primary">
+          <Icon aria-hidden="true" className="size-3.5" />
         </span>
         {legend}
       </legend>
-      <div className="mt-5 grid gap-3">
+      <div className="mt-4 grid gap-2">
         {options.map((option, index) => (
           <label
-            className="group flex min-h-17 cursor-pointer items-center gap-4 rounded-2xl border px-5 py-4 transition-[border-color,background-color] has-checked:border-primary has-checked:bg-primary/[0.035] hover:border-foreground/25"
+            className="group flex min-h-14 cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 transition-[border-color,background-color] has-checked:border-primary has-checked:bg-primary/[0.035] hover:border-foreground/25"
             key={option.id}
           >
             <input
-              className="size-4 shrink-0 accent-primary"
+              className="size-3.5 shrink-0 accent-primary"
               defaultChecked={
                 option.id === defaultValue || (!defaultValue && index === 0)
               }
@@ -82,20 +123,28 @@ function MethodOptions({
 }
 
 export function CheckoutPaymentForm({
-  canChangeDeliveryAddress,
+  billingAddress,
+  canAddDeliveryAddress,
+  canEditDeliveryAddress,
   deliveryAddress,
   deliveryAddresses,
+  email,
   paymentMethods,
   selectedPaymentMethodId,
   selectedShippingMethodId,
+  selectedDeliveryAddressId,
   shippingMethods,
 }: Readonly<{
-  canChangeDeliveryAddress: boolean;
+  billingAddress?: CheckoutAddress;
+  canAddDeliveryAddress: boolean;
+  canEditDeliveryAddress: boolean;
   deliveryAddress?: CheckoutAddress;
   deliveryAddresses: readonly CheckoutSelectableAddress[];
+  email: string;
   paymentMethods: readonly CheckoutOption[];
   selectedPaymentMethodId?: string;
   selectedShippingMethodId?: string;
+  selectedDeliveryAddressId?: string;
   shippingMethods: readonly CheckoutOption[];
 }>) {
   const [state, formAction, pending] = useActionState(
@@ -123,16 +172,45 @@ export function CheckoutPaymentForm({
       />
 
       <section className="rounded-3xl border bg-card p-5 shadow-[0_24px_70px_-58px_rgba(21,21,19,0.7)] sm:p-7">
+        {billingAddress && (
+          <div className="mb-3">
+            <EditableDetails
+              editHref="/kasse?schritt=adresse"
+              icon={MapPin}
+              label="Rechnungsadresse"
+            >
+              <address className="mt-3 text-sm leading-6 not-italic text-muted-foreground">
+                <strong className="block font-semibold text-foreground">
+                  {billingAddress.firstName} {billingAddress.lastName}
+                </strong>
+                <span className="block">{billingAddress.street}</span>
+                <span className="block">
+                  {billingAddress.zipcode} {billingAddress.city}
+                </span>
+              </address>
+            </EditableDetails>
+          </div>
+        )}
         {deliveryAddress && (
-          <div className="mb-8">
+          <div className="mb-3">
             <CheckoutDeliveryAddress
               address={deliveryAddress}
               addresses={deliveryAddresses}
-              canChange={canChangeDeliveryAddress}
-              selectedAddressId={deliveryAddresses[0]?.id}
+              canAdd={canAddDeliveryAddress}
+              canEdit={canEditDeliveryAddress}
+              selectedAddressId={selectedDeliveryAddressId}
             />
           </div>
         )}
+        <div className="mb-8">
+          <EditableDetails
+            editHref="/kasse?schritt=email"
+            icon={Mail}
+            label="E-Mail-Adresse"
+          >
+            <p className="mt-3 text-sm font-medium">{email}</p>
+          </EditableDetails>
+        </div>
         <div className="grid gap-8 divide-y sm:gap-9">
           <MethodOptions
             defaultValue={selectedShippingMethodId}

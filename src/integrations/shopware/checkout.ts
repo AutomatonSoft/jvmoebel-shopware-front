@@ -116,6 +116,7 @@ export async function getShopwareCheckoutCustomer(
 
   return customer
     ? {
+        activeShippingAddressId: activeShippingAddress?.id,
         addressComplete: Boolean(billingAddress),
         billingAddress,
         countryId: billingAddress?.countryId,
@@ -136,15 +137,7 @@ export async function updateShopwareCustomerAddress(
   const customer = (await getShopwareContext(client)).customer;
   const currentAddress =
     customer?.defaultBillingAddress ?? customer?.activeBillingAddress;
-  const currentShippingAddress =
-    customer?.activeShippingAddress ?? customer?.defaultShippingAddress;
-
-  if (
-    !customer ||
-    customer.guest ||
-    !currentAddress?.id ||
-    !currentShippingAddress?.id
-  ) {
+  if (!customer || !currentAddress?.id) {
     throw new Error("The customer has no editable billing address.");
   }
 
@@ -162,21 +155,35 @@ export async function updateShopwareCustomerAddress(
       pathParams: { addressId: currentAddress.id },
     },
   );
+}
 
-  if (currentShippingAddress.id !== currentAddress.id) {
-    await client.invoke(
-      "updateCustomerAddress patch /account/address/{addressId}",
-      {
-        body: {
-          ...body,
-          company: currentShippingAddress.company,
-          salutationId: currentShippingAddress.salutationId,
-        },
-        fetchOptions: { cache: "no-store" },
-        pathParams: { addressId: currentShippingAddress.id },
-      },
-    );
+export async function updateShopwareCheckoutDeliveryAddress(
+  client: ShopwareClient,
+  address: GuestCheckoutRegistration["billingAddress"],
+) {
+  const customer = (await getShopwareContext(client)).customer;
+  const currentShippingAddress =
+    customer?.activeShippingAddress ??
+    customer?.defaultShippingAddress ??
+    customer?.defaultBillingAddress ??
+    customer?.activeBillingAddress;
+
+  if (!customer || !currentShippingAddress?.id) {
+    throw new Error("The customer has no editable delivery address.");
   }
+
+  await client.invoke(
+    "updateCustomerAddress patch /account/address/{addressId}",
+    {
+      body: {
+        ...mapAddress(address),
+        company: currentShippingAddress.company,
+        salutationId: currentShippingAddress.salutationId,
+      },
+      fetchOptions: { cache: "no-store" },
+      pathParams: { addressId: currentShippingAddress.id },
+    },
+  );
 }
 
 export async function createShopwareCheckoutDeliveryAddress(

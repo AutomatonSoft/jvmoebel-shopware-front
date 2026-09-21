@@ -89,6 +89,16 @@ const checkoutOrderConfirmationSchema = z.object({
   acceptedTerms: z.literal(true),
 });
 
+const checkoutEmailUpdateSchema = z
+  .object({
+    email: emailSchema,
+    emailConfirmation: z.string().trim(),
+    password: z.string().max(4096),
+  })
+  .refine(({ email, emailConfirmation }) => email === emailConfirmation, {
+    path: ["emailConfirmation"],
+  });
+
 const guestPasswordSchema = z.string().min(8).max(4096);
 
 const checkoutMethodFieldMessages = {
@@ -98,6 +108,12 @@ const checkoutMethodFieldMessages = {
 
 const checkoutOrderConfirmationFieldMessages = {
   acceptedTerms: "Bitte stimmen Sie den Bedingungen zu.",
+} as const;
+
+const checkoutEmailUpdateFieldMessages = {
+  email: "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+  emailConfirmation: "Die E-Mail-Adressen stimmen nicht überein.",
+  password: "Bitte geben Sie Ihr aktuelles Passwort ein.",
 } as const;
 
 const guestPasswordFieldMessages = {
@@ -199,6 +215,18 @@ export function validateCheckoutMethodSelection(formData: FormData) {
     paymentMethodId: formData.get("paymentMethodId"),
     shippingMethodId: formData.get("shippingMethodId"),
   });
+}
+
+export function validateCheckoutEmailUpdate(formData: FormData) {
+  return checkoutEmailUpdateSchema.safeParse({
+    email: formData.get("email"),
+    emailConfirmation: formData.get("emailConfirmation"),
+    password: formData.get("password") ?? "",
+  });
+}
+
+export function getCheckoutEmailUpdateFieldErrors(error: ZodError) {
+  return getFieldErrors(error, checkoutEmailUpdateFieldMessages);
 }
 
 export function getCheckoutMethodSelectionFieldErrors(error: ZodError) {
