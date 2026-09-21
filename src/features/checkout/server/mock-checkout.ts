@@ -7,6 +7,7 @@ import type {
   CheckoutMethodSelection,
   CheckoutOptions,
   CheckoutReceipt,
+  CheckoutSelectableAddress,
   GuestCheckoutRegistration,
 } from "@/features/checkout/model/checkout";
 
@@ -14,6 +15,13 @@ const mockCheckoutCustomerCookie = "jv-mock-checkout-customer";
 
 type MockCheckoutCustomer = CheckoutCustomer &
   Readonly<{ registration: GuestCheckoutRegistration }>;
+
+function createMockSelectableAddress(
+  address: GuestCheckoutRegistration["billingAddress"],
+  id: string,
+): CheckoutSelectableAddress {
+  return { ...address, id };
+}
 
 export const mockCheckoutOptions: CheckoutOptions = {
   countries: [{ id: "mock-country-de", label: "Deutschland" }],
@@ -77,6 +85,17 @@ export async function getMockCheckoutCustomer() {
           customer.shippingAddress ??
           customer.registration.shippingAddress ??
           customer.registration.billingAddress,
+        shippingAddresses:
+          customer.shippingAddresses?.length > 0
+            ? customer.shippingAddresses
+            : [
+                createMockSelectableAddress(
+                  customer.shippingAddress ??
+                    customer.registration.shippingAddress ??
+                    customer.registration.billingAddress,
+                  "mock-shipping-address",
+                ),
+              ],
       }
     : null;
 }
@@ -94,6 +113,12 @@ export async function registerMockCheckoutGuest(
     registration,
     shippingAddress:
       registration.shippingAddress ?? registration.billingAddress,
+    shippingAddresses: [
+      createMockSelectableAddress(
+        registration.shippingAddress ?? registration.billingAddress,
+        "mock-shipping-address",
+      ),
+    ],
   });
 }
 
@@ -104,6 +129,28 @@ export async function addMockCheckoutDeliveryAddress(
 
   if (!customer || customer.guest) {
     throw new Error("The customer has no editable delivery address.");
+  }
+
+  const newAddress = createMockSelectableAddress(
+    address,
+    `mock-shipping-address-${crypto.randomUUID()}`,
+  );
+
+  await persistMockCustomer({
+    ...customer,
+    shippingAddress: newAddress,
+    shippingAddresses: [newAddress, ...customer.shippingAddresses],
+  });
+}
+
+export async function selectMockCheckoutDeliveryAddress(addressId: string) {
+  const customer = await getMockCheckoutCustomer();
+  const address = customer?.shippingAddresses.find(
+    (candidate) => candidate.id === addressId,
+  );
+
+  if (!customer || customer.guest || !address) {
+    throw new Error("The delivery address is not available to this customer.");
   }
 
   await persistMockCustomer({ ...customer, shippingAddress: address });

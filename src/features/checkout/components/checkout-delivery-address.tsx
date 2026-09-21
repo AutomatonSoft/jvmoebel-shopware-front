@@ -1,12 +1,21 @@
 import { MapPin } from "lucide-react";
 import Link from "next/link";
 
+import { CheckoutDeliveryAddressSelector } from "@/features/checkout/components/checkout-delivery-address-selector";
 import type { CheckoutDisplayAddress } from "@/features/checkout/model/checkout";
+import type { CheckoutSelectableAddress } from "@/features/checkout/model/checkout";
 
 export function CheckoutDeliveryAddress({
   address,
+  addresses,
   canChange,
-}: Readonly<{ address: CheckoutDisplayAddress; canChange: boolean }>) {
+  selectedAddressId,
+}: Readonly<{
+  address: CheckoutDisplayAddress;
+  addresses: readonly CheckoutSelectableAddress[];
+  canChange: boolean;
+  selectedAddressId?: string;
+}>) {
   return (
     <section className="rounded-2xl border bg-secondary/35 p-5">
       <div className="flex items-start justify-between gap-4">
@@ -44,6 +53,12 @@ export function CheckoutDeliveryAddress({
         </span>
         {address.country && <span className="block">{address.country}</span>}
       </address>
+      {canChange && addresses.length > 1 && (
+        <CheckoutDeliveryAddressSelector
+          addresses={addresses}
+          selectedAddressId={selectedAddressId}
+        />
+      )}
     </section>
   );
 }

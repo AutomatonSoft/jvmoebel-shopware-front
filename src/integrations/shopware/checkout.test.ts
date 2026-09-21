@@ -3,6 +3,7 @@ import { describe, expect, test } from "bun:test";
 import {
   createShopwareCheckoutDeliveryAddress,
   getShopwareCheckoutCustomer,
+  selectShopwareCheckoutDeliveryAddress,
 } from "@/integrations/shopware/checkout";
 import type { ShopwareClient } from "@/integrations/shopware/client";
 
@@ -52,7 +53,7 @@ describe("getShopwareCheckoutCustomer", () => {
 });
 
 describe("createShopwareCheckoutDeliveryAddress", () => {
-  test("creates an address and uses it as the default shipping address", async () => {
+  test("creates an address and selects it for the current checkout", async () => {
     const operations: string[] = [];
     const client = {
       invoke: async (operation: string) => {
@@ -88,7 +89,38 @@ describe("createShopwareCheckoutDeliveryAddress", () => {
     expect(operations).toEqual([
       "readContext get /context",
       "createCustomerAddress post /account/address",
-      "defaultShippingAddress patch /account/address/default-shipping/{addressId}",
+      "updateContext patch /context",
+    ]);
+  });
+});
+
+describe("selectShopwareCheckoutDeliveryAddress", () => {
+  test("sets a saved address in the checkout context without changing defaults", async () => {
+    const operations: string[] = [];
+    const client = {
+      invoke: async (operation: string) => {
+        operations.push(operation);
+
+        if (operation === "readContext get /context") {
+          return {
+            data: {
+              customer: {
+                addresses: [{ id: "delivery-address-id" }],
+                guest: false,
+              },
+            },
+          };
+        }
+
+        return { data: {} };
+      },
+    } as unknown as ShopwareClient;
+
+    await selectShopwareCheckoutDeliveryAddress(client, "delivery-address-id");
+
+    expect(operations).toEqual([
+      "readContext get /context",
+      "updateContext patch /context",
     ]);
   });
 });

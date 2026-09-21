@@ -101,6 +101,7 @@ export function CheckoutPage({
               deliveryAddress={
                 data.customer.shippingAddress ?? data.customer.billingAddress
               }
+              deliveryAddresses={data.customer.shippingAddresses}
               paymentMethods={data.options.paymentMethods}
               selectedPaymentMethodId={data.options.selectedPaymentMethodId}
               selectedShippingMethodId={data.options.selectedShippingMethodId}

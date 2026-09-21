@@ -8,6 +8,7 @@ import type {
   CheckoutMethodSelection,
   CheckoutOptions,
   CheckoutReceipt,
+  CheckoutSelectableAddress,
   GuestCheckoutRegistration,
 } from "@/features/checkout/model/checkout";
 import type { ShopwareClient } from "@/integrations/shopware/client";
@@ -35,6 +36,30 @@ function mapCheckoutAddress(
     street: address.street,
     zipcode: address.zipcode || "",
   };
+}
+
+function mapSelectableCheckoutAddress(
+  address: ShopwareAddress | null | undefined,
+): CheckoutSelectableAddress | undefined {
+  const mappedAddress = mapCheckoutAddress(address);
+
+  return mappedAddress && address?.id
+    ? { ...mappedAddress, id: address.id }
+    : undefined;
+}
+
+function getUniqueAddresses(
+  addresses: readonly (CheckoutSelectableAddress | undefined)[],
+) {
+  return Array.from(
+    new Map(
+      addresses
+        .filter((address): address is CheckoutSelectableAddress =>
+          Boolean(address),
+        )
+        .map((address) => [address.id, address]),
+    ).values(),
+  );
 }
 
 function mapAddress(
@@ -79,6 +104,15 @@ export async function getShopwareCheckoutCustomer(
       customer?.defaultBillingAddress ??
       customer?.activeBillingAddress,
   );
+  const activeShippingAddress =
+    customer?.activeShippingAddress ??
+    customer?.defaultShippingAddress ??
+    customer?.defaultBillingAddress ??
+    customer?.activeBillingAddress;
+  const shippingAddresses = getUniqueAddresses([
+    mapSelectableCheckoutAddress(activeShippingAddress),
+    ...(customer?.addresses ?? []).map(mapSelectableCheckoutAddress),
+  ]);
 
   return customer
     ? {
@@ -90,6 +124,7 @@ export async function getShopwareCheckoutCustomer(
         guest: customer.guest ?? false,
         lastName: customer.lastName,
         shippingAddress,
+        shippingAddresses,
       }
     : null;
 }
@@ -172,13 +207,31 @@ export async function createShopwareCheckoutDeliveryAddress(
     throw new Error("Shopware did not return the new delivery address.");
   }
 
-  await client.invoke(
-    "defaultShippingAddress patch /account/address/default-shipping/{addressId}",
-    {
-      fetchOptions: { cache: "no-store" },
-      pathParams: { addressId: response.data.id },
-    },
+  await client.invoke("updateContext patch /context", {
+    body: { shippingAddressId: response.data.id },
+    fetchOptions: { cache: "no-store" },
+  });
+}
+
+export async function selectShopwareCheckoutDeliveryAddress(
+  client: ShopwareClient,
+  addressId: string,
+) {
+  const customer = (await getShopwareContext(client)).customer;
+  const addressIds = new Set(
+    [customer?.activeShippingAddress, ...(customer?.addresses ?? [])]
+      .map((address) => address?.id)
+      .filter((id): id is string => Boolean(id)),
   );
+
+  if (!customer || customer.guest || !addressIds.has(addressId)) {
+    throw new Error("The delivery address is not available to this customer.");
+  }
+
+  await client.invoke("updateContext patch /context", {
+    body: { shippingAddressId: addressId },
+    fetchOptions: { cache: "no-store" },
+  });
 }
 
 export async function getShopwareCheckoutOptions(

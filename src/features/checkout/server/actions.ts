@@ -24,6 +24,7 @@ import {
   createMockCheckoutReceipt,
   mockCheckoutOptions,
   registerMockCheckoutGuest,
+  selectMockCheckoutDeliveryAddress,
 } from "@/features/checkout/server/mock-checkout";
 import { persistCheckoutReceipt } from "@/features/checkout/server/receipt";
 import { getShopCart } from "@/features/cart/server/cart";
@@ -38,6 +39,7 @@ import {
   getShopwareCheckoutCustomer,
   getShopwareCheckoutOptions,
   registerShopwareGuest,
+  selectShopwareCheckoutDeliveryAddress,
   updateShopwareCustomerAddress,
 } from "@/integrations/shopware/checkout";
 import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
@@ -235,6 +237,36 @@ export async function addCustomerCheckoutDeliveryAddress(
     }
   } catch (error) {
     return getActionError(error, "Customer delivery address creation failed.");
+  }
+
+  revalidatePath("/kasse");
+  redirect("/kasse?schritt=zahlung");
+}
+
+export async function selectCustomerCheckoutDeliveryAddress(
+  _previousState: CheckoutActionState,
+  formData: FormData,
+): Promise<CheckoutActionState> {
+  const addressId = formData.get("shippingAddressId");
+
+  if (typeof addressId !== "string" || !addressId) {
+    return {
+      message: "Bitte wÃ¤hlen Sie eine Lieferadresse.",
+      status: "invalid",
+    };
+  }
+
+  try {
+    if (shouldUseShopwareMocks()) {
+      await selectMockCheckoutDeliveryAddress(addressId);
+    } else {
+      const session = await createCustomerSession();
+
+      await selectShopwareCheckoutDeliveryAddress(session.client, addressId);
+      await persistCustomerContext(session.getContextToken());
+    }
+  } catch (error) {
+    return getActionError(error, "Customer delivery address selection failed.");
   }
 
   revalidatePath("/kasse");

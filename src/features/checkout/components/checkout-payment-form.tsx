@@ -11,6 +11,7 @@ import type {
   CheckoutAddress,
   CheckoutActionState,
   CheckoutOption,
+  CheckoutSelectableAddress,
 } from "@/features/checkout/model/checkout";
 import { placeCheckoutOrder } from "@/features/checkout/server/actions";
 
@@ -84,6 +85,7 @@ function MethodOptions({
 export function CheckoutPaymentForm({
   canChangeDeliveryAddress,
   deliveryAddress,
+  deliveryAddresses,
   paymentMethods,
   selectedPaymentMethodId,
   selectedShippingMethodId,
@@ -91,6 +93,7 @@ export function CheckoutPaymentForm({
 }: Readonly<{
   canChangeDeliveryAddress: boolean;
   deliveryAddress?: CheckoutAddress;
+  deliveryAddresses: readonly CheckoutSelectableAddress[];
   paymentMethods: readonly CheckoutOption[];
   selectedPaymentMethodId?: string;
   selectedShippingMethodId?: string;
@@ -126,7 +129,9 @@ export function CheckoutPaymentForm({
           <div className="mb-8">
             <CheckoutDeliveryAddress
               address={deliveryAddress}
+              addresses={deliveryAddresses}
               canChange={canChangeDeliveryAddress}
+              selectedAddressId={deliveryAddresses[0]?.id}
             />
           </div>
         )}
