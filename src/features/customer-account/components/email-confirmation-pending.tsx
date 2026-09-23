@@ -1,7 +1,8 @@
 import { MailCheck } from "lucide-react";
 import Link from "next/link";
 
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export function EmailConfirmationPending({
   email,
@@ -15,18 +16,41 @@ export function EmailConfirmationPending({
         Konto bestätigen
       </p>
       <h1 className="mt-3 text-2xl leading-tight font-medium tracking-[-0.035em] sm:text-3xl">
-        Prüfen Sie Ihr Postfach.
+        Geben Sie den Bestätigungscode ein.
       </h1>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
-        Wir haben Ihnen einen Link zur Bestätigung Ihrer E-Mail-Adresse gesendet
+        Wir senden Ihnen einen vierstelligen Code zur Bestätigung Ihrer
+        E-Mail-Adresse
         {email ? " an " : "."}
         {email && (
           <strong className="font-medium text-foreground">{email}</strong>
         )}
         {email && "."}
       </p>
-      <p className="mt-3 text-sm leading-6 text-muted-foreground">
-        Erst nach dem Klick auf den Link ist Ihr Kundenkonto aktiviert.
+      <form className="mt-7">
+        <fieldset>
+          <legend className="sr-only">Vierstelliger Bestätigungscode</legend>
+          <div className="grid grid-cols-4 gap-2 sm:max-w-sm">
+            {[1, 2, 3, 4].map((position) => (
+              <Input
+                aria-label={`Ziffer ${position}`}
+                className="h-14 px-0 text-center text-xl font-medium tracking-[0.16em]"
+                inputMode="numeric"
+                key={position}
+                maxLength={1}
+                pattern="[0-9]*"
+                type="text"
+              />
+            ))}
+          </div>
+        </fieldset>
+        <Button className="mt-4 w-full sm:max-w-sm" disabled type="submit">
+          Code bestätigen
+        </Button>
+      </form>
+      <p className="mt-3 text-xs leading-5 text-muted-foreground">
+        Die Bestätigung wird aktiviert, sobald der E-Mail-Versand eingerichtet
+        ist.
       </p>
       <Link
         className={buttonVariants({
