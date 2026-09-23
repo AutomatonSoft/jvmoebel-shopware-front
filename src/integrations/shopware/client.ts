@@ -8,6 +8,7 @@ import {
   type ShopwareConfig,
 } from "@/integrations/shopware/config";
 import type { ShopwareStorefrontConfigResponse } from "@/integrations/shopware/storefront-config-types";
+import type { ShopwareLegacyRedirectLookupResponse } from "@/integrations/shopware/legacy-redirect";
 
 type StorefrontConfigOperations = {
   "readStorefrontConfig get /storefront-config": {
@@ -18,7 +19,19 @@ type StorefrontConfigOperations = {
   };
 };
 
-type ShopwareOperations = operations & StorefrontConfigOperations;
+type JvSeoOperations = {
+  "readJvSeoRedirect post /jv-seo/redirect": {
+    accept?: "application/json";
+    body: { url: string };
+    contentType?: "application/json";
+    response: ShopwareLegacyRedirectLookupResponse;
+    responseCode: 200;
+  };
+};
+
+type ShopwareOperations = operations &
+  StorefrontConfigOperations &
+  JvSeoOperations;
 
 export type CreateShopwareClientOptions = {
   config?: ShopwareConfig;
