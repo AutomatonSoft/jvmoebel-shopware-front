@@ -1,24 +1,61 @@
-import { MailCheck } from "lucide-react";
+"use client";
+
+import { BadgeCheck, MailCheck, MoveRight } from "lucide-react";
 import Link from "next/link";
+import { useRef, useState } from "react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+const codeLength = 4;
+
 export function EmailConfirmationPending({
   email,
 }: Readonly<{ email?: string }>) {
+  const [code, setCode] = useState(Array(codeLength).fill(""));
+  const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
+
+  const setCodeDigit = (index: number, value: string) => {
+    const digit = value.replace(/\D/g, "").slice(-1);
+
+    setCode((currentCode) =>
+      currentCode.map((currentDigit, currentIndex) =>
+        currentIndex === index ? digit : currentDigit,
+      ),
+    );
+
+    if (digit && index < codeLength - 1) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handlePaste = (index: number, value: string) => {
+    const digits = value.replace(/\D/g, "").slice(0, codeLength - index);
+
+    if (!digits) return;
+
+    setCode((currentCode) =>
+      currentCode.map(
+        (currentDigit, currentIndex) =>
+          digits[currentIndex - index] ?? currentDigit,
+      ),
+    );
+
+    inputRefs.current[Math.min(index + digits.length, codeLength - 1)]?.focus();
+  };
+
   return (
-    <div className="flex min-h-72 flex-col justify-center py-8">
-      <div className="grid size-12 place-items-center rounded-full bg-accent text-foreground">
-        <MailCheck aria-hidden="true" className="size-6" />
+    <div className="flex min-h-72 flex-col items-center justify-center py-8 text-center sm:py-10">
+      <div className="flex size-12 items-center justify-center rounded-2xl bg-accent text-foreground shadow-[0_10px_26px_-16px_rgb(21_21_19/0.75)]">
+        <MailCheck aria-hidden="true" className="size-5" strokeWidth={1.8} />
       </div>
-      <p className="mt-7 text-[0.65rem] font-medium tracking-[0.16em] text-muted-foreground uppercase">
+      <p className="mt-6 text-[0.65rem] font-semibold tracking-[0.18em] text-muted-foreground uppercase">
         Konto bestätigen
       </p>
-      <h1 className="mt-3 text-2xl leading-tight font-medium tracking-[-0.035em] sm:text-3xl">
+      <h1 className="mt-3 max-w-md text-2xl leading-[1.08] font-medium tracking-[-0.045em] sm:text-3xl">
         Geben Sie den Bestätigungscode ein.
       </h1>
-      <p className="mt-3 text-sm leading-6 text-muted-foreground">
+      <p className="mt-4 max-w-md text-sm leading-6 text-muted-foreground">
         Wir senden Ihnen einen vierstelligen Code zur Bestätigung Ihrer
         E-Mail-Adresse
         {email ? " an " : "."}
@@ -27,34 +64,59 @@ export function EmailConfirmationPending({
         )}
         {email && "."}
       </p>
-      <form className="mt-7">
+      <form
+        className="mt-7 max-w-sm"
+        onSubmit={(event) => event.preventDefault()}
+      >
         <fieldset>
           <legend className="sr-only">Vierstelliger Bestätigungscode</legend>
-          <div className="grid grid-cols-4 gap-2 sm:max-w-sm">
-            {[1, 2, 3, 4].map((position) => (
+          <div className="flex gap-2.5" role="group">
+            {code.map((digit, index) => (
               <Input
-                aria-label={`Ziffer ${position}`}
-                className="h-14 px-0 text-center text-xl font-medium tracking-[0.16em]"
+                aria-label={`Ziffer ${index + 1}`}
+                className="size-12 rounded-xl border-border/90 bg-card px-0 text-center text-lg font-semibold tabular-nums shadow-none transition-[border-color,box-shadow,background-color] focus-visible:border-primary focus-visible:bg-background focus-visible:ring-4 focus-visible:ring-primary/10 sm:size-13"
                 inputMode="numeric"
-                key={position}
+                key={index}
                 maxLength={1}
+                onChange={(event) => setCodeDigit(index, event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Backspace" && !digit && index > 0) {
+                    inputRefs.current[index - 1]?.focus();
+                  }
+                }}
+                onPaste={(event) => {
+                  event.preventDefault();
+                  handlePaste(index, event.clipboardData.getData("text"));
+                }}
                 pattern="[0-9]*"
+                ref={(element) => {
+                  inputRefs.current[index] = element;
+                }}
                 type="text"
+                value={digit}
               />
             ))}
           </div>
         </fieldset>
-        <Button className="mt-4 w-full sm:max-w-sm" disabled type="submit">
+        <Button className="mt-5 w-full" disabled type="submit">
           Code bestätigen
+          <MoveRight aria-hidden="true" data-icon="inline-end" />
         </Button>
       </form>
-      <p className="mt-3 text-xs leading-5 text-muted-foreground">
-        Die Bestätigung wird aktiviert, sobald der E-Mail-Versand eingerichtet
-        ist.
+      <p className="mt-4 flex max-w-sm items-start justify-center gap-2 text-xs leading-5 text-muted-foreground">
+        <BadgeCheck
+          aria-hidden="true"
+          className="mt-0.5 size-4 shrink-0 text-primary"
+          strokeWidth={1.8}
+        />
+        <span>
+          Die Bestätigung wird aktiviert, sobald der E-Mail-Versand eingerichtet
+          ist.
+        </span>
       </p>
       <Link
         className={buttonVariants({
-          className: "mt-7 w-full",
+          className: "mt-8 w-full max-w-sm",
           variant: "outline",
         })}
         href="/kundenkonto/anmelden"
