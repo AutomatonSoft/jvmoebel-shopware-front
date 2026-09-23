@@ -17,6 +17,7 @@ import type {
 import { placeGuestCheckoutOrder } from "@/features/checkout/server/actions";
 
 const storageKey = "jv-guest-checkout-draft";
+const dataProtectionConsentSlotId = "checkout-data-protection-consent";
 const initialState: CheckoutActionState = { status: "idle" };
 
 type GuestDraft = Readonly<{
@@ -272,6 +273,7 @@ export function GuestCheckoutFlow({
       </div>
       <CheckoutSummary
         action={{
+          consentSlotId: dataProtectionConsentSlotId,
           disabled: pending,
           formId: "guest-checkout-form",
           label: summaryLabel,

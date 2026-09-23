@@ -5,6 +5,7 @@ import { CheckoutOrderSubmit } from "@/features/checkout/components/checkout-ord
 import type { ShopCart } from "@/features/cart/model/cart";
 
 export type CheckoutSummaryAction = Readonly<{
+  consentSlotId?: string;
   disabled?: boolean;
   formId: string;
   label: string;
@@ -69,18 +70,25 @@ export function CheckoutSummary({
         </div>
       </dl>
 
+      {action.consentSlotId && (
+        <div
+          className="mt-6 border-t pt-5 empty:hidden"
+          id={action.consentSlotId}
+        />
+      )}
+
       {action.requiresTerms ? (
         <CheckoutOrderSubmit formId={action.formId} />
       ) : (
         <Button
-          className="mt-6 w-full justify-between"
+          className="mt-6 min-h-14 w-full gap-2 rounded-2xl px-5 text-center text-sm sm:text-base"
           disabled={action.disabled}
           form={action.formId}
           size="lg"
           type="submit"
         >
-          {action.label}
-          <ArrowRight aria-hidden="true" />
+          <span>{action.label}</span>
+          <ArrowRight aria-hidden="true" className="size-5" />
         </Button>
       )}
 

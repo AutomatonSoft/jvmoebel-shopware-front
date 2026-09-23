@@ -19,7 +19,7 @@ export function CheckoutOrderSubmit({ formId }: Readonly<{ formId: string }>) {
   const acceptedTermsError = state.fieldErrors?.acceptedTerms;
 
   return (
-    <form action={formAction} className="mt-6 border-t pt-5" id={formId}>
+    <form action={formAction} className="mt-6" id={formId}>
       <AccountToast
         description={state.message}
         id={`checkout-review-${state.status}`}
@@ -67,15 +67,17 @@ export function CheckoutOrderSubmit({ formId }: Readonly<{ formId: string }>) {
       )}
 
       <Button
-        className="mt-5 w-full justify-between"
+        className="mt-5 min-h-14 w-full gap-2 rounded-2xl px-5 text-center text-sm sm:text-base"
         disabled={pending}
         size="lg"
         type="submit"
       >
-        {pending
-          ? "Bestellung wird übermittelt …"
-          : "Zahlungspflichtig bestellen"}
-        <ArrowRight aria-hidden="true" />
+        <span>
+          {pending
+            ? "Bestellung wird übermittelt …"
+            : "Zahlungspflichtig bestellen"}
+        </span>
+        <ArrowRight aria-hidden="true" className="size-5" />
       </Button>
     </form>
   );

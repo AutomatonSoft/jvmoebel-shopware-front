@@ -1,13 +1,13 @@
 "use client";
 
-import { ArrowRight, MapPin, Phone, type LucideIcon } from "lucide-react";
+import { MapPin, Phone, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { startTransition, useActionState, type FormEvent } from "react";
+import { createPortal } from "react-dom";
 import { useForm, useWatch, type UseFormRegisterReturn } from "react-hook-form";
 import type { z } from "zod";
 
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CheckoutCountrySelect } from "@/features/checkout/components/checkout-country-select";
 import { AccountField } from "@/features/customer-account/components/account-field";
@@ -26,6 +26,7 @@ import {
 import { registerCheckoutGuest } from "@/features/checkout/server/actions";
 
 const initialState: CheckoutActionState = { status: "idle" };
+const dataProtectionConsentSlotId = "checkout-data-protection-consent";
 
 type GuestCheckoutFormInput = z.input<typeof guestCheckoutRegistrationSchema>;
 type GuestCheckoutFormOutput = z.output<typeof guestCheckoutRegistrationSchema>;
@@ -283,152 +284,165 @@ export function GuestCheckoutForm({
     })(event);
   };
 
-  return (
-    <form
-      action={formAction}
-      id="guest-checkout-form"
-      noValidate
-      onSubmit={submitGuestCheckout}
-    >
-      <AccountToast
-        description={state.message}
-        id={`guest-checkout-${state.status}`}
-        title={
-          state.status === "invalid"
-            ? "Angaben prüfen"
-            : state.status === "error"
-              ? "Checkout nicht verfügbar"
+  const dataProtectionConsent = (
+    <div>
+      <label className="flex items-start gap-3 text-xs leading-5 text-muted-foreground">
+        <input
+          {...register("acceptedDataProtection")}
+          aria-describedby={
+            dataProtectionError
+              ? "checkout-accepted-data-protection-error"
               : undefined
-        }
-        trigger={state}
-        type="error"
-      />
+          }
+          aria-invalid={Boolean(dataProtectionError) || undefined}
+          className="mt-0.5 size-4 shrink-0 accent-primary"
+          form="guest-checkout-form"
+          required
+          type="checkbox"
+        />
+        <span>
+          Ich habe die{" "}
+          <Link
+            className="font-medium text-foreground underline decoration-border underline-offset-4 hover:decoration-primary"
+            href="/datenschutz"
+          >
+            Datenschutzerklärung
+          </Link>{" "}
+          gelesen und stimme der Verarbeitung meiner Daten zur Abwicklung der
+          Bestellung zu.
+        </span>
+      </label>
+      {dataProtectionError && (
+        <p
+          className="mt-2 text-xs leading-4 text-destructive"
+          id="checkout-accepted-data-protection-error"
+          role="alert"
+        >
+          {dataProtectionError}
+        </p>
+      )}
+    </div>
+  );
 
-      <section className="rounded-3xl border bg-card p-5 shadow-[0_24px_70px_-58px_rgba(21,21,19,0.7)] sm:p-7">
-        <div className="border-b pb-5">
-          <p className="text-[0.65rem] font-semibold tracking-[0.15em] text-primary uppercase">
-            Ohne Registrierung
-          </p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-[-0.04em]">
-            Rechnungsadresse
-          </h2>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            Wir verwenden diese Angaben nur für Ihre Bestellung und deren
-            Abwicklung.
-          </p>
-        </div>
+  return (
+    <>
+      <form
+        action={formAction}
+        id="guest-checkout-form"
+        noValidate
+        onSubmit={submitGuestCheckout}
+      >
+        <AccountToast
+          description={state.message}
+          id={`guest-checkout-${state.status}`}
+          title={
+            state.status === "invalid"
+              ? "Angaben prüfen"
+              : state.status === "error"
+                ? "Checkout nicht verfügbar"
+                : undefined
+          }
+          trigger={state}
+          type="error"
+        />
 
-        <fieldset className="mt-6">
-          <legend className="sr-only">Kontaktdaten und Rechnungsadresse</legend>
-          <div className="mb-3 grid gap-3 sm:grid-cols-2">
-            <AccountField
-              autoComplete="email"
-              className="sm:col-span-2"
-              error={emailError}
-              id="checkout-email"
-              label="E-Mail-Adresse"
-              name="email"
-              registration={register("email")}
-              type="email"
-            />
-            <OptionalField
-              autoComplete="tel"
-              error={fieldErrors.phoneNumber}
-              id="checkout-phone"
-              label="Telefonnummer (optional)"
-              name="billingAddress.phoneNumber"
-              registration={registerAddressField(
-                "billingAddress",
-                "phoneNumber",
-              )}
-              type="tel"
-            />
+        <section className="rounded-3xl border bg-card p-5 shadow-[0_24px_70px_-58px_rgba(21,21,19,0.7)] sm:p-7">
+          <div className="border-b pb-5">
+            <p className="text-[0.65rem] font-semibold tracking-[0.15em] text-primary uppercase">
+              Ohne Registrierung
+            </p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-[-0.04em]">
+              Rechnungsadresse
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+              Wir verwenden diese Angaben nur für Ihre Bestellung und deren
+              Abwicklung.
+            </p>
           </div>
-          <AddressFields
-            countries={countries}
-            fieldErrors={fieldErrors}
-            getClientError={(field) => getAddressError("billingAddress", field)}
-            prefix="billingAddress."
-            registerField={(field) =>
-              registerAddressField("billingAddress", field)
-            }
-          />
-        </fieldset>
 
-        <label className="mt-6 flex items-start gap-3 rounded-2xl bg-secondary/70 p-4 text-sm leading-6">
-          <input
-            {...register("shippingSameAsBilling")}
-            checked={
-              shippingSameAsBilling === true || shippingSameAsBilling === "on"
-            }
-            className="mt-1 size-4 shrink-0 accent-primary"
-            type="checkbox"
-          />
-          Lieferadresse entspricht der Rechnungsadresse
-        </label>
-
-        {separateShippingAddress && (
-          <fieldset className="mt-7 border-t pt-7">
-            <legend className="mb-5 text-xl font-semibold tracking-[-0.03em]">
-              Abweichende Lieferadresse
+          <fieldset className="mt-6">
+            <legend className="sr-only">
+              Kontaktdaten und Rechnungsadresse
             </legend>
+            <div className="mb-3 grid gap-3 sm:grid-cols-2">
+              <AccountField
+                autoComplete="email"
+                className="sm:col-span-2"
+                error={emailError}
+                id="checkout-email"
+                label="E-Mail-Adresse"
+                name="email"
+                registration={register("email")}
+                type="email"
+              />
+              <OptionalField
+                autoComplete="tel"
+                error={fieldErrors.phoneNumber}
+                id="checkout-phone"
+                label="Telefonnummer (optional)"
+                name="billingAddress.phoneNumber"
+                registration={registerAddressField(
+                  "billingAddress",
+                  "phoneNumber",
+                )}
+                type="tel"
+              />
+            </div>
             <AddressFields
               countries={countries}
               fieldErrors={fieldErrors}
               getClientError={(field) =>
-                getAddressError("shippingAddress", field)
+                getAddressError("billingAddress", field)
               }
-              prefix="shippingAddress."
+              prefix="billingAddress."
               registerField={(field) =>
-                registerAddressField("shippingAddress", field)
+                registerAddressField("billingAddress", field)
               }
             />
           </fieldset>
-        )}
 
-        <label className="mt-7 flex items-start gap-3 text-xs leading-5 text-muted-foreground">
-          <input
-            {...register("acceptedDataProtection")}
-            aria-describedby={
-              dataProtectionError
-                ? "checkout-accepted-data-protection-error"
-                : undefined
-            }
-            aria-invalid={Boolean(dataProtectionError) || undefined}
-            className="mt-0.5 size-4 shrink-0 accent-primary"
-            name="acceptedDataProtection"
-            required
-            type="checkbox"
-          />
-          <span>
-            Ich habe die{" "}
-            <Link
-              className="font-medium text-foreground underline decoration-border underline-offset-4 hover:decoration-primary"
-              href="/datenschutz"
-            >
-              Datenschutzerklärung
-            </Link>{" "}
-            gelesen und stimme der Verarbeitung meiner Daten zur Abwicklung der
-            Bestellung zu.
-          </span>
-        </label>
-        {dataProtectionError && (
-          <p
-            className="mt-2 text-xs leading-4 text-destructive"
-            id="checkout-accepted-data-protection-error"
-            role="alert"
-          >
-            {dataProtectionError}
-          </p>
-        )}
+          <label className="mt-6 flex items-start gap-3 rounded-2xl bg-secondary/70 p-4 text-sm leading-6">
+            <input
+              {...register("shippingSameAsBilling")}
+              checked={
+                shippingSameAsBilling === true || shippingSameAsBilling === "on"
+              }
+              className="mt-1 size-4 shrink-0 accent-primary"
+              type="checkbox"
+            />
+            Lieferadresse entspricht der Rechnungsadresse
+          </label>
 
-        <Button className="hidden" disabled={pending} size="lg" type="submit">
-          {pending
-            ? "Adresse wird gespeichert …"
-            : "Weiter zu Versand und Zahlung"}
-          <ArrowRight aria-hidden="true" />
-        </Button>
-      </section>
-    </form>
+          {separateShippingAddress && (
+            <fieldset className="mt-7 border-t pt-7">
+              <legend className="mb-5 text-xl font-semibold tracking-[-0.03em]">
+                Abweichende Lieferadresse
+              </legend>
+              <AddressFields
+                countries={countries}
+                fieldErrors={fieldErrors}
+                getClientError={(field) =>
+                  getAddressError("shippingAddress", field)
+                }
+                prefix="shippingAddress."
+                registerField={(field) =>
+                  registerAddressField("shippingAddress", field)
+                }
+              />
+            </fieldset>
+          )}
+
+          <button className="hidden" disabled={pending} type="submit">
+            Weiter zu Versand und Zahlung
+          </button>
+        </section>
+      </form>
+      {typeof document !== "undefined" &&
+        document.getElementById(dataProtectionConsentSlotId) &&
+        createPortal(
+          dataProtectionConsent,
+          document.getElementById(dataProtectionConsentSlotId)!,
+        )}
+    </>
   );
 }
