@@ -23,6 +23,7 @@ import {
   validateGuestPassword,
 } from "@/features/checkout/model/validation";
 import {
+  addMockCheckoutBillingAddress,
   addMockCheckoutDeliveryAddress,
   convertMockCheckoutGuest,
   createMockCheckoutReceipt,
@@ -42,6 +43,7 @@ import {
 } from "@/features/customer-account/server/session";
 import {
   convertShopwareGuest,
+  createShopwareCheckoutBillingAddress,
   createShopwareCheckoutDeliveryAddress,
   createShopwareCheckoutOrder,
   getShopwareCheckoutCustomer,
@@ -273,6 +275,50 @@ export async function addCustomerCheckoutDeliveryAddress(
     }
   } catch (error) {
     return getActionError(error, "Customer delivery address creation failed.");
+  }
+
+  revalidatePath("/kasse");
+  redirect(getCheckoutReturnPath(formData));
+}
+
+export async function addCustomerCheckoutBillingAddress(
+  _previousState: CheckoutActionState,
+  formData: FormData,
+): Promise<CheckoutActionState> {
+  const validation = validateCheckoutAddress(formData);
+
+  if (!validation.success) {
+    return {
+      fieldErrors: getCheckoutAddressFieldErrors(validation.error),
+      message: "Bitte füllen Sie alle Pflichtfelder vollständig aus.",
+      status: "invalid",
+    };
+  }
+
+  const address = validation.data;
+
+  try {
+    if (shouldUseShopwareMocks()) {
+      await addMockCheckoutBillingAddress(address);
+    } else {
+      const session = await createCustomerSession();
+      const options = await getShopwareCheckoutOptions(session.client);
+
+      if (
+        !options.countries.some((country) => country.id === address.countryId)
+      ) {
+        return {
+          fieldErrors: { countryId: "Bitte wählen Sie ein gültiges Land." },
+          message: "Bitte wählen Sie ein gültiges Land.",
+          status: "invalid",
+        };
+      }
+
+      await createShopwareCheckoutBillingAddress(session.client, address);
+      await persistCustomerContext(session.getContextToken());
+    }
+  } catch (error) {
+    return getActionError(error, "Customer billing address creation failed.");
   }
 
   revalidatePath("/kasse");

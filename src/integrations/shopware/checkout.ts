@@ -96,7 +96,7 @@ export async function getShopwareCheckoutCustomer(
 ): Promise<CheckoutCustomer | null> {
   const customer = (await getShopwareContext(client)).customer;
   const billingAddress = mapCheckoutAddress(
-    customer?.defaultBillingAddress ?? customer?.activeBillingAddress,
+    customer?.activeBillingAddress ?? customer?.defaultBillingAddress,
   );
   const shippingAddress = mapCheckoutAddress(
     customer?.activeShippingAddress ??
@@ -136,7 +136,7 @@ export async function updateShopwareCustomerAddress(
 ) {
   const customer = (await getShopwareContext(client)).customer;
   const currentAddress =
-    customer?.defaultBillingAddress ?? customer?.activeBillingAddress;
+    customer?.activeBillingAddress ?? customer?.defaultBillingAddress;
   if (!customer || !currentAddress?.id) {
     throw new Error("The customer has no editable billing address.");
   }
@@ -216,6 +216,40 @@ export async function createShopwareCheckoutDeliveryAddress(
 
   await client.invoke("updateContext patch /context", {
     body: { shippingAddressId: response.data.id },
+    fetchOptions: { cache: "no-store" },
+  });
+}
+
+export async function createShopwareCheckoutBillingAddress(
+  client: ShopwareClient,
+  address: GuestCheckoutRegistration["billingAddress"],
+) {
+  const customer = (await getShopwareContext(client)).customer;
+  const billingAddress =
+    customer?.defaultBillingAddress ?? customer?.activeBillingAddress;
+
+  if (!customer || customer.guest) {
+    throw new Error("The customer has no editable billing address.");
+  }
+
+  const response = await client.invoke(
+    "createCustomerAddress post /account/address",
+    {
+      body: {
+        ...mapAddress(address),
+        company: billingAddress?.company,
+        salutationId: billingAddress?.salutationId,
+      },
+      fetchOptions: { cache: "no-store" },
+    },
+  );
+
+  if (!response.data.id) {
+    throw new Error("Shopware did not return the new billing address.");
+  }
+
+  await client.invoke("updateContext patch /context", {
+    body: { billingAddressId: response.data.id },
     fetchOptions: { cache: "no-store" },
   });
 }
