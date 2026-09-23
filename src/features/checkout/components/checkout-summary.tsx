@@ -8,8 +8,10 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { checkoutActionButtonClassName } from "@/features/checkout/components/checkout-action-button-style";
 import { CheckoutOrderSubmit } from "@/features/checkout/components/checkout-order-submit";
 import type { ShopCart } from "@/features/cart/model/cart";
+import { cn } from "@/lib/utils";
 
 export type CheckoutSummaryAction = Readonly<{
   consentSlotId?: string;
@@ -88,14 +90,14 @@ export function CheckoutSummary({
         <CheckoutOrderSubmit formId={action.formId} />
       ) : (
         <Button
-          className="mt-6 min-h-14 w-full gap-2 rounded-2xl px-5 text-center text-sm sm:text-base"
+          className={cn(checkoutActionButtonClassName, "mt-6 w-full gap-2")}
           disabled={action.disabled}
           form={action.formId}
-          size="lg"
           type="submit"
+          variant="outline"
         >
           <span>{action.label}</span>
-          <ArrowRight aria-hidden="true" className="size-5" />
+          <ArrowRight aria-hidden="true" />
         </Button>
       )}
 

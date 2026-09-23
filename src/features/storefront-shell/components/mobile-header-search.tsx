@@ -105,6 +105,7 @@ export function MobileHeaderSearch() {
                 className="shrink-0 rounded-full hover:bg-destructive motion-safe:hover:translate-x-px motion-safe:active:scale-90"
                 size="icon"
                 type="submit"
+                variant="solid"
               >
                 <ArrowRight className="size-4" />
               </Button>

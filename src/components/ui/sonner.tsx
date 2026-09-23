@@ -18,7 +18,8 @@ export function Toaster(props: ToasterProps) {
       theme="light"
       toastOptions={{
         classNames: {
-          actionButton: "!rounded-lg !bg-primary !text-primary-foreground",
+          actionButton:
+            "!rounded-lg !border !border-orange-400 !bg-orange-100 !text-foreground !transition-all hover:!border-orange-500 hover:!bg-orange-200 hover:!shadow-md motion-safe:hover:!-translate-y-0.5",
           closeButton:
             "!border-current/20 !bg-transparent !text-current hover:!bg-black/5",
           default: "!border-[#decfbe] !bg-[#fffaf4] !text-foreground",

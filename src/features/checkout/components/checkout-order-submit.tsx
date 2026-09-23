@@ -6,8 +6,10 @@ import { useActionState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { AccountToast } from "@/features/customer-account/components/account-toast";
+import { checkoutActionButtonClassName } from "@/features/checkout/components/checkout-action-button-style";
 import type { CheckoutActionState } from "@/features/checkout/model/checkout";
 import { placeCheckoutOrder } from "@/features/checkout/server/actions";
+import { cn } from "@/lib/utils";
 
 const initialState: CheckoutActionState = { status: "idle" };
 
@@ -67,17 +69,17 @@ export function CheckoutOrderSubmit({ formId }: Readonly<{ formId: string }>) {
       )}
 
       <Button
-        className="mt-5 min-h-14 w-full gap-2 rounded-2xl px-5 text-center text-sm sm:text-base"
+        className={cn(checkoutActionButtonClassName, "mt-5 w-full gap-2")}
         disabled={pending}
-        size="lg"
         type="submit"
+        variant="outline"
       >
         <span>
           {pending
             ? "Bestellung wird übermittelt …"
             : "Zahlungspflichtig bestellen"}
         </span>
-        <ArrowRight aria-hidden="true" className="size-5" />
+        <ArrowRight aria-hidden="true" />
       </Button>
     </form>
   );

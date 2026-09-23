@@ -2,11 +2,11 @@
 
 import {
   ArrowRight,
-  CreditCard,
   Mail,
   MapPin,
   MessageSquareText,
-  Truck,
+  Package,
+  WalletCards,
 } from "lucide-react";
 import type { Route } from "next";
 import { useActionState, type ReactNode } from "react";
@@ -68,7 +68,7 @@ function MethodOptions({
 }: Readonly<{
   defaultValue?: string;
   error?: string;
-  icon: typeof Truck;
+  icon: typeof Package;
   legend: string;
   name: "paymentMethodId" | "shippingMethodId";
   options: readonly CheckoutOption[];
@@ -76,19 +76,20 @@ function MethodOptions({
   return (
     <fieldset
       aria-describedby={error ? `${name}-error` : undefined}
-      className="rounded-2xl border bg-secondary/35 p-4 sm:p-5"
+      className="rounded-2xl bg-secondary/35 p-4 sm:p-5"
     >
       <legend className="sr-only">{legend}</legend>
-      <div className="flex items-center gap-3 text-base font-semibold tracking-[-0.03em]">
-        <span className="grid size-10 place-items-center rounded-xl bg-primary/10 text-primary">
-          <Icon aria-hidden="true" className="size-5" strokeWidth={1.8} />
-        </span>
+      <div
+        aria-hidden="true"
+        className="flex items-center gap-3 text-base font-semibold tracking-[-0.03em]"
+      >
+        <Icon className="size-5 text-muted-foreground" strokeWidth={1.7} />
         {legend}
       </div>
-      <div className="mt-4 grid gap-2.5">
+      <div className="mt-3 grid gap-2.5">
         {options.map((option, index) => (
           <label
-            className="group flex min-h-16 cursor-pointer items-center gap-3 rounded-xl border bg-card px-4 py-3 transition-[border-color,background-color,box-shadow] has-checked:border-primary has-checked:bg-primary/[0.045] has-checked:shadow-[0_0_0_1px_var(--primary)] hover:border-primary/50 focus-within:ring-2 focus-within:ring-primary/30"
+            className="flex min-h-15 cursor-pointer items-center gap-3 rounded-xl border border-border/75 bg-card px-4 py-3 transition-[border-color,box-shadow] has-checked:border-foreground/25 has-checked:shadow-sm hover:border-foreground/25 focus-within:ring-2 focus-within:ring-primary/30"
             key={option.id}
           >
             <input
@@ -227,7 +228,7 @@ export function CheckoutPaymentForm({
           <MethodOptions
             defaultValue={selectedShippingMethodId}
             error={fieldErrors.shippingMethodId}
-            icon={Truck}
+            icon={Package}
             legend="Versandart"
             name="shippingMethodId"
             options={shippingMethods}
@@ -236,7 +237,7 @@ export function CheckoutPaymentForm({
             <MethodOptions
               defaultValue={selectedPaymentMethodId}
               error={fieldErrors.paymentMethodId}
-              icon={CreditCard}
+              icon={WalletCards}
               legend="Zahlungsart"
               name="paymentMethodId"
               options={paymentMethods}

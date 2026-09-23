@@ -100,6 +100,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
             className="shrink-0 rounded-full hover:bg-destructive motion-safe:hover:translate-x-px motion-safe:active:scale-90"
             size="icon-lg"
             type="submit"
+            variant="solid"
           >
             <ArrowRight className="size-4" />
           </Button>
@@ -159,6 +160,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
                         className="shrink-0 rounded-full"
                         size="icon-lg"
                         type="submit"
+                        variant="solid"
                       >
                         <ArrowRight className="size-4" />
                       </Button>

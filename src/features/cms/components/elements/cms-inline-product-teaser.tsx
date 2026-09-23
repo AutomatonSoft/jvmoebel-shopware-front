@@ -1,6 +1,7 @@
 import { ArrowRight, ShoppingBag } from "lucide-react";
 import Image from "next/image";
 
+import { buttonVariants } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
 import type { CmsElementProps } from "@/features/cms/components/cms-element";
@@ -48,7 +49,9 @@ export function CmsInlineProductTeaser({
           )}
         </span>
 
-        <span className="mx-5 mb-5 inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground sm:mx-7 sm:mb-0">
+        <span
+          className={buttonVariants({ className: "mx-5 mb-5 sm:mx-7 sm:mb-0" })}
+        >
           {link.label}
           <ArrowRight
             aria-hidden="true"

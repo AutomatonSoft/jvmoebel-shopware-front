@@ -6,6 +6,7 @@ import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
+import { buttonVariants } from "@/components/ui/button";
 import type { ProductSearchResult } from "@/features/search/model/product-search";
 
 export type SearchResultsProps = {
@@ -176,7 +177,7 @@ export function SearchResults({
       </div>
 
       <Link
-        className="mt-4 flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-destructive"
+        className={buttonVariants({ className: "mt-4 w-full" })}
         href={getSearchUrl(debouncedQuery)}
         onClick={onResultSelect}
       >

@@ -130,7 +130,7 @@ export function ContactWidget({ channels }: ContactWidgetProps) {
 
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        variant="default"
+        variant="solid"
         size="icon"
         className="size-14 rounded-full shadow-xl shadow-primary/20 transition-transform active:scale-95"
         aria-label={isOpen ? "Close contact menu" : "Open contact menu"}

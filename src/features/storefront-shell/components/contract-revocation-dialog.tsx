@@ -3,7 +3,7 @@
 import { Dialog } from "@base-ui/react/dialog";
 import { ArrowUpRight, Send, X } from "lucide-react";
 import type { FormEvent } from "react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { buildContractRevocationMailto } from "@/features/storefront-shell/model/contract-revocation";
 import type { StorefrontFooterContent } from "@/features/storefront-shell/model/footer";
@@ -38,9 +38,14 @@ export function ContractRevocationDialog({
 
   return (
     <Dialog.Root>
-      <Dialog.Trigger className="mt-6 inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground transition-[background,transform] hover:bg-primary/90 focus-visible:ring-3 focus-visible:ring-ring/30 focus-visible:outline-none motion-safe:active:translate-y-px">
+      <Dialog.Trigger
+        className={buttonVariants({ className: "mt-6 rounded-full" })}
+      >
         {content.buttonLabel}
-        <ArrowUpRight className="size-4" aria-hidden="true" />
+        <ArrowUpRight
+          className="size-4 transition-transform motion-safe:group-hover/button:translate-x-0.5 motion-safe:group-hover/button:-translate-y-0.5"
+          aria-hidden="true"
+        />
       </Dialog.Trigger>
 
       <Dialog.Portal>
@@ -133,10 +138,7 @@ export function ContractRevocationDialog({
                 />
               </div>
 
-              <Button
-                className="bg-footer-accent text-footer-on-accent hover:bg-footer-accent-hover h-10 w-full rounded-xl text-sm font-semibold"
-                type="submit"
-              >
+              <Button className="h-10 w-full rounded-xl text-sm" type="submit">
                 {content.submitLabel}
                 <Send className="size-4" aria-hidden="true" />
               </Button>
