@@ -10,7 +10,7 @@ export function CartPayPalCheckoutButton({
   return (
     <Button
       aria-label="Mit PayPal zahlen"
-      className="h-12 w-full rounded-xl border-[#e3ad16] bg-[#ffc439] text-sm font-semibold text-[#111820] shadow-none hover:bg-[#f5b91d]"
+      className="h-12 w-full rounded-xl border-border bg-background text-sm font-semibold text-foreground shadow-none hover:border-foreground/25 hover:bg-muted"
       onClick={onCheckout}
       type="button"
     >
