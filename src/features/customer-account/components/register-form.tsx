@@ -61,11 +61,13 @@ export function RegisterForm({
   >;
 
   const submitRegistration = handleSubmit((_values, event) => {
-    if (pending || !event?.currentTarget) {
+    const form = event?.target;
+
+    if (pending || !(form instanceof HTMLFormElement)) {
       return;
     }
 
-    const formData = new FormData(event.currentTarget);
+    const formData = new FormData(form);
 
     startTransition(() => {
       formAction(formData);
