@@ -94,12 +94,15 @@ const customerRegistrationSchema = registrationInputSchema.transform(
 );
 
 export const customerRegistrationFieldMessages = {
+  acceptedDataProtection: "Bitte stimmen Sie den Datenschutzbestimmungen zu.",
   accountType: "Bitte wählen Sie eine Kontoart aus.",
   company: "Bitte geben Sie Ihren Firmennamen ein.",
+  countryId: "Das Registrierungsland ist nicht gültig.",
   email: "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
   firstName: "Bitte geben Sie Ihren Vornamen ein.",
   lastName: "Bitte geben Sie Ihren Nachnamen ein.",
   password: "Das Passwort muss zwischen 8 und 72 Zeichen lang sein.",
+  salutationId: "Bitte wählen Sie eine gültige Anrede aus.",
   vatId: "Bitte geben Sie Ihre Steuer- oder USt-IdNr. ein.",
 } as const;
 
@@ -143,6 +146,16 @@ export function validateCustomerRegistration(formData: FormData) {
 
 export function getCustomerRegistrationFieldErrors(error: ZodError) {
   return getFieldErrors(error, customerRegistrationFieldMessages);
+}
+
+export function getCustomerRegistrationValidationMessage(
+  fieldErrors: NonNullable<AccountActionState["fieldErrors"]>,
+) {
+  const messages = [...new Set(Object.values(fieldErrors))];
+
+  return messages.length > 0
+    ? messages.join(" ")
+    : "Die Registrierungsdaten sind unvollständig oder ungültig.";
 }
 
 function getFieldErrors(

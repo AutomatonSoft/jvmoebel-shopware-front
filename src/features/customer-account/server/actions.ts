@@ -1,16 +1,18 @@
 "use server";
 
-import { ApiClientError } from "@shopware/api-client";
+import { ApiClientError, type ApiError } from "@shopware/api-client";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 import type { AccountActionState } from "@/features/customer-account/model/account";
 import { clearCheckoutMethodSelection } from "@/features/checkout/server/method-selection";
 import {
+  customerRegistrationFieldMessages,
   getCustomerEmailChangeFieldErrors,
   getCustomerLoginFieldErrors,
   getCustomerProfileUpdateFieldErrors,
   getCustomerRegistrationFieldErrors,
+  getCustomerRegistrationValidationMessage,
   getCustomerSettingsUpdateFieldErrors,
   validateCustomerEmailChange,
   validateCustomerLogin,
@@ -46,6 +48,52 @@ function getRedirectPath(formData: FormData) {
   return redirectTo === "/warenkorb" || redirectTo === "/kasse"
     ? redirectTo
     : null;
+}
+
+const registrationApiFieldMessages = {
+  company: "Der Firmenname wurde von Shopware nicht akzeptiert.",
+  email:
+    "Diese E-Mail-Adresse ist bereits registriert oder kann nicht verwendet werden.",
+  firstName: "Der Vorname wurde von Shopware nicht akzeptiert.",
+  lastName: "Der Nachname wurde von Shopware nicht akzeptiert.",
+  password: "Das Passwort erfüllt die Anforderungen von Shopware nicht.",
+  salutationId: "Die gewählte Anrede ist nicht gültig.",
+  vatId: "Die Steuer- oder USt-IdNr. wurde von Shopware nicht akzeptiert.",
+} as const;
+
+function getRegistrationApiErrorState(
+  error: ApiClientError<{ errors: ApiError[] }>,
+) {
+  const fieldErrors: Record<string, string> = {};
+
+  for (const apiError of error.details.errors) {
+    const pointer = apiError.source?.pointer?.toLowerCase() ?? "";
+    const code = apiError.code?.toLowerCase() ?? "";
+
+    for (const [field, message] of Object.entries(
+      registrationApiFieldMessages,
+    )) {
+      const apiField = field === "vatId" ? "vatids" : field.toLowerCase();
+
+      if (pointer.includes(apiField) || code.includes(apiField)) {
+        fieldErrors[field] ??= message;
+      }
+    }
+  }
+
+  if (Object.keys(fieldErrors).length === 0) {
+    return {
+      message:
+        "Shopware hat die Registrierung abgelehnt. Die übermittelten Daten erfüllen die Anforderungen des Shops nicht.",
+      status: "invalid" as const,
+    };
+  }
+
+  return {
+    fieldErrors,
+    message: getCustomerRegistrationValidationMessage(fieldErrors),
+    status: "invalid" as const,
+  };
 }
 
 export async function loginCustomer(
@@ -97,12 +145,30 @@ export async function registerCustomer(
   _previousState: AccountActionState,
   formData: FormData,
 ): Promise<AccountActionState> {
+  let options: Awaited<ReturnType<typeof getRegistrationOptions>>;
+
+  try {
+    options = await getRegistrationOptions();
+  } catch (error) {
+    console.error("Customer registration options could not be loaded.", error);
+
+    return {
+      message:
+        "Die Registrierung ist gerade nicht möglich. Bitte versuchen Sie es erneut.",
+      status: "error",
+    };
+  }
+
+  formData.set("countryId", options.defaultCountryId);
+
   const validation = validateCustomerRegistration(formData);
 
   if (!validation.success) {
+    const fieldErrors = getCustomerRegistrationFieldErrors(validation.error);
+
     return {
-      fieldErrors: getCustomerRegistrationFieldErrors(validation.error),
-      message: "Bitte prüfen Sie Ihre Angaben.",
+      fieldErrors,
+      message: getCustomerRegistrationValidationMessage(fieldErrors),
       status: "invalid",
     };
   }
@@ -110,17 +176,17 @@ export async function registerCustomer(
   const registration = validation.data;
 
   try {
-    const options = await getRegistrationOptions();
-
     if (
-      registration.countryId !== options.defaultCountryId ||
-      (registration.salutationId &&
-        !options.salutations.some(
-          (salutation) => salutation.id === registration.salutationId,
-        ))
+      registration.salutationId &&
+      !options.salutations.some(
+        (salutation) => salutation.id === registration.salutationId,
+      )
     ) {
+      const message = customerRegistrationFieldMessages.salutationId;
+
       return {
-        message: "Bitte prüfen Sie Ihre Angaben.",
+        fieldErrors: { salutationId: message },
+        message,
         status: "invalid",
       };
     }
@@ -152,11 +218,7 @@ export async function registerCustomer(
     }
   } catch (error) {
     if (error instanceof ApiClientError && error.status === 400) {
-      return {
-        message:
-          "Das Konto konnte mit diesen Angaben nicht erstellt werden. Möglicherweise ist die E-Mail-Adresse bereits registriert.",
-        status: "invalid",
-      };
+      return getRegistrationApiErrorState(error);
     }
 
     console.error("Customer registration failed.", error);

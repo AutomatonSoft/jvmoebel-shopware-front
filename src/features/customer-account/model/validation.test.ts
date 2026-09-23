@@ -4,6 +4,7 @@ import {
   getCustomerEmailChangeFieldErrors,
   getCustomerLoginFieldErrors,
   getCustomerRegistrationFieldErrors,
+  getCustomerRegistrationValidationMessage,
   parseCustomerEmailChange,
   parseCustomerLogin,
   parseCustomerProfileUpdate,
@@ -130,6 +131,28 @@ describe("customer account validation", () => {
         email: "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
         vatId: "Bitte geben Sie Ihre Steuer- oder USt-IdNr. ein.",
       });
+    }
+  });
+
+  test("explains missing internal registration values", () => {
+    const formData = createRegistrationForm();
+
+    formData.delete("acceptedDataProtection");
+    formData.delete("countryId");
+    const result = validateCustomerRegistration(formData);
+
+    expect(result.success).toBeFalse();
+    if (!result.success) {
+      const fieldErrors = getCustomerRegistrationFieldErrors(result.error);
+
+      expect(fieldErrors).toEqual({
+        acceptedDataProtection:
+          "Bitte stimmen Sie den Datenschutzbestimmungen zu.",
+        countryId: "Das Registrierungsland ist nicht gültig.",
+      });
+      expect(getCustomerRegistrationValidationMessage(fieldErrors)).toBe(
+        "Bitte stimmen Sie den Datenschutzbestimmungen zu. Das Registrierungsland ist nicht gültig.",
+      );
     }
   });
 

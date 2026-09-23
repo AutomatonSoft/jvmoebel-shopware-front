@@ -3,7 +3,7 @@
 import { ArrowRight, Building2, ReceiptText } from "lucide-react";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { startTransition, useActionState } from "react";
+import { startTransition, useActionState, type FormEvent } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import type { z } from "zod";
 
@@ -60,19 +60,24 @@ export function RegisterForm({
     Record<keyof typeof customerRegistrationFieldMessages, unknown>
   >;
 
-  const submitRegistration = handleSubmit((_values, event) => {
-    const form = event?.target;
+  const submitRegistration = (event: FormEvent<HTMLFormElement>) => {
+    const form = event.currentTarget;
 
-    if (pending || !(form instanceof HTMLFormElement)) {
-      return;
-    }
+    void handleSubmit(() => {
+      if (pending) {
+        return;
+      }
 
-    const formData = new FormData(form);
+      const formData = new FormData(form);
 
-    startTransition(() => {
-      formAction(formData);
-    });
-  });
+      formData.set("acceptedDataProtection", "on");
+      formData.set("countryId", options.defaultCountryId);
+
+      startTransition(() => {
+        formAction(formData);
+      });
+    })(event);
+  };
 
   const getFieldError = (
     field: keyof typeof customerRegistrationFieldMessages,
@@ -82,12 +87,7 @@ export function RegisterForm({
       : fieldErrors[field];
 
   return (
-    <form
-      action={formAction}
-      className="space-y-2"
-      noValidate
-      onSubmit={submitRegistration}
-    >
+    <form className="space-y-2" noValidate onSubmit={submitRegistration}>
       {redirectTo && (
         <input name="redirectTo" type="hidden" value={redirectTo} />
       )}
