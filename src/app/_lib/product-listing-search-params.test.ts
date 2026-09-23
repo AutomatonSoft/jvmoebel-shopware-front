@@ -29,4 +29,10 @@ describe("getProductPageRequest", () => {
     expect(request.propertyIds).toEqual(["legacy-option"]);
     expect(request.propertyGroups).toEqual({});
   });
+
+  test("normalizes the product search query", () => {
+    const request = getProductPageRequest({ query: "  Sofa  " });
+
+    expect(request.search).toBe("Sofa");
+  });
 });

@@ -80,18 +80,40 @@ export const guestCheckoutFieldMessages = {
 } as const;
 
 const checkoutMethodSelectionSchema = z.object({
-  acceptedTerms: z.literal(true),
   customerComment: optionalString(1000),
   paymentMethodId: requiredString(64),
   shippingMethodId: requiredString(64),
 });
 
+const checkoutOrderConfirmationSchema = z.object({
+  acceptedTerms: z.literal(true),
+});
+
+const checkoutEmailUpdateSchema = z
+  .object({
+    email: emailSchema,
+    emailConfirmation: z.string().trim(),
+    password: z.string().max(4096),
+  })
+  .refine(({ email, emailConfirmation }) => email === emailConfirmation, {
+    path: ["emailConfirmation"],
+  });
+
 const guestPasswordSchema = z.string().min(8).max(4096);
 
 const checkoutMethodFieldMessages = {
-  acceptedTerms: "Bitte stimmen Sie den Bedingungen zu.",
   paymentMethodId: "Bitte wählen Sie eine Zahlungsart aus.",
   shippingMethodId: "Bitte wählen Sie eine Versandart aus.",
+} as const;
+
+const checkoutOrderConfirmationFieldMessages = {
+  acceptedTerms: "Bitte stimmen Sie den Bedingungen zu.",
+} as const;
+
+const checkoutEmailUpdateFieldMessages = {
+  email: "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+  emailConfirmation: "Die E-Mail-Adressen stimmen nicht überein.",
+  password: "Bitte geben Sie Ihr aktuelles Passwort ein.",
 } as const;
 
 const guestPasswordFieldMessages = {
@@ -116,11 +138,11 @@ function getGuestCheckoutRegistrationInput(formData: FormData) {
 
   return {
     acceptedDataProtection: formData.get("acceptedDataProtection") === "on",
-    billingAddress: getAddressInput(formData),
+    billingAddress: getAddressInput(formData, "billingAddress."),
     email: formData.get("email"),
     shippingAddress: shippingSameAsBilling
       ? undefined
-      : getAddressInput(formData, "shipping"),
+      : getAddressInput(formData, "shippingAddress."),
     shippingSameAsBilling,
   };
 }
@@ -142,7 +164,7 @@ export function getGuestCheckoutRegistrationFieldErrors(error: ZodError) {
       typeof field === "string" &&
       field in checkoutAddressFieldMessages
     ) {
-      const name = `${address === "shippingAddress" ? "shipping" : ""}${field}`;
+      const name = `${address}.${field}`;
 
       fieldErrors[name] ??=
         checkoutAddressFieldMessages[
@@ -189,15 +211,36 @@ export function getCheckoutAddressFieldErrors(error: ZodError) {
 
 export function validateCheckoutMethodSelection(formData: FormData) {
   return checkoutMethodSelectionSchema.safeParse({
-    acceptedTerms: formData.get("acceptedTerms") === "on",
     customerComment: formData.get("customerComment"),
     paymentMethodId: formData.get("paymentMethodId"),
     shippingMethodId: formData.get("shippingMethodId"),
   });
 }
 
+export function validateCheckoutEmailUpdate(formData: FormData) {
+  return checkoutEmailUpdateSchema.safeParse({
+    email: formData.get("email"),
+    emailConfirmation: formData.get("emailConfirmation"),
+    password: formData.get("password") ?? "",
+  });
+}
+
+export function getCheckoutEmailUpdateFieldErrors(error: ZodError) {
+  return getFieldErrors(error, checkoutEmailUpdateFieldMessages);
+}
+
 export function getCheckoutMethodSelectionFieldErrors(error: ZodError) {
   return getFieldErrors(error, checkoutMethodFieldMessages);
+}
+
+export function validateCheckoutOrderConfirmation(formData: FormData) {
+  return checkoutOrderConfirmationSchema.safeParse({
+    acceptedTerms: formData.get("acceptedTerms") === "on",
+  });
+}
+
+export function getCheckoutOrderConfirmationFieldErrors(error: ZodError) {
+  return getFieldErrors(error, checkoutOrderConfirmationFieldMessages);
 }
 
 export function validateGuestPassword(formData: FormData) {

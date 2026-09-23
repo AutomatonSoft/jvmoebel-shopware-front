@@ -76,7 +76,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
   return (
     <>
       <form
-        action="/moebel-sortiment"
+        action="/suche"
         className={`group/search h-11 items-center rounded-full border bg-muted/80 p-1 pl-4 transition-[background,border-color,box-shadow] hover:border-foreground/15 hover:bg-card/70 focus-within:border-foreground/25 focus-within:bg-card focus-within:ring-3 focus-within:ring-primary/15 ${className}`}
         onFocus={() => {
           setIsOpen(true);
@@ -90,6 +90,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
           name="query"
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Moebel suchen"
+          required
           type="search"
           value={query}
         />
@@ -125,7 +126,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
                   animate="visible"
                   aria-label="Produktsuche"
                   aria-modal="true"
-                  className="w-[min(50vw,48rem)] overflow-hidden rounded-[1.375rem] border bg-background shadow-2xl"
+                  className="w-[min(64rem,calc(100vw-2rem))] overflow-hidden rounded-[1.375rem] border bg-background shadow-2xl"
                   exit={shouldReduceMotion ? { opacity: 0 } : "hidden"}
                   initial={shouldReduceMotion ? false : "hidden"}
                   role="dialog"
@@ -136,7 +137,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
                   variants={headerSearchPanelVariants}
                 >
                   <form
-                    action="/moebel-sortiment"
+                    action="/suche"
                     className="group/search flex h-11 items-center border-b bg-muted/80 px-4 py-1"
                     role="search"
                   >
@@ -148,6 +149,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
                       onChange={(event) => setQuery(event.target.value)}
                       placeholder="Moebel suchen"
                       ref={overlayInputRef}
+                      required
                       type="search"
                       value={query}
                     />
@@ -165,7 +167,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
 
                   <div
                     aria-live="polite"
-                    className="max-h-[min(30rem,70dvh)] min-h-18 overflow-y-auto px-4 pt-3 pb-4"
+                    className="max-h-[min(38rem,75dvh)] min-h-18 overflow-y-auto px-5 pt-4 pb-5"
                   >
                     <SearchResults
                       currency={search.currency}

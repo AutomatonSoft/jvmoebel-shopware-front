@@ -13,6 +13,7 @@ import {
   parseProductId,
   parsePromotionCode,
 } from "@/features/cart/model/validation";
+import type { AddToCartActionState } from "@/features/cart/model/cart";
 import {
   addMockProduct,
   applyMockPromotionCode,
@@ -41,6 +42,7 @@ async function runCartMutation<Result>(
     const result = await mutation(session);
 
     await persistCustomerContext(session.getContextToken());
+    revalidatePath("/kasse");
     revalidatePath("/warenkorb");
 
     return result;
@@ -57,6 +59,7 @@ async function runCartMutation<Result>(
 async function runMockCartMutation(mutation: () => Promise<void>) {
   try {
     await mutation();
+    revalidatePath("/kasse");
     revalidatePath("/warenkorb");
   } catch (error) {
     console.error("Mock cart mutation failed.", error);
@@ -64,7 +67,14 @@ async function runMockCartMutation(mutation: () => Promise<void>) {
   }
 }
 
+function getCartReturnPath(formData: FormData) {
+  return formData.get("returnTo") === "/kasse?schritt=bestaetigung"
+    ? "/kasse?schritt=bestaetigung"
+    : "/warenkorb";
+}
+
 export async function updateCartItem(formData: FormData) {
+  const returnPath = getCartReturnPath(formData);
   const cartItem = parseCartItemUpdate(formData);
 
   if (!cartItem) {
@@ -81,10 +91,11 @@ export async function updateCartItem(formData: FormData) {
     );
   }
 
-  redirect("/warenkorb?meldung=menge");
+  redirect(returnPath);
 }
 
 export async function removeCartItem(formData: FormData) {
+  const returnPath = getCartReturnPath(formData);
   const id = parseCartItemRemoval(formData);
 
   if (!id) {
@@ -99,7 +110,7 @@ export async function removeCartItem(formData: FormData) {
     );
   }
 
-  redirect("/warenkorb?meldung=entfernt");
+  redirect(returnPath);
 }
 
 export async function applyPromotionCode(formData: FormData) {
@@ -120,28 +131,60 @@ export async function applyPromotionCode(formData: FormData) {
   redirect("/warenkorb?meldung=gutschein");
 }
 
-export async function addProductToCart(formData: FormData) {
+export async function addProductToCart(
+  _previousState: AddToCartActionState,
+  formData: FormData,
+): Promise<AddToCartActionState> {
   const productId = parseProductId(formData);
 
   if (!productId) {
-    redirect("/warenkorb?fehler=eingabe");
+    return {
+      message: "Das Produkt konnte nicht hinzugefügt werden.",
+      status: "error",
+    };
   }
 
-  if (shouldUseShopwareMocks()) {
-    await runMockCartMutation(() => addMockProduct(productId));
-  } else {
-    const result = await runCartMutation(async (session) => {
+  try {
+    if (shouldUseShopwareMocks()) {
+      await addMockProduct(productId);
+    } else {
+      const session = await createCustomerSession();
+
       if (!(await isShopwareProductAvailable(session.client, productId))) {
         throw new ProductUnavailableError();
       }
 
-      return addShopwareProduct(session.client, productId);
-    });
+      const result = await addShopwareProduct(session.client, productId);
 
-    if (!result.succeeded) {
-      redirect("/warenkorb?fehler=shopware");
+      if (!result.succeeded) {
+        return {
+          message:
+            "Shopware konnte den Artikel nicht in den Warenkorb übernehmen.",
+          status: "error",
+        };
+      }
+
+      await persistCustomerContext(session.getContextToken());
     }
-  }
 
-  redirect("/warenkorb?meldung=hinzugefuegt");
+    revalidatePath("/", "layout");
+    revalidatePath("/kasse");
+    revalidatePath("/warenkorb");
+
+    return { status: "success" };
+  } catch (error) {
+    if (error instanceof ProductUnavailableError) {
+      return {
+        message: "Dieser Artikel ist derzeit nicht verfügbar.",
+        status: "error",
+      };
+    }
+
+    console.error("Adding product to cart failed.", error);
+    return {
+      message:
+        "Der Artikel konnte nicht hinzugefügt werden. Bitte versuchen Sie es erneut.",
+      status: "error",
+    };
+  }
 }

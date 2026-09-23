@@ -151,6 +151,35 @@ export function ProductGallery({ badge, images }: ProductGalleryProps) {
                 src={activeImage.url}
                 unoptimized={activeImage.url.startsWith("http")}
               />
+              {hasMultipleImages && (
+                <>
+                  <button
+                    aria-label="Vorheriges Produktbild"
+                    className="absolute top-1/2 left-2 z-10 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-background/90 text-foreground shadow-lg backdrop-blur transition-[background,transform] hover:bg-background focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:left-5 sm:size-12"
+                    onClick={showPreviousImage}
+                    type="button"
+                  >
+                    <ChevronLeft
+                      aria-hidden="true"
+                      className="size-5 sm:size-6"
+                    />
+                  </button>
+                  <button
+                    aria-label="Nächstes Produktbild"
+                    className="absolute top-1/2 right-2 z-10 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-background/90 text-foreground shadow-lg backdrop-blur transition-[background,transform] hover:bg-background focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:right-5 sm:size-12"
+                    onClick={showNextImage}
+                    type="button"
+                  >
+                    <ChevronRight
+                      aria-hidden="true"
+                      className="size-5 sm:size-6"
+                    />
+                  </button>
+                  <span className="absolute bottom-3 left-1/2 z-10 -translate-x-1/2 rounded-full bg-foreground/75 px-3 py-1.5 text-[0.65rem] font-semibold text-background backdrop-blur sm:bottom-5">
+                    {activeImageIndex + 1} / {images.length}
+                  </span>
+                </>
+              )}
               <Dialog.Close
                 aria-label="Vollbildansicht schlie\u00dfen"
                 className="absolute top-2 right-2 grid size-11 place-items-center rounded-full bg-background/90 text-foreground shadow-md backdrop-blur transition-colors hover:bg-background focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:top-4 sm:right-4"

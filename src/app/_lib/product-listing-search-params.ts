@@ -9,6 +9,7 @@ export type ProductListingSearchParams = Readonly<{
   minPrice?: string | string[];
   page?: string | string[];
   property?: string | string[];
+  query?: string | string[];
   sort?: string | string[];
 }>;
 
@@ -85,6 +86,8 @@ export function getProductPageRequest(
     page: getPositiveInteger(parameters.page),
     propertyGroups,
     propertyIds,
+    search:
+      getFirstParameter(parameters.query)?.trim().slice(0, 100) || undefined,
     sort: getProductSort(parameters.sort),
   };
 }

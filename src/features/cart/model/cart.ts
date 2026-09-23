@@ -1,3 +1,8 @@
+export type ShopCartItemOption = Readonly<{
+  label: string;
+  value: string;
+}>;
+
 export type ShopCartItem = Readonly<{
   deliveryLabel?: string;
   id: string;
@@ -12,6 +17,7 @@ export type ShopCartItem = Readonly<{
   quantity: number;
   quantityStep: number;
   removable: boolean;
+  selectedOptions: readonly ShopCartItemOption[];
   stackable: boolean;
   totalPrice: number;
   unitPrice: number;
@@ -34,6 +40,11 @@ export type ShopCart = Readonly<{
   shippingCosts: number;
   subtotal: number;
   total: number;
+}>;
+
+export type AddToCartActionState = Readonly<{
+  message?: string;
+  status: "error" | "idle" | "success";
 }>;
 
 export function getShopCartItemCount(cart: Pick<ShopCart, "items">) {

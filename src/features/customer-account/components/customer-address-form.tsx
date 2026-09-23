@@ -1,6 +1,6 @@
 "use client";
 
-import { Save } from "lucide-react";
+import { BadgeCheck } from "lucide-react";
 import { useActionState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -59,7 +59,7 @@ export function CustomerAddressForm({
         }}
       />
       <Button className="mt-6" disabled={pending} type="submit">
-        <Save aria-hidden="true" />
+        <BadgeCheck aria-hidden="true" strokeWidth={1.8} />
         {pending ? "Wird gespeichert …" : "Adresse speichern"}
       </Button>
     </form>

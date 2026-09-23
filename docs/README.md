@@ -2,8 +2,14 @@
 
 ## Техническая часть витрины
 
-| Документ                                                  | Описание                                     |
+| Documentation                                             | Purpose                                      |
 | --------------------------------------------------------- | -------------------------------------------- |
+| [`storefront-config.md`](storefront/storefront-config.md) | Global header and footer configuration       |
+| [`product-listing.md`](storefront/product-listing.md)     | Product listing model and behavior           |
+| [`discount-offers.md`](storefront/discount-offers.md)     | Discount offers page composition             |
+| [`about-page.md`](storefront/about-page.md)               | About page composition                       |
+| [`video-shop.md`](storefront/video-shop.md)               | Video Shop page composition                  |
+| [`legacy-redirects.md`](storefront/legacy-redirects.md)   | Legacy URL redirect delivery                 |
 | [`dynamic-routing.md`](storefront/dynamic-routing.md)     | Как Shopware SEO URL открывает CMS-страницу. |
 | [`storefront-config.md`](storefront/storefront-config.md) | Конфигурация шапки и подвала.                |
 | [`product-listing.md`](catalog/product-listing.md)        | Специальный каталог `/moebel-sortiment`.     |

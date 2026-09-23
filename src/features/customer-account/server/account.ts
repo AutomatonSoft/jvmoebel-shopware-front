@@ -1,6 +1,5 @@
 import "server-only";
 
-import { unstable_cache } from "next/cache";
 import { cache } from "react";
 
 import {
@@ -11,17 +10,7 @@ import {
 } from "@/integrations/shopware/customer-account";
 import { createCustomerSession } from "@/features/customer-account/server/session";
 import { getShopwareCheckoutOptions } from "@/integrations/shopware/checkout";
-import { shopwareCacheTtlSeconds } from "@/integrations/shopware/cache-policy";
 import { getShopwareRequestSession } from "@/integrations/shopware/session";
-
-const getCachedShopwareRegistrationOptions = unstable_cache(
-  () => getShopwareRegistrationOptions(getShopwareRequestSession().client),
-  ["shopware-registration-options-v2"],
-  {
-    revalidate: shopwareCacheTtlSeconds.registrationOptions,
-    tags: ["shopware:registration-options"],
-  },
-);
 
 export const getCustomerAccount = cache(async () => {
   const session = await createCustomerSession();
@@ -54,5 +43,7 @@ export const getCustomerAddressOptions = cache(async () => {
 });
 
 export async function getRegistrationOptions() {
-  return getCachedShopwareRegistrationOptions();
+  const session = getShopwareRequestSession();
+
+  return getShopwareRegistrationOptions(session.client);
 }

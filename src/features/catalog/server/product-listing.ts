@@ -60,22 +60,37 @@ export async function getShopProductListing(
 function getMockProductListingPage(
   request: ShopProductPageRequest,
 ): ShopProductListingPage {
-  const prices = shopProductListingMock.products.map(
-    (product) => product.unitPrice,
-  );
+  const normalizedSearch = request.search?.toLocaleLowerCase();
+  const searchableProducts = normalizedSearch
+    ? shopProductListingMock.products.filter((product) =>
+        [
+          product.name,
+          product.description,
+          product.categoryLabel,
+          product.company,
+          product.material,
+          ...product.colors.map((color) => color.label),
+        ].some((value) => value.toLocaleLowerCase().includes(normalizedSearch)),
+      )
+    : shopProductListingMock.products;
+  const priceSource =
+    searchableProducts.length > 0
+      ? searchableProducts
+      : shopProductListingMock.products;
+  const prices = priceSource.map((product) => product.unitPrice);
   const minimumPriceBound = Math.floor(Math.min(...prices) / 10) * 10;
   const maximumPriceBound = Math.ceil(Math.max(...prices) / 10) * 10;
   const selectedPropertyIds = new Set(request.propertyIds);
   const attributes = Object.fromEntries(
-    buildShopProductFilterOptions(
-      shopProductListingMock.products,
-    ).attributeGroups.flatMap((group) => {
-      const selectedOptions = group.options
-        .filter((option) => selectedPropertyIds.has(option.value))
-        .map((option) => option.value);
+    buildShopProductFilterOptions(searchableProducts).attributeGroups.flatMap(
+      (group) => {
+        const selectedOptions = group.options
+          .filter((option) => selectedPropertyIds.has(option.value))
+          .map((option) => option.value);
 
-      return selectedOptions.length > 0 ? [[group.id, selectedOptions]] : [];
-    }),
+        return selectedOptions.length > 0 ? [[group.id, selectedOptions]] : [];
+      },
+    ),
   );
   const filters = {
     attributes,
@@ -85,7 +100,7 @@ function getMockProductListingPage(
     minimumPrice: request.minimumPrice ?? minimumPriceBound,
   };
   const filteredProducts = filterAndSortShopProducts(
-    shopProductListingMock.products,
+    searchableProducts,
     filters,
     request.sort,
   );
@@ -93,10 +108,7 @@ function getMockProductListingPage(
 
   return {
     ...shopProductListingMock,
-    filterOptions: buildShopProductFilterOptions(
-      shopProductListingMock.products,
-      filters,
-    ),
+    filterOptions: buildShopProductFilterOptions(searchableProducts, filters),
     filters,
     pagination: {
       currentPage: pagination.currentPage,

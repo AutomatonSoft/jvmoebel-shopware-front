@@ -2,20 +2,10 @@
 
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
 
 import { ShopProductCard } from "@/features/catalog/components/shop-product-card";
+import { useProductRail } from "@/features/catalog/hooks/use-product-rail";
 import type { ShopProductListing } from "@/features/catalog/model/product-listing";
-
-type ScrollState = Readonly<{
-  canScrollBack: boolean;
-  canScrollForward: boolean;
-}>;
-
-const initialScrollState: ScrollState = {
-  canScrollBack: false,
-  canScrollForward: false,
-};
 
 type WishlistRecommendationsProps = Readonly<{
   isLoading: boolean;
@@ -26,70 +16,9 @@ export function WishlistRecommendations({
   isLoading,
   listing,
 }: WishlistRecommendationsProps) {
-  const railRef = useRef<HTMLUListElement>(null);
-  const [scrollState, setScrollState] =
-    useState<ScrollState>(initialScrollState);
   const products = listing?.products ?? [];
-
-  useEffect(() => {
-    const rail = railRef.current;
-
-    if (!rail) {
-      return;
-    }
-
-    const railElement = rail;
-    let animationFrame: number | null = null;
-
-    function updateScrollState() {
-      animationFrame = null;
-      const maximumScrollLeft =
-        railElement.scrollWidth - railElement.clientWidth;
-      const canScrollBack = railElement.scrollLeft > 2;
-      const canScrollForward = railElement.scrollLeft < maximumScrollLeft - 2;
-
-      setScrollState((currentState) =>
-        currentState.canScrollBack === canScrollBack &&
-        currentState.canScrollForward === canScrollForward
-          ? currentState
-          : { canScrollBack, canScrollForward },
-      );
-    }
-
-    function requestScrollStateUpdate() {
-      if (animationFrame === null) {
-        animationFrame = window.requestAnimationFrame(updateScrollState);
-      }
-    }
-
-    requestScrollStateUpdate();
-    railElement.addEventListener("scroll", requestScrollStateUpdate, {
-      passive: true,
-    });
-    window.addEventListener("resize", requestScrollStateUpdate);
-
-    return () => {
-      railElement.removeEventListener("scroll", requestScrollStateUpdate);
-      window.removeEventListener("resize", requestScrollStateUpdate);
-
-      if (animationFrame !== null) {
-        window.cancelAnimationFrame(animationFrame);
-      }
-    };
-  }, [products.length]);
-
-  function scrollRail(direction: -1 | 1) {
-    const rail = railRef.current;
-
-    if (!rail) {
-      return;
-    }
-
-    rail.scrollBy({
-      behavior: "smooth",
-      left: direction * Math.max(rail.clientWidth * 0.8, 280),
-    });
-  }
+  const { canScrollBack, canScrollForward, railRef, scrollRail } =
+    useProductRail(products.length);
 
   if (!isLoading && (!listing || products.length === 0)) {
     return null;
@@ -118,7 +47,7 @@ export function WishlistRecommendations({
             <button
               aria-label="Vorherige Neuheiten anzeigen"
               className="flex size-9 items-center justify-center rounded-full border bg-card transition-[background-color,border-color,color] hover:border-foreground/35 hover:bg-secondary disabled:cursor-default disabled:opacity-35"
-              disabled={!scrollState.canScrollBack}
+              disabled={!canScrollBack}
               onClick={() => scrollRail(-1)}
               type="button"
             >
@@ -127,7 +56,7 @@ export function WishlistRecommendations({
             <button
               aria-label="Weitere Neuheiten anzeigen"
               className="flex size-9 items-center justify-center rounded-full border bg-card transition-[background-color,border-color,color] hover:border-foreground/35 hover:bg-secondary disabled:cursor-default disabled:opacity-35"
-              disabled={!scrollState.canScrollForward}
+              disabled={!canScrollForward}
               onClick={() => scrollRail(1)}
               type="button"
             >

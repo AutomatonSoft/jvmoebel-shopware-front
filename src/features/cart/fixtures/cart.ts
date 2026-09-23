@@ -21,6 +21,14 @@ function createMockCartItem(
     quantity,
     quantityStep: 1,
     removable: true,
+    selectedOptions: [
+      ...(product.colors[0]
+        ? [{ label: "Farbe", value: product.colors[0].label }]
+        : []),
+      ...(product.sizes[0]
+        ? [{ label: "Größe", value: product.sizes[0] }]
+        : []),
+    ],
     stackable: true,
     totalPrice: product.unitPrice * quantity,
     unitPrice: product.unitPrice,

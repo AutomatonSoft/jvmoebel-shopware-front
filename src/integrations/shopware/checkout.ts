@@ -4,9 +4,11 @@ import type { components } from "@shopware/api-client/store-api-types";
 
 import type {
   CheckoutCustomer,
+  CheckoutDisplayAddress,
   CheckoutMethodSelection,
   CheckoutOptions,
   CheckoutReceipt,
+  CheckoutSelectableAddress,
   GuestCheckoutRegistration,
 } from "@/features/checkout/model/checkout";
 import type { ShopwareClient } from "@/integrations/shopware/client";
@@ -14,6 +16,51 @@ import { getShopwareContext } from "@/integrations/shopware/context";
 import { isPendingCustomerAddress } from "@/integrations/shopware/customer-address";
 
 type ShopwareAddress = components["schemas"]["CustomerAddress"];
+
+function mapCheckoutAddress(
+  address: ShopwareAddress | null | undefined,
+): CheckoutDisplayAddress | undefined {
+  if (!address || isPendingCustomerAddress(address)) {
+    return undefined;
+  }
+
+  return {
+    additionalAddressLine1: address.additionalAddressLine1 || undefined,
+    city: address.city,
+    country:
+      address.country?.translated.name || address.country?.name || undefined,
+    countryId: address.countryId,
+    firstName: address.firstName,
+    lastName: address.lastName,
+    phoneNumber: address.phoneNumber || undefined,
+    street: address.street,
+    zipcode: address.zipcode || "",
+  };
+}
+
+function mapSelectableCheckoutAddress(
+  address: ShopwareAddress | null | undefined,
+): CheckoutSelectableAddress | undefined {
+  const mappedAddress = mapCheckoutAddress(address);
+
+  return mappedAddress && address?.id
+    ? { ...mappedAddress, id: address.id }
+    : undefined;
+}
+
+function getUniqueAddresses(
+  addresses: readonly (CheckoutSelectableAddress | undefined)[],
+) {
+  return Array.from(
+    new Map(
+      addresses
+        .filter((address): address is CheckoutSelectableAddress =>
+          Boolean(address),
+        )
+        .map((address) => [address.id, address]),
+    ).values(),
+  );
+}
 
 function mapAddress(
   address: GuestCheckoutRegistration["billingAddress"],
@@ -48,17 +95,37 @@ export async function getShopwareCheckoutCustomer(
   client: ShopwareClient,
 ): Promise<CheckoutCustomer | null> {
   const customer = (await getShopwareContext(client)).customer;
-  const address =
-    customer?.defaultBillingAddress ?? customer?.activeBillingAddress;
+  const billingAddress = mapCheckoutAddress(
+    customer?.defaultBillingAddress ?? customer?.activeBillingAddress,
+  );
+  const shippingAddress = mapCheckoutAddress(
+    customer?.activeShippingAddress ??
+      customer?.defaultShippingAddress ??
+      customer?.defaultBillingAddress ??
+      customer?.activeBillingAddress,
+  );
+  const activeShippingAddress =
+    customer?.activeShippingAddress ??
+    customer?.defaultShippingAddress ??
+    customer?.defaultBillingAddress ??
+    customer?.activeBillingAddress;
+  const shippingAddresses = getUniqueAddresses([
+    mapSelectableCheckoutAddress(activeShippingAddress),
+    ...(customer?.addresses ?? []).map(mapSelectableCheckoutAddress),
+  ]);
 
   return customer
     ? {
-        addressComplete: Boolean(address && !isPendingCustomerAddress(address)),
-        countryId: address?.countryId,
+        activeShippingAddressId: activeShippingAddress?.id,
+        addressComplete: Boolean(billingAddress),
+        billingAddress,
+        countryId: billingAddress?.countryId,
         email: customer.email,
         firstName: customer.firstName,
         guest: customer.guest ?? false,
         lastName: customer.lastName,
+        shippingAddress,
+        shippingAddresses,
       }
     : null;
 }
@@ -70,9 +137,39 @@ export async function updateShopwareCustomerAddress(
   const customer = (await getShopwareContext(client)).customer;
   const currentAddress =
     customer?.defaultBillingAddress ?? customer?.activeBillingAddress;
-
-  if (!customer || customer.guest || !currentAddress?.id) {
+  if (!customer || !currentAddress?.id) {
     throw new Error("The customer has no editable billing address.");
+  }
+
+  const body = {
+    ...mapAddress(address),
+    company: currentAddress.company,
+    salutationId: currentAddress.salutationId,
+  };
+
+  await client.invoke(
+    "updateCustomerAddress patch /account/address/{addressId}",
+    {
+      body,
+      fetchOptions: { cache: "no-store" },
+      pathParams: { addressId: currentAddress.id },
+    },
+  );
+}
+
+export async function updateShopwareCheckoutDeliveryAddress(
+  client: ShopwareClient,
+  address: GuestCheckoutRegistration["billingAddress"],
+) {
+  const customer = (await getShopwareContext(client)).customer;
+  const currentShippingAddress =
+    customer?.activeShippingAddress ??
+    customer?.defaultShippingAddress ??
+    customer?.defaultBillingAddress ??
+    customer?.activeBillingAddress;
+
+  if (!customer || !currentShippingAddress?.id) {
+    throw new Error("The customer has no editable delivery address.");
   }
 
   await client.invoke(
@@ -80,13 +177,68 @@ export async function updateShopwareCustomerAddress(
     {
       body: {
         ...mapAddress(address),
-        company: currentAddress.company,
-        salutationId: currentAddress.salutationId,
+        company: currentShippingAddress.company,
+        salutationId: currentShippingAddress.salutationId,
       },
       fetchOptions: { cache: "no-store" },
-      pathParams: { addressId: currentAddress.id },
+      pathParams: { addressId: currentShippingAddress.id },
     },
   );
+}
+
+export async function createShopwareCheckoutDeliveryAddress(
+  client: ShopwareClient,
+  address: GuestCheckoutRegistration["billingAddress"],
+) {
+  const customer = (await getShopwareContext(client)).customer;
+  const billingAddress =
+    customer?.defaultBillingAddress ?? customer?.activeBillingAddress;
+
+  if (!customer || customer.guest) {
+    throw new Error("The customer has no editable delivery address.");
+  }
+
+  const response = await client.invoke(
+    "createCustomerAddress post /account/address",
+    {
+      body: {
+        ...mapAddress(address),
+        company: billingAddress?.company,
+        salutationId: billingAddress?.salutationId,
+      },
+      fetchOptions: { cache: "no-store" },
+    },
+  );
+
+  if (!response.data.id) {
+    throw new Error("Shopware did not return the new delivery address.");
+  }
+
+  await client.invoke("updateContext patch /context", {
+    body: { shippingAddressId: response.data.id },
+    fetchOptions: { cache: "no-store" },
+  });
+}
+
+export async function selectShopwareCheckoutDeliveryAddress(
+  client: ShopwareClient,
+  addressId: string,
+) {
+  const customer = (await getShopwareContext(client)).customer;
+  const addressIds = new Set(
+    [customer?.activeShippingAddress, ...(customer?.addresses ?? [])]
+      .map((address) => address?.id)
+      .filter((id): id is string => Boolean(id)),
+  );
+
+  if (!customer || customer.guest || !addressIds.has(addressId)) {
+    throw new Error("The delivery address is not available to this customer.");
+  }
+
+  await client.invoke("updateContext patch /context", {
+    body: { shippingAddressId: addressId },
+    fetchOptions: { cache: "no-store" },
+  });
 }
 
 export async function getShopwareCheckoutOptions(
@@ -134,6 +286,22 @@ export async function getShopwareCheckoutOptions(
   };
 }
 
+export async function updateShopwareCheckoutMethodSelection(
+  client: ShopwareClient,
+  selection: Pick<
+    CheckoutMethodSelection,
+    "paymentMethodId" | "shippingMethodId"
+  >,
+) {
+  await client.invoke("updateContext patch /context", {
+    body: {
+      paymentMethodId: selection.paymentMethodId,
+      shippingMethodId: selection.shippingMethodId,
+    },
+    fetchOptions: { cache: "no-store" },
+  });
+}
+
 export async function registerShopwareGuest(
   client: ShopwareClient,
   registration: GuestCheckoutRegistration,
@@ -170,13 +338,7 @@ export async function createShopwareCheckoutOrder(
     redirectUrl?: string;
   }>
 > {
-  await client.invoke("updateContext patch /context", {
-    body: {
-      paymentMethodId: selection.paymentMethodId,
-      shippingMethodId: selection.shippingMethodId,
-    },
-    fetchOptions: { cache: "no-store" },
-  });
+  await updateShopwareCheckoutMethodSelection(client, selection);
 
   const orderResponse = await client.invoke(
     "createOrder post /checkout/order",

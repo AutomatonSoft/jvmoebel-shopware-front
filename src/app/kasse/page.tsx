@@ -12,7 +12,11 @@ export const metadata: Metadata = {
 };
 
 type CheckoutRouteProps = Readonly<{
-  searchParams: Promise<{ fehler?: string | string[] }>;
+  searchParams: Promise<{
+    fehler?: string | string[];
+    schritt?: string | string[];
+    zurueck?: string | string[];
+  }>;
 }>;
 
 export default async function CheckoutRoute({
@@ -22,6 +26,12 @@ export default async function CheckoutRoute({
   const error = Array.isArray(parameters.fehler)
     ? parameters.fehler[0]
     : parameters.fehler;
+  const step = Array.isArray(parameters.schritt)
+    ? parameters.schritt[0]
+    : parameters.schritt;
+  const returnStep = Array.isArray(parameters.zurueck)
+    ? parameters.zurueck[0]
+    : parameters.zurueck;
   let data: Awaited<ReturnType<typeof getCheckoutPageData>>;
 
   try {
@@ -43,5 +53,17 @@ export default async function CheckoutRoute({
     redirect("/warenkorb");
   }
 
-  return <CheckoutPage data={data} paymentError={error === "zahlung"} />;
+  return (
+    <CheckoutPage
+      addressStep={step === "adresse"}
+      confirmationStep={step === "bestaetigung"}
+      data={data}
+      deliveryAddressStep={step === "lieferadresse"}
+      emailStep={step === "email"}
+      newDeliveryAddressStep={step === "neue-lieferadresse"}
+      paymentError={error === "zahlung"}
+      paymentStep={step === "zahlung"}
+      returnToConfirmation={returnStep === "bestaetigung"}
+    />
+  );
 }
