@@ -62,6 +62,7 @@ export function AccountField({
         autoComplete={autoComplete}
         className={cn(
           "peer h-11 rounded-lg border-border/80 bg-card/80 pt-5 pb-1 pl-11 text-foreground shadow-none transition-[border-color,background-color,box-shadow] focus-visible:border-primary focus-visible:bg-card focus-visible:ring-2 focus-visible:ring-primary/10 motion-reduce:transition-none",
+          readOnly && "pointer-events-none cursor-default",
           type === "password" ? "pr-12" : "pr-3",
         )}
         defaultValue={defaultValue}
@@ -69,9 +70,15 @@ export function AccountField({
         maxLength={maxLength}
         minLength={minLength}
         name={name}
+        onFocus={(event) => {
+          if (readOnly) {
+            event.currentTarget.blur();
+          }
+        }}
         placeholder=" "
         required
         readOnly={readOnly}
+        tabIndex={readOnly ? -1 : undefined}
         type={type === "password" && passwordVisible ? "text" : type}
       />
       <Icon
