@@ -22,7 +22,7 @@ function QuantityControl({
 
   return (
     <div
-      aria-label={`Menge fÃ¼r ${item.label}`}
+      aria-label={`Menge für ${item.label}`}
       className="inline-flex h-10 items-center rounded-full border bg-background p-1"
     >
       <form action={updateCartItem}>
@@ -54,7 +54,7 @@ function QuantityControl({
           value={Math.min(item.maxQuantity, item.quantity + item.quantityStep)}
         />
         <button
-          aria-label="Menge erhÃ¶hen"
+          aria-label="Menge erhöhen"
           className="grid size-8 place-items-center rounded-full hover:bg-muted disabled:cursor-not-allowed disabled:opacity-35"
           disabled={item.quantity >= item.maxQuantity}
           type="submit"
@@ -132,7 +132,7 @@ export function CartLineItem({
         )}
         {item.selectedOptions.length > 0 && (
           <dl
-            aria-label={`AusgewÃ¤hlte Variante fÃ¼r ${item.label}`}
+            aria-label={`Ausgewählte Variante für ${item.label}`}
             className="mt-3 flex flex-wrap gap-1.5"
           >
             {item.selectedOptions.map((option) => (
@@ -183,7 +183,7 @@ export function CartLineItem({
           </strong>
           {item.quantity > 1 && (
             <span className="text-xs text-muted-foreground">
-              {formatter.format(item.unitPrice)} je StÃ¼ck
+              {formatter.format(item.unitPrice)} je Stück
             </span>
           )}
           {item.previousUnitPrice && (

@@ -245,7 +245,7 @@ export async function addCustomerCheckoutDeliveryAddress(
   if (!validation.success) {
     return {
       fieldErrors: getCheckoutAddressFieldErrors(validation.error),
-      message: "Bitte fÃ¼llen Sie alle Pflichtfelder vollstÃ¤ndig aus.",
+      message: "Bitte füllen Sie alle Pflichtfelder vollständig aus.",
       status: "invalid",
     };
   }
@@ -263,8 +263,8 @@ export async function addCustomerCheckoutDeliveryAddress(
         !options.countries.some((country) => country.id === address.countryId)
       ) {
         return {
-          fieldErrors: { countryId: "Bitte wÃ¤hlen Sie ein gÃ¼ltiges Land." },
-          message: "Bitte wÃ¤hlen Sie ein gÃ¼ltiges Land.",
+          fieldErrors: { countryId: "Bitte wählen Sie ein gültiges Land." },
+          message: "Bitte wählen Sie ein gültiges Land.",
           status: "invalid",
         };
       }
@@ -375,7 +375,7 @@ export async function selectCustomerCheckoutDeliveryAddress(
 
   if (typeof addressId !== "string" || !addressId) {
     return {
-      message: "Bitte wÃ¤hlen Sie eine Lieferadresse.",
+      message: "Bitte wählen Sie eine Lieferadresse.",
       status: "invalid",
     };
   }

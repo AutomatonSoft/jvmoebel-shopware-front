@@ -127,10 +127,10 @@ describe("customer account validation", () => {
     const formData = new FormData();
 
     formData.set("firstName", " Greta ");
-    formData.set("lastName", " GroÃŸ ");
+    formData.set("lastName", " Groß ");
     expect(parseCustomerProfileUpdate(formData)).toEqual({
       firstName: "Greta",
-      lastName: "GroÃŸ",
+      lastName: "Groß",
     });
 
     formData.set("lastName", " ");
@@ -174,13 +174,13 @@ describe("customer account validation", () => {
     formData.set("currentEmail", "kunde@example.com");
     formData.set("email", "kunde@example.com");
     formData.set("firstName", " Greta ");
-    formData.set("lastName", " GroÃŸ ");
+    formData.set("lastName", " Groß ");
 
     expect(parseCustomerSettingsUpdate(formData)).toEqual({
       currentEmail: "kunde@example.com",
       email: "kunde@example.com",
       firstName: "Greta",
-      lastName: "GroÃŸ",
+      lastName: "Groß",
     });
   });
 });

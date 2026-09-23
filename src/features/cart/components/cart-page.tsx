@@ -255,6 +255,9 @@ export function CartPage({ cart, recommendations, signedIn }: CartPageProps) {
                 </ul>
               </aside>
             </div>
+            {recommendations && (
+              <CartProductRails recommendations={recommendations} />
+            )}
           </>
         )}
       </Container>

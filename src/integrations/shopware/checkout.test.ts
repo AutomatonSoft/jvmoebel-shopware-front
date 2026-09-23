@@ -21,34 +21,34 @@ describe("getShopwareCheckoutCustomer", () => {
       createClient({
         activeShippingAddress: {
           id: "shipping-address-id",
-          city: "DÃ¼sseldorf",
+          city: "Düsseldorf",
           country: { name: "Deutschland", translated: { name: "Deutschland" } },
           countryId: "country-id",
           firstName: "Greta",
-          lastName: "GroÃŸ",
+          lastName: "Groß",
           street: "Rheinufer 8",
           zipcode: "40213",
         },
         defaultBillingAddress: {
-          city: "KÃ¶ln",
+          city: "Köln",
           countryId: "country-id",
           firstName: "Greta",
-          lastName: "GroÃŸ",
-          street: "DomstraÃŸe 1",
+          lastName: "Groß",
+          street: "Domstraße 1",
           zipcode: "50667",
         },
         email: "greta@example.com",
         firstName: "Greta",
-        lastName: "GroÃŸ",
+        lastName: "Groß",
       }),
     );
 
     expect(customer).toMatchObject({
       activeShippingAddressId: "shipping-address-id",
       addressComplete: true,
-      billingAddress: { street: "DomstraÃŸe 1" },
+      billingAddress: { street: "Domstraße 1" },
       shippingAddress: {
-        city: "DÃ¼sseldorf",
+        city: "Düsseldorf",
         country: "Deutschland",
         street: "Rheinufer 8",
       },
@@ -162,11 +162,11 @@ describe("createShopwareCheckoutDeliveryAddress", () => {
     } as unknown as ShopwareClient;
 
     await createShopwareCheckoutDeliveryAddress(client, {
-      city: "KÃ¶ln",
+      city: "Köln",
       countryId: "country-id",
       firstName: "Greta",
-      lastName: "GroÃŸ",
-      street: "DomstraÃŸe 1",
+      lastName: "Groß",
+      street: "Domstraße 1",
       zipcode: "50667",
     });
 

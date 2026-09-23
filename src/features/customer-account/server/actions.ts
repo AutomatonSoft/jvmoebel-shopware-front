@@ -118,7 +118,7 @@ export async function registerCustomer(
         ))
     ) {
       return {
-        message: "Bitte prÃ¼fen Sie Ihre Angaben.",
+        message: "Bitte prüfen Sie Ihre Angaben.",
         status: "invalid",
       };
     }
