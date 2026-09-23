@@ -56,7 +56,7 @@ export function CheckoutPage({
       (method) => method.id === data.selection?.shippingMethodId,
     );
   const step = hasConfirmationSelection
-    ? "confirmation"
+    ? "review"
     : data.customer?.addressComplete &&
         !addressStep &&
         !showDeliveryAddressStep &&
@@ -135,7 +135,7 @@ export function CheckoutPage({
 
       <Container className="py-6 sm:py-8">
         <PageHeader
-          aside={<CheckoutProgress step="checkout" />}
+          aside={data.customer ? <CheckoutProgress step={step} /> : undefined}
           description={
             data.customer
               ? `Bestellung für ${data.customer.firstName} ${data.customer.lastName}`

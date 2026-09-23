@@ -1,30 +1,16 @@
 import { Check } from "lucide-react";
 
-const journeySteps = [
-  { id: "cart", label: "Warenkorb" },
-  { id: "checkout", label: "Kasse" },
-  { id: "confirmation", label: "Bestätigung" },
-] as const;
-
-const detailSteps = [
+const steps = [
   { id: "address", label: "Adresse" },
   { id: "payment", label: "Zahlung" },
   { id: "review", label: "Prüfen" },
 ] as const;
 
-type CheckoutProgressProps =
-  | Readonly<{
-      step: (typeof journeySteps)[number]["id"];
-      variant?: "journey";
-    }>
-  | Readonly<{
-      step: (typeof detailSteps)[number]["id"];
-      variant: "details";
-    }>;
+export type CheckoutProgressStep = (typeof steps)[number]["id"];
 
-export function CheckoutProgress(props: CheckoutProgressProps) {
-  const steps = props.variant === "details" ? detailSteps : journeySteps;
-  const step = props.step;
+export function CheckoutProgress({
+  step,
+}: Readonly<{ step: CheckoutProgressStep }>) {
   const currentIndex = steps.findIndex((item) => item.id === step);
 
   return (
@@ -37,15 +23,9 @@ export function CheckoutProgress(props: CheckoutProgressProps) {
         const current = index === currentIndex;
 
         return (
-          <li
-            className={`flex items-center gap-2 ${index === 2 ? "hidden sm:flex" : ""}`}
-            key={item.id}
-          >
+          <li className="flex items-center gap-2" key={item.id}>
             {index > 0 && (
-              <span
-                aria-hidden="true"
-                className={`h-px w-5 bg-border sm:w-8 ${index === 2 ? "hidden sm:block" : ""}`}
-              />
+              <span aria-hidden="true" className="h-px w-4 bg-border sm:w-8" />
             )}
             <span
               aria-current={current ? "step" : undefined}
@@ -60,7 +40,9 @@ export function CheckoutProgress(props: CheckoutProgressProps) {
                   index + 1
                 )}
               </span>
-              {item.label}
+              <span className={current ? undefined : "hidden sm:inline"}>
+                {item.label}
+              </span>
             </span>
           </li>
         );

@@ -269,7 +269,7 @@ export function GuestCheckoutFlow({
   return (
     <div className="mt-6">
       <div className="flex justify-end">
-        <CheckoutProgress step={stage} variant="details" />
+        <CheckoutProgress step={stage} />
       </div>
       <div className="mt-6 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_23rem] xl:gap-12">
         <div>

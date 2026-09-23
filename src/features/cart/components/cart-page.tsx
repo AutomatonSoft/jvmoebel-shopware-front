@@ -17,7 +17,6 @@ import { CartLineItem } from "@/features/cart/components/cart-line-item";
 import { CartPromotionCode } from "@/features/cart/components/cart-promotion-code";
 import { CartProductRails } from "@/features/cart/components/cart-product-rail";
 import type { ShopProductListing } from "@/features/catalog/model/product-listing";
-import { CheckoutProgress } from "@/features/checkout/components/checkout-progress";
 import {
   getShopCartItemCount,
   type ShopCart,
@@ -132,7 +131,6 @@ export function CartPage({ cart, recommendations, signedIn }: CartPageProps) {
         ) : (
           <>
             <PageHeader
-              aside={<CheckoutProgress step="cart" />}
               className="mt-5"
               description={`${itemCount} ${itemCount === 1 ? "Artikel" : "Artikel"} für Ihr Zuhause`}
               eyebrow="Ihre Auswahl"
