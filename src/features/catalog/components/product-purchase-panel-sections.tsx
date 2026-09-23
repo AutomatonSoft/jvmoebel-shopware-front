@@ -1,7 +1,9 @@
 import {
   CalendarDays,
+  Check,
   ChevronRight,
   Info,
+  LoaderCircle,
   MapPin,
   Recycle,
   ShieldCheck,
@@ -11,12 +13,15 @@ import {
   Truck,
   Wrench,
 } from "lucide-react";
-import type { FormEvent } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import Link from "next/link";
+import { useActionState, useEffect, useState, type FormEvent } from "react";
 import { useFormStatus } from "react-dom";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import type { AddToCartActionState } from "@/features/cart/model/cart";
 import { addProductToCart } from "@/features/cart/server/actions";
 import { selectProductVariant } from "@/features/catalog/server/actions";
 import type { ShopProductDetail } from "@/features/catalog/model/product-detail";
@@ -30,24 +35,112 @@ const sizeLabels: Record<ShopProductSize, string> = {
   "extra-large": "Extra groß",
 };
 
-function AddToCartButton({ unavailable }: Readonly<{ unavailable: boolean }>) {
+const initialAddToCartState: AddToCartActionState = { status: "idle" };
+
+function AddToCartButton({
+  state,
+  unavailable,
+}: Readonly<{
+  state: AddToCartActionState;
+  unavailable: boolean;
+}>) {
   const { pending } = useFormStatus();
-  const label = unavailable
+  const shouldReduceMotion = useReducedMotion();
+  const [showCartLink, setShowCartLink] = useState(false);
+
+  useEffect(() => {
+    if (state.status !== "success") return;
+
+    const timeout = window.setTimeout(() => setShowCartLink(true), 1400);
+
+    return () => window.clearTimeout(timeout);
+  }, [state.status]);
+
+  if (showCartLink) {
+    return (
+      <Button
+        className="h-12 w-full rounded-xl text-base shadow-sm"
+        nativeButton={false}
+        render={<Link href="/warenkorb" />}
+        size="lg"
+      >
+        <motion.span
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center gap-2"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 5 }}
+        >
+          Zum Warenkorb
+          <ShoppingBag aria-hidden="true" className="size-4" />
+        </motion.span>
+      </Button>
+    );
+  }
+
+  const contentKey = unavailable
     ? "Derzeit nicht verfügbar"
     : pending
-      ? "Wird hinzugefügt …"
-      : "In den Warenkorb";
+      ? "pending"
+      : state.status;
 
   return (
     <Button
       aria-describedby="product-availability"
-      className="h-12 w-full rounded-xl text-base shadow-sm disabled:cursor-not-allowed"
-      disabled={pending || unavailable}
+      aria-live="polite"
+      className="relative h-12 w-full overflow-hidden rounded-xl text-base shadow-sm disabled:cursor-not-allowed disabled:opacity-100"
+      disabled={pending || state.status === "success" || unavailable}
       size="lg"
       type="submit"
     >
-      {label}
-      <ShoppingBag className="size-4" />
+      <AnimatePresence initial={false} mode="wait">
+        <motion.span
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          className="flex items-center gap-2"
+          exit={
+            shouldReduceMotion
+              ? { opacity: 0 }
+              : { opacity: 0, scale: 0.94, y: -5 }
+          }
+          initial={
+            shouldReduceMotion
+              ? { opacity: 0 }
+              : { opacity: 0, scale: 0.94, y: 5 }
+          }
+          key={contentKey}
+          transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
+        >
+          {unavailable ? (
+            "Derzeit nicht verfügbar"
+          ) : pending ? (
+            <>
+              <LoaderCircle
+                aria-hidden="true"
+                className="size-5 animate-spin"
+              />
+              <span className="sr-only">Wird hinzugefügt</span>
+            </>
+          ) : state.status === "success" ? (
+            <>
+              <motion.span
+                animate={
+                  shouldReduceMotion
+                    ? undefined
+                    : { scale: [0.7, 1.15, 1], rotate: [-8, 4, 0] }
+                }
+                className="grid size-6 place-items-center rounded-full bg-primary-foreground text-primary"
+                transition={{ duration: 0.45, ease: "easeOut" }}
+              >
+                <Check aria-hidden="true" className="size-4" strokeWidth={3} />
+              </motion.span>
+              Hinzugefügt
+            </>
+          ) : (
+            <>
+              In den Warenkorb
+              <ShoppingBag aria-hidden="true" className="size-4" />
+            </>
+          )}
+        </motion.span>
+      </AnimatePresence>
     </Button>
   );
 }
@@ -575,12 +668,28 @@ export function ProductPurchaseActions({
   inquirySubject: string;
   product: ShopProductDetail;
 }) {
+  const [state, formAction] = useActionState(
+    addProductToCart,
+    initialAddToCartState,
+  );
+
   return (
     <div className="sticky bottom-0 z-10 -mx-1 bg-background/95 px-1 pt-5 pb-1 backdrop-blur">
-      <form action={addProductToCart}>
+      <form action={formAction}>
         <input name="productId" type="hidden" value={product.id} />
-        <AddToCartButton unavailable={product.isAvailable === false} />
+        <AddToCartButton
+          state={state}
+          unavailable={product.isAvailable === false}
+        />
       </form>
+      {state.status === "error" && state.message && (
+        <p
+          className="mt-2 text-center text-xs leading-5 text-destructive"
+          role="alert"
+        >
+          {state.message}
+        </p>
+      )}
       <WishlistToggleButton
         className="mt-2"
         productId={product.id}

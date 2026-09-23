@@ -42,6 +42,11 @@ export type ShopCart = Readonly<{
   total: number;
 }>;
 
+export type AddToCartActionState = Readonly<{
+  message?: string;
+  status: "error" | "idle" | "success";
+}>;
+
 export function getShopCartItemCount(cart: Pick<ShopCart, "items">) {
   return cart.items.reduce((total, item) => total + item.quantity, 0);
 }

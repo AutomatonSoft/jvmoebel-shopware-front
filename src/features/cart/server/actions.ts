@@ -13,6 +13,7 @@ import {
   parseProductId,
   parsePromotionCode,
 } from "@/features/cart/model/validation";
+import type { AddToCartActionState } from "@/features/cart/model/cart";
 import {
   addMockProduct,
   applyMockPromotionCode,
@@ -130,28 +131,60 @@ export async function applyPromotionCode(formData: FormData) {
   redirect("/warenkorb?meldung=gutschein");
 }
 
-export async function addProductToCart(formData: FormData) {
+export async function addProductToCart(
+  _previousState: AddToCartActionState,
+  formData: FormData,
+): Promise<AddToCartActionState> {
   const productId = parseProductId(formData);
 
   if (!productId) {
-    redirect("/warenkorb?fehler=eingabe");
+    return {
+      message: "Das Produkt konnte nicht hinzugefügt werden.",
+      status: "error",
+    };
   }
 
-  if (shouldUseShopwareMocks()) {
-    await runMockCartMutation(() => addMockProduct(productId));
-  } else {
-    const result = await runCartMutation(async (session) => {
+  try {
+    if (shouldUseShopwareMocks()) {
+      await addMockProduct(productId);
+    } else {
+      const session = await createCustomerSession();
+
       if (!(await isShopwareProductAvailable(session.client, productId))) {
         throw new ProductUnavailableError();
       }
 
-      return addShopwareProduct(session.client, productId);
-    });
+      const result = await addShopwareProduct(session.client, productId);
 
-    if (!result.succeeded) {
-      redirect("/warenkorb?fehler=shopware");
+      if (!result.succeeded) {
+        return {
+          message:
+            "Shopware konnte den Artikel nicht in den Warenkorb übernehmen.",
+          status: "error",
+        };
+      }
+
+      await persistCustomerContext(session.getContextToken());
     }
-  }
 
-  redirect("/warenkorb?meldung=hinzugefuegt");
+    revalidatePath("/", "layout");
+    revalidatePath("/kasse");
+    revalidatePath("/warenkorb");
+
+    return { status: "success" };
+  } catch (error) {
+    if (error instanceof ProductUnavailableError) {
+      return {
+        message: "Dieser Artikel ist derzeit nicht verfügbar.",
+        status: "error",
+      };
+    }
+
+    console.error("Adding product to cart failed.", error);
+    return {
+      message:
+        "Der Artikel konnte nicht hinzugefügt werden. Bitte versuchen Sie es erneut.",
+      status: "error",
+    };
+  }
 }
