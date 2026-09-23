@@ -1,6 +1,4 @@
-import { ArrowLeft } from "lucide-react";
 import type { Route } from "next";
-import Link from "next/link";
 
 import { Container } from "@/components/ui/container";
 import { PageHeader } from "@/components/ui/page-header";
@@ -118,13 +116,6 @@ export function CheckoutPage({
   return (
     <main className="flex-1 bg-background">
       <Container className="py-4 sm:py-5">
-        <Link
-          className="mb-3 inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-primary"
-          href="/warenkorb"
-        >
-          <ArrowLeft aria-hidden="true" className="size-3.5" />
-          Zum Warenkorb
-        </Link>
         <PageHeader
           aside={data.customer ? <CheckoutProgress step={step} /> : undefined}
           description={
