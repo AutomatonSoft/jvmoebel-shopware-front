@@ -1,14 +1,30 @@
 import { Check } from "lucide-react";
 
-const steps = [
-  { id: "address", label: "Adresse" },
-  { id: "payment", label: "Zahlung" },
+const journeySteps = [
+  { id: "cart", label: "Warenkorb" },
+  { id: "checkout", label: "Kasse" },
   { id: "confirmation", label: "Bestätigung" },
 ] as const;
 
-export function CheckoutProgress({
-  step,
-}: Readonly<{ step: (typeof steps)[number]["id"] }>) {
+const detailSteps = [
+  { id: "address", label: "Adresse" },
+  { id: "payment", label: "Zahlung" },
+  { id: "review", label: "Prüfen" },
+] as const;
+
+type CheckoutProgressProps =
+  | Readonly<{
+      step: (typeof journeySteps)[number]["id"];
+      variant?: "journey";
+    }>
+  | Readonly<{
+      step: (typeof detailSteps)[number]["id"];
+      variant: "details";
+    }>;
+
+export function CheckoutProgress(props: CheckoutProgressProps) {
+  const steps = props.variant === "details" ? detailSteps : journeySteps;
+  const step = props.step;
   const currentIndex = steps.findIndex((item) => item.id === step);
 
   return (

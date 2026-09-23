@@ -135,7 +135,7 @@ export function CheckoutPage({
 
       <Container className="py-6 sm:py-8">
         <PageHeader
-          aside={<CheckoutProgress step={step} />}
+          aside={<CheckoutProgress step="checkout" />}
           description={
             data.customer
               ? `Bestellung für ${data.customer.firstName} ${data.customer.lastName}`

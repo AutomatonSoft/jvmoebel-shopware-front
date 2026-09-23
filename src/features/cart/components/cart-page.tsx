@@ -17,6 +17,7 @@ import { CartLineItem } from "@/features/cart/components/cart-line-item";
 import { CartPromotionCode } from "@/features/cart/components/cart-promotion-code";
 import { CartProductRails } from "@/features/cart/components/cart-product-rail";
 import type { ShopProductListing } from "@/features/catalog/model/product-listing";
+import { CheckoutProgress } from "@/features/checkout/components/checkout-progress";
 import {
   getShopCartItemCount,
   type ShopCart,
@@ -131,36 +132,7 @@ export function CartPage({ cart, recommendations, signedIn }: CartPageProps) {
         ) : (
           <>
             <PageHeader
-              aside={
-                <ol className="flex items-center gap-2 text-[0.625rem] font-semibold tracking-wide uppercase sm:gap-3">
-                  <li className="flex items-center gap-2 text-foreground">
-                    <span className="grid size-7 place-items-center rounded-full bg-primary text-primary-foreground">
-                      1
-                    </span>
-                    Warenkorb
-                  </li>
-                  <li
-                    aria-hidden="true"
-                    className="h-px w-5 bg-border sm:w-8"
-                  />
-                  <li className="flex items-center gap-2 text-muted-foreground">
-                    <span className="grid size-7 place-items-center rounded-full border">
-                      2
-                    </span>
-                    Kasse
-                  </li>
-                  <li
-                    aria-hidden="true"
-                    className="hidden h-px w-8 bg-border sm:block"
-                  />
-                  <li className="hidden items-center gap-2 text-muted-foreground sm:flex">
-                    <span className="grid size-7 place-items-center rounded-full border">
-                      3
-                    </span>
-                    Bestätigung
-                  </li>
-                </ol>
-              }
+              aside={<CheckoutProgress step="cart" />}
               className="mt-5"
               description={`${itemCount} ${itemCount === 1 ? "Artikel" : "Artikel"} für Ihr Zuhause`}
               eyebrow="Ihre Auswahl"

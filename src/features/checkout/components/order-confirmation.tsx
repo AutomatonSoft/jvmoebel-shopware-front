@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { CheckoutProgress } from "@/features/checkout/components/checkout-progress";
 import { GuestAccountForm } from "@/features/checkout/components/guest-account-form";
 import type { CheckoutReceipt } from "@/features/checkout/model/checkout";
 
@@ -24,6 +25,9 @@ export function OrderConfirmation({
   return (
     <main className="flex-1 bg-background">
       <Container className="py-10 sm:py-16">
+        <div className="mx-auto mb-6 flex max-w-3xl justify-end">
+          <CheckoutProgress step="confirmation" />
+        </div>
         <section className="mx-auto max-w-3xl overflow-hidden rounded-3xl border bg-card shadow-[0_28px_80px_-58px_rgba(21,21,19,0.75)]">
           <div className="bg-secondary/75 px-6 py-10 text-center sm:px-10 sm:py-14">
             <span className="mx-auto grid size-16 place-items-center rounded-full bg-accent text-accent-foreground">

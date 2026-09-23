@@ -5,6 +5,7 @@ import { useActionState, useEffect, useState, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
 import { CheckoutCartPreview } from "@/features/checkout/components/checkout-cart-preview";
+import { CheckoutProgress } from "@/features/checkout/components/checkout-progress";
 import { GuestCheckoutForm } from "@/features/checkout/components/guest-checkout-form";
 import { CheckoutSummary } from "@/features/checkout/components/checkout-summary";
 import type { ShopCart } from "@/features/cart/model/cart";
@@ -266,20 +267,25 @@ export function GuestCheckoutFlow({
   }
 
   return (
-    <div className="mt-8 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_23rem] xl:gap-12">
-      <div>
-        {content}
-        <CheckoutCartPreview cart={cart} />
+    <div className="mt-6">
+      <div className="flex justify-end">
+        <CheckoutProgress step={stage} variant="details" />
       </div>
-      <CheckoutSummary
-        action={{
-          consentSlotId: dataProtectionConsentSlotId,
-          disabled: pending,
-          formId: "guest-checkout-form",
-          label: summaryLabel,
-        }}
-        cart={cart}
-      />
+      <div className="mt-6 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_23rem] xl:gap-12">
+        <div>
+          {content}
+          <CheckoutCartPreview cart={cart} />
+        </div>
+        <CheckoutSummary
+          action={{
+            consentSlotId: dataProtectionConsentSlotId,
+            disabled: pending,
+            formId: "guest-checkout-form",
+            label: summaryLabel,
+          }}
+          cart={cart}
+        />
+      </div>
     </div>
   );
 }
