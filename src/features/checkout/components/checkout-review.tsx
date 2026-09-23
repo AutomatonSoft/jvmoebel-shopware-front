@@ -1,12 +1,12 @@
 import {
   AtSign,
+  ClipboardCheck,
   CreditCard,
   House,
   MapPin,
   MessageSquareText,
   PackageOpen,
   PencilLine,
-  ReceiptText,
   ShoppingBag,
   Truck,
 } from "lucide-react";
@@ -175,26 +175,26 @@ export function CheckoutReview({
 }>) {
   return (
     <>
-      <section className="rounded-3xl border bg-card p-5 shadow-[0_24px_70px_-58px_rgba(21,21,19,0.7)] sm:p-7">
-        <div className="flex gap-4 border-b pb-5">
-          <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/10">
-            <ReceiptText
+      <section className="rounded-3xl border bg-card p-4 shadow-[0_24px_70px_-58px_rgba(21,21,19,0.7)] sm:p-6">
+        <div className="flex items-center gap-3 border-b pb-4">
+          <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/10">
+            <ClipboardCheck
               aria-hidden="true"
-              className="size-5"
+              className="size-4"
               strokeWidth={1.7}
             />
           </span>
           <div>
-            <h2 className="text-xl font-semibold tracking-[-0.03em]">
+            <h2 className="text-lg font-semibold tracking-[-0.025em]">
               Bestellung prüfen
             </h2>
-            <p className="mt-1 text-sm leading-6 text-muted-foreground">
+            <p className="mt-0.5 text-xs leading-5 text-muted-foreground sm:text-sm">
               Prüfen Sie alle Angaben, bevor Sie zahlungspflichtig bestellen.
             </p>
           </div>
         </div>
 
-        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <ReviewSection
             action="/kasse?schritt=lieferadresse&zurueck=bestaetigung"
             icon={MapPin}
