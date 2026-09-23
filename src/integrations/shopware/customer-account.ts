@@ -121,6 +121,16 @@ export async function registerShopwareCustomer(
   });
 }
 
+export async function confirmShopwareCustomerRegistration(
+  client: ShopwareClient,
+  confirmation: Readonly<{ em: string; hash: string }>,
+) {
+  await client.invoke("registerConfirm post /account/register-confirm", {
+    body: confirmation,
+    fetchOptions: { cache: "no-store" },
+  });
+}
+
 export async function getShopwareCustomerAccount(
   client: ShopwareClient,
 ): Promise<CustomerAccountSummary | null> {

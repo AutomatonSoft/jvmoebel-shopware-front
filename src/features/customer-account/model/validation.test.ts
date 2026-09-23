@@ -4,6 +4,7 @@ import {
   getCustomerEmailChangeFieldErrors,
   getCustomerLoginFieldErrors,
   getCustomerRegistrationFieldErrors,
+  getCustomerRegistrationValidationMessage,
   parseCustomerEmailChange,
   parseCustomerLogin,
   parseCustomerProfileUpdate,
@@ -69,11 +70,20 @@ describe("customer account validation", () => {
       countryId: "country-de",
       email: "kunde@example.com",
       firstName: "Greta",
+      newsletterConsent: false,
       lastName: "Groß",
       password: "sicheres-passwort",
       salutationId: "salutation-mrs",
       vatId: undefined,
     });
+  });
+
+  test("keeps newsletter consent when selected during registration", () => {
+    const formData = createRegistrationForm();
+
+    formData.set("newsletterConsent", "on");
+
+    expect(parseCustomerRegistration(formData)?.newsletterConsent).toBeTrue();
   });
 
   test("accepts browser values for client-side registration validation", () => {
@@ -84,6 +94,7 @@ describe("customer account validation", () => {
         countryId: "country-de",
         email: "kunde@example.com",
         firstName: "Greta",
+        newsletterConsent: false,
         lastName: "Groß",
         password: "sicheres-passwort",
         salutationId: "",
@@ -123,14 +134,36 @@ describe("customer account validation", () => {
     }
   });
 
+  test("explains missing internal registration values", () => {
+    const formData = createRegistrationForm();
+
+    formData.delete("acceptedDataProtection");
+    formData.delete("countryId");
+    const result = validateCustomerRegistration(formData);
+
+    expect(result.success).toBeFalse();
+    if (!result.success) {
+      const fieldErrors = getCustomerRegistrationFieldErrors(result.error);
+
+      expect(fieldErrors).toEqual({
+        acceptedDataProtection:
+          "Bitte stimmen Sie den Datenschutzbestimmungen zu.",
+        countryId: "Das Registrierungsland ist nicht gültig.",
+      });
+      expect(getCustomerRegistrationValidationMessage(fieldErrors)).toBe(
+        "Bitte stimmen Sie den Datenschutzbestimmungen zu. Das Registrierungsland ist nicht gültig.",
+      );
+    }
+  });
+
   test("normalizes a valid profile update and rejects an empty name", () => {
     const formData = new FormData();
 
     formData.set("firstName", " Greta ");
-    formData.set("lastName", " GroÃŸ ");
+    formData.set("lastName", " Groß ");
     expect(parseCustomerProfileUpdate(formData)).toEqual({
       firstName: "Greta",
-      lastName: "GroÃŸ",
+      lastName: "Groß",
     });
 
     formData.set("lastName", " ");
@@ -174,13 +207,13 @@ describe("customer account validation", () => {
     formData.set("currentEmail", "kunde@example.com");
     formData.set("email", "kunde@example.com");
     formData.set("firstName", " Greta ");
-    formData.set("lastName", " GroÃŸ ");
+    formData.set("lastName", " Groß ");
 
     expect(parseCustomerSettingsUpdate(formData)).toEqual({
       currentEmail: "kunde@example.com",
       email: "kunde@example.com",
       firstName: "Greta",
-      lastName: "GroÃŸ",
+      lastName: "Groß",
     });
   });
 });

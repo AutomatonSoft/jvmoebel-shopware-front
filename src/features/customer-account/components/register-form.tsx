@@ -3,7 +3,7 @@
 import { ArrowRight, Building2, ReceiptText } from "lucide-react";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { startTransition, useActionState } from "react";
+import { startTransition, useActionState, type FormEvent } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import type { z } from "zod";
 
@@ -44,6 +44,7 @@ export function RegisterForm({
       acceptedDataProtection: true,
       accountType: "private",
       countryId: options.defaultCountryId,
+      newsletterConsent: false,
       salutationId: "",
     },
     mode: "onBlur",
@@ -59,17 +60,24 @@ export function RegisterForm({
     Record<keyof typeof customerRegistrationFieldMessages, unknown>
   >;
 
-  const submitRegistration = handleSubmit((_values, event) => {
-    if (pending || !event?.currentTarget) {
-      return;
-    }
+  const submitRegistration = (event: FormEvent<HTMLFormElement>) => {
+    const form = event.currentTarget;
 
-    const formData = new FormData(event.currentTarget);
+    void handleSubmit(() => {
+      if (pending) {
+        return;
+      }
 
-    startTransition(() => {
-      formAction(formData);
-    });
-  });
+      const formData = new FormData(form);
+
+      formData.set("acceptedDataProtection", "on");
+      formData.set("countryId", options.defaultCountryId);
+
+      startTransition(() => {
+        formAction(formData);
+      });
+    })(event);
+  };
 
   const getFieldError = (
     field: keyof typeof customerRegistrationFieldMessages,
@@ -79,12 +87,7 @@ export function RegisterForm({
       : fieldErrors[field];
 
   return (
-    <form
-      action={formAction}
-      className="space-y-2"
-      noValidate
-      onSubmit={submitRegistration}
-    >
+    <form className="space-y-2" noValidate onSubmit={submitRegistration}>
       {redirectTo && (
         <input name="redirectTo" type="hidden" value={redirectTo} />
       )}
@@ -222,6 +225,33 @@ export function RegisterForm({
         />
       </fieldset>
 
+      <label className="flex cursor-pointer items-start gap-2.5">
+        <input
+          {...register("newsletterConsent")}
+          className="mt-0.5 size-4 shrink-0 rounded border-border accent-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          type="checkbox"
+        />
+        <span className="text-xs leading-5 text-muted-foreground">
+          <span className="block text-foreground">
+            Ja, ich möchte <strong>E-Mail-Nachrichten</strong> erhalten.
+          </span>
+          <span className="block">
+            Eine Abmeldung von den E-Mail-Nachrichten ist jederzeit möglich.*
+          </span>
+        </span>
+      </label>
+
+      <Button
+        className="w-full justify-between rounded-lg bg-foreground text-background hover:bg-foreground/85 disabled:cursor-wait"
+        disabled={pending}
+        type="submit"
+      >
+        {pending ? "Konto wird erstellt …" : "Konto erstellen"}
+        <span className="grid size-6 place-items-center rounded-full bg-background/10">
+          <ArrowRight aria-hidden="true" className="size-3.5" />
+        </span>
+      </Button>
+
       <p className="text-[0.7rem] leading-4 text-muted-foreground">
         Mit Ihrer Registrierung stimmen Sie unseren{" "}
         <Link
@@ -239,17 +269,6 @@ export function RegisterForm({
         </Link>{" "}
         zu.
       </p>
-
-      <Button
-        className="w-full justify-between rounded-lg bg-foreground text-background hover:bg-foreground/85 disabled:cursor-wait"
-        disabled={pending}
-        type="submit"
-      >
-        {pending ? "Konto wird erstellt …" : "Konto erstellen"}
-        <span className="grid size-6 place-items-center rounded-full bg-background/10">
-          <ArrowRight aria-hidden="true" className="size-3.5" />
-        </span>
-      </Button>
     </form>
   );
 }

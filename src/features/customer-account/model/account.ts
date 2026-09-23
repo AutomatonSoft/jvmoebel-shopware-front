@@ -72,6 +72,7 @@ export type CustomerRegistration = Readonly<{
   email: string;
   firstName: string;
   lastName: string;
+  newsletterConsent: boolean;
   password: string;
   salutationId?: string;
   vatId?: string;

@@ -59,6 +59,7 @@ const registrationBaseSchema = z.object({
   email: emailSchema,
   firstName: requiredString(255),
   lastName: requiredString(255),
+  newsletterConsent: z.boolean(),
   password: z.string().min(8).max(72),
   salutationId: optionalString(64),
 });
@@ -84,6 +85,7 @@ const customerRegistrationSchema = registrationInputSchema.transform(
     email: registration.email,
     firstName: registration.firstName,
     lastName: registration.lastName,
+    newsletterConsent: registration.newsletterConsent,
     password: registration.password,
     salutationId: registration.salutationId,
     vatId:
@@ -92,12 +94,15 @@ const customerRegistrationSchema = registrationInputSchema.transform(
 );
 
 export const customerRegistrationFieldMessages = {
+  acceptedDataProtection: "Bitte stimmen Sie den Datenschutzbestimmungen zu.",
   accountType: "Bitte wählen Sie eine Kontoart aus.",
   company: "Bitte geben Sie Ihren Firmennamen ein.",
+  countryId: "Das Registrierungsland ist nicht gültig.",
   email: "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
   firstName: "Bitte geben Sie Ihren Vornamen ein.",
   lastName: "Bitte geben Sie Ihren Nachnamen ein.",
   password: "Das Passwort muss zwischen 8 und 72 Zeichen lang sein.",
+  salutationId: "Bitte wählen Sie eine gültige Anrede aus.",
   vatId: "Bitte geben Sie Ihre Steuer- oder USt-IdNr. ein.",
 } as const;
 
@@ -126,6 +131,7 @@ function getCustomerRegistrationInput(formData: FormData) {
     email: formData.get("email"),
     firstName: formData.get("firstName"),
     lastName: formData.get("lastName"),
+    newsletterConsent: formData.get("newsletterConsent") === "on",
     password: formData.get("password"),
     salutationId: formData.get("salutationId"),
     vatId: formData.get("vatId"),
@@ -140,6 +146,16 @@ export function validateCustomerRegistration(formData: FormData) {
 
 export function getCustomerRegistrationFieldErrors(error: ZodError) {
   return getFieldErrors(error, customerRegistrationFieldMessages);
+}
+
+export function getCustomerRegistrationValidationMessage(
+  fieldErrors: NonNullable<AccountActionState["fieldErrors"]>,
+) {
+  const messages = [...new Set(Object.values(fieldErrors))];
+
+  return messages.length > 0
+    ? messages.join(" ")
+    : "Die Registrierungsdaten sind unvollständig oder ungültig.";
 }
 
 function getFieldErrors(

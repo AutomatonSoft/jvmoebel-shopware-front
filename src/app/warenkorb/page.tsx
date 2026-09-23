@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { CartNotifications } from "@/features/cart/components/cart-notifications";
 import { CartPage } from "@/features/cart/components/cart-page";
 import { getShopCart } from "@/features/cart/server/cart";
+import { getCartRecommendations } from "@/features/cart/server/cart-recommendations";
 import { getCustomerAccount } from "@/features/customer-account/server/account";
 import { ErrorExperience } from "@/features/storefront-shell/components/error-experience";
 
@@ -28,6 +29,9 @@ export default async function CartRoute({ searchParams }: CartRouteProps) {
     : parameters.meldung;
   let cart: Awaited<ReturnType<typeof getShopCart>>;
   let account: Awaited<ReturnType<typeof getCustomerAccount>> = null;
+  let recommendations: Awaited<
+    ReturnType<typeof getCartRecommendations>
+  > | null = null;
 
   try {
     [cart, account] = await Promise.all([
@@ -37,6 +41,18 @@ export default async function CartRoute({ searchParams }: CartRouteProps) {
         return null;
       }),
     ]);
+
+    if (cart.items.length === 0) {
+      recommendations = await getCartRecommendations().catch(
+        (recommendationError: unknown) => {
+          console.error(
+            "Cart recommendations failed to load.",
+            recommendationError,
+          );
+          return null;
+        },
+      );
+    }
   } catch (cartError) {
     console.error("Cart loading failed.", cartError);
 
@@ -57,7 +73,11 @@ export default async function CartRoute({ searchParams }: CartRouteProps) {
         messages={cart.messages}
         success={success}
       />
-      <CartPage cart={cart} signedIn={Boolean(account)} />
+      <CartPage
+        cart={cart}
+        recommendations={recommendations}
+        signedIn={Boolean(account)}
+      />
     </>
   );
 }

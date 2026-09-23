@@ -1,21 +1,21 @@
 import {
-  ArrowRight,
-  Bell,
-  BellRing,
-  CircleHelp,
-  Gift,
+  ArrowUpRight,
+  BadgePercent,
+  BellDot,
+  IdCard,
   LogOut,
-  MapPin,
-  PackageCheck,
+  MapPinned,
+  MessageCircleQuestion,
+  ReceiptText,
   ShoppingBag,
   Sparkles,
-  UserRound,
 } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { PageHeader } from "@/components/ui/page-header";
 import { AccountWishlistSummary } from "@/features/customer-account/components/account-wishlist-summary";
 import type {
   CustomerAccountSummary,
@@ -32,25 +32,25 @@ const accountLinks = [
   {
     description: "Bestellstatus und vergangene Einkäufe ansehen.",
     href: "/kundenkonto/bestellungen",
-    icon: PackageCheck,
+    icon: ReceiptText,
     label: "Bestellungen",
   },
   {
     description: "Persönliche Angaben und E-Mail-Adresse prüfen.",
     href: "/kundenkonto/profil",
-    icon: UserRound,
+    icon: IdCard,
     label: "Kundenprofil",
   },
   {
     description: "Rechnungs- und Lieferadresse ansehen.",
     href: "/kundenkonto/adressen",
-    icon: MapPin,
+    icon: MapPinned,
     label: "Adressen",
   },
   {
     description: "Informationen zu Aktionen und dem Kundenkonto.",
     href: "/kundenkonto/benachrichtigungen",
-    icon: Bell,
+    icon: BellDot,
     label: "Benachrichtigungen",
   },
 ] as const;
@@ -63,7 +63,7 @@ function AccountSection({
   return (
     <section aria-labelledby={`${id}-title`} className="scroll-mt-28" id={id}>
       <h2
-        className="text-xl font-semibold tracking-[-0.03em]"
+        className="flex items-center gap-3 text-xl font-semibold tracking-[-0.035em] before:h-px before:w-5 before:bg-primary"
         id={`${id}-title`}
       >
         {title}
@@ -76,7 +76,7 @@ function AccountSection({
 function CustomerOrders({ orders }: Pick<CustomerProfilePageProps, "orders">) {
   if (orders === null) {
     return (
-      <p className="rounded-2xl border border-border bg-card p-5 text-sm leading-6 text-muted-foreground">
+      <p className="rounded-3xl border border-border/80 bg-card p-6 text-sm leading-6 text-muted-foreground shadow-[0_20px_50px_-45px_rgba(21,21,19,0.7)]">
         Ihre Bestellungen können gerade nicht geladen werden. Bitte versuchen
         Sie es später erneut.
       </p>
@@ -85,7 +85,7 @@ function CustomerOrders({ orders }: Pick<CustomerProfilePageProps, "orders">) {
 
   if (orders.length === 0) {
     return (
-      <div className="rounded-2xl border border-border bg-card p-6 sm:flex sm:items-center sm:justify-between sm:gap-8">
+      <div className="rounded-3xl border border-border/80 bg-card p-6 shadow-[0_20px_50px_-45px_rgba(21,21,19,0.7)] sm:flex sm:items-center sm:justify-between sm:gap-8">
         <div>
           <p className="font-semibold">Noch keine aktuellen Bestellungen</p>
           <p className="mt-1 text-sm leading-6 text-muted-foreground">
@@ -98,14 +98,15 @@ function CustomerOrders({ orders }: Pick<CustomerProfilePageProps, "orders">) {
           render={<Link href="/moebel-sortiment" />}
           variant="outline"
         >
-          Sortiment entdecken <ArrowRight aria-hidden="true" />
+          Sortiment entdecken{" "}
+          <ArrowUpRight aria-hidden="true" strokeWidth={1.5} />
         </Button>
       </div>
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-border bg-card">
+    <div className="overflow-hidden rounded-3xl border border-border/80 bg-card shadow-[0_20px_50px_-45px_rgba(21,21,19,0.7)]">
       {orders.map((order) => {
         const date = new Intl.DateTimeFormat("de-DE", {
           dateStyle: "medium",
@@ -115,12 +116,18 @@ function CustomerOrders({ orders }: Pick<CustomerProfilePageProps, "orders">) {
           style: "currency",
         }).format(order.total);
         return (
-          <article
-            className="flex flex-wrap items-center gap-x-5 gap-y-3 border-b border-border px-5 py-4 last:border-b-0"
+          <Link
+            aria-label={`Bestellung ${order.number} öffnen`}
+            className="group flex flex-wrap items-center gap-x-5 gap-y-3 border-b border-border/70 px-6 py-5 transition-colors last:border-b-0 hover:bg-secondary/50 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-inset focus-visible:ring-ring/40"
+            href={`/kundenkonto/bestellungen/${encodeURIComponent(order.number)}`}
             key={order.number}
           >
-            <span className="grid size-10 place-items-center rounded-xl bg-secondary text-primary">
-              <ShoppingBag aria-hidden="true" className="size-4" />
+            <span className="grid size-10 place-items-center rounded-full bg-secondary text-primary">
+              <ShoppingBag
+                aria-hidden="true"
+                className="size-4"
+                strokeWidth={1.5}
+              />
             </span>
             <div className="min-w-40 flex-1">
               <p className="text-sm font-semibold">Bestellung {order.number}</p>
@@ -130,7 +137,12 @@ function CustomerOrders({ orders }: Pick<CustomerProfilePageProps, "orders">) {
               {order.status}
             </span>
             <p className="ml-auto text-sm font-semibold">{total}</p>
-          </article>
+            <ArrowUpRight
+              aria-hidden="true"
+              className="size-4 text-muted-foreground transition-colors group-hover:text-primary"
+              strokeWidth={1.5}
+            />
+          </Link>
         );
       })}
     </div>
@@ -145,7 +157,7 @@ export function CustomerProfilePage({
 
   return (
     <main className="flex-1 bg-background">
-      <Container className="py-8 sm:py-10 lg:py-14">
+      <Container className="py-6 sm:py-8">
         <nav
           aria-label="Breadcrumb"
           className="flex items-center gap-2 text-xs text-muted-foreground"
@@ -156,14 +168,12 @@ export function CustomerProfilePage({
           <span aria-hidden="true">/</span>
           <strong className="font-medium text-foreground">Kundenkonto</strong>
         </nav>
-        <header className="mt-8 border-b border-border pb-8 sm:mt-10 sm:pb-10">
-          <h1 className="text-3xl font-semibold tracking-[-0.05em] sm:text-5xl">
-            Hallo {account.firstName}, willkommen zurück!
-          </h1>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Kundennummer {account.customerNumber}
-          </p>
-        </header>
+        <PageHeader
+          className="mt-5"
+          description={`Kundennummer ${account.customerNumber}`}
+          eyebrow="Kundenkonto"
+          title={`Hallo ${account.firstName}, willkommen zurück!`}
+        />
 
         <nav
           aria-label="Bereiche im Kundenkonto"
@@ -171,14 +181,20 @@ export function CustomerProfilePage({
         >
           {accountLinks.map(({ description, href, icon: Icon, label }) => (
             <Link
-              className="group rounded-2xl border border-border bg-card p-5 transition-[border-color,box-shadow,transform] hover:border-primary/45 hover:shadow-[0_16px_36px_-28px_rgba(21,21,19,0.7)] motion-safe:hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/40"
+              className="group rounded-3xl border border-border/80 bg-card p-5 shadow-[0_20px_50px_-45px_rgba(21,21,19,0.7)] transition-[border-color,box-shadow,transform] hover:border-primary/45 hover:shadow-[0_24px_44px_-30px_rgba(21,21,19,0.35)] motion-safe:hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/40"
               href={href}
               key={href}
             >
-              <span className="grid size-10 place-items-center rounded-xl bg-secondary text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                <Icon aria-hidden="true" className="size-4" />
+              <span className="grid size-11 place-items-center rounded-full border border-border/60 bg-secondary text-primary transition-colors group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground">
+                <Icon
+                  aria-hidden="true"
+                  className="size-[1.125rem]"
+                  strokeWidth={1.5}
+                />
               </span>
-              <p className="mt-6 text-sm font-semibold">{label}</p>
+              <p className="mt-7 text-sm font-semibold tracking-[-0.015em]">
+                {label}
+              </p>
               <p className="mt-1 text-xs leading-5 text-muted-foreground">
                 {description}
               </p>
@@ -195,11 +211,15 @@ export function CustomerProfilePage({
                 href="/kundenkonto/bestellungen"
               >
                 Alle Bestellungen ansehen{" "}
-                <ArrowRight aria-hidden="true" className="size-3.5" />
+                <ArrowUpRight
+                  aria-hidden="true"
+                  className="size-3.5"
+                  strokeWidth={1.5}
+                />
               </Link>
             </AccountSection>
             <AccountSection id="profile" title="Kundenprofil">
-              <div className="grid gap-3 rounded-2xl border border-border bg-card p-5 sm:grid-cols-2">
+              <div className="grid gap-5 rounded-3xl border border-border/80 bg-card p-6 shadow-[0_20px_50px_-45px_rgba(21,21,19,0.7)] sm:grid-cols-2">
                 <div>
                   <p className="text-xs text-muted-foreground">Name</p>
                   <p className="mt-1 text-sm font-semibold">{fullName}</p>
@@ -216,7 +236,7 @@ export function CustomerProfilePage({
             </AccountSection>
             <AccountSection id="addresses" title="Ihre Adresse">
               {account.billingAddress ? (
-                <div className="rounded-2xl border border-border bg-card p-5 text-sm leading-6">
+                <div className="rounded-3xl border border-border/80 bg-card p-6 text-sm leading-6 shadow-[0_20px_50px_-45px_rgba(21,21,19,0.7)]">
                   <p className="font-semibold">
                     {account.billingAddress.firstName}{" "}
                     {account.billingAddress.lastName}
@@ -235,18 +255,24 @@ export function CustomerProfilePage({
                   </p>
                 </div>
               ) : (
-                <p className="rounded-2xl border border-dashed border-border bg-card p-5 text-sm leading-6 text-muted-foreground">
+                <p className="rounded-3xl border border-dashed border-border bg-card p-6 text-sm leading-6 text-muted-foreground">
                   Für dieses Kundenkonto ist noch keine Adresse hinterlegt.
                 </p>
               )}
             </AccountSection>
           </div>
 
-          <aside className="space-y-8 lg:pt-1">
+          <aside className="space-y-6 lg:pt-1 [&>section>div]:mt-3">
             <AccountSection id="notifications" title="Benachrichtigungen">
-              <div className="rounded-2xl bg-secondary p-5">
-                <BellRing aria-hidden="true" className="size-5 text-primary" />
-                <p className="mt-5 text-sm font-semibold">
+              <div className="rounded-3xl border border-border/80 bg-card p-5 shadow-[0_20px_50px_-45px_rgba(21,21,19,0.7)]">
+                <span className="grid size-9 place-items-center rounded-full bg-secondary text-primary">
+                  <BellDot
+                    aria-hidden="true"
+                    className="size-4"
+                    strokeWidth={1.5}
+                  />
+                </span>
+                <p className="mt-4 text-sm font-semibold">
                   Konto- und Bestellupdates
                 </p>
                 <p className="mt-1 text-xs leading-5 text-muted-foreground">
@@ -254,38 +280,55 @@ export function CustomerProfilePage({
                   senden wir Ihnen per E-Mail.
                 </p>
                 <Link
-                  className="mt-5 inline-flex items-center gap-2 text-xs font-semibold text-primary hover:underline"
+                  className="mt-4 inline-flex items-center gap-2 text-xs font-semibold text-primary hover:underline"
                   href="/kundenkonto/benachrichtigungen"
                 >
                   Benachrichtigungen öffnen{" "}
-                  <ArrowRight aria-hidden="true" className="size-3.5" />
+                  <ArrowUpRight
+                    aria-hidden="true"
+                    className="size-3.5"
+                    strokeWidth={1.5}
+                  />
                 </Link>
               </div>
             </AccountSection>
             <AccountSection id="advantages" title="Vorteile & Angebote">
-              <div className="rounded-2xl bg-secondary p-5">
-                <Gift aria-hidden="true" className="size-5 text-primary" />
-                <p className="mt-5 text-sm font-semibold">Exklusive Aktionen</p>
+              <div className="rounded-3xl border border-border/80 bg-card p-5 shadow-[0_20px_50px_-45px_rgba(21,21,19,0.7)]">
+                <span className="grid size-9 place-items-center rounded-full bg-secondary text-primary">
+                  <BadgePercent
+                    aria-hidden="true"
+                    className="size-4"
+                    strokeWidth={1.5}
+                  />
+                </span>
+                <p className="mt-4 text-sm font-semibold">Exklusive Aktionen</p>
                 <p className="mt-1 text-xs leading-5 text-muted-foreground">
                   Entdecken Sie laufende Rabatte und neue Lieblingsstücke.
                 </p>
                 <Link
-                  className="mt-5 inline-flex items-center gap-2 text-xs font-semibold text-primary hover:underline"
+                  className="mt-4 inline-flex items-center gap-2 text-xs font-semibold text-primary hover:underline"
                   href="/rabatt-angebote"
                 >
                   Angebote ansehen{" "}
-                  <ArrowRight aria-hidden="true" className="size-3.5" />
+                  <ArrowUpRight
+                    aria-hidden="true"
+                    className="size-3.5"
+                    strokeWidth={1.5}
+                  />
                 </Link>
               </div>
             </AccountSection>
             <AccountWishlistSummary />
             <AccountSection id="help" title="Hilfe & Kontakt">
-              <div className="rounded-2xl border border-border bg-card p-5">
-                <CircleHelp
-                  aria-hidden="true"
-                  className="size-5 text-primary"
-                />
-                <p className="mt-5 text-sm font-semibold">
+              <div className="rounded-3xl border border-border/80 bg-card p-5 shadow-[0_20px_50px_-45px_rgba(21,21,19,0.7)]">
+                <span className="grid size-9 place-items-center rounded-full bg-secondary text-primary">
+                  <MessageCircleQuestion
+                    aria-hidden="true"
+                    className="size-4"
+                    strokeWidth={1.5}
+                  />
+                </span>
+                <p className="mt-4 text-sm font-semibold">
                   Wir helfen gern weiter
                 </p>
                 <p className="mt-1 text-xs leading-5 text-muted-foreground">
@@ -295,18 +338,26 @@ export function CustomerProfilePage({
               </div>
             </AccountSection>
             <form action={logoutCustomer}>
-              <Button className="w-full" type="submit" variant="outline">
-                <LogOut aria-hidden="true" />
+              <Button
+                className="w-full border-destructive/70 text-destructive hover:border-destructive hover:bg-destructive/10 hover:text-destructive"
+                type="submit"
+                variant="outline"
+              >
+                <LogOut aria-hidden="true" strokeWidth={1.5} />
                 Abmelden
               </Button>
             </form>
           </aside>
         </div>
 
-        <section className="mt-12 rounded-3xl bg-accent px-6 py-8 sm:flex sm:items-center sm:justify-between sm:gap-8 sm:px-8">
+        <section className="mt-12 rounded-[2rem] border border-accent bg-accent px-6 py-8 sm:flex sm:items-center sm:justify-between sm:gap-8 sm:px-8">
           <div>
             <p className="flex items-center gap-2 text-xs font-semibold tracking-[0.12em] uppercase">
-              <Sparkles aria-hidden="true" className="size-4" />
+              <Sparkles
+                aria-hidden="true"
+                className="size-4"
+                strokeWidth={1.5}
+              />
               Für Ihr Zuhause
             </p>
             <h2 className="mt-3 text-2xl font-semibold tracking-[-0.035em]">
@@ -318,7 +369,8 @@ export function CustomerProfilePage({
             nativeButton={false}
             render={<Link href="/inspiration" />}
           >
-            Inspiration entdecken <ArrowRight aria-hidden="true" />
+            Inspiration entdecken{" "}
+            <ArrowUpRight aria-hidden="true" strokeWidth={1.5} />
           </Button>
         </section>
       </Container>

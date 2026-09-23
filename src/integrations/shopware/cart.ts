@@ -56,6 +56,40 @@ function getDeliveryLabel(
   return `Lieferung in ${deliveryTime.min}–${deliveryTime.max} ${deliveryTime.unit}`;
 }
 
+function getPayloadRecord(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === "object"
+    ? (value as Record<string, unknown>)
+    : null;
+}
+
+function getPayloadString(value: unknown) {
+  return typeof value === "string" && value.trim() ? value.trim() : undefined;
+}
+
+function getLineItemOptions(payload: unknown) {
+  const options = getPayloadRecord(payload)?.options;
+
+  if (!Array.isArray(options)) {
+    return [];
+  }
+
+  const mappedOptions = options.flatMap((option) => {
+    const record = getPayloadRecord(option);
+    const label = getPayloadString(record?.group);
+    const value = getPayloadString(record?.option);
+
+    return label && value ? [{ label, value }] : [];
+  });
+
+  return mappedOptions.filter(
+    (option, index) =>
+      mappedOptions.findIndex(
+        (candidate) =>
+          candidate.label === option.label && candidate.value === option.value,
+      ) === index,
+  );
+}
+
 export function mapShopwareCart(
   cart: ShopwareCart,
   currency: string,
@@ -103,6 +137,7 @@ export function mapShopwareCart(
           quantity,
           quantityStep: quantityInformation?.purchaseSteps ?? 1,
           removable: lineItem.removable ?? true,
+          selectedOptions: getLineItemOptions(lineItem.payload),
           stackable: lineItem.stackable ?? false,
           totalPrice: lineItem.price.totalPrice,
           unitPrice: lineItem.price.unitPrice,

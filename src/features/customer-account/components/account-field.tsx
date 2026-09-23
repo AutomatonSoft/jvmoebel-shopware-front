@@ -62,6 +62,7 @@ export function AccountField({
         autoComplete={autoComplete}
         className={cn(
           "peer h-11 rounded-lg border-border/80 bg-card/80 pt-5 pb-1 pl-11 text-foreground shadow-none transition-[border-color,background-color,box-shadow] focus-visible:border-primary focus-visible:bg-card focus-visible:ring-2 focus-visible:ring-primary/10 motion-reduce:transition-none",
+          readOnly && "pointer-events-none cursor-default",
           type === "password" ? "pr-12" : "pr-3",
         )}
         defaultValue={defaultValue}
@@ -69,9 +70,15 @@ export function AccountField({
         maxLength={maxLength}
         minLength={minLength}
         name={name}
+        onFocus={(event) => {
+          if (readOnly) {
+            event.currentTarget.blur();
+          }
+        }}
         placeholder=" "
         required
         readOnly={readOnly}
+        tabIndex={readOnly ? -1 : undefined}
         type={type === "password" && passwordVisible ? "text" : type}
       />
       <Icon
@@ -80,7 +87,7 @@ export function AccountField({
         strokeWidth={1.5}
       />
       <label
-        className="absolute top-2 left-11 max-w-[calc(100%-3.5rem)] origin-left truncate text-[0.65rem] leading-4 text-muted-foreground transition-[top,translate,font-size,color] peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-focus:top-2 peer-focus:translate-y-0 peer-focus:text-[0.65rem] peer-focus:text-primary peer-aria-invalid:text-destructive motion-reduce:transition-none"
+        className="absolute top-2 left-11 max-w-[calc(100%-3.5rem)] origin-left truncate text-[0.65rem] leading-4 text-muted-foreground transition-[top,translate,font-size,color] peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-focus:top-2 peer-focus:translate-y-0 peer-focus:text-[0.65rem] peer-focus:text-primary peer-aria-invalid:top-2 peer-aria-invalid:translate-y-0 peer-aria-invalid:text-[0.65rem] peer-aria-invalid:text-destructive motion-reduce:transition-none"
         htmlFor={id}
       >
         {label}

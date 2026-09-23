@@ -11,6 +11,12 @@ export type CheckoutAddress = Readonly<{
   zipcode: string;
 }>;
 
+export type CheckoutDisplayAddress = CheckoutAddress &
+  Readonly<{ country?: string }>;
+
+export type CheckoutSelectableAddress = CheckoutDisplayAddress &
+  Readonly<{ id: string }>;
+
 export type GuestCheckoutRegistration = Readonly<{
   acceptedDataProtection: true;
   billingAddress: CheckoutAddress;
@@ -19,12 +25,16 @@ export type GuestCheckoutRegistration = Readonly<{
 }>;
 
 export type CheckoutCustomer = Readonly<{
+  activeShippingAddressId?: string;
   addressComplete: boolean;
+  billingAddress?: CheckoutAddress;
   countryId?: string;
   email: string;
   firstName: string;
   guest: boolean;
   lastName: string;
+  shippingAddress?: CheckoutDisplayAddress;
+  shippingAddresses: readonly CheckoutSelectableAddress[];
 }>;
 
 export type CheckoutOption = Readonly<{
@@ -45,6 +55,7 @@ export type CheckoutPageData = Readonly<{
   cart: ShopCart;
   customer: CheckoutCustomer | null;
   options: CheckoutOptions;
+  selection: CheckoutMethodSelection | null;
 }>;
 
 export type CheckoutActionState = Readonly<{
@@ -54,7 +65,6 @@ export type CheckoutActionState = Readonly<{
 }>;
 
 export type CheckoutMethodSelection = Readonly<{
-  acceptedTerms: true;
   customerComment?: string;
   paymentMethodId: string;
   shippingMethodId: string;

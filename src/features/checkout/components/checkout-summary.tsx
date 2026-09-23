@@ -1,8 +1,31 @@
-import { Check, PackageCheck, ShieldCheck } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  HeartHandshake,
+  PackageCheck,
+  RotateCcw,
+  ShieldCheck,
+} from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import { CheckoutOrderSubmit } from "@/features/checkout/components/checkout-order-submit";
 import type { ShopCart } from "@/features/cart/model/cart";
 
-export function CheckoutSummary({ cart }: Readonly<{ cart: ShopCart }>) {
+export type CheckoutSummaryAction = Readonly<{
+  consentSlotId?: string;
+  disabled?: boolean;
+  formId: string;
+  label: string;
+  requiresTerms?: boolean;
+}>;
+
+export function CheckoutSummary({
+  action,
+  cart,
+}: Readonly<{
+  action: CheckoutSummaryAction;
+  cart: ShopCart;
+}>) {
   const formatter = new Intl.NumberFormat(cart.locale, {
     currency: cart.currency,
     minimumFractionDigits: 2,
@@ -24,23 +47,7 @@ export function CheckoutSummary({ cart }: Readonly<{ cart: ShopCart }>) {
         </span>
       </div>
 
-      <ul className="divide-y">
-        {cart.items.map((item) => (
-          <li className="flex justify-between gap-5 py-4 text-sm" key={item.id}>
-            <span className="min-w-0">
-              <strong className="line-clamp-2 font-medium">{item.label}</strong>
-              <span className="mt-1 block text-xs text-muted-foreground">
-                Menge {item.quantity}
-              </span>
-            </span>
-            <strong className="shrink-0 font-semibold">
-              {formatter.format(item.totalPrice)}
-            </strong>
-          </li>
-        ))}
-      </ul>
-
-      <dl className="space-y-3 border-t pt-5 text-sm">
+      <dl className="mt-6 space-y-3 text-sm">
         <div className="flex justify-between gap-4 text-muted-foreground">
           <dt>Zwischensumme</dt>
           <dd>{formatter.format(cart.subtotal)}</dd>
@@ -70,6 +77,28 @@ export function CheckoutSummary({ cart }: Readonly<{ cart: ShopCart }>) {
         </div>
       </dl>
 
+      {action.consentSlotId && (
+        <div
+          className="mt-6 border-t pt-5 empty:hidden"
+          id={action.consentSlotId}
+        />
+      )}
+
+      {action.requiresTerms ? (
+        <CheckoutOrderSubmit formId={action.formId} />
+      ) : (
+        <Button
+          className="mt-6 min-h-14 w-full gap-2 rounded-2xl px-5 text-center text-sm sm:text-base"
+          disabled={action.disabled}
+          form={action.formId}
+          size="lg"
+          type="submit"
+        >
+          <span>{action.label}</span>
+          <ArrowRight aria-hidden="true" className="size-5" />
+        </Button>
+      )}
+
       <ul className="mt-6 grid gap-3 border-t pt-6 text-xs text-muted-foreground">
         <li className="flex items-center gap-2.5">
           <ShieldCheck aria-hidden="true" className="size-4 text-primary" />
@@ -82,6 +111,14 @@ export function CheckoutSummary({ cart }: Readonly<{ cart: ShopCart }>) {
         <li className="flex items-center gap-2.5">
           <Check aria-hidden="true" className="size-4 text-primary" />
           Bestellbestätigung per E-Mail
+        </li>
+        <li className="flex items-center gap-2.5">
+          <RotateCcw aria-hidden="true" className="size-4 text-primary" />
+          14 Tage Widerrufsrecht
+        </li>
+        <li className="flex items-center gap-2.5">
+          <HeartHandshake aria-hidden="true" className="size-4 text-primary" />
+          Persönlicher Lieferservice
         </li>
       </ul>
     </aside>
