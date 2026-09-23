@@ -1,6 +1,6 @@
 "use client";
 
-import { Pencil, Save } from "lucide-react";
+import { BadgeCheck, Pencil } from "lucide-react";
 import { useActionState, useState, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -23,18 +23,11 @@ function EditableField({
         aria-label="Feld bearbeiten"
         className="shrink-0"
         onClick={onEdit}
-        size="sm"
+        size="icon"
         type="button"
-        variant={editing ? "secondary" : "outline"}
+        variant={editing ? "secondary" : "ghost"}
       >
-        {editing ? (
-          "Fertig"
-        ) : (
-          <>
-            <Pencil aria-hidden="true" />
-            Ändern
-          </>
-        )}
+        <Pencil aria-hidden="true" className="size-3.5" />
       </Button>
     </div>
   );
@@ -73,7 +66,7 @@ export function CustomerProfileForm({
         type="error"
       />
       <input name="currentEmail" type="hidden" value={account.email} />
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-3">
         <EditableField
           editing={editable === "firstName"}
           onEdit={() => edit("firstName")}
@@ -141,7 +134,7 @@ export function CustomerProfileForm({
         )}
       </div>
       <Button className="mt-5" disabled={pending} type="submit">
-        <Save aria-hidden="true" />
+        <BadgeCheck aria-hidden="true" strokeWidth={1.8} />
         {pending ? "Wird gespeichert …" : "Änderungen speichern"}
       </Button>
     </form>
