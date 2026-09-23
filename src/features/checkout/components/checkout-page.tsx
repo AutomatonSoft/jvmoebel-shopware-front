@@ -209,6 +209,7 @@ export function CheckoutPage({
                     data.customer.shippingAddress ??
                     data.customer.billingAddress
                   }
+                  email={data.customer.email}
                   paymentMethods={data.options.paymentMethods}
                   selection={data.selection}
                   shippingMethods={data.options.shippingMethods}

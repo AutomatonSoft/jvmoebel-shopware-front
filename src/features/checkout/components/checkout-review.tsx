@@ -1,5 +1,6 @@
 import {
   CreditCard,
+  Mail,
   MapPin,
   MessageSquareText,
   ReceiptText,
@@ -75,6 +76,7 @@ export function CheckoutReview({
   billingAddress,
   cart,
   deliveryAddress,
+  email,
   paymentMethods,
   selection,
   shippingMethods,
@@ -82,6 +84,7 @@ export function CheckoutReview({
   billingAddress: CheckoutDisplayAddress;
   cart: ShopCart;
   deliveryAddress: CheckoutDisplayAddress;
+  email: string;
   paymentMethods: readonly CheckoutOption[];
   selection: CheckoutMethodSelection;
   shippingMethods: readonly CheckoutOption[];
@@ -117,6 +120,13 @@ export function CheckoutReview({
             title="Rechnungsadresse"
           >
             <AddressDetails address={billingAddress} />
+          </ReviewSection>
+          <ReviewSection
+            action="/kasse?schritt=email&zurueck=bestaetigung"
+            icon={Mail}
+            title="E-Mail-Adresse"
+          >
+            <p className="mt-3 text-sm font-medium">{email}</p>
           </ReviewSection>
           <ReviewSection
             action="/kasse?schritt=zahlung"
