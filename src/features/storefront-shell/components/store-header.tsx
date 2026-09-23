@@ -6,9 +6,12 @@ import { Container } from "@/components/ui/container";
 import { CategoryMenu } from "@/features/storefront-shell/components/category-menu";
 import { HeaderSearch } from "@/features/storefront-shell/components/header-search";
 import {
-  HeaderSessionActions,
-  HeaderSessionActionsFallback,
+  HeaderAccountActions,
+  HeaderAccountActionsFallback,
+  HeaderCartAction,
+  HeaderCartActionFallback,
 } from "@/features/storefront-shell/components/header-session-actions";
+import { HeaderWishlistLink } from "@/features/storefront-shell/components/header-wishlist-link";
 import { MobileHeaderSearch } from "@/features/storefront-shell/components/mobile-header-search";
 import { StoreLogo } from "@/features/storefront-shell/components/store-logo";
 import type { StorefrontBranding } from "@/features/storefront-shell/model/branding";
@@ -52,9 +55,17 @@ export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
         )}
         <HeaderSearch className="ml-auto hidden w-full max-w-80 xl:flex" />
         <MobileHeaderSearch />
-        <Suspense fallback={<HeaderSessionActionsFallback />}>
-          <HeaderSessionActions />
-        </Suspense>
+        <div className="ml-auto flex items-center justify-end xl:ml-0">
+          <Suspense fallback={<HeaderAccountActionsFallback />}>
+            <HeaderAccountActions />
+          </Suspense>
+          <div className="flex items-center gap-1 sm:ml-2 sm:border-l sm:border-foreground/10 sm:pl-2">
+            <HeaderWishlistLink />
+            <Suspense fallback={<HeaderCartActionFallback />}>
+              <HeaderCartAction />
+            </Suspense>
+          </div>
+        </div>
       </Container>
     </header>
   );
