@@ -45,17 +45,17 @@ export function EmailConfirmationPending({
   };
 
   return (
-    <div className="flex min-h-72 flex-col items-center justify-center py-8 text-center sm:py-10">
-      <div className="flex size-12 items-center justify-center rounded-2xl bg-accent text-foreground shadow-[0_10px_26px_-16px_rgb(21_21_19/0.75)]">
-        <MailCheck aria-hidden="true" className="size-5" strokeWidth={1.8} />
+    <div className="flex min-h-72 flex-col items-center justify-center py-5 text-center">
+      <div className="flex size-10 items-center justify-center rounded-xl bg-accent text-foreground shadow-[0_10px_26px_-16px_rgb(21_21_19/0.75)]">
+        <MailCheck aria-hidden="true" className="size-4" strokeWidth={1.8} />
       </div>
-      <p className="mt-6 text-[0.65rem] font-semibold tracking-[0.18em] text-muted-foreground uppercase">
+      <p className="mt-4 text-[0.65rem] font-semibold tracking-[0.18em] text-muted-foreground uppercase">
         Konto bestätigen
       </p>
-      <h1 className="mt-3 max-w-md text-2xl leading-[1.08] font-medium tracking-[-0.045em] sm:text-3xl">
+      <h1 className="mt-2 max-w-md text-2xl leading-[1.08] font-medium tracking-[-0.045em]">
         Geben Sie den Bestätigungscode ein.
       </h1>
-      <p className="mt-4 max-w-md text-sm leading-6 text-muted-foreground">
+      <p className="mt-3 max-w-md text-sm leading-5 text-muted-foreground">
         Wir senden Ihnen einen vierstelligen Code zur Bestätigung Ihrer
         E-Mail-Adresse
         {email ? " an " : "."}
@@ -65,7 +65,7 @@ export function EmailConfirmationPending({
         {email && "."}
       </p>
       <form
-        className="mt-7 max-w-sm"
+        className="mt-5 max-w-sm"
         onSubmit={(event) => event.preventDefault()}
       >
         <fieldset>
@@ -74,7 +74,7 @@ export function EmailConfirmationPending({
             {code.map((digit, index) => (
               <Input
                 aria-label={`Ziffer ${index + 1}`}
-                className="size-12 rounded-xl border-border/90 bg-card px-0 text-center text-lg font-semibold tabular-nums shadow-none transition-[border-color,box-shadow,background-color] focus-visible:border-primary focus-visible:bg-background focus-visible:ring-4 focus-visible:ring-primary/10 sm:size-13"
+                className="size-11 rounded-xl border-border/90 bg-card px-0 text-center text-lg font-semibold tabular-nums shadow-none transition-[border-color,box-shadow,background-color] focus-visible:border-primary focus-visible:bg-background focus-visible:ring-4 focus-visible:ring-primary/10"
                 inputMode="numeric"
                 key={index}
                 maxLength={1}
@@ -98,12 +98,12 @@ export function EmailConfirmationPending({
             ))}
           </div>
         </fieldset>
-        <Button className="mt-5 w-full" disabled type="submit">
+        <Button className="mt-4 w-full" disabled type="submit">
           Code bestätigen
           <MoveRight aria-hidden="true" data-icon="inline-end" />
         </Button>
       </form>
-      <p className="mt-4 flex max-w-sm items-start justify-center gap-2 text-xs leading-5 text-muted-foreground">
+      <p className="mt-3 flex max-w-sm items-start justify-center gap-2 text-xs leading-5 text-muted-foreground">
         <BadgeCheck
           aria-hidden="true"
           className="mt-0.5 size-4 shrink-0 text-primary"
@@ -116,7 +116,7 @@ export function EmailConfirmationPending({
       </p>
       <Link
         className={buttonVariants({
-          className: "mt-8 w-full max-w-sm",
+          className: "mt-6 w-full max-w-sm",
           variant: "outline",
         })}
         href="/kundenkonto/anmelden"
