@@ -11,17 +11,16 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/ui/page-header";
 import { CartCheckoutDialog } from "@/features/cart/components/cart-checkout-dialog";
 import { CartLineItem } from "@/features/cart/components/cart-line-item";
+import { CartPromotionCode } from "@/features/cart/components/cart-promotion-code";
 import { CartProductRails } from "@/features/cart/components/cart-product-rail";
 import type { ShopProductListing } from "@/features/catalog/model/product-listing";
 import {
   getShopCartItemCount,
   type ShopCart,
 } from "@/features/cart/model/cart";
-import { applyPromotionCode } from "@/features/cart/server/actions";
 
 type CartPageProps = Readonly<{
   cart: ShopCart;
@@ -191,16 +190,18 @@ export function CartPage({ cart, recommendations, signedIn }: CartPageProps) {
                 </Link>
               </div>
 
-              <aside className="rounded-3xl border border-[#d8c8b8] bg-[#eadfd2] p-6 text-foreground shadow-[0_28px_75px_-52px_rgba(91,67,43,0.5)] lg:sticky lg:top-24 sm:p-7">
-                <p className="text-xs font-semibold tracking-[0.15em] text-foreground/55 uppercase">
-                  Zusammenfassung
-                </p>
-                <h2 className="mt-2 text-2xl font-semibold tracking-[-0.04em]">
-                  Ihre Bestellung
-                </h2>
+              <aside className="rounded-3xl border bg-card p-6 text-foreground shadow-[0_24px_70px_-58px_rgba(21,21,19,0.7)] lg:sticky lg:top-24 sm:p-7">
+                <div className="flex items-baseline justify-between gap-4 border-b pb-5">
+                  <h2 className="text-xl font-semibold tracking-[-0.035em]">
+                    Ihre Bestellung
+                  </h2>
+                  <span className="shrink-0 text-xs text-muted-foreground">
+                    {itemCount} {itemCount === 1 ? "Artikel" : "Artikel"}
+                  </span>
+                </div>
 
-                <dl className="mt-7 space-y-3 text-sm">
-                  <div className="flex justify-between gap-4 text-foreground/65">
+                <dl className="mt-5 space-y-3 text-sm">
+                  <div className="flex justify-between gap-4 text-muted-foreground">
                     <dt>Zwischensumme</dt>
                     <dd>{formatter.format(cart.subtotal)}</dd>
                   </div>
@@ -213,7 +214,7 @@ export function CartPage({ cart, recommendations, signedIn }: CartPageProps) {
                       <dd>{formatter.format(adjustment.price)}</dd>
                     </div>
                   ))}
-                  <div className="flex justify-between gap-4 text-foreground/65">
+                  <div className="flex justify-between gap-4 text-muted-foreground">
                     <dt>Versand</dt>
                     <dd>
                       {cart.shippingCosts === 0
@@ -221,60 +222,35 @@ export function CartPage({ cart, recommendations, signedIn }: CartPageProps) {
                         : formatter.format(cart.shippingCosts)}
                     </dd>
                   </div>
-                  <div className="flex items-end justify-between gap-4 border-t border-foreground/15 pt-5">
+                  <div className="flex items-end justify-between gap-4 border-t pt-5">
                     <dt className="font-semibold">Gesamtsumme</dt>
-                    <dd className="text-2xl font-semibold tracking-[-0.04em]">
+                    <dd className="text-2xl font-bold tracking-[-0.04em]">
                       {formatter.format(cart.total)}
                     </dd>
                   </div>
                 </dl>
 
-                {cart.editable && (
-                  <form
-                    action={applyPromotionCode}
-                    className="mt-6 border-t border-foreground/15 pt-6"
-                  >
-                    <label
-                      className="text-xs font-medium text-foreground/65"
-                      htmlFor="promotion-code"
-                    >
-                      Gutscheincode
-                    </label>
-                    <div className="mt-2 flex gap-2">
-                      <Input
-                        className="h-11 border-foreground/15 bg-background/70 text-foreground placeholder:text-muted-foreground"
-                        id="promotion-code"
-                        name="code"
-                        placeholder="Code eingeben"
-                        required
-                      />
-                      <Button
-                        className="h-11 border border-foreground/10 bg-background px-4 text-foreground hover:bg-background/80"
-                        type="submit"
-                      >
-                        Anwenden
-                      </Button>
-                    </div>
-                  </form>
-                )}
-
                 <CartCheckoutDialog signedIn={signedIn} />
-                <p className="mt-3 text-center text-[0.6875rem] leading-5 text-foreground/55">
-                  Sicher bestellen – mit Kundenkonto oder als Gast.
-                </p>
+                {cart.editable && <CartPromotionCode />}
 
-                <ul className="mt-6 grid gap-3 border-t border-foreground/15 pt-6 text-xs text-foreground/65">
+                <ul className="mt-5 grid gap-2.5 border-t pt-5 text-xs leading-5 text-muted-foreground">
                   <li className="flex items-center gap-2.5">
-                    <ShieldCheck className="size-4 text-primary" />
-                    Sicherer Checkout ohne Registrierung
+                    <ShieldCheck
+                      aria-hidden="true"
+                      className="size-4 text-primary"
+                    />
+                    SSL-verschlüsselter Checkout
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <PackageCheck className="size-4 text-primary" />
-                    Versand und Zahlung transparent wählen
+                    <PackageCheck
+                      aria-hidden="true"
+                      className="size-4 text-primary"
+                    />
+                    Bestellen mit oder ohne Kundenkonto
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <Check className="size-4 text-primary" />
-                    Transparente Bestellübersicht
+                    <Check aria-hidden="true" className="size-4 text-primary" />
+                    Versandkosten vor Abschluss sichtbar
                   </li>
                 </ul>
               </aside>

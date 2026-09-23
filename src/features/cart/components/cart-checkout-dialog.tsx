@@ -15,37 +15,47 @@ export function CartCheckoutDialog({
 
   if (signedIn) {
     return (
-      <>
+      <div className="mt-6">
+        <p className="mb-2.5 text-center text-xs font-medium text-muted-foreground">
+          Schnell und sicher bezahlen
+        </p>
+        <CartPayPalCheckoutButton onCheckout={onPayPalCheckout} />
+        <div className="flex items-center gap-3 py-3 text-[0.6875rem] text-muted-foreground before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
+          oder
+        </div>
         <Button
-          className="mt-7 w-full justify-between"
+          className="h-11 w-full gap-2 rounded-xl border-primary/35 bg-primary/5 text-sm text-primary shadow-none hover:border-primary/60 hover:bg-primary/10"
           nativeButton={false}
           render={<Link href="/kasse" />}
-          size="lg"
+          variant="outline"
         >
-          Zur Kasse gehen
-          <span className="grid size-7 place-items-center rounded-full bg-primary-foreground/20">
-            <ArrowRight aria-hidden="true" className="size-4" />
-          </span>
+          Weiter zur Kasse
+          <ArrowRight aria-hidden="true" className="size-4" />
         </Button>
-        <CartPayPalCheckoutButton onCheckout={onPayPalCheckout} />
-      </>
+      </div>
     );
   }
 
   return (
     <>
-      <Button
-        className="mt-7 w-full justify-between"
-        onClick={() => dialogRef.current?.showModal()}
-        size="lg"
-        type="button"
-      >
-        Zur Kasse gehen
-        <span className="grid size-7 place-items-center rounded-full bg-primary-foreground/20">
+      <div className="mt-6">
+        <p className="mb-2.5 text-center text-xs font-medium text-muted-foreground">
+          Schnell und sicher bezahlen
+        </p>
+        <CartPayPalCheckoutButton onCheckout={onPayPalCheckout} />
+        <div className="flex items-center gap-3 py-3 text-[0.6875rem] text-muted-foreground before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
+          oder
+        </div>
+        <Button
+          className="h-11 w-full gap-2 rounded-xl border-primary/35 bg-primary/5 text-sm text-primary shadow-none hover:border-primary/60 hover:bg-primary/10"
+          onClick={() => dialogRef.current?.showModal()}
+          type="button"
+          variant="outline"
+        >
+          Weiter zur Kasse
           <ArrowRight aria-hidden="true" className="size-4" />
-        </span>
-      </Button>
-      <CartPayPalCheckoutButton onCheckout={onPayPalCheckout} />
+        </Button>
+      </div>
 
       <dialog
         aria-labelledby="checkout-dialog-title"
