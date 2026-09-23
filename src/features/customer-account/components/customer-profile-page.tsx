@@ -338,8 +338,12 @@ export function CustomerProfilePage({
               </div>
             </AccountSection>
             <form action={logoutCustomer}>
-              <Button className="w-full" type="submit" variant="outline">
-                <LogOut aria-hidden="true" />
+              <Button
+                className="w-full border-destructive/70 text-destructive hover:border-destructive hover:bg-destructive/10 hover:text-destructive"
+                type="submit"
+                variant="outline"
+              >
+                <LogOut aria-hidden="true" strokeWidth={1.5} />
                 Abmelden
               </Button>
             </form>
