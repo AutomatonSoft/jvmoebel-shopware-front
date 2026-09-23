@@ -1,5 +1,7 @@
 import "server-only";
 
+import { unstable_cache } from "next/cache";
+
 import {
   defaultShopProductPageRequest,
   type ShopProductPageRequest,
@@ -9,10 +11,21 @@ import { getShopCategoryPage } from "@/features/catalog/server/category-page";
 import { getShopProductPageData } from "@/features/catalog/server/product-detail";
 import { getMockLandingPageRoute } from "@/features/storefront-shell/fixtures/landing-pages";
 import { getStorefrontRoute } from "@/features/storefront-shell/server/storefront-route";
+import { shopwareCacheTtlSeconds } from "@/integrations/shopware/cache-policy";
 import { getShopwareLandingPage } from "@/integrations/shopware/landing-page";
 import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
 import { getShopwareRequestSession } from "@/integrations/shopware/session";
 import type { ShopwareStorefrontRoute } from "@/integrations/shopware/storefront-route";
+
+const getCachedShopwareLandingPage = unstable_cache(
+  (landingPageId: string) =>
+    getShopwareLandingPage(getShopwareRequestSession().client, landingPageId),
+  ["shopware-landing-page"],
+  {
+    revalidate: shopwareCacheTtlSeconds.landingPage,
+    tags: ["shopware:cms"],
+  },
+);
 
 export type ResolvedStorefrontRoute = Readonly<{
   mockLandingPage?: CmsLandingPage;
@@ -87,10 +100,7 @@ export async function getStorefrontPage(
   if (route.kind === "landing-page") {
     const page =
       resolvedRoute.mockLandingPage ??
-      (await getShopwareLandingPage(
-        getShopwareRequestSession().client,
-        route.entityId,
-      ));
+      (await getCachedShopwareLandingPage(route.entityId));
 
     return page
       ? ({ kind: "landing-page", page, route } satisfies {

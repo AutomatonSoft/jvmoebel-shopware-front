@@ -5,6 +5,7 @@ export const shopwareCacheTtlSeconds = {
   categoryChildren: hourInSeconds,
   categoryPage: 2 * minuteInSeconds,
   homeCmsPage: 10 * minuteInSeconds,
+  landingPage: 10 * minuteInSeconds,
   productDetail: 2 * minuteInSeconds,
   productListing: 5 * minuteInSeconds,
   productListingPage: 2 * minuteInSeconds,
