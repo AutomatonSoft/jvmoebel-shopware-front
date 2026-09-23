@@ -1,8 +1,18 @@
+import { cacheLife, cacheTag } from "next/cache";
+
 import { CmsPageRenderer } from "@/features/cms/components/cms-page-renderer";
 import { getHomeCmsPage } from "@/features/cms/server/home-page";
 import { HomePreparationState } from "@/features/storefront-shell/components/home-preparation-state";
+import { shopwareCacheTtlSeconds } from "@/integrations/shopware/cache-policy";
 
 export default async function Home() {
+  "use cache";
+  cacheLife({
+    revalidate: shopwareCacheTtlSeconds.homeCmsPage,
+    expire: 3600,
+  });
+  cacheTag("shopware:cms");
+
   const page = await getHomeCmsPage();
 
   if (!page) {

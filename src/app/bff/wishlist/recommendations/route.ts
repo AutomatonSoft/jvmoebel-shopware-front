@@ -1,7 +1,5 @@
 import { getWishlistRecommendations } from "@/features/wishlist/server/wishlist-products";
 
-export const dynamic = "force-dynamic";
-
 export async function POST(request: Request) {
   try {
     const body: unknown = await request.json();

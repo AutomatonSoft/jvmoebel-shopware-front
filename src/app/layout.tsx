@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
+import { Suspense } from "react";
 
 import { Toaster } from "@/components/ui/sonner";
 import { StoreFooter } from "@/features/storefront-shell/components/store-footer";
@@ -18,8 +19,6 @@ export const metadata: Metadata = {
   description: "JVMoebel",
 };
 
-export const dynamic = "force-dynamic";
-
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const storefront = await getStorefrontShellData();
 
@@ -30,7 +29,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           branding={storefront.branding}
           navigation={storefront.navigation}
         />
-        {children}
+        <Suspense fallback={<main className="flex-1" />}>{children}</Suspense>
         <StoreFooter
           branding={storefront.branding}
           content={storefront.footerContent}

@@ -1,5 +1,7 @@
 import "server-only";
 
+import { unstable_rethrow } from "next/navigation";
+
 import { getShopCartItemCount } from "@/features/cart/model/cart";
 import { getShopCart } from "@/features/cart/server/cart";
 import { getCustomerAccount } from "@/features/customer-account/server/account";
@@ -13,10 +15,12 @@ export async function getHeaderSession() {
 
   const [customer, cart] = await Promise.all([
     getCustomerAccount().catch((error: unknown) => {
+      unstable_rethrow(error);
       console.error("Header customer account lookup failed.", error);
       return null;
     }),
     getShopCart().catch((error: unknown) => {
+      unstable_rethrow(error);
       console.error("Header cart lookup failed.", error);
       return null;
     }),

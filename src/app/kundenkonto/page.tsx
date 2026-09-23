@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
+import { redirect, unstable_rethrow } from "next/navigation";
 
 import { AccountToast } from "@/features/customer-account/components/account-toast";
 import { CustomerProfilePage } from "@/features/customer-account/components/customer-profile-page";
@@ -28,6 +28,7 @@ export default async function CustomerAccountPage({
   const [account, orders, params] = await Promise.all([
     getCustomerAccount(),
     getCustomerAccountOrders().catch((error: unknown) => {
+      unstable_rethrow(error);
       console.error("Customer order lookup failed.", error);
       return null;
     }),
