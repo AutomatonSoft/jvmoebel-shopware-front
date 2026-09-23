@@ -39,7 +39,10 @@ export function ContractRevocationDialog({
   return (
     <Dialog.Root>
       <Dialog.Trigger
-        className={buttonVariants({ className: "mt-6 rounded-full" })}
+        className={buttonVariants({
+          className: "mt-6 rounded-full",
+          variant: "solid",
+        })}
       >
         {content.buttonLabel}
         <ArrowUpRight

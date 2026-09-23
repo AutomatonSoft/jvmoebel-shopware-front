@@ -105,6 +105,7 @@ export function NewsletterForm({
           disabled={pending}
           size={buttonSizeMap[buttonSize]}
           type="submit"
+          variant="solid"
         >
           {buttonLabel}
           <ArrowRight className="size-4 transition-transform motion-safe:group-hover:translate-x-1" />

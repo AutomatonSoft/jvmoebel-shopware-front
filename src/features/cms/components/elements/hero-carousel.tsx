@@ -182,6 +182,7 @@ function FeaturedSlideContent({
                 href={slide.primaryLink.url}
                 label={slide.primaryLink.label}
                 size={slide.primaryLink.size}
+                variant="solid"
               />
             )}
             {slide.secondaryLink && (
