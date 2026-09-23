@@ -5,9 +5,11 @@ import { Toaster } from "@/components/ui/sonner";
 import { getShopCartItemCount } from "@/features/cart/model/cart";
 import { getShopCart } from "@/features/cart/server/cart";
 import { getCustomerAccount } from "@/features/customer-account/server/account";
+import { hasCustomerContextCookie } from "@/features/customer-account/server/session";
 import { StoreFooter } from "@/features/storefront-shell/components/store-footer";
 import { StoreHeader } from "@/features/storefront-shell/components/store-header";
 import { getStorefrontShellData } from "@/features/storefront-shell/server/storefront-config";
+import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
 
 import "./globals.css";
 
@@ -24,16 +26,23 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const storefrontPromise = getStorefrontShellData();
+  const shouldLoadCustomerData =
+    shouldUseShopwareMocks() || (await hasCustomerContextCookie());
   const [storefront, customer, cart] = await Promise.all([
-    getStorefrontShellData(),
-    getCustomerAccount().catch((error: unknown) => {
-      console.error("Header customer account lookup failed.", error);
-      return null;
-    }),
-    getShopCart().catch((error: unknown) => {
-      console.error("Header cart lookup failed.", error);
-      return null;
-    }),
+    storefrontPromise,
+    shouldLoadCustomerData
+      ? getCustomerAccount().catch((error: unknown) => {
+          console.error("Header customer account lookup failed.", error);
+          return null;
+        })
+      : null,
+    shouldLoadCustomerData
+      ? getShopCart().catch((error: unknown) => {
+          console.error("Header cart lookup failed.", error);
+          return null;
+        })
+      : null,
   ]);
 
   return (

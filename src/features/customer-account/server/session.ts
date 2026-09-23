@@ -6,6 +6,12 @@ import { createShopwareSession } from "@/integrations/shopware/session";
 
 const customerContextCookie = "sw-context-token";
 
+export async function hasCustomerContextCookie() {
+  const cookieStore = await cookies();
+
+  return Boolean(cookieStore.get(customerContextCookie)?.value);
+}
+
 export async function createCustomerSession() {
   const cookieStore = await cookies();
 
