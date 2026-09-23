@@ -1,4 +1,4 @@
-import { LockKeyhole, PackageCheck, RotateCcw } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 
@@ -117,32 +117,14 @@ export function CheckoutPage({
 
   return (
     <main className="flex-1 bg-background">
-      <section className="border-b bg-card">
-        <Container className="flex flex-wrap items-center justify-between gap-4 py-4 text-xs text-muted-foreground">
-          <span className="flex items-center gap-2 font-medium text-foreground">
-            <LockKeyhole aria-hidden="true" className="size-4 text-primary" />
-            Sicherer Bereich
-          </span>
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-            <span className="flex items-center gap-2">
-              <RotateCcw aria-hidden="true" className="size-4" />
-              14 Tage Widerrufsrecht
-            </span>
-            <span className="flex items-center gap-2">
-              <PackageCheck aria-hidden="true" className="size-4" />
-              Persönlicher Lieferservice
-            </span>
-            <Link
-              className="font-semibold text-foreground hover:text-primary"
-              href="/warenkorb"
-            >
-              Zum Warenkorb
-            </Link>
-          </div>
-        </Container>
-      </section>
-
-      <Container className="py-6 sm:py-8">
+      <Container className="py-4 sm:py-5">
+        <Link
+          className="mb-3 inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-primary"
+          href="/warenkorb"
+        >
+          <ArrowLeft aria-hidden="true" className="size-3.5" />
+          Zum Warenkorb
+        </Link>
         <PageHeader
           aside={data.customer ? <CheckoutProgress step={step} /> : undefined}
           description={
@@ -155,7 +137,7 @@ export function CheckoutPage({
         />
 
         {paymentError && (
-          <p className="mt-6 rounded-2xl border border-destructive/25 bg-destructive/5 p-4 text-sm leading-6 text-destructive">
+          <p className="mt-5 rounded-2xl border border-destructive/25 bg-destructive/5 p-4 text-sm leading-6 text-destructive">
             Die Zahlung konnte nicht abgeschlossen werden. Ihre Bestellung ist
             gespeichert; wählen Sie die Zahlungsart bitte erneut.
           </p>
@@ -169,7 +151,7 @@ export function CheckoutPage({
             shippingMethods={data.options.shippingMethods}
           />
         ) : (
-          <div className="mt-6 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_23rem] xl:gap-12">
+          <div className="mt-5 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_23rem] xl:gap-12">
             <div>
               {showNewDeliveryAddressStep ? (
                 <CustomerCheckoutDeliveryAddressForm

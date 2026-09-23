@@ -1,4 +1,11 @@
-import { ArrowRight, Check, PackageCheck, ShieldCheck } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  HeartHandshake,
+  PackageCheck,
+  RotateCcw,
+  ShieldCheck,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { CheckoutOrderSubmit } from "@/features/checkout/components/checkout-order-submit";
@@ -104,6 +111,14 @@ export function CheckoutSummary({
         <li className="flex items-center gap-2.5">
           <Check aria-hidden="true" className="size-4 text-primary" />
           Bestellbestätigung per E-Mail
+        </li>
+        <li className="flex items-center gap-2.5">
+          <RotateCcw aria-hidden="true" className="size-4 text-primary" />
+          14 Tage Widerrufsrecht
+        </li>
+        <li className="flex items-center gap-2.5">
+          <HeartHandshake aria-hidden="true" className="size-4 text-primary" />
+          Persönlicher Lieferservice
         </li>
       </ul>
     </aside>

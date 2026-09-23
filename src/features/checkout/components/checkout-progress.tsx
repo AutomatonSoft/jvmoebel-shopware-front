@@ -14,26 +14,26 @@ export function CheckoutProgress({ step }: Readonly<{ step: CheckoutStep }>) {
   return (
     <ol
       aria-label="Checkout-Fortschritt"
-      className="flex items-center gap-2 text-[0.625rem] font-semibold tracking-wide uppercase sm:gap-3"
+      className="flex items-center gap-1.5 text-[0.5625rem] font-semibold tracking-wide uppercase sm:gap-2"
     >
       {steps.map((item, index) => {
         const completed = index < currentIndex;
         const current = index === currentIndex;
 
         return (
-          <li className="flex items-center gap-2" key={item.id}>
+          <li className="flex items-center gap-1.5" key={item.id}>
             {index > 0 && (
-              <span aria-hidden="true" className="h-px w-4 bg-border sm:w-8" />
+              <span aria-hidden="true" className="h-px w-3 bg-border sm:w-6" />
             )}
             <span
               aria-current={current ? "step" : undefined}
-              className={`flex items-center gap-2 ${current || completed ? "text-foreground" : "text-muted-foreground"}`}
+              className={`flex items-center gap-1.5 ${current || completed ? "text-foreground" : "text-muted-foreground"}`}
             >
               <span
-                className={`grid size-7 place-items-center rounded-full ${current || completed ? "bg-primary text-primary-foreground" : "border"}`}
+                className={`grid size-6 place-items-center rounded-full ${current || completed ? "bg-primary text-primary-foreground" : "border"}`}
               >
                 {completed ? (
-                  <Check aria-hidden="true" className="size-3.5" />
+                  <Check aria-hidden="true" className="size-3" />
                 ) : (
                   index + 1
                 )}
