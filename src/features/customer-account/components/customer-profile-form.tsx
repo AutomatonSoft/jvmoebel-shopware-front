@@ -50,7 +50,7 @@ export function CustomerProfileForm({
   return (
     <form
       action={formAction}
-      className="rounded-2xl border border-border bg-card p-4 sm:p-5"
+      className="max-w-2xl rounded-3xl border border-border/80 bg-card p-5 shadow-[0_20px_50px_-45px_rgba(21,21,19,0.7)] sm:p-6"
     >
       <AccountToast
         description={state.message}
@@ -66,7 +66,7 @@ export function CustomerProfileForm({
         type="error"
       />
       <input name="currentEmail" type="hidden" value={account.email} />
-      <div className="grid gap-3">
+      <div className="grid gap-4">
         <EditableField
           editing={editable === "firstName"}
           onEdit={() => edit("firstName")}
@@ -133,7 +133,7 @@ export function CustomerProfileForm({
           </div>
         )}
       </div>
-      <Button className="mt-5" disabled={pending} type="submit">
+      <Button className="mt-6" disabled={pending} type="submit">
         <BadgeCheck aria-hidden="true" strokeWidth={1.8} />
         {pending ? "Wird gespeichert …" : "Änderungen speichern"}
       </Button>
