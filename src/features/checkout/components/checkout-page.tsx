@@ -18,6 +18,11 @@ import { CustomerCheckoutDeliveryAddressForm } from "@/features/checkout/compone
 import { CustomerCheckoutDeliveryAddressEditForm } from "@/features/checkout/components/customer-checkout-delivery-address-edit-form";
 import { CustomerCheckoutAddressForm } from "@/features/checkout/components/customer-checkout-address-form";
 import type { CheckoutPageData } from "@/features/checkout/model/checkout";
+import {
+  hasAvailableCheckoutSelection,
+  resolveCheckoutStep,
+  type CheckoutStep,
+} from "@/features/checkout/model/checkout-step";
 
 export function CheckoutPage({
   addressStep,
@@ -27,6 +32,7 @@ export function CheckoutPage({
   emailStep,
   newDeliveryAddressStep,
   paymentError,
+  paymentStep,
   returnToConfirmation,
 }: Readonly<{
   addressStep: boolean;
@@ -36,6 +42,7 @@ export function CheckoutPage({
   emailStep: boolean;
   newDeliveryAddressStep: boolean;
   paymentError: boolean;
+  paymentStep: boolean;
   returnToConfirmation: boolean;
 }>) {
   const editBackHref: Route = returnToConfirmation
@@ -46,24 +53,26 @@ export function CheckoutPage({
   const showDeliveryAddressStep =
     deliveryAddressStep && Boolean(data.customer?.shippingAddress);
   const showEmailStep = emailStep && Boolean(data.customer);
-  const hasConfirmationSelection =
-    confirmationStep &&
-    Boolean(data.selection) &&
-    data.options.paymentMethods.some(
-      (method) => method.id === data.selection?.paymentMethodId,
-    ) &&
-    data.options.shippingMethods.some(
-      (method) => method.id === data.selection?.shippingMethodId,
-    );
-  const step = hasConfirmationSelection
-    ? "review"
-    : data.customer?.addressComplete &&
-        !addressStep &&
-        !showDeliveryAddressStep &&
-        !showEmailStep &&
-        !showNewDeliveryAddressStep
-      ? "payment"
-      : "address";
+  const requestedStep: CheckoutStep | undefined =
+    addressStep ||
+    showDeliveryAddressStep ||
+    showEmailStep ||
+    showNewDeliveryAddressStep
+      ? "address"
+      : paymentStep
+        ? "payment"
+        : confirmationStep
+          ? "review"
+          : undefined;
+  const step = resolveCheckoutStep({
+    addressComplete: data.customer?.addressComplete ?? false,
+    options: data.options,
+    requestedStep,
+    selection: data.selection,
+  });
+  const showReview =
+    step === "review" &&
+    hasAvailableCheckoutSelection(data.selection, data.options);
   const summaryAction: CheckoutSummaryAction = !data.customer
     ? {
         formId: "guest-checkout-form",
@@ -92,7 +101,7 @@ export function CheckoutPage({
                     ? "Änderungen speichern"
                     : "Weiter zu Versand und Zahlung",
               }
-            : hasConfirmationSelection
+            : showReview
               ? {
                   formId: "checkout-order-review-form",
                   label: "Zahlungspflichtig bestellen",
@@ -188,7 +197,7 @@ export function CheckoutPage({
                   countries={data.options.countries}
                   customer={data.customer}
                 />
-              ) : hasConfirmationSelection &&
+              ) : showReview &&
                 data.customer.billingAddress &&
                 (data.customer.shippingAddress ??
                   data.customer.billingAddress) &&
@@ -228,9 +237,7 @@ export function CheckoutPage({
                   shippingMethods={data.options.shippingMethods}
                 />
               )}
-              {!hasConfirmationSelection && (
-                <CheckoutCartPreview cart={data.cart} />
-              )}
+              {!showReview && <CheckoutCartPreview cart={data.cart} />}
             </div>
             <CheckoutSummary action={summaryAction} cart={data.cart} />
           </div>

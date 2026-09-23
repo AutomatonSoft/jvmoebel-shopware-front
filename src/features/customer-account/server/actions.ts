@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 import type { AccountActionState } from "@/features/customer-account/model/account";
+import { clearCheckoutMethodSelection } from "@/features/checkout/server/method-selection";
 import {
   getCustomerEmailChangeFieldErrors,
   getCustomerLoginFieldErrors,
@@ -156,7 +157,7 @@ export async function logoutCustomer() {
   } catch (error) {
     console.error("Customer logout failed.", error);
   } finally {
-    await clearCustomerContext();
+    await Promise.all([clearCheckoutMethodSelection(), clearCustomerContext()]);
   }
 
   redirect("/kundenkonto/anmelden");

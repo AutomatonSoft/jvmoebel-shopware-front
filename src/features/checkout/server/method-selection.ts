@@ -45,9 +45,10 @@ export async function persistCheckoutMethodSelection(
 
   cookieStore.set(checkoutMethodSelectionCookie, JSON.stringify(selection), {
     httpOnly: true,
-    maxAge: 60 * 60,
+    maxAge: 60 * 60 * 24 * 30,
     path: "/",
     sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
   });
 }
 

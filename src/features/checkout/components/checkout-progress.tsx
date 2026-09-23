@@ -1,16 +1,14 @@
 import { Check } from "lucide-react";
 
+import type { CheckoutStep } from "@/features/checkout/model/checkout-step";
+
 const steps = [
   { id: "address", label: "Adresse" },
   { id: "payment", label: "Zahlung" },
   { id: "review", label: "Prüfen" },
 ] as const;
 
-export type CheckoutProgressStep = (typeof steps)[number]["id"];
-
-export function CheckoutProgress({
-  step,
-}: Readonly<{ step: CheckoutProgressStep }>) {
+export function CheckoutProgress({ step }: Readonly<{ step: CheckoutStep }>) {
   const currentIndex = steps.findIndex((item) => item.id === step);
 
   return (

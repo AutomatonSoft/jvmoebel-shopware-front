@@ -31,7 +31,6 @@ import {
   selectMockCheckoutDeliveryAddress,
 } from "@/features/checkout/server/mock-checkout";
 import {
-  clearCheckoutMethodSelection,
   getCheckoutMethodSelection,
   persistCheckoutMethodSelection,
 } from "@/features/checkout/server/method-selection";
@@ -541,8 +540,6 @@ export async function placeCheckoutOrder(
           ? "/bestellung/danke?zahlung=offen"
           : destination;
     }
-
-    await clearCheckoutMethodSelection();
   } catch (error) {
     return getActionError(error, "Checkout order creation failed.");
   }
