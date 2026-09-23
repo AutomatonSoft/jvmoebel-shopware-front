@@ -25,6 +25,7 @@ import {
   persistCustomerContext,
 } from "@/features/customer-account/server/session";
 import {
+  confirmShopwareCustomerRegistration,
   loginShopwareCustomer,
   logoutShopwareCustomer,
   registerShopwareCustomer,
@@ -97,7 +98,6 @@ export async function registerCustomer(
   formData: FormData,
 ): Promise<AccountActionState> {
   const validation = validateCustomerRegistration(formData);
-  const redirectPath = getRedirectPath(formData);
 
   if (!validation.success) {
     return {
@@ -150,7 +150,6 @@ export async function registerCustomer(
         );
       }
     }
-    await persistCustomerContext(session.getContextToken());
   } catch (error) {
     if (error instanceof ApiClientError && error.status === 400) {
       return {
@@ -169,7 +168,36 @@ export async function registerCustomer(
     };
   }
 
-  redirect(redirectPath ?? "/kundenkonto?registriert=1");
+  redirect(
+    `/kundenkonto/email-bestaetigen?email=${encodeURIComponent(registration.email)}`,
+  );
+}
+
+export async function confirmCustomerRegistration(
+  confirmation: Readonly<{ em?: string; hash?: string }>,
+) {
+  if (!confirmation.em || !confirmation.hash) {
+    return { status: "invalid" as const };
+  }
+
+  try {
+    const session = await createCustomerSession();
+
+    await confirmShopwareCustomerRegistration(session.client, {
+      em: confirmation.em,
+      hash: confirmation.hash,
+    });
+    await persistCustomerContext(session.getContextToken());
+
+    return { status: "success" as const };
+  } catch (error) {
+    if (error instanceof ApiClientError && error.status === 412) {
+      return { status: "already-confirmed" as const };
+    }
+
+    console.error("Customer registration confirmation failed.", error);
+    return { status: "invalid" as const };
+  }
 }
 
 export async function logoutCustomer() {
