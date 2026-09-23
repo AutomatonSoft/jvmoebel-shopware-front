@@ -1,6 +1,6 @@
 "use client";
 
-import { Gem, Heart, ShieldCheck } from "lucide-react";
+import { ArrowUpRight, Heart, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -100,7 +100,7 @@ export function WishlistPage() {
         ) : (
           <section className="mt-6 rounded-3xl border border-dashed border-border bg-card px-6 py-16 text-center sm:py-24">
             <span className="mx-auto grid size-16 place-items-center rounded-full bg-muted text-primary">
-              <Heart aria-hidden="true" className="size-7" />
+              <Heart aria-hidden="true" className="size-7" strokeWidth={1.5} />
             </span>
             <p className="mt-6 text-[0.6875rem] font-semibold tracking-[0.15em] text-muted-foreground uppercase">
               Noch keine Favoriten
@@ -118,7 +118,7 @@ export function WishlistPage() {
               render={<Link href="/moebel-sortiment" />}
               size="lg"
             >
-              <Gem aria-hidden="true" />
+              <ArrowUpRight aria-hidden="true" strokeWidth={1.5} />
               Moebel entdecken
             </Button>
           </section>
