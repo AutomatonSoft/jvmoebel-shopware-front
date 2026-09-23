@@ -3,7 +3,7 @@ const hourInSeconds = 60 * minuteInSeconds;
 
 export const shopwareCacheTtlSeconds = {
   categoryChildren: hourInSeconds,
-  categoryPage: 2 * minuteInSeconds,
+  categoryPage: 10 * minuteInSeconds,
   homeCmsPage: 10 * minuteInSeconds,
   landingPage: 10 * minuteInSeconds,
   productDetail: 2 * minuteInSeconds,
