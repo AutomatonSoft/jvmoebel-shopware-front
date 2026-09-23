@@ -1,6 +1,7 @@
 import "server-only";
 
 import { unstable_cache } from "next/cache";
+import { connection } from "next/server";
 
 import { defaultStorefrontFooterContent } from "@/features/storefront-shell/fixtures/footer";
 import {
@@ -43,6 +44,10 @@ const getCachedShopwareStorefrontShellData = unstable_cache(
 export async function getStorefrontShellData(): Promise<StorefrontShellData> {
   if (shouldUseShopwareMocks()) {
     return storefrontShellMock;
+  }
+
+  if (!process.env.SHOPWARE_ENDPOINT || !process.env.SHOPWARE_ACCESS_TOKEN) {
+    await connection();
   }
 
   return getCachedShopwareStorefrontShellData();

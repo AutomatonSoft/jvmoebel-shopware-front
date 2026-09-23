@@ -15,10 +15,8 @@ type CustomerRegistrationPageProps = Readonly<{
 export default async function CustomerRegistrationPage({
   searchParams,
 }: CustomerRegistrationPageProps) {
-  const [options, parameters] = await Promise.all([
-    getRegistrationOptions(),
-    searchParams,
-  ]);
+  const parameters = await searchParams;
+  const options = await getRegistrationOptions();
   const redirectTo = Array.isArray(parameters.weiter)
     ? parameters.weiter[0]
     : parameters.weiter;

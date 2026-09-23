@@ -19,23 +19,41 @@ export const metadata: Metadata = {
   description: "JVMoebel",
 };
 
-export default async function RootLayout({ children }: LayoutProps<"/">) {
+async function StorefrontHeader() {
   const storefront = await getStorefrontShellData();
 
   return (
+    <StoreHeader
+      branding={storefront.branding}
+      navigation={storefront.navigation}
+    />
+  );
+}
+
+async function StorefrontFooter() {
+  const storefront = await getStorefrontShellData();
+
+  return (
+    <StoreFooter
+      branding={storefront.branding}
+      content={storefront.footerContent}
+      footerNavigation={storefront.footerNavigation}
+      serviceNavigation={storefront.serviceNavigation}
+    />
+  );
+}
+
+export default function RootLayout({ children }: LayoutProps<"/">) {
+  return (
     <html lang="de" className={`${montserrat.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
-        <StoreHeader
-          branding={storefront.branding}
-          navigation={storefront.navigation}
-        />
+        <Suspense fallback={<header className="h-18 border-b bg-background" />}>
+          <StorefrontHeader />
+        </Suspense>
         <Suspense fallback={<main className="flex-1" />}>{children}</Suspense>
-        <StoreFooter
-          branding={storefront.branding}
-          content={storefront.footerContent}
-          footerNavigation={storefront.footerNavigation}
-          serviceNavigation={storefront.serviceNavigation}
-        />
+        <Suspense fallback={null}>
+          <StorefrontFooter />
+        </Suspense>
         <Toaster />
       </body>
     </html>
