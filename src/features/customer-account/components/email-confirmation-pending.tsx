@@ -2,7 +2,7 @@
 
 import { BadgeCheck, MailCheck, MoveRight } from "lucide-react";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,10 @@ export function EmailConfirmationPending({
 }: Readonly<{ email?: string }>) {
   const [code, setCode] = useState(Array(codeLength).fill(""));
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
+
+  useEffect(() => {
+    inputRefs.current[0]?.focus();
+  }, []);
 
   const setCodeDigit = (index: number, value: string) => {
     const digit = value.replace(/\D/g, "").slice(-1);
