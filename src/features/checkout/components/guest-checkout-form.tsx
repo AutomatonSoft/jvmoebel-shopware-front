@@ -74,7 +74,7 @@ function OptionalField({
         strokeWidth={1.5}
       />
       <label
-        className="absolute top-2 left-11 text-[0.65rem] leading-4 text-muted-foreground peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-focus:top-2 peer-focus:translate-y-0 peer-focus:text-[0.65rem] peer-focus:text-primary"
+        className="absolute top-2 left-11 text-[0.65rem] leading-4 text-muted-foreground peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-focus:top-2 peer-focus:translate-y-0 peer-focus:text-[0.65rem] peer-focus:text-primary peer-aria-invalid:top-2 peer-aria-invalid:translate-y-0 peer-aria-invalid:text-[0.65rem] peer-aria-invalid:text-destructive"
         htmlFor={id}
       >
         {label}

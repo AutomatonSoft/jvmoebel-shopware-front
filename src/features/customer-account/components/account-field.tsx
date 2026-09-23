@@ -87,7 +87,7 @@ export function AccountField({
         strokeWidth={1.5}
       />
       <label
-        className="absolute top-2 left-11 max-w-[calc(100%-3.5rem)] origin-left truncate text-[0.65rem] leading-4 text-muted-foreground transition-[top,translate,font-size,color] peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-focus:top-2 peer-focus:translate-y-0 peer-focus:text-[0.65rem] peer-focus:text-primary peer-aria-invalid:text-destructive motion-reduce:transition-none"
+        className="absolute top-2 left-11 max-w-[calc(100%-3.5rem)] origin-left truncate text-[0.65rem] leading-4 text-muted-foreground transition-[top,translate,font-size,color] peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-focus:top-2 peer-focus:translate-y-0 peer-focus:text-[0.65rem] peer-focus:text-primary peer-aria-invalid:top-2 peer-aria-invalid:translate-y-0 peer-aria-invalid:text-[0.65rem] peer-aria-invalid:text-destructive motion-reduce:transition-none"
         htmlFor={id}
       >
         {label}
