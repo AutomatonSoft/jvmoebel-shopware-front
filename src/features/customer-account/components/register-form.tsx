@@ -44,6 +44,7 @@ export function RegisterForm({
       acceptedDataProtection: true,
       accountType: "private",
       countryId: options.defaultCountryId,
+      newsletterConsent: false,
       salutationId: "",
     },
     mode: "onBlur",
@@ -222,6 +223,33 @@ export function RegisterForm({
         />
       </fieldset>
 
+      <label className="flex cursor-pointer items-start gap-2.5">
+        <input
+          {...register("newsletterConsent")}
+          className="mt-0.5 size-4 shrink-0 rounded border-border accent-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          type="checkbox"
+        />
+        <span className="text-xs leading-5 text-muted-foreground">
+          <span className="block text-foreground">
+            Ja, ich möchte <strong>E-Mail-Nachrichten</strong> erhalten.
+          </span>
+          <span className="block">
+            Eine Abmeldung von den E-Mail-Nachrichten ist jederzeit möglich.*
+          </span>
+        </span>
+      </label>
+
+      <Button
+        className="w-full justify-between rounded-lg bg-foreground text-background hover:bg-foreground/85 disabled:cursor-wait"
+        disabled={pending}
+        type="submit"
+      >
+        {pending ? "Konto wird erstellt …" : "Konto erstellen"}
+        <span className="grid size-6 place-items-center rounded-full bg-background/10">
+          <ArrowRight aria-hidden="true" className="size-3.5" />
+        </span>
+      </Button>
+
       <p className="text-[0.7rem] leading-4 text-muted-foreground">
         Mit Ihrer Registrierung stimmen Sie unseren{" "}
         <Link
@@ -239,17 +267,6 @@ export function RegisterForm({
         </Link>{" "}
         zu.
       </p>
-
-      <Button
-        className="w-full justify-between rounded-lg bg-foreground text-background hover:bg-foreground/85 disabled:cursor-wait"
-        disabled={pending}
-        type="submit"
-      >
-        {pending ? "Konto wird erstellt …" : "Konto erstellen"}
-        <span className="grid size-6 place-items-center rounded-full bg-background/10">
-          <ArrowRight aria-hidden="true" className="size-3.5" />
-        </span>
-      </Button>
     </form>
   );
 }

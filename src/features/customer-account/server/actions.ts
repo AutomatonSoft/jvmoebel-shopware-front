@@ -29,6 +29,7 @@ import {
   logoutShopwareCustomer,
   registerShopwareCustomer,
 } from "@/integrations/shopware/customer-account";
+import { subscribeToShopwareNewsletter } from "@/integrations/shopware/newsletter";
 import {
   getCheckoutAddressFieldErrors,
   validateCheckoutAddress,
@@ -127,6 +128,28 @@ export async function registerCustomer(
     const session = await createCustomerSession();
 
     await registerShopwareCustomer(session.client, registration);
+    if (registration.newsletterConsent) {
+      try {
+        const outcome = await subscribeToShopwareNewsletter(session.client, {
+          email: registration.email,
+        });
+
+        if (!outcome.success) {
+          console.error(
+            "Newsletter subscription was not accepted by Shopware.",
+            {
+              email: registration.email,
+              status: outcome.status,
+            },
+          );
+        }
+      } catch (error) {
+        console.error(
+          "Newsletter subscription failed after registration.",
+          error,
+        );
+      }
+    }
     await persistCustomerContext(session.getContextToken());
   } catch (error) {
     if (error instanceof ApiClientError && error.status === 400) {

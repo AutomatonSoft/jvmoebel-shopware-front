@@ -69,11 +69,20 @@ describe("customer account validation", () => {
       countryId: "country-de",
       email: "kunde@example.com",
       firstName: "Greta",
+      newsletterConsent: false,
       lastName: "Groß",
       password: "sicheres-passwort",
       salutationId: "salutation-mrs",
       vatId: undefined,
     });
+  });
+
+  test("keeps newsletter consent when selected during registration", () => {
+    const formData = createRegistrationForm();
+
+    formData.set("newsletterConsent", "on");
+
+    expect(parseCustomerRegistration(formData)?.newsletterConsent).toBeTrue();
   });
 
   test("accepts browser values for client-side registration validation", () => {
@@ -84,6 +93,7 @@ describe("customer account validation", () => {
         countryId: "country-de",
         email: "kunde@example.com",
         firstName: "Greta",
+        newsletterConsent: false,
         lastName: "Groß",
         password: "sicheres-passwort",
         salutationId: "",

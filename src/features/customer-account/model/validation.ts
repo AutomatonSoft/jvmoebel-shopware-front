@@ -59,6 +59,7 @@ const registrationBaseSchema = z.object({
   email: emailSchema,
   firstName: requiredString(255),
   lastName: requiredString(255),
+  newsletterConsent: z.boolean(),
   password: z.string().min(8).max(72),
   salutationId: optionalString(64),
 });
@@ -84,6 +85,7 @@ const customerRegistrationSchema = registrationInputSchema.transform(
     email: registration.email,
     firstName: registration.firstName,
     lastName: registration.lastName,
+    newsletterConsent: registration.newsletterConsent,
     password: registration.password,
     salutationId: registration.salutationId,
     vatId:
@@ -126,6 +128,7 @@ function getCustomerRegistrationInput(formData: FormData) {
     email: formData.get("email"),
     firstName: formData.get("firstName"),
     lastName: formData.get("lastName"),
+    newsletterConsent: formData.get("newsletterConsent") === "on",
     password: formData.get("password"),
     salutationId: formData.get("salutationId"),
     vatId: formData.get("vatId"),
