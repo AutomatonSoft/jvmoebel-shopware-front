@@ -1,25 +1,10 @@
 "use client";
 
-import type { ShopProduct } from "@/features/catalog/model/product-listing";
-
 const recentlyViewedStorageKey = "jvmoebel:recently-viewed-products";
 const maximumRecentlyViewedProducts = 12;
 const recentlyViewedListeners = new Set<() => void>();
 
-export type RecentlyViewedProduct = Pick<
-  ShopProduct,
-  | "badge"
-  | "colors"
-  | "company"
-  | "id"
-  | "image"
-  | "name"
-  | "previousPrice"
-  | "rating"
-  | "reviewCount"
-  | "unitPrice"
-  | "url"
->;
+export type RecentlyViewedProduct = Readonly<{ id: string }>;
 
 const emptyRecentlyViewedProducts: readonly RecentlyViewedProduct[] = [];
 
@@ -37,18 +22,7 @@ function isRecentlyViewedProduct(
 
   const product = value as Partial<RecentlyViewedProduct>;
 
-  return (
-    typeof product.id === "string" &&
-    typeof product.name === "string" &&
-    typeof product.company === "string" &&
-    typeof product.unitPrice === "number" &&
-    typeof product.url === "string" &&
-    Boolean(
-      product.image &&
-      typeof product.image.alt === "string" &&
-      typeof product.image.url === "string",
-    )
-  );
+  return typeof product.id === "string" && product.id.trim().length > 0;
 }
 
 function readRecentlyViewedStorageValue() {
@@ -65,11 +39,18 @@ function createRecentlyViewedSnapshot(
 ): RecentlyViewedSnapshot {
   try {
     const parsedValue: unknown = JSON.parse(storageValue);
-    const products = Array.isArray(parsedValue)
-      ? parsedValue
-          .filter(isRecentlyViewedProduct)
-          .slice(0, maximumRecentlyViewedProducts)
-      : emptyRecentlyViewedProducts;
+    const seenIds = new Set<string>();
+    const products: RecentlyViewedProduct[] = [];
+
+    if (Array.isArray(parsedValue)) {
+      for (const value of parsedValue) {
+        if (!isRecentlyViewedProduct(value) || seenIds.has(value.id)) continue;
+
+        seenIds.add(value.id);
+        products.push({ id: value.id });
+        if (products.length === maximumRecentlyViewedProducts) break;
+      }
+    }
 
     return { products, storageValue };
   } catch {
@@ -82,6 +63,19 @@ export function getRecentlyViewedProducts(): readonly RecentlyViewedProduct[] {
 
   if (cachedRecentlyViewedSnapshot?.storageValue !== storageValue) {
     cachedRecentlyViewedSnapshot = createRecentlyViewedSnapshot(storageValue);
+
+    const idsOnlyValue = JSON.stringify(cachedRecentlyViewedSnapshot.products);
+    if (storageValue !== idsOnlyValue) {
+      try {
+        window.localStorage.setItem(recentlyViewedStorageKey, idsOnlyValue);
+        cachedRecentlyViewedSnapshot = {
+          ...cachedRecentlyViewedSnapshot,
+          storageValue: idsOnlyValue,
+        };
+      } catch (error) {
+        console.error("Recently viewed products could not be saved.", error);
+      }
+    }
   }
 
   return cachedRecentlyViewedSnapshot.products;
@@ -119,8 +113,10 @@ export function subscribeToRecentlyViewedProducts(listener: () => void) {
 }
 
 export function rememberRecentlyViewedProduct(product: RecentlyViewedProduct) {
+  if (!isRecentlyViewedProduct(product)) return;
+
   const nextProducts = [
-    product,
+    { id: product.id },
     ...getRecentlyViewedProducts().filter(
       (currentProduct) => currentProduct.id !== product.id,
     ),

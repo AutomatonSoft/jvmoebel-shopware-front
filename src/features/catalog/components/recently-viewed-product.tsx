@@ -2,17 +2,14 @@
 
 import { useEffect } from "react";
 
-import {
-  rememberRecentlyViewedProduct,
-  type RecentlyViewedProduct,
-} from "@/features/catalog/hooks/recently-viewed-products";
+import { rememberRecentlyViewedProduct } from "@/features/catalog/hooks/recently-viewed-products";
 
 export function RecentlyViewedProduct({
-  product,
-}: Readonly<{ product: RecentlyViewedProduct }>) {
+  productId,
+}: Readonly<{ productId: string }>) {
   useEffect(() => {
-    rememberRecentlyViewedProduct(product);
-  }, [product]);
+    rememberRecentlyViewedProduct({ id: productId });
+  }, [productId]);
 
   return null;
 }
