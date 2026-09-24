@@ -43,6 +43,17 @@ export function useCatalogState(listing: ShopProductListingPage) {
     }
   }, [searchParameters]);
 
+  useEffect(() => {
+    function syncPendingSearchWithHistory() {
+      pendingSearchParameters.current = window.location.search.slice(1);
+    }
+
+    window.addEventListener("popstate", syncPendingSearchWithHistory);
+
+    return () =>
+      window.removeEventListener("popstate", syncPendingSearchWithHistory);
+  }, []);
+
   const { filterOptions, filters, pagination, priceRange, sort } = listing;
   const selectedAttributes = filters.attributes ?? {};
   const selectedCategories = filters.categories;
