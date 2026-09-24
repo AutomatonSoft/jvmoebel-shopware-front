@@ -698,6 +698,5 @@ export async function convertCheckoutGuest(
     return getActionError(error, "Guest account conversion failed.");
   }
 
-  revalidatePath("/");
   redirect("/bestellung/danke?konto=erstellt");
 }
