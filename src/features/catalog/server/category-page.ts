@@ -37,15 +37,14 @@ export async function getShopCategoryPage(
   categoryId: string,
   productRequest: ShopProductPageRequest = defaultShopProductPageRequest,
 ) {
-  const [content, listing] = await Promise.all([
-    getCachedShopwareCategoryPageContent(categoryId),
-    getShopProductListingPage(productRequest, categoryId),
-  ]);
+  const content = await getCachedShopwareCategoryPageContent(categoryId);
   const { hasProductListing, ...page } = content;
 
   return {
     ...page,
-    listing: hasProductListing ? listing : null,
+    listing: hasProductListing
+      ? await getShopProductListingPage(productRequest, categoryId)
+      : null,
   };
 }
 
