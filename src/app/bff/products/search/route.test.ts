@@ -2,7 +2,6 @@ import { afterEach, describe, expect, test } from "bun:test";
 import { NextRequest } from "next/server";
 
 import { GET } from "@/app/bff/products/search/route";
-import { productSearchCacheTtlSeconds } from "@/features/search/model/product-search";
 
 const originalShopwareUseMocks = process.env.SHOPWARE_USE_MOCKS;
 
@@ -15,7 +14,7 @@ afterEach(() => {
 });
 
 describe("GET /bff/products/search", () => {
-  test("allows only private browser caching of successful results", async () => {
+  test("T01: never caches a successful response containing prices", async () => {
     process.env.SHOPWARE_USE_MOCKS = "true";
 
     const response = await GET(
@@ -23,8 +22,11 @@ describe("GET /bff/products/search", () => {
     );
 
     expect(response.status).toBe(200);
-    expect(response.headers.get("Cache-Control")).toBe(
-      `private, max-age=${productSearchCacheTtlSeconds}`,
+    expect(response.headers.get("Cache-Control")).toMatch(
+      /(?:^|,)\s*no-store\s*(?:,|$)/,
+    );
+    expect(response.headers.get("Cache-Control")).not.toMatch(
+      /(?:s-maxage|max-age)=[1-9]/,
     );
     expect((await response.json()).results).toHaveLength(1);
   });
