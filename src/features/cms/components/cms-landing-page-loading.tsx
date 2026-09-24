@@ -31,7 +31,7 @@ export function CmsLandingPageLoading() {
             <Skeleton className="mt-2 h-4 w-5/6" />
             <Skeleton className="mt-8 h-11 w-36 rounded-xl" />
           </div>
-          <Skeleton className="aspect-[4/3] rounded-2xl" />
+          <Skeleton className="aspect-4/3 rounded-2xl" />
         </Container>
       </section>
 
@@ -51,7 +51,7 @@ export function CmsLandingPageLoading() {
 
         <section className="grid gap-4 sm:grid-cols-3">
           {cardSkeletons.map((index) => (
-            <Skeleton className="aspect-[4/5] rounded-2xl" key={index} />
+            <Skeleton className="aspect-4/5 rounded-2xl" key={index} />
           ))}
         </section>
       </Container>

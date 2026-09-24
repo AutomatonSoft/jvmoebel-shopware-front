@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import {
   MessageCircle,
   X,
@@ -27,7 +28,15 @@ function BrandIcon({
   iconUrl?: string;
 }) {
   if (iconUrl) {
-    return <img src={iconUrl} alt={type} className="size-5 object-contain" />;
+    return (
+      <Image
+        src={iconUrl}
+        alt={type}
+        width={20}
+        height={20}
+        className="size-5 object-contain"
+      />
+    );
   }
 
   const t = type.toLowerCase();

@@ -147,7 +147,7 @@ export function SearchResults({
                   href={product.url as Route}
                   onClick={onResultSelect}
                 >
-                  <span className="relative block aspect-[4/3] overflow-hidden rounded-lg bg-muted/60">
+                  <span className="relative block aspect-4/3 overflow-hidden rounded-lg bg-muted/60">
                     <Image
                       alt={product.image.alt}
                       className="object-contain p-2 transition-transform duration-300 group-hover:scale-105"

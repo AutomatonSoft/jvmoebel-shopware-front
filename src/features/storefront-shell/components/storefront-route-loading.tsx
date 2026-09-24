@@ -24,7 +24,7 @@ export function StorefrontRouteLoading() {
         </section>
         <section aria-hidden="true" className="grid gap-4 sm:grid-cols-3">
           {Array.from({ length: 3 }, (_, index) => (
-            <Skeleton className="aspect-[4/3] rounded-2xl" key={index} />
+            <Skeleton className="aspect-4/3 rounded-2xl" key={index} />
           ))}
         </section>
       </Container>
