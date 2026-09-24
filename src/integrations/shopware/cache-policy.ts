@@ -13,3 +13,7 @@ export const shopwareCacheTtlSeconds = {
   seo: 10 * minuteInSeconds,
   storefrontShell: hourInSeconds,
 } as const;
+
+export function shopwareCacheLife(revalidate: number) {
+  return { revalidate, expire: Math.max(revalidate * 6, hourInSeconds) };
+}

@@ -1,6 +1,6 @@
 import "server-only";
 
-import { unstable_cache } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 
 import { shopProductListingMock } from "@/features/catalog/fixtures/product-listing";
 import { buildShopProductFilterOptions } from "@/features/catalog/model/filter-options";
@@ -15,7 +15,10 @@ import {
   shopProductPageSize,
 } from "@/features/catalog/model/product-listing-page";
 import { paginateProducts } from "@/features/catalog/model/paginate-products";
-import { shopwareCacheTtlSeconds } from "@/integrations/shopware/cache-policy";
+import {
+  shopwareCacheLife,
+  shopwareCacheTtlSeconds,
+} from "@/integrations/shopware/cache-policy";
 import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
 import {
   getShopwareProductListing,
@@ -23,32 +26,31 @@ import {
 } from "@/integrations/shopware/product-listing";
 import { getShopwareRequestSession } from "@/integrations/shopware/session";
 
-const getCachedShopwareProductListing = unstable_cache(
-  (categoryId: string | null) =>
-    getShopwareProductListing(
-      getShopwareRequestSession().client,
-      categoryId ?? undefined,
-    ),
-  ["shopware-product-listing"],
-  {
-    revalidate: shopwareCacheTtlSeconds.productListing,
-    tags: ["shopware:catalog"],
-  },
-);
+async function getCachedShopwareProductListing(categoryId: string | null) {
+  "use cache";
+  cacheLife(shopwareCacheLife(shopwareCacheTtlSeconds.productListing));
+  cacheTag("shopware:catalog");
 
-const getCachedShopwareProductListingPage = unstable_cache(
-  (request: ShopProductPageRequest, categoryId: string | null) =>
-    getShopwareProductListingPage(
-      getShopwareRequestSession().client,
-      request,
-      categoryId ?? undefined,
-    ),
-  ["shopware-product-listing-page"],
-  {
-    revalidate: shopwareCacheTtlSeconds.productListingPage,
-    tags: ["shopware:catalog"],
-  },
-);
+  return getShopwareProductListing(
+    getShopwareRequestSession().client,
+    categoryId ?? undefined,
+  );
+}
+
+async function getCachedShopwareProductListingPage(
+  request: ShopProductPageRequest,
+  categoryId: string | null,
+) {
+  "use cache";
+  cacheLife(shopwareCacheLife(shopwareCacheTtlSeconds.productListingPage));
+  cacheTag("shopware:catalog");
+
+  return getShopwareProductListingPage(
+    getShopwareRequestSession().client,
+    request,
+    categoryId ?? undefined,
+  );
+}
 
 export async function getShopProductListing(
   categoryId?: string,

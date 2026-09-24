@@ -20,9 +20,8 @@ let hasProductListing = false;
 const loadListing = mock(async () => listing);
 
 mock.module("next/cache", () => ({
-  unstable_cache: <Arguments extends unknown[], Result>(
-    loader: (...args: Arguments) => Result,
-  ) => loader,
+  cacheLife: () => {},
+  cacheTag: () => {},
 }));
 mock.module("@/features/catalog/server/product-listing", () => ({
   getShopProductListingPage: loadListing,
