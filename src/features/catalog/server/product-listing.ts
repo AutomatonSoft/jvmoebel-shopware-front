@@ -69,7 +69,7 @@ function getMockProductListingPage(
     ),
   );
   const filters = {
-    attributes,
+    attributes: { ...request.propertyGroups, ...attributes },
     categories: request.categoryIds,
     companies: request.companyIds,
     maximumPrice: request.maximumPrice ?? maximumPriceBound,

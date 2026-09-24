@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSyncExternalStore } from "react";
 
 import { ProductFilterPanel } from "@/features/catalog/components/product-filter-panel";
+import { ActiveProductFilters } from "@/features/catalog/components/active-product-filters";
 import { ProductQuickFilters } from "@/features/catalog/components/product-quick-filters";
 import { ShopProductResults } from "@/features/catalog/components/product-results";
 import { Button } from "@/components/ui/button";
@@ -140,6 +141,7 @@ function ShopCatalogContent({
   const { activeFilterCount } = filterPanelProps;
   const loading = isLoading || isCatalogLoading;
   const hasProducts = paginationProps.totalProducts > 0;
+  const showFilterPanel = hasProducts || activeFilterCount > 0;
 
   return (
     <Container className="pb-20 sm:pb-28">
@@ -171,6 +173,12 @@ function ShopCatalogContent({
         </>
       )}
 
+      <ActiveProductFilters
+        {...filterPanelProps}
+        currency={listing.currency}
+        locale={listing.locale}
+      />
+
       {showQuickFilters && hasProducts && (
         <ProductQuickFilters
           {...filterPanelProps}
@@ -180,11 +188,16 @@ function ShopCatalogContent({
       )}
 
       <div
-        className={`grid gap-8 lg:gap-10 xl:gap-12 ${hasProducts ? "lg:grid-cols-[13.75rem_minmax(0,1fr)]" : ""} ${showQuickFilters && hasProducts ? "pt-4" : "pt-6"}`}
+        className={`grid gap-8 lg:gap-10 xl:gap-12 ${showFilterPanel ? "lg:grid-cols-[13.75rem_minmax(0,1fr)]" : ""} ${showQuickFilters && hasProducts ? "pt-4" : "pt-6"}`}
       >
-        {hasProducts && (
+        {showFilterPanel && (
           <aside className="sticky top-24 hidden max-h-[calc(100dvh-7rem)] self-start overflow-y-auto rounded-xl border bg-card/70 p-4 scrollbar-width:none lg:block [&::-webkit-scrollbar]:hidden">
-            {isDesktopCatalog && <ProductFilterPanel {...filterPanelProps} />}
+            {isDesktopCatalog && (
+              <ProductFilterPanel
+                {...filterPanelProps}
+                hasProducts={hasProducts}
+              />
+            )}
           </aside>
         )}
 
@@ -193,7 +206,7 @@ function ShopCatalogContent({
             <span className="text-xs font-medium text-muted-foreground">
               {paginationProps.totalProducts} Produkte
             </span>
-            {hasProducts && !isDesktopCatalog && (
+            {showFilterPanel && !isDesktopCatalog && (
               <Dialog.Root>
                 <Dialog.Trigger
                   render={
@@ -240,7 +253,10 @@ function ShopCatalogContent({
                         </Dialog.Close>
                       </div>
                       <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5">
-                        <ProductFilterPanel {...filterPanelProps} />
+                        <ProductFilterPanel
+                          {...filterPanelProps}
+                          hasProducts={hasProducts}
+                        />
                       </div>
                       <div className="border-t p-5">
                         <Dialog.Close
