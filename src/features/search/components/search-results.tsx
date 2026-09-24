@@ -8,6 +8,7 @@ import Link from "next/link";
 
 import { buttonVariants } from "@/components/ui/button";
 import type { ProductSearchResult } from "@/features/search/model/product-search";
+import { getSearchUrl } from "@/features/search/model/search-url";
 
 export type SearchResultsProps = {
   currency: string;
@@ -19,10 +20,6 @@ export type SearchResultsProps = {
   query: string;
   results: readonly ProductSearchResult[];
 };
-
-function getSearchUrl(query: string) {
-  return `/suche?query=${encodeURIComponent(query)}` as Route;
-}
 
 export function SearchResults({
   currency,
@@ -100,7 +97,7 @@ export function SearchResults({
             <li>
               <Link
                 className="group flex items-center gap-2 rounded-lg px-2 py-2.5 text-sm transition-colors hover:bg-muted hover:text-primary"
-                href={getSearchUrl(debouncedQuery)}
+                href={getSearchUrl(debouncedQuery) as Route}
                 onClick={onResultSelect}
               >
                 <Search className="size-3.5 shrink-0 text-muted-foreground group-hover:text-primary" />
@@ -114,7 +111,7 @@ export function SearchResults({
               <li key={category}>
                 <Link
                   className="group flex items-center gap-2 rounded-lg px-2 py-2.5 text-sm transition-colors hover:bg-muted hover:text-primary"
-                  href={getSearchUrl(`${debouncedQuery} ${category}`)}
+                  href={getSearchUrl(`${debouncedQuery} ${category}`) as Route}
                   onClick={onResultSelect}
                 >
                   <Search className="size-3.5 shrink-0 text-muted-foreground group-hover:text-primary" />
@@ -177,7 +174,7 @@ export function SearchResults({
 
       <Link
         className={buttonVariants({ className: "mt-4 w-full" })}
-        href={getSearchUrl(debouncedQuery)}
+        href={getSearchUrl(debouncedQuery) as Route}
         onClick={onResultSelect}
       >
         Alle Ergebnisse anzeigen

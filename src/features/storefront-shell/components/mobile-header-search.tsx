@@ -2,16 +2,20 @@
 
 import { ArrowRight, Search, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import type { Route } from "next";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SearchResults } from "@/features/search/components/search-results";
 import { useProductSearch } from "@/features/search/hooks/use-product-search";
+import { getSearchUrl } from "@/features/search/model/search-url";
 
 const MOBILE_SEARCH_PANEL_ID = "mobile-header-search-panel";
 
 export function MobileHeaderSearch() {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -22,6 +26,12 @@ export function MobileHeaderSearch() {
   function handleResultSelect() {
     setIsOpen(false);
     setQuery("");
+  }
+
+  function submitSearch(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    router.push(getSearchUrl(query) as Route);
+    handleResultSelect();
   }
 
   useEffect(() => {
@@ -86,6 +96,7 @@ export function MobileHeaderSearch() {
             <form
               action="/suche"
               className="group/search flex h-12 items-center border-b bg-muted/80 p-1 pl-4"
+              onSubmit={submitSearch}
               role="search"
             >
               <Search className="mr-2 size-4.5 shrink-0 text-muted-foreground transition-colors group-focus-within/search:text-foreground" />
