@@ -8,8 +8,6 @@ import {
   SitemapPublicationValidationError,
 } from "@/features/sitemap/model/publication";
 
-export const runtime = "nodejs";
-
 export async function POST(request: Request): Promise<Response> {
   if (!isAuthorizedSitemapPublisher(request))
     return privateError("unauthorized", 401);

@@ -1,7 +1,5 @@
 import { getSitemapArtifactResponse } from "@/features/sitemap/server/sitemap-public";
 
-export const runtime = "nodejs";
-
 type RouteContext = { params: Promise<{ artifactPath: string[] }> };
 
 export async function GET(

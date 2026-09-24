@@ -4,8 +4,6 @@ import {
   SitemapArtifactStorageError,
 } from "@/features/sitemap/server/sitemap-artifact-storage";
 
-export const runtime = "nodejs";
-
 type RouteContext = { params: Promise<{ publicationId: string }> };
 
 export async function POST(
