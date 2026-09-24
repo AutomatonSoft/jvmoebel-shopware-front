@@ -101,7 +101,7 @@ export function ProductPagination({
               onClick={() => onPageChange(item)}
               size="icon-lg"
               type="button"
-              variant={item === currentPage ? "default" : "ghost"}
+              variant={item === currentPage ? "solid" : "ghost"}
             >
               {item}
             </Button>

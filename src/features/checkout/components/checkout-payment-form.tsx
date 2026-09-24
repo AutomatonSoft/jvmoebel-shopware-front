@@ -2,19 +2,18 @@
 
 import {
   ArrowRight,
-  CreditCard,
   Mail,
   MapPin,
   MessageSquareText,
-  Pencil,
-  Truck,
+  Package,
+  WalletCards,
 } from "lucide-react";
 import type { Route } from "next";
-import Link from "next/link";
 import { useActionState, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
 import { AccountToast } from "@/features/customer-account/components/account-toast";
+import { CheckoutAddressActions } from "@/features/checkout/components/checkout-address-actions";
 import { CheckoutDeliveryAddress } from "@/features/checkout/components/checkout-delivery-address";
 import type {
   CheckoutAddress,
@@ -28,29 +27,31 @@ const initialState: CheckoutActionState = { status: "idle" };
 
 function EditableDetails({
   children,
+  addHref,
   editHref,
   icon: Icon,
   label,
 }: Readonly<{
   children: ReactNode;
+  addHref?: Route;
   editHref: Route;
   icon: typeof Mail;
   label: string;
 }>) {
   return (
-    <section className="rounded-2xl border bg-secondary/35 p-5">
-      <div className="flex items-center justify-between gap-4">
+    <section className="rounded-2xl border bg-secondary/35 px-5 py-4">
+      <div className="relative flex items-center justify-between gap-4 pr-10">
         <h2 className="flex items-center gap-2 text-sm font-semibold">
           <Icon aria-hidden="true" className="size-3.5 text-primary" />
           {label}
         </h2>
-        <Link
-          aria-label={`${label} ändern`}
-          className="grid size-8 place-items-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-primary"
-          href={editHref}
-        >
-          <Pencil aria-hidden="true" className="size-3.5" />
-        </Link>
+        <div className="absolute top-1/2 right-0 -translate-y-1/2">
+          <CheckoutAddressActions
+            addHref={addHref}
+            editHref={editHref}
+            label={label}
+          />
+        </div>
       </div>
       {children}
     </section>
@@ -67,27 +68,32 @@ function MethodOptions({
 }: Readonly<{
   defaultValue?: string;
   error?: string;
-  icon: typeof Truck;
+  icon: typeof Package;
   legend: string;
   name: "paymentMethodId" | "shippingMethodId";
   options: readonly CheckoutOption[];
 }>) {
   return (
-    <fieldset aria-describedby={error ? `${name}-error` : undefined}>
-      <legend className="flex items-center gap-2.5 text-lg font-semibold tracking-[-0.03em]">
-        <span className="grid size-8 place-items-center rounded-lg bg-primary/10 text-primary">
-          <Icon aria-hidden="true" className="size-3.5" />
-        </span>
+    <fieldset
+      aria-describedby={error ? `${name}-error` : undefined}
+      className="rounded-2xl bg-secondary/35 p-4 sm:p-5"
+    >
+      <legend className="sr-only">{legend}</legend>
+      <div
+        aria-hidden="true"
+        className="flex items-center gap-3 text-base font-semibold tracking-[-0.03em]"
+      >
+        <Icon className="size-5 text-muted-foreground" strokeWidth={1.7} />
         {legend}
-      </legend>
-      <div className="mt-4 grid gap-2">
+      </div>
+      <div className="mt-3 grid gap-2.5">
         {options.map((option, index) => (
           <label
-            className="group flex min-h-14 cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 transition-[border-color,background-color] has-checked:border-primary has-checked:bg-primary/[0.035] hover:border-foreground/25"
+            className="flex min-h-15 cursor-pointer items-center gap-3 rounded-xl border border-border/75 bg-card px-4 py-3 transition-[border-color,box-shadow] has-checked:border-foreground/25 has-checked:shadow-sm hover:border-foreground/25 focus-within:ring-2 focus-within:ring-primary/30"
             key={option.id}
           >
             <input
-              className="size-3.5 shrink-0 accent-primary"
+              className="size-4 shrink-0 accent-primary"
               defaultChecked={
                 option.id === defaultValue || (!defaultValue && index === 0)
               }
@@ -124,6 +130,7 @@ function MethodOptions({
 
 export function CheckoutPaymentForm({
   billingAddress,
+  canAddBillingAddress,
   canAddDeliveryAddress,
   canEditDeliveryAddress,
   deliveryAddress,
@@ -136,6 +143,7 @@ export function CheckoutPaymentForm({
   shippingMethods,
 }: Readonly<{
   billingAddress?: CheckoutAddress;
+  canAddBillingAddress: boolean;
   canAddDeliveryAddress: boolean;
   canEditDeliveryAddress: boolean;
   deliveryAddress?: CheckoutAddress;
@@ -175,11 +183,16 @@ export function CheckoutPaymentForm({
         {billingAddress && (
           <div className="mb-3">
             <EditableDetails
+              addHref={
+                canAddBillingAddress
+                  ? "/kasse?schritt=neue-rechnungsadresse"
+                  : undefined
+              }
               editHref="/kasse?schritt=adresse"
               icon={MapPin}
               label="Rechnungsadresse"
             >
-              <address className="mt-3 text-sm leading-6 not-italic text-muted-foreground">
+              <address className="mt-2 text-sm leading-6 not-italic text-muted-foreground">
                 <strong className="block font-semibold text-foreground">
                   {billingAddress.firstName} {billingAddress.lastName}
                 </strong>
@@ -208,29 +221,29 @@ export function CheckoutPaymentForm({
             icon={Mail}
             label="E-Mail-Adresse"
           >
-            <p className="mt-3 text-sm font-medium">{email}</p>
+            <p className="mt-2 text-sm font-medium">{email}</p>
           </EditableDetails>
         </div>
-        <div className="grid gap-8 divide-y sm:gap-9">
+        <div className="grid gap-4">
           <MethodOptions
             defaultValue={selectedShippingMethodId}
             error={fieldErrors.shippingMethodId}
-            icon={Truck}
+            icon={Package}
             legend="Versandart"
             name="shippingMethodId"
             options={shippingMethods}
           />
-          <div className="pt-8 sm:pt-9">
+          <div>
             <MethodOptions
               defaultValue={selectedPaymentMethodId}
               error={fieldErrors.paymentMethodId}
-              icon={CreditCard}
+              icon={WalletCards}
               legend="Zahlungsart"
               name="paymentMethodId"
               options={paymentMethods}
             />
           </div>
-          <div className="pt-8 sm:pt-9">
+          <div className="border-t pt-6">
             <label
               className="flex items-center gap-3 text-sm font-semibold"
               htmlFor="customerComment"

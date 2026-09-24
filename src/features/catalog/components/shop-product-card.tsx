@@ -112,6 +112,7 @@ export const ShopProductCard = memo(function ShopProductCard({
         aria-label={product.name}
         className="relative isolate block aspect-square overflow-hidden bg-gradient-to-br from-muted/80 via-muted/40 to-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         href={product.url as Route}
+        target="_blank"
       >
         <span
           aria-hidden="true"
@@ -125,7 +126,6 @@ export const ShopProductCard = memo(function ShopProductCard({
             loading={eagerImage ? "eager" : "lazy"}
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             src={product.image.url}
-            unoptimized={product.image.url.startsWith("http")}
           />
         </span>
         {product.badge && (
@@ -166,6 +166,7 @@ export const ShopProductCard = memo(function ShopProductCard({
           <Link
             className="rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             href={product.url as Route}
+            target="_blank"
             title={product.name}
           >
             {product.name}
@@ -217,6 +218,7 @@ export const ShopProductCard = memo(function ShopProductCard({
             aria-label={`Produkt ansehen: ${product.name}`}
             className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[0_8px_18px_-10px_rgba(255,79,34,0.85)] transition-colors duration-300 group-hover:bg-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             href={product.url as Route}
+            target="_blank"
           >
             <ArrowUpRight className="size-4 transition-transform duration-300 motion-safe:group-hover:rotate-45" />
           </Link>

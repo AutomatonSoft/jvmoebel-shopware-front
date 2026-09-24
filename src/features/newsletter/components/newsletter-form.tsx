@@ -101,10 +101,11 @@ export function NewsletterForm({
           )}
         </div>
         <Button
-          className="group w-full justify-between font-bold hover:bg-destructive disabled:cursor-wait motion-safe:active:scale-[.985] sm:w-auto"
+          className="group w-full justify-between font-bold disabled:cursor-wait sm:w-auto"
           disabled={pending}
           size={buttonSizeMap[buttonSize]}
           type="submit"
+          variant="solid"
         >
           {buttonLabel}
           <ArrowRight className="size-4 transition-transform motion-safe:group-hover:translate-x-1" />

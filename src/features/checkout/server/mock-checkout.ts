@@ -143,6 +143,18 @@ export async function addMockCheckoutDeliveryAddress(
   });
 }
 
+export async function addMockCheckoutBillingAddress(
+  address: GuestCheckoutRegistration["billingAddress"],
+) {
+  const customer = await getMockCheckoutCustomer();
+
+  if (!customer || customer.guest) {
+    throw new Error("The customer has no editable billing address.");
+  }
+
+  await persistMockCustomer({ ...customer, billingAddress: address });
+}
+
 export async function selectMockCheckoutDeliveryAddress(addressId: string) {
   const customer = await getMockCheckoutCustomer();
   const address = customer?.shippingAddresses.find(

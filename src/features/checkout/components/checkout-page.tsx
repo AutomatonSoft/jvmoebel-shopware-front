@@ -15,6 +15,7 @@ import {
 import { CustomerCheckoutDeliveryAddressForm } from "@/features/checkout/components/customer-checkout-delivery-address-form";
 import { CustomerCheckoutDeliveryAddressEditForm } from "@/features/checkout/components/customer-checkout-delivery-address-edit-form";
 import { CustomerCheckoutAddressForm } from "@/features/checkout/components/customer-checkout-address-form";
+import { CustomerCheckoutNewBillingAddressForm } from "@/features/checkout/components/customer-checkout-new-billing-address-form";
 import type { CheckoutPageData } from "@/features/checkout/model/checkout";
 import {
   hasAvailableCheckoutSelection,
@@ -28,6 +29,7 @@ export function CheckoutPage({
   data,
   deliveryAddressStep,
   emailStep,
+  newBillingAddressStep,
   newDeliveryAddressStep,
   paymentError,
   paymentStep,
@@ -38,6 +40,7 @@ export function CheckoutPage({
   data: CheckoutPageData;
   deliveryAddressStep: boolean;
   emailStep: boolean;
+  newBillingAddressStep: boolean;
   newDeliveryAddressStep: boolean;
   paymentError: boolean;
   paymentStep: boolean;
@@ -48,6 +51,8 @@ export function CheckoutPage({
     : "/kasse?schritt=zahlung";
   const showNewDeliveryAddressStep =
     newDeliveryAddressStep && !data.customer?.guest;
+  const showNewBillingAddressStep =
+    newBillingAddressStep && !data.customer?.guest;
   const showDeliveryAddressStep =
     deliveryAddressStep && Boolean(data.customer?.shippingAddress);
   const showEmailStep = emailStep && Boolean(data.customer);
@@ -55,6 +60,7 @@ export function CheckoutPage({
     addressStep ||
     showDeliveryAddressStep ||
     showEmailStep ||
+    showNewBillingAddressStep ||
     showNewDeliveryAddressStep
       ? "address"
       : paymentStep
@@ -81,37 +87,42 @@ export function CheckoutPage({
           formId: "customer-checkout-delivery-address-form",
           label: "Lieferadresse verwenden",
         }
-      : showDeliveryAddressStep
+      : showNewBillingAddressStep
         ? {
-            formId: "customer-checkout-delivery-address-edit-form",
-            label: "Lieferadresse speichern",
+            formId: "customer-checkout-new-billing-address-form",
+            label: "Rechnungsadresse verwenden",
           }
-        : showEmailStep
+        : showDeliveryAddressStep
           ? {
-              formId: "checkout-email-form",
-              label: "E-Mail-Adresse speichern",
+              formId: "customer-checkout-delivery-address-edit-form",
+              label: "Lieferadresse speichern",
             }
-          : step === "address"
+          : showEmailStep
             ? {
-                formId: "customer-checkout-address-form",
-                label:
-                  addressStep && data.customer.addressComplete
-                    ? "Änderungen speichern"
-                    : "Weiter zu Versand und Zahlung",
+                formId: "checkout-email-form",
+                label: "E-Mail-Adresse speichern",
               }
-            : showReview
+            : step === "address"
               ? {
-                  formId: "checkout-order-review-form",
-                  label: "Zahlungspflichtig bestellen",
-                  requiresTerms: true,
+                  formId: "customer-checkout-address-form",
+                  label:
+                    addressStep && data.customer.addressComplete
+                      ? "Änderungen speichern"
+                      : "Weiter zu Versand und Zahlung",
                 }
-              : {
-                  disabled:
-                    data.options.paymentMethods.length === 0 ||
-                    data.options.shippingMethods.length === 0,
-                  formId: "checkout-payment-form",
-                  label: "Weiter zur Bestellübersicht",
-                };
+              : showReview
+                ? {
+                    formId: "checkout-order-review-form",
+                    label: "Zahlungspflichtig bestellen",
+                    requiresTerms: true,
+                  }
+                : {
+                    disabled:
+                      data.options.paymentMethods.length === 0 ||
+                      data.options.shippingMethods.length === 0,
+                    formId: "checkout-payment-form",
+                    label: "Weiter zur Bestellübersicht",
+                  };
 
   return (
     <main className="flex-1 bg-background">
@@ -144,7 +155,13 @@ export function CheckoutPage({
         ) : (
           <div className="mt-5 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_23rem] xl:gap-12">
             <div>
-              {showNewDeliveryAddressStep ? (
+              {showNewBillingAddressStep ? (
+                <CustomerCheckoutNewBillingAddressForm
+                  backHref={editBackHref}
+                  countries={data.options.countries}
+                  customer={data.customer}
+                />
+              ) : showNewDeliveryAddressStep ? (
                 <CustomerCheckoutDeliveryAddressForm
                   backHref={editBackHref}
                   countries={data.options.countries}
@@ -190,6 +207,7 @@ export function CheckoutPage({
               ) : (
                 <CheckoutPaymentForm
                   billingAddress={data.customer.billingAddress}
+                  canAddBillingAddress={!data.customer.guest}
                   canAddDeliveryAddress={!data.customer.guest}
                   canEditDeliveryAddress={Boolean(
                     data.customer.shippingAddress,

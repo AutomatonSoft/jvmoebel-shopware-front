@@ -13,6 +13,7 @@ export function CartPayPalCheckoutButton({
       className="h-12 w-full rounded-xl border-border bg-background text-sm font-semibold text-foreground shadow-none hover:border-foreground/25 hover:bg-muted"
       onClick={onCheckout}
       type="button"
+      variant="outline"
     >
       <span aria-hidden="true" className="flex items-center gap-1.5">
         Mit

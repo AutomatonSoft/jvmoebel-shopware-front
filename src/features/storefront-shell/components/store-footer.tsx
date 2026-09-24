@@ -1,3 +1,5 @@
+import { cacheLife } from "next/cache";
+
 import { Container } from "@/components/ui/container";
 import { FooterAbout } from "@/features/storefront-shell/components/footer-about";
 import { FooterNavigation } from "@/features/storefront-shell/components/footer-navigation";
@@ -14,12 +16,21 @@ export type StoreFooterProps = {
   serviceNavigation: StoreNavigationItem[];
 };
 
-export function StoreFooter({
+async function getCopyrightYear() {
+  "use cache";
+  cacheLife({ revalidate: 3600, expire: 86400 });
+
+  return new Date().getFullYear();
+}
+
+export async function StoreFooter({
   branding,
   content,
   footerNavigation,
   serviceNavigation,
 }: StoreFooterProps) {
+  const copyrightYear = await getCopyrightYear();
+
   return (
     <footer className="mt-auto bg-background pt-4 sm:pt-8">
       <Container>
@@ -55,7 +66,7 @@ export function StoreFooter({
           <div className="border-t bg-background/45 px-6 py-5 text-xs text-muted-foreground sm:px-10 lg:px-12">
             <span>
               {content.copyright
-                .replaceAll("{year}", String(new Date().getFullYear()))
+                .replaceAll("{year}", String(copyrightYear))
                 .replaceAll("{storeName}", branding.name)}
             </span>
           </div>

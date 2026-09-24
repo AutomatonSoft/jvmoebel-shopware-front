@@ -6,6 +6,7 @@ import type { ShopProductPageData } from "@/features/catalog/model/product-detai
 import type { ShopwareClient } from "@/integrations/shopware/client";
 import { getShopwareContext } from "@/integrations/shopware/context";
 import { mapShopwareProductDetail } from "@/integrations/shopware/mappers/product-detail";
+import { mapShopwareProductCard } from "@/integrations/shopware/mappers/product-listing";
 
 const productDetailAssociations = {
   categories: {},
@@ -17,6 +18,37 @@ const productDetailAssociations = {
   seoUrls: {},
   unit: {},
 } satisfies components["schemas"]["Associations"];
+
+const productCardAssociations = {
+  cover: { associations: { media: {} } },
+  manufacturer: {},
+  seoUrls: {},
+} satisfies components["schemas"]["Associations"];
+
+export async function getShopwareProductCardData(
+  client: ShopwareClient,
+  productId: string,
+) {
+  const [context, response] = await Promise.all([
+    getShopwareContext(client),
+    client.invoke("readProductDetail post /product/{productId}", {
+      body: { associations: productCardAssociations },
+      fetchOptions: { cache: "no-store" },
+      headers: { "sw-include-seo-urls": true },
+      pathParams: { productId },
+      query: { skipCmsPage: true, skipConfigurator: true },
+    }),
+  ]);
+  const product = response.data.product;
+
+  return product
+    ? {
+        currency: context.currency?.isoCode || "EUR",
+        locale: context.languageInfo.localeCode || "de-DE",
+        product: mapShopwareProductCard(product, 0),
+      }
+    : null;
+}
 
 async function getShopwareProductCrossSellings(
   client: ShopwareClient,

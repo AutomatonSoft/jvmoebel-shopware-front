@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { buttonVariants } from "@/components/ui/button";
 
 type CmsYoutubeVideoConsentProps = Readonly<{
   embedUrl: string;
@@ -33,7 +34,7 @@ export function CmsYoutubeVideoConsent({
         Informationen finden Sie in unserer Datenschutzerklärung.
       </p>
       <button
-        className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+        className={buttonVariants({ className: "rounded-full px-5" })}
         onClick={() => setAccepted(true)}
         type="button"
       >

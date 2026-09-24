@@ -6,7 +6,6 @@ import { Toaster as SonnerToaster, type ToasterProps } from "sonner";
 export function Toaster(props: ToasterProps) {
   return (
     <SonnerToaster
-      closeButton
       icons={{
         error: <CircleX className="size-5" />,
         info: <Info className="size-5" />,
@@ -18,9 +17,8 @@ export function Toaster(props: ToasterProps) {
       theme="light"
       toastOptions={{
         classNames: {
-          actionButton: "!rounded-lg !bg-primary !text-primary-foreground",
-          closeButton:
-            "!border-current/20 !bg-transparent !text-current hover:!bg-black/5",
+          actionButton:
+            "!rounded-lg !border !border-orange-400 !bg-orange-100 !text-foreground !transition-all hover:!border-orange-500 hover:!bg-orange-200 hover:!shadow-md motion-safe:hover:!-translate-y-0.5",
           default: "!border-[#decfbe] !bg-[#fffaf4] !text-foreground",
           description: "!text-current !opacity-75",
           error: "!border-[#e88f82] !bg-[#fff0ed] !text-[#a12d22]",

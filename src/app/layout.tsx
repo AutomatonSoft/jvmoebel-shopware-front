@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
+import { Suspense } from "react";
 
 import { Toaster } from "@/components/ui/sonner";
-import { getShopCartItemCount } from "@/features/cart/model/cart";
-import { getShopCart } from "@/features/cart/server/cart";
-import { getCustomerAccount } from "@/features/customer-account/server/account";
 import { StoreFooter } from "@/features/storefront-shell/components/store-footer";
 import { StoreHeader } from "@/features/storefront-shell/components/store-header";
 import { getStorefrontShellData } from "@/features/storefront-shell/server/storefront-config";
@@ -21,37 +19,41 @@ export const metadata: Metadata = {
   description: "JVMoebel",
 };
 
-export const dynamic = "force-dynamic";
+async function StorefrontHeader() {
+  const storefront = await getStorefrontShellData();
 
-export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const [storefront, customer, cart] = await Promise.all([
-    getStorefrontShellData(),
-    getCustomerAccount().catch((error: unknown) => {
-      console.error("Header customer account lookup failed.", error);
-      return null;
-    }),
-    getShopCart().catch((error: unknown) => {
-      console.error("Header cart lookup failed.", error);
-      return null;
-    }),
-  ]);
+  return (
+    <StoreHeader
+      branding={storefront.branding}
+      navigation={storefront.navigation}
+    />
+  );
+}
 
+async function StorefrontFooter() {
+  const storefront = await getStorefrontShellData();
+
+  return (
+    <StoreFooter
+      branding={storefront.branding}
+      content={storefront.footerContent}
+      footerNavigation={storefront.footerNavigation}
+      serviceNavigation={storefront.serviceNavigation}
+    />
+  );
+}
+
+export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="de" className={`${montserrat.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
-        <StoreHeader
-          branding={storefront.branding}
-          cartItemCount={cart ? getShopCartItemCount(cart) : 0}
-          customer={customer}
-          navigation={storefront.navigation}
-        />
+        <Suspense fallback={<header className="h-18 border-b bg-background" />}>
+          <StorefrontHeader />
+        </Suspense>
         {children}
-        <StoreFooter
-          branding={storefront.branding}
-          content={storefront.footerContent}
-          footerNavigation={storefront.footerNavigation}
-          serviceNavigation={storefront.serviceNavigation}
-        />
+        <Suspense fallback={null}>
+          <StorefrontFooter />
+        </Suspense>
         <Toaster />
       </body>
     </html>

@@ -6,7 +6,9 @@ import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
+import { buttonVariants } from "@/components/ui/button";
 import type { ProductSearchResult } from "@/features/search/model/product-search";
+import { getSearchUrl } from "@/features/search/model/search-url";
 
 export type SearchResultsProps = {
   currency: string;
@@ -18,10 +20,6 @@ export type SearchResultsProps = {
   query: string;
   results: readonly ProductSearchResult[];
 };
-
-function getSearchUrl(query: string) {
-  return `/suche?query=${encodeURIComponent(query)}` as Route;
-}
 
 export function SearchResults({
   currency,
@@ -99,7 +97,7 @@ export function SearchResults({
             <li>
               <Link
                 className="group flex items-center gap-2 rounded-lg px-2 py-2.5 text-sm transition-colors hover:bg-muted hover:text-primary"
-                href={getSearchUrl(debouncedQuery)}
+                href={getSearchUrl(debouncedQuery) as Route}
                 onClick={onResultSelect}
               >
                 <Search className="size-3.5 shrink-0 text-muted-foreground group-hover:text-primary" />
@@ -113,7 +111,7 @@ export function SearchResults({
               <li key={category}>
                 <Link
                   className="group flex items-center gap-2 rounded-lg px-2 py-2.5 text-sm transition-colors hover:bg-muted hover:text-primary"
-                  href={getSearchUrl(`${debouncedQuery} ${category}`)}
+                  href={getSearchUrl(`${debouncedQuery} ${category}`) as Route}
                   onClick={onResultSelect}
                 >
                   <Search className="size-3.5 shrink-0 text-muted-foreground group-hover:text-primary" />
@@ -148,15 +146,15 @@ export function SearchResults({
                   className="group block rounded-xl border bg-card p-2 transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
                   href={product.url as Route}
                   onClick={onResultSelect}
+                  target="_blank"
                 >
-                  <span className="relative block aspect-[4/3] overflow-hidden rounded-lg bg-muted/60">
+                  <span className="relative block aspect-4/3 overflow-hidden rounded-lg bg-muted/60">
                     <Image
                       alt={product.image.alt}
                       className="object-contain p-2 transition-transform duration-300 group-hover:scale-105"
                       fill
                       sizes="(max-width: 639px) 40vw, 160px"
                       src={product.image.url}
-                      unoptimized
                     />
                   </span>
                   <span className="mt-2 block text-xs font-semibold">
@@ -176,8 +174,8 @@ export function SearchResults({
       </div>
 
       <Link
-        className="mt-4 flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-destructive"
-        href={getSearchUrl(debouncedQuery)}
+        className={buttonVariants({ className: "mt-4 w-full" })}
+        href={getSearchUrl(debouncedQuery) as Route}
         onClick={onResultSelect}
       >
         Alle Ergebnisse anzeigen

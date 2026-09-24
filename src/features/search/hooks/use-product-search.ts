@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import type { ProductSearchResponse } from "@/features/search/model/product-search";
+import {
+  productSearchCacheTtlSeconds,
+  type ProductSearchResponse,
+} from "@/features/search/model/product-search";
 
 const SEARCH_DEBOUNCE_MS = 300;
 
@@ -18,10 +21,30 @@ export function useProductSearch(query: string, isOpen: boolean) {
     query: "",
     status: "idle",
   });
+  const lastSuccessfulSearch = useRef<{
+    expiresAt: number;
+    query: string;
+    response: ProductSearchResponse;
+  } | null>(null);
   const normalizedQuery = query.trim();
 
   useEffect(() => {
     if (!isOpen || !normalizedQuery) return;
+
+    const cached = lastSuccessfulSearch.current;
+
+    if (cached?.query === normalizedQuery && cached.expiresAt > Date.now()) {
+      setRequest((current) =>
+        current.query === normalizedQuery && current.status === "success"
+          ? current
+          : {
+              query: normalizedQuery,
+              response: cached.response,
+              status: "success",
+            },
+      );
+      return;
+    }
 
     const controller = new AbortController();
     const timeout = window.setTimeout(async () => {
@@ -30,7 +53,7 @@ export function useProductSearch(query: string, isOpen: boolean) {
       try {
         const response = await fetch(
           `/bff/products/search?query=${encodeURIComponent(normalizedQuery)}`,
-          { cache: "no-store", signal: controller.signal },
+          { signal: controller.signal },
         );
 
         if (!response.ok) throw new Error("Product search request failed.");
@@ -38,6 +61,11 @@ export function useProductSearch(query: string, isOpen: boolean) {
         const data = (await response.json()) as ProductSearchResponse;
         if (controller.signal.aborted) return;
 
+        lastSuccessfulSearch.current = {
+          expiresAt: Date.now() + productSearchCacheTtlSeconds * 1000,
+          query: normalizedQuery,
+          response: data,
+        };
         setRequest({
           query: normalizedQuery,
           response: data,

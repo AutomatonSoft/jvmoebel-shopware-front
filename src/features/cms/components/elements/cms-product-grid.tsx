@@ -5,9 +5,18 @@ import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
 import type { CmsElementProps } from "@/features/cms/components/cms-element";
 import type { CmsProductGridData } from "@/features/cms/contracts/product-grid";
+import { getLiveCmsProductGrid } from "@/features/cms/server/product-grid";
 import { cn } from "@/lib/utils";
 
-export function CmsProductGrid({ data }: CmsElementProps<CmsProductGridData>) {
+export async function CmsProductGrid({
+  data: cachedData,
+}: CmsElementProps<CmsProductGridData>) {
+  const data = await getLiveCmsProductGrid(cachedData);
+
+  if (data.products.length === 0) {
+    return null;
+  }
+
   const {
     anchorId,
     currency,

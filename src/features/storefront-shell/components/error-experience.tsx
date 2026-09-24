@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { ArrowRight, Home, RefreshCw, Search, ShoppingBag } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 
 type ErrorExperienceProps = {
@@ -65,7 +66,7 @@ export function ErrorExperience({
               <button
                 type="button"
                 onClick={retry}
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/15 transition hover:-translate-y-0.5 hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/40"
+                className={buttonVariants({ className: "h-12 px-6" })}
               >
                 <RefreshCw className="size-4" />
                 Erneut versuchen
@@ -73,7 +74,7 @@ export function ErrorExperience({
             ) : (
               <Link
                 href="/"
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/15 transition hover:-translate-y-0.5 hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/40"
+                className={buttonVariants({ className: "h-12 px-6" })}
               >
                 <Home className="size-4" />
                 Zur Startseite

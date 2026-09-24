@@ -24,10 +24,9 @@ export function CartCheckoutDialog({
           oder
         </div>
         <Button
-          className="h-11 w-full gap-2 rounded-xl border-primary/35 bg-primary/5 text-sm text-primary shadow-none hover:border-primary/60 hover:bg-primary/10"
+          className="h-11 w-full gap-2"
           nativeButton={false}
           render={<Link href="/kasse" />}
-          variant="outline"
         >
           Weiter zur Kasse
           <ArrowRight aria-hidden="true" className="size-4" />
@@ -47,10 +46,9 @@ export function CartCheckoutDialog({
           oder
         </div>
         <Button
-          className="h-11 w-full gap-2 rounded-xl border-primary/35 bg-primary/5 text-sm text-primary shadow-none hover:border-primary/60 hover:bg-primary/10"
+          className="h-11 w-full gap-2"
           onClick={() => dialogRef.current?.showModal()}
           type="button"
-          variant="outline"
         >
           Weiter zur Kasse
           <ArrowRight aria-hidden="true" className="size-4" />

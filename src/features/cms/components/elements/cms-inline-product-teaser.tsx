@@ -1,6 +1,7 @@
 import { ArrowRight, ShoppingBag } from "lucide-react";
 import Image from "next/image";
 
+import { buttonVariants } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
 import type { CmsElementProps } from "@/features/cms/components/cms-element";
@@ -22,6 +23,7 @@ export function CmsInlineProductTeaser({
         aria-label={link.label}
         className="group grid overflow-hidden rounded-2xl border bg-card shadow-[0_18px_45px_-38px_rgba(21,21,19,0.7)] transition-[border-color,transform] hover:border-primary/35 focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:ring-offset-4 focus-visible:outline-none motion-safe:hover:-translate-y-0.5 sm:grid-cols-[13rem_1fr_auto] sm:items-center"
         href={link.url}
+        target="_blank"
       >
         <span className="relative block aspect-4/3 overflow-hidden bg-muted sm:aspect-square">
           <Image
@@ -48,7 +50,9 @@ export function CmsInlineProductTeaser({
           )}
         </span>
 
-        <span className="mx-5 mb-5 inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground sm:mx-7 sm:mb-0">
+        <span
+          className={buttonVariants({ className: "mx-5 mb-5 sm:mx-7 sm:mb-0" })}
+        >
           {link.label}
           <ArrowRight
             aria-hidden="true"

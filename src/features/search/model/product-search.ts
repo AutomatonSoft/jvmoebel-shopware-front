@@ -1,3 +1,5 @@
+export const productSearchCacheTtlSeconds = 2 * 60;
+
 export type ProductSearchResult = Readonly<{
   categoryLabel: string;
   description: string;

@@ -2,13 +2,22 @@
 
 import { ArrowRight, Search } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import type { Route } from "next";
+import { useRouter } from "next/navigation";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
 import { createPortal } from "react-dom";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SearchResults } from "@/features/search/components/search-results";
 import { useProductSearch } from "@/features/search/hooks/use-product-search";
+import { getSearchUrl } from "@/features/search/model/search-url";
 
 const headerSearchOverlayVariants = {
   hidden: { opacity: 0 },
@@ -25,6 +34,7 @@ export type HeaderSearchProps = {
 };
 
 export function HeaderSearch({ className }: HeaderSearchProps) {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const overlayInputRef = useRef<HTMLInputElement>(null);
@@ -39,6 +49,12 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
     setIsOpen(false);
     setQuery("");
   }, []);
+
+  function submitSearch(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    router.push(getSearchUrl(query) as Route);
+    handleResultSelect();
+  }
 
   useEffect(() => {
     if (!isOpen) return;
@@ -81,6 +97,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
         onFocus={() => {
           setIsOpen(true);
         }}
+        onSubmit={submitSearch}
         role="search"
       >
         <Search className="mr-2 size-4.5 shrink-0 text-muted-foreground transition-colors group-focus-within/search:text-foreground" />
@@ -100,6 +117,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
             className="shrink-0 rounded-full hover:bg-destructive motion-safe:hover:translate-x-px motion-safe:active:scale-90"
             size="icon-lg"
             type="submit"
+            variant="solid"
           >
             <ArrowRight className="size-4" />
           </Button>
@@ -139,6 +157,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
                   <form
                     action="/suche"
                     className="group/search flex h-11 items-center border-b bg-muted/80 px-4 py-1"
+                    onSubmit={submitSearch}
                     role="search"
                   >
                     <Search className="mr-2 size-4.5 shrink-0 text-muted-foreground transition-colors group-focus-within/search:text-foreground" />
@@ -159,6 +178,7 @@ export function HeaderSearch({ className }: HeaderSearchProps) {
                         className="shrink-0 rounded-full"
                         size="icon-lg"
                         type="submit"
+                        variant="solid"
                       >
                         <ArrowRight className="size-4" />
                       </Button>

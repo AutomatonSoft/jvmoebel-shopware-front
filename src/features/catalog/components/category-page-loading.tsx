@@ -29,13 +29,13 @@ function CategoryProductSkeleton() {
   );
 }
 
-export function CategoryPageLoading() {
+export function CategoryPageLoading({
+  label = "Kategorie wird geladen",
+}: {
+  label?: string;
+} = {}) {
   return (
-    <main
-      aria-busy="true"
-      aria-label="Kategorie wird geladen"
-      className="flex-1"
-    >
+    <main aria-busy="true" aria-label={label} className="flex-1">
       <Container className="pt-6">
         <nav
           aria-hidden="true"
@@ -115,7 +115,7 @@ export function CategoryPageLoading() {
         </div>
       </Container>
       <span className="sr-only" role="status">
-        Kategorie wird geladen...
+        {label}...
       </span>
     </main>
   );
