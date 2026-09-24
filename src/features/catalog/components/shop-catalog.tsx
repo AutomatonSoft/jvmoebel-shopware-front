@@ -139,6 +139,7 @@ function ShopCatalogContent({
   } = catalogState;
   const { activeFilterCount } = filterPanelProps;
   const loading = isLoading || isCatalogLoading;
+  const hasProducts = paginationProps.totalProducts > 0;
 
   return (
     <Container className="pb-20 sm:pb-28">
@@ -170,7 +171,7 @@ function ShopCatalogContent({
         </>
       )}
 
-      {showQuickFilters && (
+      {showQuickFilters && hasProducts && (
         <ProductQuickFilters
           {...filterPanelProps}
           currency={listing.currency}
@@ -179,18 +180,20 @@ function ShopCatalogContent({
       )}
 
       <div
-        className={`grid gap-8 lg:grid-cols-[13.75rem_minmax(0,1fr)] lg:gap-10 xl:gap-12 ${showQuickFilters ? "pt-4" : "pt-6"}`}
+        className={`grid gap-8 lg:gap-10 xl:gap-12 ${hasProducts ? "lg:grid-cols-[13.75rem_minmax(0,1fr)]" : ""} ${showQuickFilters && hasProducts ? "pt-4" : "pt-6"}`}
       >
-        <aside className="sticky top-24 hidden max-h-[calc(100dvh-7rem)] self-start overflow-y-auto rounded-xl border bg-card/70 p-4 scrollbar-width:none lg:block [&::-webkit-scrollbar]:hidden">
-          {isDesktopCatalog && <ProductFilterPanel {...filterPanelProps} />}
-        </aside>
+        {hasProducts && (
+          <aside className="sticky top-24 hidden max-h-[calc(100dvh-7rem)] self-start overflow-y-auto rounded-xl border bg-card/70 p-4 scrollbar-width:none lg:block [&::-webkit-scrollbar]:hidden">
+            {isDesktopCatalog && <ProductFilterPanel {...filterPanelProps} />}
+          </aside>
+        )}
 
         <section aria-label="Produktliste" className="min-w-0">
           <div className="mb-6 flex items-center justify-between gap-3">
             <span className="text-xs font-medium text-muted-foreground">
               {paginationProps.totalProducts} Produkte
             </span>
-            {!isDesktopCatalog && (
+            {hasProducts && !isDesktopCatalog && (
               <Dialog.Root>
                 <Dialog.Trigger
                   render={
@@ -255,61 +258,64 @@ function ShopCatalogContent({
               </Dialog.Root>
             )}
 
-            <div className="ml-auto flex items-center gap-2 text-xs">
-              <span className="hidden text-muted-foreground sm:inline">
-                Sortieren nach
-              </span>
-              <Select
-                onValueChange={(value) => setSort(value as ShopProductSort)}
-                value={sort}
-              >
-                <SelectTrigger
-                  aria-label="Produkte sortieren"
-                  className="h-10 min-w-40 cursor-pointer bg-card px-3 text-xs shadow-xs transition-[border-color,box-shadow,background-color] hover:border-primary/60 hover:bg-accent/30 data-popup-open:border-primary data-popup-open:ring-3 data-popup-open:ring-primary/15"
+            {hasProducts && (
+              <div className="ml-auto flex items-center gap-2 text-xs">
+                <span className="hidden text-muted-foreground sm:inline">
+                  Sortieren nach
+                </span>
+                <Select
+                  onValueChange={(value) => setSort(value as ShopProductSort)}
+                  value={sort}
                 >
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent
-                  align="end"
-                  alignItemWithTrigger={false}
-                  className="min-w-52 p-1.5"
-                >
-                  <SelectItem
-                    className="cursor-pointer py-2 text-xs"
-                    value="featured"
+                  <SelectTrigger
+                    aria-label="Produkte sortieren"
+                    className="h-10 min-w-40 cursor-pointer bg-card px-3 text-xs shadow-xs transition-[border-color,box-shadow,background-color] hover:border-primary/60 hover:bg-accent/30 data-popup-open:border-primary data-popup-open:ring-3 data-popup-open:ring-primary/15"
                   >
-                    Empfohlen
-                  </SelectItem>
-                  <SelectItem
-                    className="cursor-pointer py-2 text-xs"
-                    value="newest"
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent
+                    align="end"
+                    alignItemWithTrigger={false}
+                    className="min-w-52 p-1.5"
                   >
-                    Neuheiten
-                  </SelectItem>
-                  <SelectItem
-                    className="cursor-pointer py-2 text-xs"
-                    value="price-ascending"
-                  >
-                    Preis: aufsteigend
-                  </SelectItem>
-                  <SelectItem
-                    className="cursor-pointer py-2 text-xs"
-                    value="price-descending"
-                  >
-                    Preis: absteigend
-                  </SelectItem>
-                  <SelectItem
-                    className="cursor-pointer py-2 text-xs"
-                    value="rating"
-                  >
-                    Beste Bewertung
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+                    <SelectItem
+                      className="cursor-pointer py-2 text-xs"
+                      value="featured"
+                    >
+                      Empfohlen
+                    </SelectItem>
+                    <SelectItem
+                      className="cursor-pointer py-2 text-xs"
+                      value="newest"
+                    >
+                      Neuheiten
+                    </SelectItem>
+                    <SelectItem
+                      className="cursor-pointer py-2 text-xs"
+                      value="price-ascending"
+                    >
+                      Preis: aufsteigend
+                    </SelectItem>
+                    <SelectItem
+                      className="cursor-pointer py-2 text-xs"
+                      value="price-descending"
+                    >
+                      Preis: absteigend
+                    </SelectItem>
+                    <SelectItem
+                      className="cursor-pointer py-2 text-xs"
+                      value="rating"
+                    >
+                      Beste Bewertung
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
 
           <ShopProductResults
+            activeFilterCount={activeFilterCount}
             currency={listing.currency}
             isLoading={loading}
             locale={listing.locale}

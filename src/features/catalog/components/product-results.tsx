@@ -1,7 +1,9 @@
 "use client";
 
-import { Sparkles } from "lucide-react";
+import { ArrowRight, PackageOpen } from "lucide-react";
 import { motion } from "motion/react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { memo, useEffect, useRef } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -19,6 +21,7 @@ const productLayoutTransition = {
 } as const;
 
 export type ShopProductResultsProps = {
+  activeFilterCount: number;
   currency: string;
   isLoading: boolean;
   locale: string;
@@ -49,6 +52,7 @@ const ShopProductGrid = memo(function ShopProductGrid({
 });
 
 export function ShopProductResults({
+  activeFilterCount,
   currency,
   isLoading,
   locale,
@@ -56,6 +60,7 @@ export function ShopProductResults({
   paginationProps,
   products,
 }: ShopProductResultsProps) {
+  const pathname = usePathname();
   const previousLoadingRef = useRef(isLoading);
   const productResultsRef = useRef<HTMLDivElement>(null);
   const resultHeightReleaseTimerRef = useRef<number>(null);
@@ -132,18 +137,45 @@ export function ShopProductResults({
         </>
       ) : (
         <div
-          className={`flex min-h-96 flex-col items-center justify-center rounded-2xl border border-dashed bg-card/40 px-6 text-center transition-opacity duration-200 ${isLoading ? "pointer-events-none opacity-35" : ""}`}
+          className={`flex min-h-96 flex-col items-center justify-center rounded-2xl border bg-card px-6 py-14 text-center shadow-xs transition-opacity duration-200 sm:min-h-[26rem] ${isLoading ? "pointer-events-none opacity-35" : ""}`}
         >
-          <span className="mb-4 flex size-12 items-center justify-center rounded-full bg-muted">
-            <Sparkles className="size-5 text-primary" />
+          <span className="mb-7 flex size-20 items-center justify-center rounded-full border border-border bg-secondary/60 shadow-[0_0_0_8px_var(--color-background)]">
+            <PackageOpen
+              aria-hidden="true"
+              className="size-9 stroke-[1.25] text-foreground"
+            />
           </span>
-          <h2 className="text-lg font-semibold">Keine passenden Produkte</h2>
-          <p className="mt-2 max-w-sm text-sm leading-6 text-muted-foreground">
-            Entfernen Sie einen oder mehrere Filter, um weitere Moebel zu sehen.
+          <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">
+            {activeFilterCount > 0
+              ? "Keine passenden Produkte"
+              : "Hier gibt es noch keine Produkte"}
+          </h2>
+          <p className="mt-3 max-w-md text-sm leading-6 text-muted-foreground">
+            {activeFilterCount > 0
+              ? "Passen Sie Ihre Auswahl an, um weitere Produkte zu entdecken."
+              : "Entdecken Sie in der Zwischenzeit unser weiteres Sortiment."}
           </p>
-          <Button className="mt-5" onClick={onClearFilters} variant="outline">
-            Filter löschen
-          </Button>
+          {activeFilterCount > 0 ? (
+            <Button className="mt-7" onClick={onClearFilters}>
+              Filter zurücksetzen
+            </Button>
+          ) : (
+            <Button
+              className="mt-7"
+              render={
+                <Link
+                  href={
+                    pathname === "/moebel-sortiment" ? "/" : "/moebel-sortiment"
+                  }
+                />
+              }
+            >
+              {pathname === "/moebel-sortiment"
+                ? "Zur Startseite"
+                : "Sortiment entdecken"}
+              <ArrowRight aria-hidden="true" className="size-4" />
+            </Button>
+          )}
         </div>
       )}
 
