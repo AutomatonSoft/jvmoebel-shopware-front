@@ -308,7 +308,6 @@ export async function saveCustomerProfile(
     };
   }
 
-  revalidatePath("/");
   revalidatePath("/kundenkonto");
   revalidatePath("/kundenkonto/profil");
   redirect("/kundenkonto?profil=1");
@@ -346,7 +345,6 @@ export async function changeCustomerEmail(
     };
   }
 
-  revalidatePath("/");
   revalidatePath("/kundenkonto");
   redirect("/kundenkonto?email=1");
 }
@@ -401,7 +399,6 @@ export async function saveCustomerSettings(
       status: "error",
     };
   }
-  revalidatePath("/");
   revalidatePath("/kundenkonto");
   redirect("/kundenkonto?einstellungen=1");
 }
