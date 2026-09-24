@@ -7,6 +7,7 @@ import {
   type ProductListingSearchParams,
 } from "@/app/_lib/product-listing-search-params";
 import { CategoryPage } from "@/features/catalog/components/category-page";
+import { getShopCategoryMetadata } from "@/features/catalog/server/category-page";
 import type { ShopProductPageRequest } from "@/features/catalog/model/product-listing-page";
 import { ProductDetail } from "@/features/catalog/components/product-detail";
 import { CmsLandingPageView } from "@/features/cms/components/cms-landing-page-view";
@@ -39,22 +40,6 @@ async function getPath(params: CategoryRoutePageProps["params"]) {
   const { path } = await params;
 
   return `/${path.join("/")}`;
-}
-
-async function getPageResult({ params, searchParams }: CategoryRoutePageProps) {
-  const [pathname, parameters] = await Promise.all([
-    getPath(params),
-    searchParams,
-  ]);
-  const resolvedRoute = await loadStorefrontRoute(pathname);
-  const result = resolvedRoute
-    ? await loadStorefrontPage(
-        resolvedRoute,
-        JSON.stringify(getProductPageRequest(parameters)),
-      )
-    : null;
-
-  return { parameters, result };
 }
 
 type StorefrontPageContentProps = Readonly<{
@@ -94,7 +79,30 @@ export async function generateMetadata({
   params,
   searchParams,
 }: CategoryRoutePageProps): Promise<Metadata> {
-  const { result } = await getPageResult({ params, searchParams });
+  const pathname = await getPath(params);
+  const resolvedRoute = await loadStorefrontRoute(pathname);
+
+  if (!resolvedRoute) {
+    return {};
+  }
+
+  if (resolvedRoute.route.kind === "category") {
+    const category = await getShopCategoryMetadata(
+      resolvedRoute.route.entityId,
+    );
+
+    return {
+      alternates: { canonical: resolvedRoute.route.canonicalPath },
+      description: category.metaDescription || category.description,
+      title: category.metaTitle || `${category.name} | JVMoebel`,
+    };
+  }
+
+  const parameters = await searchParams;
+  const result = await loadStorefrontPage(
+    resolvedRoute,
+    JSON.stringify(getProductPageRequest(parameters)),
+  );
 
   if (!result) {
     return {};

@@ -52,6 +52,12 @@ async function getCachedShopwareCategoryPageContent(
   );
 }
 
+export async function getShopCategoryMetadata(categoryId: string) {
+  const core = await getCachedShopwareCategoryPageCore(categoryId);
+
+  return core.category;
+}
+
 export async function getShopCategoryPage(
   categoryId: string,
   productRequest: ShopProductPageRequest = defaultShopProductPageRequest,
