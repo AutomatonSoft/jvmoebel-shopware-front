@@ -113,6 +113,7 @@ function ReviewCartItem({
           aria-label={item.label}
           className="relative grid aspect-square place-items-center overflow-hidden rounded-xl bg-muted/70 p-2"
           href={item.url as Route}
+          target="_blank"
         >
           {image}
         </Link>
@@ -125,7 +126,11 @@ function ReviewCartItem({
       <div className="min-w-0">
         <h3 className="text-sm leading-5 font-semibold tracking-[-0.015em]">
           {item.url ? (
-            <Link className="hover:text-primary" href={item.url as Route}>
+            <Link
+              className="hover:text-primary"
+              href={item.url as Route}
+              target="_blank"
+            >
               {item.label}
             </Link>
           ) : (

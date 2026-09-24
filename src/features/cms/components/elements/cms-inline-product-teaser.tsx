@@ -23,6 +23,7 @@ export function CmsInlineProductTeaser({
         aria-label={link.label}
         className="group grid overflow-hidden rounded-2xl border bg-card shadow-[0_18px_45px_-38px_rgba(21,21,19,0.7)] transition-[border-color,transform] hover:border-primary/35 focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:ring-offset-4 focus-visible:outline-none motion-safe:hover:-translate-y-0.5 sm:grid-cols-[13rem_1fr_auto] sm:items-center"
         href={link.url}
+        target="_blank"
       >
         <span className="relative block aspect-4/3 overflow-hidden bg-muted sm:aspect-square">
           <Image

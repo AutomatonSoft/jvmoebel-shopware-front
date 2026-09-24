@@ -146,6 +146,7 @@ export function SearchResults({
                   className="group block rounded-xl border bg-card p-2 transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
                   href={product.url as Route}
                   onClick={onResultSelect}
+                  target="_blank"
                 >
                   <span className="relative block aspect-4/3 overflow-hidden rounded-lg bg-muted/60">
                     <Image

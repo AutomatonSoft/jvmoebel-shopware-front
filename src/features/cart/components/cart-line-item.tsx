@@ -103,6 +103,7 @@ export function CartLineItem({
           aria-label={item.label}
           className="relative grid aspect-square place-items-center overflow-hidden rounded-2xl bg-muted/65 p-3"
           href={item.url as Route}
+          target="_blank"
         >
           {content}
         </Link>
@@ -118,7 +119,9 @@ export function CartLineItem({
         </p>
         <h2 className="mt-1 text-base leading-6 font-semibold tracking-[-0.02em] sm:text-lg">
           {item.url ? (
-            <Link href={item.url as Route}>{item.label}</Link>
+            <Link href={item.url as Route} target="_blank">
+              {item.label}
+            </Link>
           ) : (
             item.label
           )}
