@@ -23,6 +23,7 @@ mock.module("next/cache", () => ({
   cacheLife: () => {},
   cacheTag: () => {},
 }));
+
 mock.module("@/features/catalog/server/product-listing", () => ({
   getShopProductListingPage: loadListing,
 }));

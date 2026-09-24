@@ -3,11 +3,51 @@ import type { components } from "@shopware/api-client/store-api-types";
 
 import {
   findShopwareProductVariant,
+  getShopwareProductCardData,
   getShopwareProductDetail,
   isShopwareProductAvailable,
 } from "@/integrations/shopware/product-detail";
 
 type ShopwareProduct = components["schemas"]["Product"];
+
+describe("getShopwareProductCardData", () => {
+  test("loads the current price without configurator or cross-selling requests", async () => {
+    const requests: Array<{ operation: string; request: unknown }> = [];
+    const product = {
+      calculatedPrice: { listPrice: null, unitPrice: 120 },
+      id: "product-id",
+      name: "Sessel Nara",
+      translated: { name: "Sessel Nara" },
+    } as ShopwareProduct;
+    const client = {
+      invoke: async (operation: string, request: unknown) => {
+        requests.push({ operation, request });
+
+        return operation === "readContext get /context"
+          ? {
+              data: {
+                currency: { isoCode: "EUR" },
+                languageInfo: { localeCode: "de-DE" },
+              },
+            }
+          : { data: { product } };
+      },
+    } as unknown as Parameters<typeof getShopwareProductCardData>[0];
+
+    const result = await getShopwareProductCardData(client, "product-id");
+
+    expect(result?.product.unitPrice).toBe(120);
+    expect(requests.map(({ operation }) => operation)).toEqual([
+      "readContext get /context",
+      "readProductDetail post /product/{productId}",
+    ]);
+    expect(requests[1]?.request).toMatchObject({
+      fetchOptions: { cache: "no-store" },
+      pathParams: { productId: "product-id" },
+      query: { skipCmsPage: true, skipConfigurator: true },
+    });
+  });
+});
 
 describe("getShopwareProductDetail", () => {
   test("loads a product with configurator data while skipping CMS data", async () => {

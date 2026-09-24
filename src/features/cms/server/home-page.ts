@@ -18,18 +18,15 @@ async function getCachedHomeCmsPage(): Promise<CmsPage | null> {
   cacheLife(shopwareCacheLife(shopwareCacheTtlSeconds.homeCmsPage));
   cacheTag("shopware:cms");
 
-  if (shouldUseShopwareMocks()) {
-    return homeCmsPageMock;
-  }
-
   return getShopwareHomeCmsPage(getShopwareRequestSession().client);
 }
 
 export async function getHomeCmsPage(): Promise<CmsPage | null> {
-  if (
-    !shouldUseShopwareMocks() &&
-    (!process.env.SHOPWARE_ENDPOINT || !process.env.SHOPWARE_ACCESS_TOKEN)
-  ) {
+  if (shouldUseShopwareMocks()) {
+    return homeCmsPageMock;
+  }
+
+  if (!process.env.SHOPWARE_ENDPOINT || !process.env.SHOPWARE_ACCESS_TOKEN) {
     await connection();
   }
 

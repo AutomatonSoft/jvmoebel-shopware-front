@@ -1,7 +1,5 @@
 import "server-only";
 
-import { cacheLife, cacheTag } from "next/cache";
-
 import { shopProductListingMock } from "@/features/catalog/fixtures/product-listing";
 import { buildShopProductFilterOptions } from "@/features/catalog/model/filter-options";
 import { filterAndSortShopProducts } from "@/features/catalog/model/filter-products";
@@ -15,42 +13,12 @@ import {
   shopProductPageSize,
 } from "@/features/catalog/model/product-listing-page";
 import { paginateProducts } from "@/features/catalog/model/paginate-products";
-import {
-  shopwareCacheLife,
-  shopwareCacheTtlSeconds,
-} from "@/integrations/shopware/cache-policy";
 import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
 import {
   getShopwareProductListing,
   getShopwareProductListingPage,
 } from "@/integrations/shopware/product-listing";
 import { getShopwareRequestSession } from "@/integrations/shopware/session";
-
-async function getCachedShopwareProductListing(categoryId: string | null) {
-  "use cache";
-  cacheLife(shopwareCacheLife(shopwareCacheTtlSeconds.productListing));
-  cacheTag("shopware:catalog");
-
-  return getShopwareProductListing(
-    getShopwareRequestSession().client,
-    categoryId ?? undefined,
-  );
-}
-
-async function getCachedShopwareProductListingPage(
-  request: ShopProductPageRequest,
-  categoryId: string | null,
-) {
-  "use cache";
-  cacheLife(shopwareCacheLife(shopwareCacheTtlSeconds.productListingPage));
-  cacheTag("shopware:catalog");
-
-  return getShopwareProductListingPage(
-    getShopwareRequestSession().client,
-    request,
-    categoryId ?? undefined,
-  );
-}
 
 export async function getShopProductListing(
   categoryId?: string,
@@ -59,7 +27,10 @@ export async function getShopProductListing(
     return shopProductListingMock;
   }
 
-  return getCachedShopwareProductListing(categoryId ?? null);
+  return getShopwareProductListing(
+    getShopwareRequestSession().client,
+    categoryId,
+  );
 }
 
 function getMockProductListingPage(
@@ -138,8 +109,9 @@ export async function getShopProductListingPage(
     return getMockProductListingPage(request);
   }
 
-  return getCachedShopwareProductListingPage(
+  return getShopwareProductListingPage(
+    getShopwareRequestSession().client,
     normalizeShopProductPageRequest(request),
-    categoryId ?? null,
+    categoryId,
   );
 }
