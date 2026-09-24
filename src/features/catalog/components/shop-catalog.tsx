@@ -188,7 +188,7 @@ function ShopCatalogContent({
       )}
 
       <div
-        className={`grid gap-8 lg:gap-10 xl:gap-12 ${showFilterPanel ? "lg:grid-cols-[13.75rem_minmax(0,1fr)]" : ""} ${showQuickFilters && hasProducts ? "pt-4" : "pt-6"}`}
+        className={`grid gap-8 lg:gap-10 xl:gap-12 ${showFilterPanel ? "lg:grid-cols-[15rem_minmax(0,1fr)]" : ""} ${showQuickFilters && hasProducts ? "pt-4" : "pt-6"}`}
       >
         {showFilterPanel && (
           <aside className="sticky top-24 hidden max-h-[calc(100dvh-7rem)] self-start overflow-y-auto rounded-xl border bg-card/70 p-4 scrollbar-width:none lg:block [&::-webkit-scrollbar]:hidden">
@@ -202,9 +202,10 @@ function ShopCatalogContent({
         )}
 
         <section aria-label="Produktliste" className="min-w-0">
-          <div className="mb-6 flex items-center justify-between gap-3">
-            <span className="text-xs font-medium text-muted-foreground">
-              {paginationProps.totalProducts} Produkte
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+            <span className="shrink-0 whitespace-nowrap text-xs font-medium text-muted-foreground">
+              {paginationProps.totalProducts}{" "}
+              {paginationProps.totalProducts === 1 ? "Produkt" : "Produkte"}
             </span>
             {showFilterPanel && !isDesktopCatalog && (
               <Dialog.Root>

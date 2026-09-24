@@ -266,10 +266,10 @@ export function ProductFilterPanel({
 
   return (
     <div>
-      <div className="flex items-center justify-between pb-5">
-        <strong className="text-lg">Filtern nach</strong>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 pb-5">
+        <strong className="shrink-0 text-lg">Filtern nach</strong>
         <button
-          className="cursor-pointer text-xs text-muted-foreground underline underline-offset-4 transition-colors hover:text-primary disabled:cursor-default disabled:opacity-40"
+          className="ml-auto shrink-0 cursor-pointer text-xs text-muted-foreground underline underline-offset-4 transition-colors hover:text-primary disabled:cursor-default disabled:opacity-40"
           disabled={activeFilterCount === 0}
           onClick={onClear}
           type="button"
