@@ -157,7 +157,6 @@ export function SearchResults({
                       fill
                       sizes="(max-width: 639px) 40vw, 160px"
                       src={product.image.url}
-                      unoptimized
                     />
                   </span>
                   <span className="mt-2 block text-xs font-semibold">

@@ -125,7 +125,6 @@ export const ShopProductCard = memo(function ShopProductCard({
             loading={eagerImage ? "eager" : "lazy"}
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             src={product.image.url}
-            unoptimized={product.image.url.startsWith("http")}
           />
         </span>
         {product.badge && (

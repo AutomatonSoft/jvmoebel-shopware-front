@@ -97,7 +97,6 @@ function ReviewCartItem({
       fill
       sizes="72px"
       src={item.image.url}
-      unoptimized={item.image.url.startsWith("http")}
     />
   ) : (
     <ShoppingBag

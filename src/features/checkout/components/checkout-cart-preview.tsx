@@ -43,7 +43,6 @@ export function CheckoutCartPreview({ cart }: Readonly<{ cart: ShopCart }>) {
                     fill
                     sizes="64px"
                     src={item.image.url}
-                    unoptimized={item.image.url.startsWith("http")}
                   />
                 ) : (
                   <Package

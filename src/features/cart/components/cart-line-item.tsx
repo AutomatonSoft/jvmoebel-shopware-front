@@ -91,7 +91,6 @@ export function CartLineItem({
       fill
       sizes="(max-width: 640px) 112px, 160px"
       src={item.image.url}
-      unoptimized={item.image.url.startsWith("http")}
     />
   ) : (
     <ShoppingBag className="size-8 text-muted-foreground" />
