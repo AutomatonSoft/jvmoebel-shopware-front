@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { StoreFooter } from "@/features/storefront-shell/components/store-footer";
 import { StoreHeader } from "@/features/storefront-shell/components/store-header";
+import { StorefrontRouteLoading } from "@/features/storefront-shell/components/storefront-route-loading";
 import { getStorefrontShellData } from "@/features/storefront-shell/server/storefront-config";
 
 import "./globals.css";
@@ -50,7 +51,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Suspense fallback={<header className="h-18 border-b bg-background" />}>
           <StorefrontHeader />
         </Suspense>
-        <Suspense fallback={<main className="flex-1" />}>{children}</Suspense>
+        <Suspense fallback={<StorefrontRouteLoading />}>{children}</Suspense>
         <Suspense fallback={null}>
           <StorefrontFooter />
         </Suspense>
