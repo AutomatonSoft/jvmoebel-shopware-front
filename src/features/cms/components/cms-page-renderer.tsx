@@ -73,7 +73,7 @@ import { parseCmsLoyaltyPromoData } from "@/features/cms/contracts/loyalty-promo
 import { parseCmsNewsletterData } from "@/features/cms/contracts/newsletter";
 import { parseCmsOfferRailData } from "@/features/cms/contracts/offer-rail";
 import { parseCmsPageHeaderData } from "@/features/cms/contracts/page-header";
-import { parseCmsProductGridData } from "@/features/cms/contracts/product-grid";
+import { parseCmsProductGridSlotData } from "@/features/cms/contracts/product-grid";
 import { parseCmsPromoBannerData } from "@/features/cms/contracts/promo-banner";
 import { parseCmsPromoDealTilesData } from "@/features/cms/contracts/promo-deal-tiles";
 import { parseCmsRelatedLookCardsData } from "@/features/cms/contracts/related-look-cards";
@@ -226,7 +226,7 @@ const cmsSlotComponents: Record<string, CmsSlotComponent | undefined> = {
     CmsPageHeader,
   ),
   "jv-product-grid": createCmsDataElementRenderer(
-    parseCmsProductGridData,
+    parseCmsProductGridSlotData,
     CmsProductGrid,
   ),
   "jv-promo-banner": createCmsDataElementRenderer(
