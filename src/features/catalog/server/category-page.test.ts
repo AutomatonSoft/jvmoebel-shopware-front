@@ -1,68 +1,59 @@
 import { beforeEach, describe, expect, mock, test } from "bun:test";
+import {
+  context,
+  fakeClient,
+  rawCategory,
+  rawProduct,
+} from "../../../../tests/cache-audit/support";
 
-import type { ShopCategoryPageContent } from "@/features/catalog/model/category-page";
-import type { ShopProductListingPage } from "@/features/catalog/model/product-listing-page";
-
-const content: ShopCategoryPageContent = {
-  breadcrumbs: [],
-  category: {
-    canonicalPath: "/category/",
-    description: "",
-    id: "category-id",
-    name: "Category",
-  },
-  children: [],
-  cmsPage: null,
-  hasProductListing: false,
-};
-const listing = {} as ShopProductListingPage;
 let hasProductListing = false;
-const loadListing = mock(async () => listing);
-
-mock.module("next/cache", () => ({
-  cacheLife: () => {},
-  cacheTag: () => {},
-}));
-
-mock.module("@/features/catalog/server/product-listing", () => ({
-  getShopProductListingPage: loadListing,
+const api = fakeClient(({ operation }) => {
+  if (operation.includes("/category/"))
+    return rawCategory("category-id", hasProductListing ? "page" : "folder");
+  if (operation.includes("/navigation/")) return [];
+  if (operation.includes("/context")) return context;
+  if (operation.includes("/product-listing/"))
+    return { elements: [rawProduct("product")], total: 1 };
+  throw new Error(`Unexpected API operation: ${operation}`);
+});
+mock.module("next/cache", () => ({ cacheLife: () => {}, cacheTag: () => {} }));
+mock.module("@/integrations/shopware/mock-mode", () => ({
+  shouldUseShopwareMocks: () => false,
 }));
 mock.module("@/features/storefront-shell/server/storefront-config", () => ({
   getStorefrontShellData: async () => ({ navigation: [] }),
 }));
-mock.module("@/integrations/shopware/category-page", () => ({
-  getShopwareCategoryPageContent: async () => ({
-    ...content,
-    hasProductListing,
-  }),
-}));
 mock.module("@/integrations/shopware/session", () => ({
-  getShopwareRequestSession: () => ({ client: {} }),
+  getShopwareRequestSession: () => ({ client: api.client }),
 }));
-
-const { getShopCategoryPage } =
-  await import("@/features/catalog/server/category-page");
+const { getShopCategoryPage } = await import("./category-page");
 
 beforeEach(() => {
   hasProductListing = false;
-  loadListing.mockClear();
+  api.calls.length = 0;
 });
 
 describe("getShopCategoryPage", () => {
   test("does not request products for a folder category", async () => {
-    const page = await getShopCategoryPage("category-id");
-
-    expect(page.listing).toBeNull();
-    expect(loadListing).not.toHaveBeenCalled();
+    expect((await getShopCategoryPage("category-id")).listing).toBeNull();
+    expect(
+      api.calls.filter(({ operation }) =>
+        operation.includes("/product-listing/"),
+      ),
+    ).toHaveLength(0);
   });
-
   test("requests products for a category with a listing", async () => {
     hasProductListing = true;
-
     const page = await getShopCategoryPage("category-id");
-
-    expect(page.listing).toBe(listing);
-    expect(loadListing).toHaveBeenCalledTimes(1);
-    expect(loadListing).toHaveBeenCalledWith(expect.any(Object), "category-id");
+    expect(page.listing?.products.map((product) => product.id)).toEqual([
+      "product",
+    ]);
+    const requests = api.calls.filter(({ operation }) =>
+      operation.includes("/product-listing/"),
+    );
+    expect(requests).toHaveLength(1);
+    expect(requests[0].options.pathParams).toEqual({
+      categoryId: "category-id",
+    });
   });
 });
