@@ -45,6 +45,7 @@ export function CmsLookScene({ data }: CmsElementProps<CmsLookSceneData>) {
                 <CmsLink
                   className="group flex min-h-16 items-center gap-4 py-3 focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:outline-none"
                   href={product.url}
+                  target="_blank"
                 >
                   <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-secondary text-xs font-semibold tabular-nums">
                     {String(index + 1).padStart(2, "0")}

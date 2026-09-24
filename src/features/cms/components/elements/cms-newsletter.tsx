@@ -22,20 +22,20 @@ export function CmsNewsletter({ data }: CmsElementProps<CmsNewsletterData>) {
       className="my-2 sm:my-6"
       data-cms-element="jv-newsletter"
     >
-      <div className="overflow-hidden rounded-3xl border border-[#cbbdad] bg-[#ded2c4]">
-        <div className="grid items-center gap-10 px-4 py-16 sm:px-8 lg:grid-cols-2 lg:gap-20">
+      <div className="overflow-hidden rounded-2xl border border-[#cbbdad] bg-[#ded2c4]">
+        <div className="grid items-center gap-6 px-4 py-8 sm:px-6 lg:grid-cols-2 lg:gap-10">
           <div>
             {eyebrow && (
-              <p className="mb-5 flex items-center gap-3 text-xs font-semibold tracking-[0.16em] uppercase before:block before:size-2 before:bg-primary">
+              <p className="mb-3 flex items-center gap-2 text-xs font-semibold tracking-[0.16em] uppercase before:block before:size-1.5 before:bg-primary">
                 {eyebrow}
               </p>
             )}
-            <h2 className="max-w-xl text-4xl leading-none font-semibold tracking-[-0.04em] text-balance sm:text-5xl">
+            <h2 className="max-w-xl text-3xl leading-none font-semibold tracking-[-0.04em] text-balance sm:text-4xl">
               {title}
             </h2>
           </div>
           <div>
-            <p className="mb-5 max-w-xl text-sm leading-7 sm:text-base">
+            <p className="mb-4 max-w-xl text-sm leading-6 sm:text-base">
               {description}
             </p>
             <NewsletterForm

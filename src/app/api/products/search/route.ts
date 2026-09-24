@@ -2,8 +2,6 @@ import type { NextRequest } from "next/server";
 
 import { searchProducts } from "@/features/search/server/product-search";
 
-export const dynamic = "force-dynamic";
-
 export async function GET(request: NextRequest) {
   const query = request.nextUrl.searchParams.get("query")?.trim() ?? "";
 

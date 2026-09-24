@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { refresh, revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import {
@@ -167,7 +167,7 @@ export async function addProductToCart(
       await persistCustomerContext(session.getContextToken());
     }
 
-    revalidatePath("/", "layout");
+    refresh();
     revalidatePath("/kasse");
     revalidatePath("/warenkorb");
 

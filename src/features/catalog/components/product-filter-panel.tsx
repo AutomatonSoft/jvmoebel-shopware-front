@@ -35,18 +35,27 @@ export type ProductFilterPanelProps = {
 const filterPreviewLimit = 8;
 
 function FilterGroup({
+  activeCount = 0,
   children,
   defaultOpen = true,
   title,
 }: {
+  activeCount?: number;
   children: ReactNode;
   defaultOpen?: boolean;
   title: string;
 }) {
   return (
     <details className="group border-t" open={defaultOpen}>
-      <summary className="flex cursor-pointer list-none items-center justify-between py-5 text-sm font-semibold [&::-webkit-details-marker]:hidden">
-        {title}
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-2 py-5 text-sm font-semibold [&::-webkit-details-marker]:hidden">
+        <span className="flex min-w-0 items-center gap-2">
+          {title}
+          {activeCount > 0 && (
+            <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[0.625rem] font-bold text-primary">
+              {activeCount}
+            </span>
+          )}
+        </span>
         <ChevronDown className="size-4 transition-transform group-open:rotate-180" />
       </summary>
       <div className="space-y-3 pb-6">{children}</div>
@@ -194,13 +203,73 @@ export function ProductFilterPanel({
   selectedAttributes,
   selectedCategories,
   selectedCompanies,
-}: ProductFilterPanelProps) {
+  hasProducts = true,
+}: ProductFilterPanelProps & {
+  hasProducts?: boolean;
+}) {
+  const hasPriceFilter =
+    minimumPrice !== minimumPriceBound || maximumPrice !== maximumPriceBound;
+  const categoryOptions = [
+    ...categories,
+    ...selectedCategories
+      .filter((value) => !categories.some((option) => option.value === value))
+      .map((value) => ({ count: 0, label: "Ausgewählt", value })),
+  ];
+  const companyOptions = [
+    ...companies,
+    ...selectedCompanies
+      .filter((value) => !companies.some((option) => option.value === value))
+      .map((value) => ({ count: 0, label: "Ausgewählt", value })),
+  ];
+  const attributeOptions = [
+    ...attributeGroups.map((group) => ({
+      ...group,
+      options: [
+        ...group.options,
+        ...(selectedAttributes[group.id] ?? [])
+          .filter(
+            (value) => !group.options.some((option) => option.value === value),
+          )
+          .map((value) => ({
+            count: 0,
+            hex: undefined,
+            label: "Ausgewählt",
+            value,
+          })),
+      ],
+    })),
+    ...Object.entries(selectedAttributes)
+      .filter(
+        ([groupId]) => !attributeGroups.some((group) => group.id === groupId),
+      )
+      .map(([groupId, values]) => ({
+        id: groupId,
+        label: "Eigenschaft",
+        options: values.map((value) => ({
+          count: 0,
+          hex: undefined,
+          label: "Ausgewählt",
+          value,
+        })),
+      })),
+  ];
+  const visibleCompanies = hasProducts
+    ? companyOptions
+    : companyOptions.filter((option) =>
+        selectedCompanies.includes(option.value),
+      );
+  const visibleCategories = hasProducts
+    ? categoryOptions
+    : categoryOptions.filter((option) =>
+        selectedCategories.includes(option.value),
+      );
+
   return (
     <div>
-      <div className="flex items-center justify-between pb-5">
-        <strong className="text-lg">Filtern nach</strong>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 pb-5">
+        <strong className="shrink-0 text-lg">Filtern nach</strong>
         <button
-          className="cursor-pointer text-xs text-muted-foreground underline underline-offset-4 transition-colors hover:text-primary disabled:cursor-default disabled:opacity-40"
+          className="ml-auto shrink-0 cursor-pointer text-xs text-muted-foreground underline underline-offset-4 transition-colors hover:text-primary disabled:cursor-default disabled:opacity-40"
           disabled={activeFilterCount === 0}
           onClick={onClear}
           type="button"
@@ -209,84 +278,110 @@ export function ProductFilterPanel({
         </button>
       </div>
 
-      <FilterGroup title="Preis">
-        <PriceRangeFilter
-          maximumPrice={maximumPrice}
-          maximumPriceBound={maximumPriceBound}
-          minimumPrice={minimumPrice}
-          minimumPriceBound={minimumPriceBound}
-          onMaximumPriceChange={onMaximumPriceChange}
-          onMinimumPriceChange={onMinimumPriceChange}
-          onPriceRangeChange={onPriceRangeChange}
-        />
-      </FilterGroup>
+      {hasProducts && (
+        <FilterGroup activeCount={hasPriceFilter ? 1 : 0} title="Preis">
+          <PriceRangeFilter
+            maximumPrice={maximumPrice}
+            maximumPriceBound={maximumPriceBound}
+            minimumPrice={minimumPrice}
+            minimumPriceBound={minimumPriceBound}
+            onMaximumPriceChange={onMaximumPriceChange}
+            onMinimumPriceChange={onMinimumPriceChange}
+            onPriceRangeChange={onPriceRangeChange}
+          />
+        </FilterGroup>
+      )}
 
-      <FilterGroup title="Hersteller">
-        <ExpandableFilterOptions
-          getKey={(option) => option.value}
-          getSearchText={(option) => option.label}
-          layoutClassName="space-y-3"
-          options={companies}
-          renderOption={(option) => (
-            <CheckboxOption
-              checked={selectedCompanies.includes(option.value)}
-              count={option.count}
-              disabled={
-                option.count === 0 && !selectedCompanies.includes(option.value)
-              }
-              label={option.label}
-              onChange={() => onToggleCompany(option.value)}
-            />
-          )}
-          searchPlaceholder="Hersteller suchen"
-        />
-      </FilterGroup>
-
-      <FilterGroup title="Kategorie">
-        <ExpandableFilterOptions
-          getKey={(option) => option.value}
-          layoutClassName="space-y-3"
-          options={categories}
-          renderOption={(option) => (
-            <CheckboxOption
-              checked={selectedCategories.includes(option.value)}
-              count={option.count}
-              disabled={
-                option.count === 0 && !selectedCategories.includes(option.value)
-              }
-              label={option.label}
-              onChange={() => onToggleCategory(option.value)}
-            />
-          )}
-        />
-      </FilterGroup>
-
-      {attributeGroups.map((group) => (
-        <FilterGroup defaultOpen={false} key={group.id} title={group.label}>
+      {(hasProducts || selectedCompanies.length > 0) && (
+        <FilterGroup activeCount={selectedCompanies.length} title="Hersteller">
           <ExpandableFilterOptions
             getKey={(option) => option.value}
             getSearchText={(option) => option.label}
             layoutClassName="space-y-3"
-            options={group.options}
+            options={visibleCompanies}
             renderOption={(option) => (
               <CheckboxOption
-                checked={(selectedAttributes[group.id] ?? []).includes(
-                  option.value,
-                )}
+                checked={selectedCompanies.includes(option.value)}
                 count={option.count}
                 disabled={
                   option.count === 0 &&
-                  !(selectedAttributes[group.id] ?? []).includes(option.value)
+                  !selectedCompanies.includes(option.value)
                 }
                 label={option.label}
-                onChange={() => onToggleAttribute(group.id, option.value)}
-                swatch={option.hex}
+                onChange={() => onToggleCompany(option.value)}
               />
             )}
-            searchPlaceholder={`${group.label} durchsuchen`}
+            searchPlaceholder="Hersteller suchen"
           />
         </FilterGroup>
-      ))}
+      )}
+
+      {(hasProducts || selectedCategories.length > 0) && (
+        <FilterGroup activeCount={selectedCategories.length} title="Kategorie">
+          <ExpandableFilterOptions
+            getKey={(option) => option.value}
+            layoutClassName="space-y-3"
+            options={visibleCategories}
+            renderOption={(option) => (
+              <CheckboxOption
+                checked={selectedCategories.includes(option.value)}
+                count={option.count}
+                disabled={
+                  option.count === 0 &&
+                  !selectedCategories.includes(option.value)
+                }
+                label={option.label}
+                onChange={() => onToggleCategory(option.value)}
+              />
+            )}
+          />
+        </FilterGroup>
+      )}
+
+      {attributeOptions
+        .filter(
+          (group) =>
+            hasProducts || (selectedAttributes[group.id] ?? []).length > 0,
+        )
+        .map((group) => (
+          <FilterGroup
+            activeCount={(selectedAttributes[group.id] ?? []).length}
+            defaultOpen={(selectedAttributes[group.id] ?? []).length > 0}
+            key={group.id}
+            title={group.label}
+          >
+            <ExpandableFilterOptions
+              getKey={(option) => option.value}
+              getSearchText={(option) => option.label}
+              layoutClassName="space-y-3"
+              options={
+                hasProducts
+                  ? group.options
+                  : group.options.filter((option) =>
+                      (selectedAttributes[group.id] ?? []).includes(
+                        option.value,
+                      ),
+                    )
+              }
+              renderOption={(option) => (
+                <CheckboxOption
+                  checked={(selectedAttributes[group.id] ?? []).includes(
+                    option.value,
+                  )}
+                  count={option.count}
+                  disabled={
+                    option.count === 0 &&
+                    !(selectedAttributes[group.id] ?? []).includes(option.value)
+                  }
+                  label={option.label}
+                  onChange={() => onToggleAttribute(group.id, option.value)}
+                  swatch={option.hex}
+                />
+              )}
+              searchPlaceholder={`${group.label} durchsuchen`}
+            />
+          </FilterGroup>
+        ))}
     </div>
   );
 }

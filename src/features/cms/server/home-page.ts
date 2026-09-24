@@ -1,27 +1,34 @@
 import "server-only";
 
-import { unstable_cache } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
+import { connection } from "next/server";
 
 import { homeCmsPageMock } from "@/features/cms/fixtures/home-page";
 import type { CmsPage } from "@/features/cms/model/page";
-import { shopwareCacheTtlSeconds } from "@/integrations/shopware/cache-policy";
 import { getShopwareHomeCmsPage } from "@/integrations/shopware/home-cms";
+import {
+  shopwareCacheLife,
+  shopwareCacheTtlSeconds,
+} from "@/integrations/shopware/cache-policy";
 import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
 import { getShopwareRequestSession } from "@/integrations/shopware/session";
 
-const getCachedShopwareHomeCmsPage = unstable_cache(
-  () => getShopwareHomeCmsPage(getShopwareRequestSession().client),
-  ["shopware-home-cms"],
-  {
-    revalidate: shopwareCacheTtlSeconds.homeCmsPage,
-    tags: ["shopware:cms"],
-  },
-);
+async function getCachedHomeCmsPage(): Promise<CmsPage | null> {
+  "use cache";
+  cacheLife(shopwareCacheLife(shopwareCacheTtlSeconds.homeCmsPage));
+  cacheTag("shopware:cms");
+
+  return getShopwareHomeCmsPage(getShopwareRequestSession().client);
+}
 
 export async function getHomeCmsPage(): Promise<CmsPage | null> {
   if (shouldUseShopwareMocks()) {
     return homeCmsPageMock;
   }
 
-  return getCachedShopwareHomeCmsPage();
+  if (!process.env.SHOPWARE_ENDPOINT || !process.env.SHOPWARE_ACCESS_TOKEN) {
+    await connection();
+  }
+
+  return getCachedHomeCmsPage();
 }

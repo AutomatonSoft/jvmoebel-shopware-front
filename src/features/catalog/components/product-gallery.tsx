@@ -73,7 +73,6 @@ export function ProductGallery({ badge, images }: ProductGalleryProps) {
                   fill
                   sizes="80px"
                   src={image.url}
-                  unoptimized={image.url.startsWith("http")}
                 />
               </button>
             );
@@ -97,7 +96,6 @@ export function ProductGallery({ badge, images }: ProductGalleryProps) {
               ref={zoomImageRef}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) calc(100vw - 8rem), 58vw"
               src={activeImage.url}
-              unoptimized={activeImage.url.startsWith("http")}
             />
             <span className="absolute top-4 right-4 grid size-10 place-items-center rounded-full bg-background/90 text-foreground opacity-0 shadow-sm transition-opacity group-hover:opacity-100">
               <Maximize2 aria-hidden="true" className="size-4" />
@@ -149,7 +147,6 @@ export function ProductGallery({ badge, images }: ProductGalleryProps) {
                 fill
                 sizes="100vw"
                 src={activeImage.url}
-                unoptimized={activeImage.url.startsWith("http")}
               />
               {hasMultipleImages && (
                 <>

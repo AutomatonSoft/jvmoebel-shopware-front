@@ -1,0 +1,2 @@
+export const checkoutActionButtonClassName =
+  "h-12 rounded-xl border-orange-400 bg-orange-100 px-4 text-sm font-semibold text-foreground shadow-sm hover:border-orange-500 hover:bg-orange-200 hover:shadow-md focus-visible:ring-orange-400/40 motion-safe:hover:-translate-y-0.5 motion-safe:active:translate-y-px [&_svg]:size-5 [&_svg]:text-orange-600 [&_svg]:transition-transform motion-safe:hover:[&_svg]:translate-x-1";

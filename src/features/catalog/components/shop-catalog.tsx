@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSyncExternalStore } from "react";
 
 import { ProductFilterPanel } from "@/features/catalog/components/product-filter-panel";
+import { ActiveProductFilters } from "@/features/catalog/components/active-product-filters";
 import { ProductQuickFilters } from "@/features/catalog/components/product-quick-filters";
 import { ShopProductResults } from "@/features/catalog/components/product-results";
 import { Button } from "@/components/ui/button";
@@ -139,6 +140,8 @@ function ShopCatalogContent({
   } = catalogState;
   const { activeFilterCount } = filterPanelProps;
   const loading = isLoading || isCatalogLoading;
+  const hasProducts = paginationProps.totalProducts > 0;
+  const showFilterPanel = hasProducts || activeFilterCount > 0;
 
   return (
     <Container className="pb-20 sm:pb-28">
@@ -170,7 +173,13 @@ function ShopCatalogContent({
         </>
       )}
 
-      {showQuickFilters && (
+      <ActiveProductFilters
+        {...filterPanelProps}
+        currency={listing.currency}
+        locale={listing.locale}
+      />
+
+      {showQuickFilters && hasProducts && (
         <ProductQuickFilters
           {...filterPanelProps}
           currency={listing.currency}
@@ -179,18 +188,26 @@ function ShopCatalogContent({
       )}
 
       <div
-        className={`grid gap-8 lg:grid-cols-[13.75rem_minmax(0,1fr)] lg:gap-10 xl:gap-12 ${showQuickFilters ? "pt-4" : "pt-6"}`}
+        className={`grid gap-8 lg:gap-10 xl:gap-12 ${showFilterPanel ? "lg:grid-cols-[15rem_minmax(0,1fr)]" : ""} ${showQuickFilters && hasProducts ? "pt-4" : "pt-6"}`}
       >
-        <aside className="sticky top-24 hidden max-h-[calc(100dvh-7rem)] self-start overflow-y-auto rounded-xl border bg-card/70 p-4 scrollbar-width:none lg:block [&::-webkit-scrollbar]:hidden">
-          {isDesktopCatalog && <ProductFilterPanel {...filterPanelProps} />}
-        </aside>
+        {showFilterPanel && (
+          <aside className="sticky top-24 hidden max-h-[calc(100dvh-7rem)] self-start overflow-y-auto rounded-xl border bg-card/70 p-4 scrollbar-width:none lg:block [&::-webkit-scrollbar]:hidden">
+            {isDesktopCatalog && (
+              <ProductFilterPanel
+                {...filterPanelProps}
+                hasProducts={hasProducts}
+              />
+            )}
+          </aside>
+        )}
 
         <section aria-label="Produktliste" className="min-w-0">
-          <div className="mb-6 flex items-center justify-between gap-3">
-            <span className="text-xs font-medium text-muted-foreground">
-              {paginationProps.totalProducts} Produkte
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+            <span className="shrink-0 whitespace-nowrap text-xs font-medium text-muted-foreground">
+              {paginationProps.totalProducts}{" "}
+              {paginationProps.totalProducts === 1 ? "Produkt" : "Produkte"}
             </span>
-            {!isDesktopCatalog && (
+            {showFilterPanel && !isDesktopCatalog && (
               <Dialog.Root>
                 <Dialog.Trigger
                   render={
@@ -237,7 +254,10 @@ function ShopCatalogContent({
                         </Dialog.Close>
                       </div>
                       <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5">
-                        <ProductFilterPanel {...filterPanelProps} />
+                        <ProductFilterPanel
+                          {...filterPanelProps}
+                          hasProducts={hasProducts}
+                        />
                       </div>
                       <div className="border-t p-5">
                         <Dialog.Close
@@ -255,61 +275,64 @@ function ShopCatalogContent({
               </Dialog.Root>
             )}
 
-            <div className="ml-auto flex items-center gap-2 text-xs">
-              <span className="hidden text-muted-foreground sm:inline">
-                Sortieren nach
-              </span>
-              <Select
-                onValueChange={(value) => setSort(value as ShopProductSort)}
-                value={sort}
-              >
-                <SelectTrigger
-                  aria-label="Produkte sortieren"
-                  className="h-10 min-w-40 cursor-pointer bg-card px-3 text-xs shadow-xs transition-[border-color,box-shadow,background-color] hover:border-primary/60 hover:bg-accent/30 data-popup-open:border-primary data-popup-open:ring-3 data-popup-open:ring-primary/15"
+            {hasProducts && (
+              <div className="ml-auto flex items-center gap-2 text-xs">
+                <span className="hidden text-muted-foreground sm:inline">
+                  Sortieren nach
+                </span>
+                <Select
+                  onValueChange={(value) => setSort(value as ShopProductSort)}
+                  value={sort}
                 >
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent
-                  align="end"
-                  alignItemWithTrigger={false}
-                  className="min-w-52 p-1.5"
-                >
-                  <SelectItem
-                    className="cursor-pointer py-2 text-xs"
-                    value="featured"
+                  <SelectTrigger
+                    aria-label="Produkte sortieren"
+                    className="h-10 min-w-40 cursor-pointer bg-card px-3 text-xs shadow-xs transition-[border-color,box-shadow,background-color] hover:border-primary/60 hover:bg-accent/30 data-popup-open:border-primary data-popup-open:ring-3 data-popup-open:ring-primary/15"
                   >
-                    Empfohlen
-                  </SelectItem>
-                  <SelectItem
-                    className="cursor-pointer py-2 text-xs"
-                    value="newest"
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent
+                    align="end"
+                    alignItemWithTrigger={false}
+                    className="min-w-52 p-1.5"
                   >
-                    Neuheiten
-                  </SelectItem>
-                  <SelectItem
-                    className="cursor-pointer py-2 text-xs"
-                    value="price-ascending"
-                  >
-                    Preis: aufsteigend
-                  </SelectItem>
-                  <SelectItem
-                    className="cursor-pointer py-2 text-xs"
-                    value="price-descending"
-                  >
-                    Preis: absteigend
-                  </SelectItem>
-                  <SelectItem
-                    className="cursor-pointer py-2 text-xs"
-                    value="rating"
-                  >
-                    Beste Bewertung
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+                    <SelectItem
+                      className="cursor-pointer py-2 text-xs"
+                      value="featured"
+                    >
+                      Empfohlen
+                    </SelectItem>
+                    <SelectItem
+                      className="cursor-pointer py-2 text-xs"
+                      value="newest"
+                    >
+                      Neuheiten
+                    </SelectItem>
+                    <SelectItem
+                      className="cursor-pointer py-2 text-xs"
+                      value="price-ascending"
+                    >
+                      Preis: aufsteigend
+                    </SelectItem>
+                    <SelectItem
+                      className="cursor-pointer py-2 text-xs"
+                      value="price-descending"
+                    >
+                      Preis: absteigend
+                    </SelectItem>
+                    <SelectItem
+                      className="cursor-pointer py-2 text-xs"
+                      value="rating"
+                    >
+                      Beste Bewertung
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
 
           <ShopProductResults
+            activeFilterCount={activeFilterCount}
             currency={listing.currency}
             isLoading={loading}
             locale={listing.locale}

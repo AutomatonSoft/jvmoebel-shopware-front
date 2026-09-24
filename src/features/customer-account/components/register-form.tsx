@@ -242,9 +242,10 @@ export function RegisterForm({
       </label>
 
       <Button
-        className="w-full justify-between rounded-lg bg-foreground text-background hover:bg-foreground/85 disabled:cursor-wait"
+        className="w-full justify-between rounded-lg bg-foreground text-background hover:bg-foreground/85 hover:text-background disabled:cursor-wait"
         disabled={pending}
         type="submit"
+        variant="ghost"
       >
         {pending ? "Konto wird erstellt …" : "Konto erstellen"}
         <span className="grid size-6 place-items-center rounded-full bg-background/10">

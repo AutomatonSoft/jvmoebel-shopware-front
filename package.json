@@ -10,7 +10,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "test": "bun --conditions=react-server test",
+    "test": "bun --conditions=react-server test --isolate",
     "typecheck": "next typegen && tsc --noEmit",
     "prepare": "husky"
   },

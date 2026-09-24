@@ -1,5 +1,5 @@
-import { StorefrontRouteLoading } from "@/features/storefront-shell/components/storefront-route-loading";
+import { CmsLandingPageLoading } from "@/features/cms/components/cms-landing-page-loading";
 
 export default function StorefrontRouteLoadingPage() {
-  return <StorefrontRouteLoading />;
+  return <CmsLandingPageLoading />;
 }

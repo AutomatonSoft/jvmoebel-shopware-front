@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import {
   MessageCircle,
   X,
@@ -27,7 +28,15 @@ function BrandIcon({
   iconUrl?: string;
 }) {
   if (iconUrl) {
-    return <img src={iconUrl} alt={type} className="size-5 object-contain" />;
+    return (
+      <Image
+        src={iconUrl}
+        alt={type}
+        width={20}
+        height={20}
+        className="size-5 object-contain"
+      />
+    );
   }
 
   const t = type.toLowerCase();
@@ -130,7 +139,7 @@ export function ContactWidget({ channels }: ContactWidgetProps) {
 
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        variant="default"
+        variant="solid"
         size="icon"
         className="size-14 rounded-full shadow-xl shadow-primary/20 transition-transform active:scale-95"
         aria-label={isOpen ? "Close contact menu" : "Open contact menu"}

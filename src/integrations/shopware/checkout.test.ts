@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 
 import {
+  createShopwareCheckoutBillingAddress,
   createShopwareCheckoutDeliveryAddress,
   getShopwareCheckoutCustomer,
   selectShopwareCheckoutDeliveryAddress,
@@ -53,6 +54,76 @@ describe("getShopwareCheckoutCustomer", () => {
         street: "Rheinufer 8",
       },
     });
+  });
+
+  test("shows the billing address selected for the current checkout", async () => {
+    const customer = await getShopwareCheckoutCustomer(
+      createClient({
+        activeBillingAddress: {
+          city: "Berlin",
+          countryId: "country-id",
+          firstName: "Greta",
+          lastName: "Groß",
+          street: "Neue Straße 2",
+          zipcode: "10115",
+        },
+        defaultBillingAddress: {
+          city: "Köln",
+          countryId: "country-id",
+          firstName: "Greta",
+          lastName: "Groß",
+          street: "Domstraße 1",
+          zipcode: "50667",
+        },
+        email: "greta@example.com",
+        firstName: "Greta",
+        lastName: "Groß",
+      }),
+    );
+
+    expect(customer?.billingAddress?.street).toBe("Neue Straße 2");
+  });
+});
+
+describe("createShopwareCheckoutBillingAddress", () => {
+  test("creates an address and selects it for the current checkout", async () => {
+    const operations: string[] = [];
+    const client = {
+      invoke: async (operation: string, parameters: unknown) => {
+        operations.push(operation);
+        if (operation === "readContext get /context") {
+          return {
+            data: {
+              customer: {
+                defaultBillingAddress: { salutationId: "salutation-id" },
+                guest: false,
+              },
+            },
+          };
+        }
+        if (operation === "updateContext patch /context") {
+          expect(parameters).toMatchObject({
+            body: { billingAddressId: "new-billing-address-id" },
+          });
+        }
+        return { data: { id: "new-billing-address-id" } };
+      },
+    } as unknown as ShopwareClient;
+
+    await createShopwareCheckoutBillingAddress(client, {
+      city: "Berlin",
+      countryId: "country-id",
+      firstName: "Greta",
+      lastName: "Groß",
+      street: "Neue Straße 2",
+      zipcode: "10115",
+    });
+
+    expect(operations).toEqual([
+      "readContext get /context",
+      "createCustomerAddress post /account/address",
+      "updateContext patch /context",
+    ]);
   });
 });
 

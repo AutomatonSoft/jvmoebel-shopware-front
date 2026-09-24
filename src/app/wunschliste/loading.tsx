@@ -17,7 +17,7 @@ export default function WishlistLoading() {
         </header>
         <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {Array.from({ length: 4 }, (_, index) => (
-            <Skeleton className="aspect-[4/5] rounded-3xl" key={index} />
+            <Skeleton className="aspect-4/5 rounded-3xl" key={index} />
           ))}
         </div>
       </Container>

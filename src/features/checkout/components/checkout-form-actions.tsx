@@ -3,6 +3,7 @@ import type { Route } from "next";
 import Link from "next/link";
 
 import { Button, buttonVariants } from "@/components/ui/button";
+import { checkoutActionButtonClassName } from "@/features/checkout/components/checkout-action-button-style";
 import { cn } from "@/lib/utils";
 
 export function CheckoutFormActions({
@@ -25,7 +26,12 @@ export function CheckoutFormActions({
         <ArrowLeft aria-hidden="true" />
         Zurück
       </Link>
-      <Button disabled={pending} size="lg" type="submit">
+      <Button
+        className={checkoutActionButtonClassName}
+        disabled={pending}
+        type="submit"
+        variant="outline"
+      >
         {pending ? pendingLabel : submitLabel}
         <ArrowRight aria-hidden="true" />
       </Button>

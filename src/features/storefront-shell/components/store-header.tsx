@@ -1,37 +1,30 @@
-import { ShoppingBag, UserRound } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 
 import { Container } from "@/components/ui/container";
-import { HeaderWishlistLink } from "@/features/storefront-shell/components/header-wishlist-link";
 import { CategoryMenu } from "@/features/storefront-shell/components/category-menu";
 import { HeaderSearch } from "@/features/storefront-shell/components/header-search";
+import {
+  HeaderAccountActions,
+  HeaderAccountActionsFallback,
+  HeaderCartAction,
+  HeaderCartActionFallback,
+} from "@/features/storefront-shell/components/header-session-actions";
+import { HeaderWishlistLink } from "@/features/storefront-shell/components/header-wishlist-link";
 import { MobileHeaderSearch } from "@/features/storefront-shell/components/mobile-header-search";
 import { StoreLogo } from "@/features/storefront-shell/components/store-logo";
-import type { CustomerAccountSummary } from "@/features/customer-account/model/account";
 import type { StorefrontBranding } from "@/features/storefront-shell/model/branding";
 import type { MainNavigation } from "@/features/storefront-shell/model/navigation";
 
 export type StoreHeaderProps = {
   branding: StorefrontBranding;
-  cartItemCount: number;
-  customer: CustomerAccountSummary | null;
   navigation: MainNavigation;
 };
 
 const MAX_VISIBLE_CATEGORIES = 6;
 
-export function StoreHeader({
-  branding,
-  cartItemCount,
-  customer,
-  navigation,
-}: StoreHeaderProps) {
-  const accountHref = customer ? "/kundenkonto" : "/kundenkonto/anmelden";
-  const accountLabel = customer
-    ? `${customer.firstName} ${customer.lastName}`.trim()
-    : "Anmelden";
-
+export function StoreHeader({ branding, navigation }: StoreHeaderProps) {
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur">
       <Container className="relative flex h-18 items-center gap-1 lg:gap-6">
@@ -63,55 +56,14 @@ export function StoreHeader({
         <HeaderSearch className="ml-auto hidden w-full max-w-80 xl:flex" />
         <MobileHeaderSearch />
         <div className="ml-auto flex items-center justify-end xl:ml-0">
-          <Link
-            aria-label={
-              customer ? `Kundenkonto von ${accountLabel}` : "Anmelden"
-            }
-            className="hidden min-h-10 items-center gap-2 rounded-full p-1 pr-3 transition-[background,transform,box-shadow] hover:bg-muted focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-[.975] xl:flex"
-            href={accountHref}
-          >
-            <span className="flex size-8.5 shrink-0 items-center justify-center rounded-full border border-foreground/15">
-              <UserRound className="size-4" />
-            </span>
-            <span className="flex min-w-12 flex-col leading-none">
-              <span className="mb-1 text-[0.5rem] tracking-[0.09em] text-muted-foreground uppercase">
-                Profil
-              </span>
-              <strong className="max-w-28 truncate text-xs font-semibold">
-                {accountLabel}
-              </strong>
-            </span>
-          </Link>
+          <Suspense fallback={<HeaderAccountActionsFallback />}>
+            <HeaderAccountActions />
+          </Suspense>
           <div className="flex items-center gap-1 sm:ml-2 sm:border-l sm:border-foreground/10 sm:pl-2">
-            <Link
-              aria-label={
-                customer ? `Kundenkonto von ${accountLabel}` : "Anmelden"
-              }
-              className="flex size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-90 xl:hidden"
-              href={accountHref}
-            >
-              <UserRound className="size-4.5" />
-            </Link>
             <HeaderWishlistLink />
-            <Link
-              aria-label={
-                cartItemCount > 0
-                  ? `Warenkorb, ${cartItemCount} Artikel`
-                  : "Warenkorb"
-              }
-              className="relative flex size-10 items-center justify-center rounded-full transition-[background,transform,box-shadow,color] hover:bg-muted hover:text-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-safe:active:translate-y-px motion-safe:active:scale-90"
-              href="/warenkorb"
-            >
-              <ShoppingBag className="size-4.5" />
-              {cartItemCount > 0 && (
-                <span
-                  aria-hidden="true"
-                  className="absolute -top-0.5 -right-0.5 grid min-w-4 place-items-center rounded-full bg-primary px-1 text-[0.5625rem] leading-4 font-bold text-primary-foreground"
-                >
-                  {cartItemCount > 99 ? "99+" : cartItemCount}
-                </span>
-              )}
-            </Link>
+            <Suspense fallback={<HeaderCartActionFallback />}>
+              <HeaderCartAction />
+            </Suspense>
           </div>
         </div>
       </Container>

@@ -106,18 +106,22 @@ function mapAttributeGroups(
 function getSelectedAttributes(
   filterOptions: ShopProductFilterOptions,
   propertyIds: readonly string[],
+  propertyGroups: Readonly<Record<string, readonly string[]>>,
 ) {
   const selectedPropertyIds = new Set(propertyIds);
 
-  return Object.fromEntries(
-    filterOptions.attributeGroups.flatMap((group) => {
-      const selectedOptions = group.options
-        .filter((option) => selectedPropertyIds.has(option.value))
-        .map((option) => option.value);
+  return {
+    ...propertyGroups,
+    ...Object.fromEntries(
+      filterOptions.attributeGroups.flatMap((group) => {
+        const selectedOptions = group.options
+          .filter((option) => selectedPropertyIds.has(option.value))
+          .map((option) => option.value);
 
-      return selectedOptions.length > 0 ? [[group.id, selectedOptions]] : [];
-    }),
-  );
+        return selectedOptions.length > 0 ? [[group.id, selectedOptions]] : [];
+      }),
+    ),
+  };
 }
 
 export function mapShopwareProductListingPage(
@@ -163,7 +167,11 @@ export function mapShopwareProductListingPage(
     ...listing,
     filterOptions,
     filters: {
-      attributes: getSelectedAttributes(filterOptions, request.propertyIds),
+      attributes: getSelectedAttributes(
+        filterOptions,
+        request.propertyIds,
+        request.propertyGroups,
+      ),
       categories: request.categoryIds,
       companies: request.companyIds,
       maximumPrice: request.maximumPrice ?? maximumPriceBound,

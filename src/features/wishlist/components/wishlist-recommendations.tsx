@@ -75,7 +75,7 @@ export function WishlistRecommendations({
           {Array.from({ length: 3 }, (_, index) => (
             <span
               aria-hidden="true"
-              className="aspect-[4/5] animate-pulse rounded-3xl bg-muted"
+              className="aspect-4/5 animate-pulse rounded-3xl bg-muted"
               key={index}
             />
           ))}

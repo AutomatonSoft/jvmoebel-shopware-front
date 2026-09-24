@@ -70,9 +70,10 @@ export function LoginForm({ redirectTo }: Readonly<{ redirectTo?: string }>) {
       </label>
 
       <Button
-        className="mt-2 w-full justify-between rounded-lg bg-foreground text-background hover:bg-foreground/85 disabled:cursor-wait"
+        className="mt-2 w-full justify-between rounded-lg bg-foreground text-background hover:bg-foreground/85 hover:text-background disabled:cursor-wait"
         disabled={pending}
         type="submit"
+        variant="ghost"
       >
         {pending ? "Anmeldung läuft …" : "Anmelden"}
         <span className="grid size-6 place-items-center rounded-full bg-background/10">

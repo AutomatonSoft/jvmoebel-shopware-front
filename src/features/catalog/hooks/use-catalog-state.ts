@@ -2,18 +2,19 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { Route } from "next";
-import { useTransition } from "react";
+import { useEffect, useRef, useTransition } from "react";
 
 import type { ShopProductSort } from "@/features/catalog/model/filter-products";
 import type { ShopProductListingPage } from "@/features/catalog/model/product-listing-page";
+import {
+  toggleCatalogPropertyValue,
+  toggleCatalogQueryValue,
+} from "@/features/catalog/model/catalog-query";
 
 type QueryValue = string | readonly string[] | undefined;
-
-function toggleValue(value: string, values: readonly string[]) {
-  return values.includes(value)
-    ? values.filter((selectedValue) => selectedValue !== value)
-    : [...values, value];
-}
+type QueryUpdates = Readonly<Record<string, QueryValue>>;
+type QueryUpdate =
+  QueryUpdates | ((parameters: URLSearchParams) => QueryUpdates);
 
 function setQueryValue(
   parameters: URLSearchParams,
@@ -34,6 +35,25 @@ export function useCatalogState(listing: ShopProductListingPage) {
   const router = useRouter();
   const searchParameters = useSearchParams();
   const [isLoading, startTransition] = useTransition();
+  const pendingSearchParameters = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (pendingSearchParameters.current === searchParameters.toString()) {
+      pendingSearchParameters.current = null;
+    }
+  }, [searchParameters]);
+
+  useEffect(() => {
+    function syncPendingSearchWithHistory() {
+      pendingSearchParameters.current = window.location.search.slice(1);
+    }
+
+    window.addEventListener("popstate", syncPendingSearchWithHistory);
+
+    return () =>
+      window.removeEventListener("popstate", syncPendingSearchWithHistory);
+  }, []);
+
   const { filterOptions, filters, pagination, priceRange, sort } = listing;
   const selectedAttributes = filters.attributes ?? {};
   const selectedCategories = filters.categories;
@@ -50,14 +70,18 @@ export function useCatalogState(listing: ShopProductListingPage) {
       ? 1
       : 0);
 
-  function navigate(updates: Readonly<Record<string, QueryValue>>) {
-    const parameters = new URLSearchParams(searchParameters.toString());
+  function navigate(update: QueryUpdate) {
+    const parameters = new URLSearchParams(
+      pendingSearchParameters.current ?? searchParameters.toString(),
+    );
+    const updates = typeof update === "function" ? update(parameters) : update;
 
     Object.entries(updates).forEach(([key, value]) =>
       setQueryValue(parameters, key, value),
     );
 
     const query = parameters.toString();
+    pendingSearchParameters.current = query;
 
     startTransition(() => {
       router.push((query ? `${pathname}?${query}` : pathname) as Route, {
@@ -66,8 +90,11 @@ export function useCatalogState(listing: ShopProductListingPage) {
     });
   }
 
-  function resetPage(updates: Readonly<Record<string, QueryValue>>) {
-    navigate({ ...updates, page: undefined });
+  function resetPage(update: QueryUpdate) {
+    navigate((parameters) => ({
+      ...(typeof update === "function" ? update(parameters) : update),
+      page: undefined,
+    }));
   }
 
   function getPriceParameter(value: number, bound: number) {
@@ -134,31 +161,23 @@ export function useCatalogState(listing: ShopProductListingPage) {
           minPrice: getPriceParameter(minimumPrice, priceRange.minimum),
         });
       },
-      onToggleAttribute: (groupId: string, value: string) => {
-        const nextSelectedAttributes = Object.fromEntries(
-          Object.entries({
-            ...selectedAttributes,
-            [groupId]: toggleValue(value, selectedAttributes[groupId] ?? []),
-          }).filter(([, selectedOptions]) => selectedOptions.length > 0),
-        );
-        const properties = Object.entries(nextSelectedAttributes).flatMap(
-          ([candidateGroupId, selectedOptions]) =>
-            selectedOptions.map(
-              (selectedOption) => `${candidateGroupId}:${selectedOption}`,
-            ),
-        );
-
-        resetPage({ property: properties });
-      },
+      onToggleAttribute: (groupId: string, value: string) =>
+        resetPage((parameters) => ({
+          property: toggleCatalogPropertyValue(parameters, groupId, value),
+        })),
       onToggleCategory: (value: string) =>
-        resetPage({
-          category: toggleValue(value, selectedCategories),
+        resetPage((parameters) => ({
+          category: toggleCatalogQueryValue(parameters, "category", value),
           categoryLabel: undefined,
-        }),
+        })),
       onToggleCompany: (value: string) =>
-        resetPage({
-          manufacturer: toggleValue(value, selectedCompanies),
-        }),
+        resetPage((parameters) => ({
+          manufacturer: toggleCatalogQueryValue(
+            parameters,
+            "manufacturer",
+            value,
+          ),
+        })),
       selectedAttributes,
       selectedCategories,
       selectedCompanies,

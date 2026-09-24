@@ -14,7 +14,7 @@ export type CmsButtonProps = {
   href: string;
   label: string;
   size?: unknown;
-  variant?: "default" | "link";
+  variant?: "default" | "link" | "solid";
 };
 
 export function CmsButton({
@@ -30,7 +30,9 @@ export function CmsButton({
       className={buttonVariants({
         className: isLink
           ? "group px-0 text-white hover:text-primary"
-          : "group shadow-lg shadow-black/15 hover:bg-destructive motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-[.985]",
+          : variant === "solid"
+            ? "group shadow-lg shadow-black/15 motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-[.985]"
+            : "group",
         size: buttonSizeMap[resolveCmsButtonSize(size)],
         variant,
       })}
