@@ -10,7 +10,10 @@ import type {
   ShopProductListingPage,
   ShopProductPageRequest,
 } from "@/features/catalog/model/product-listing-page";
-import { shopProductPageSize } from "@/features/catalog/model/product-listing-page";
+import {
+  normalizeShopProductPageRequest,
+  shopProductPageSize,
+} from "@/features/catalog/model/product-listing-page";
 import { paginateProducts } from "@/features/catalog/model/paginate-products";
 import { shopwareCacheTtlSeconds } from "@/integrations/shopware/cache-policy";
 import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
@@ -133,5 +136,8 @@ export async function getShopProductListingPage(
     return getMockProductListingPage(request);
   }
 
-  return getCachedShopwareProductListingPage(request, categoryId ?? null);
+  return getCachedShopwareProductListingPage(
+    normalizeShopProductPageRequest(request),
+    categoryId ?? null,
+  );
 }

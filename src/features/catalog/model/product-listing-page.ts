@@ -29,6 +29,29 @@ export const defaultShopProductPageRequest = {
   sort: "featured",
 } satisfies ShopProductPageRequest;
 
+export function normalizeShopProductPageRequest(
+  request: ShopProductPageRequest,
+): ShopProductPageRequest {
+  return {
+    categoryIds: [...request.categoryIds].sort(),
+    companyIds: [...request.companyIds].sort(),
+    maximumPrice: request.maximumPrice,
+    minimumPrice: request.minimumPrice,
+    page: request.page,
+    propertyGroups: Object.fromEntries(
+      Object.keys(request.propertyGroups)
+        .sort()
+        .map((groupId) => [
+          groupId,
+          [...request.propertyGroups[groupId]].sort(),
+        ]),
+    ),
+    propertyIds: [...request.propertyIds].sort(),
+    search: request.search,
+    sort: request.sort,
+  };
+}
+
 export type ShopProductListingPage = ShopProductListing &
   Readonly<{
     filterOptions: ShopProductFilterOptions;
