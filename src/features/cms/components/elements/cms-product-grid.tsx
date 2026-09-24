@@ -4,13 +4,16 @@ import { ShopProductCard } from "@/features/catalog/components/shop-product-card
 import { Container } from "@/components/ui/container";
 import { CmsLink } from "@/features/cms/components/cms-link";
 import type { CmsElementProps } from "@/features/cms/components/cms-element";
-import type { CmsProductGridData } from "@/features/cms/contracts/product-grid";
+import type {
+  CmsProductGridData,
+  CmsProductGridReferenceData,
+} from "@/features/cms/contracts/product-grid";
 import { getLiveCmsProductGrid } from "@/features/cms/server/product-grid";
 import { cn } from "@/lib/utils";
 
 export async function CmsProductGrid({
   data: cachedData,
-}: CmsElementProps<CmsProductGridData>) {
+}: CmsElementProps<CmsProductGridData | CmsProductGridReferenceData>) {
   const data = await getLiveCmsProductGrid(cachedData);
 
   if (data.products.length === 0) {
