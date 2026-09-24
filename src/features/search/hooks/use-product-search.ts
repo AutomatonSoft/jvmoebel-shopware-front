@@ -1,59 +1,54 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
-import {
-  productSearchCacheTtlSeconds,
-  type ProductSearchResponse,
-} from "@/features/search/model/product-search";
+import type { ProductSearchResponse } from "@/features/search/model/product-search";
 
 const SEARCH_DEBOUNCE_MS = 300;
 
 type SearchRequestState = Readonly<{
   errorMessage?: string;
   query: string;
+  requestId?: number;
   response?: ProductSearchResponse;
-  status: "idle" | "loading" | "success" | "error";
+  status: "idle" | "success" | "error";
 }>;
 
 export function useProductSearch(query: string, isOpen: boolean) {
+  const normalizedQuery = query.trim();
   const [request, setRequest] = useState<SearchRequestState>({
     query: "",
     status: "idle",
   });
-  const lastSuccessfulSearch = useRef<{
-    expiresAt: number;
-    query: string;
-    response: ProductSearchResponse;
-  } | null>(null);
-  const normalizedQuery = query.trim();
+  const [searchSession, setSearchSession] = useState(() => ({
+    isOpen,
+    query: normalizedQuery,
+    requestId: 0,
+  }));
+
+  if (
+    searchSession.isOpen !== isOpen ||
+    searchSession.query !== normalizedQuery
+  ) {
+    const requestId = searchSession.requestId + 1;
+    setSearchSession({
+      isOpen,
+      query: normalizedQuery,
+      requestId,
+    });
+    setRequest({ query: normalizedQuery, requestId, status: "idle" });
+  }
 
   useEffect(() => {
     if (!isOpen || !normalizedQuery) return;
 
-    const cached = lastSuccessfulSearch.current;
-
-    if (cached?.query === normalizedQuery && cached.expiresAt > Date.now()) {
-      setRequest((current) =>
-        current.query === normalizedQuery && current.status === "success"
-          ? current
-          : {
-              query: normalizedQuery,
-              response: cached.response,
-              status: "success",
-            },
-      );
-      return;
-    }
-
     const controller = new AbortController();
+    const requestId = searchSession.requestId;
     const timeout = window.setTimeout(async () => {
-      setRequest({ query: normalizedQuery, status: "loading" });
-
       try {
         const response = await fetch(
           `/bff/products/search?query=${encodeURIComponent(normalizedQuery)}`,
-          { signal: controller.signal },
+          { cache: "no-store", signal: controller.signal },
         );
 
         if (!response.ok) throw new Error("Product search request failed.");
@@ -61,13 +56,9 @@ export function useProductSearch(query: string, isOpen: boolean) {
         const data = (await response.json()) as ProductSearchResponse;
         if (controller.signal.aborted) return;
 
-        lastSuccessfulSearch.current = {
-          expiresAt: Date.now() + productSearchCacheTtlSeconds * 1000,
-          query: normalizedQuery,
-          response: data,
-        };
         setRequest({
           query: normalizedQuery,
+          requestId,
           response: data,
           status: "success",
         });
@@ -83,6 +74,7 @@ export function useProductSearch(query: string, isOpen: boolean) {
           errorMessage:
             "Die Suche ist vorübergehend nicht verfügbar. Bitte versuchen Sie es erneut.",
           query: normalizedQuery,
+          requestId,
           status: "error",
         });
       }
@@ -92,21 +84,30 @@ export function useProductSearch(query: string, isOpen: boolean) {
       window.clearTimeout(timeout);
       controller.abort();
     };
-  }, [isOpen, normalizedQuery]);
+  }, [isOpen, normalizedQuery, searchSession.requestId]);
 
-  const hasCurrentResponse = request.query === normalizedQuery;
+  const hasCurrentResponse =
+    isOpen &&
+    request.query === normalizedQuery &&
+    request.requestId === searchSession.requestId &&
+    request.status !== "idle";
 
   return {
-    currency: request.response?.currency ?? "EUR",
+    currency: hasCurrentResponse
+      ? (request.response?.currency ?? "EUR")
+      : "EUR",
     debouncedQuery: hasCurrentResponse ? request.query : normalizedQuery,
     errorMessage:
       hasCurrentResponse && request.status === "error"
         ? request.errorMessage
         : undefined,
-    isSearching:
-      Boolean(normalizedQuery) &&
-      (!hasCurrentResponse || request.status === "loading"),
-    locale: request.response?.locale ?? "de-DE",
-    results: hasCurrentResponse ? (request.response?.results ?? []) : [],
+    isSearching: Boolean(isOpen && normalizedQuery) && !hasCurrentResponse,
+    locale: hasCurrentResponse
+      ? (request.response?.locale ?? "de-DE")
+      : "de-DE",
+    results:
+      hasCurrentResponse && request.status === "success"
+        ? (request.response?.results ?? [])
+        : [],
   };
 }
