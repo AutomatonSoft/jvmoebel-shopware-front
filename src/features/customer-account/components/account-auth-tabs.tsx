@@ -38,6 +38,7 @@ export function AccountAuthTabs() {
                 : tab.href
             }
             key={tab.href}
+            prefetch={true}
             scroll={false}
           >
             {tab.label}
