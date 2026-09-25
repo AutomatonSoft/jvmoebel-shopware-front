@@ -16,13 +16,13 @@ import { mapShopwareProductListingPage } from "@/integrations/shopware/mappers/p
 const completeProductListingPageSize = 100;
 const productListingAssociations = {
   categories: {},
-  cover: { associations: { media: {} } },
+  cover: { associations: { media: { associations: { thumbnails: {} } } } },
   manufacturer: {},
   properties: { associations: { group: {} } },
   seoUrls: {},
 } satisfies components["schemas"]["Associations"];
 const productListingPageAssociations = {
-  cover: { associations: { media: {} } },
+  cover: { associations: { media: { associations: { thumbnails: {} } } } },
   manufacturer: {},
   properties: {},
   seoUrls: {
@@ -39,7 +39,8 @@ const productListingPageAssociations = {
 } satisfies components["schemas"]["Associations"];
 const productListingIncludes = {
   category: ["id", "name", "path", "translated"],
-  media: ["alt", "translated", "url"],
+  media: ["alt", "thumbnails", "translated", "url"],
+  media_thumbnail: ["height", "url", "width"],
   product: [
     "calculatedPrice",
     "categories",
@@ -72,7 +73,8 @@ const productListingIncludes = {
 } satisfies components["schemas"]["Includes"];
 const productListingPageIncludes = {
   category: ["id", "name", "translated"],
-  media: ["alt", "translated", "url"],
+  media: ["alt", "thumbnails", "translated", "url"],
+  media_thumbnail: ["height", "url", "width"],
   product: [
     "calculatedPrice",
     "cover",

@@ -21,7 +21,7 @@ export default async function CustomerNotificationsRoute() {
         <p className="mt-6 text-xs font-semibold tracking-[0.12em] text-primary uppercase">
           Kundenkonto
         </p>
-        <h1 className="text-3xl font-semibold tracking-[-0.05em] sm:text-4xl">
+        <h1 className="text-3xl font-semibold tracking-tighter sm:text-4xl">
           Benachrichtigungen
         </h1>
         <p className="mt-3 text-sm leading-6 text-muted-foreground">
@@ -33,7 +33,7 @@ export default async function CustomerNotificationsRoute() {
             <span className="grid size-10 place-items-center rounded-xl bg-card text-primary shadow-[0_12px_24px_-20px_rgba(21,21,19,0.7)]">
               <MailCheck
                 aria-hidden="true"
-                className="size-[1.125rem]"
+                className="size-4.5"
                 strokeWidth={1.6}
               />
             </span>
@@ -45,11 +45,7 @@ export default async function CustomerNotificationsRoute() {
           </section>
           <section className="rounded-3xl border border-border/80 bg-card p-5 shadow-[0_20px_50px_-45px_rgba(21,21,19,0.7)] sm:p-6">
             <span className="grid size-10 place-items-center rounded-xl bg-secondary text-primary">
-              <Gift
-                aria-hidden="true"
-                className="size-[1.125rem]"
-                strokeWidth={1.6}
-              />
+              <Gift aria-hidden="true" className="size-4.5" strokeWidth={1.6} />
             </span>
             <h2 className="mt-4 text-lg font-semibold">
               Angebote & Inspiration

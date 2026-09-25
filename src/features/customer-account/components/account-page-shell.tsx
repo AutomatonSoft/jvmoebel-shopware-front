@@ -47,8 +47,8 @@ export function AccountPageShell({
           className={cn(
             "grid rounded-xl border border-border/70 bg-card",
             authNavigation
-              ? "min-h-[36.5rem] lg:grid-cols-2"
-              : "lg:min-h-[36rem] lg:grid-cols-2",
+              ? "min-h-146 lg:grid-cols-2"
+              : "lg:min-h-144 lg:grid-cols-2",
           )}
         >
           <div
@@ -103,7 +103,7 @@ export function AccountPageShell({
                 </header>
               )}
 
-              <section className={cn(!authNavigation && "mt-7 min-h-[25rem]")}>
+              <section className={cn(!authNavigation && "mt-7 min-h-100")}>
                 {children}
               </section>
             </div>

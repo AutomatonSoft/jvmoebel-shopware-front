@@ -2,12 +2,12 @@ import type { components } from "@shopware/api-client/store-api-types";
 import sanitizeHtml from "sanitize-html";
 
 import type { ProductSearchResult } from "@/features/search/model/product-search";
-import { getShopwareProductUrl } from "@/integrations/shopware/mappers/product-listing";
+import {
+  getShopwareCardImageUrl,
+  getShopwareProductUrl,
+} from "@/integrations/shopware/mappers/product-listing";
 
 type ShopwareProduct = components["schemas"]["Product"];
-
-const fallbackProductImage =
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='112' height='112' viewBox='0 0 112 112'%3E%3Crect width='112' height='112' fill='%23dedbd4'/%3E%3C/svg%3E";
 
 function getPlainText(value: string) {
   return sanitizeHtml(
@@ -57,7 +57,7 @@ function getImage(product: ShopwareProduct, name: string) {
 
   return {
     alt: getPlainText(alt),
-    url: media?.url?.trim() || fallbackProductImage,
+    url: getShopwareCardImageUrl(media),
   };
 }
 

@@ -117,6 +117,7 @@ export function ContactWidget({ channels }: ContactWidgetProps) {
         {channels.map((channel) => (
           <Button
             key={channel.id}
+            nativeButton={false}
             render={
               <a href={channel.url} target="_blank" rel="noopener noreferrer" />
             }

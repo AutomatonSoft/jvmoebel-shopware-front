@@ -137,7 +137,7 @@ export function ShopProductResults({
         </>
       ) : (
         <div
-          className={`flex min-h-96 flex-col items-center justify-center rounded-2xl border bg-card px-6 py-14 text-center shadow-xs transition-opacity duration-200 sm:min-h-[26rem] ${isLoading ? "pointer-events-none opacity-35" : ""}`}
+          className={`flex min-h-96 flex-col items-center justify-center rounded-2xl border bg-card px-6 py-14 text-center shadow-xs transition-opacity duration-200 sm:min-h-104 ${isLoading ? "pointer-events-none opacity-35" : ""}`}
         >
           <span className="mb-7 flex size-20 items-center justify-center rounded-full border border-border bg-secondary/60 shadow-[0_0_0_8px_var(--color-background)]">
             <PackageOpen

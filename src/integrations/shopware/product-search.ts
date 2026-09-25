@@ -9,7 +9,7 @@ import { mapShopwareProductSearchResult } from "@/integrations/shopware/mappers/
 
 const productSearchAssociations = {
   categories: {},
-  cover: { associations: { media: {} } },
+  cover: { associations: { media: { associations: { thumbnails: {} } } } },
   seoUrls: {},
 } satisfies components["schemas"]["Associations"];
 

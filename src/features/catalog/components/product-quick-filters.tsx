@@ -47,7 +47,7 @@ function QuickFilter({
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Positioner align="start" className="z-80" sideOffset={8}>
-          <Popover.Popup className="w-72 origin-[var(--transform-origin)] rounded-xl border bg-popover p-3 text-popover-foreground shadow-xl transition-[transform,scale,opacity] data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0">
+          <Popover.Popup className="w-72 origin-(--transform-origin) rounded-xl border bg-popover p-3 text-popover-foreground shadow-xl transition-[transform,scale,opacity] data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0">
             <Popover.Title className="mb-3 text-sm font-semibold">
               {label}
             </Popover.Title>
@@ -141,7 +141,7 @@ export function ProductQuickFilters({
 
   return (
     <section aria-label="Schnellfilter" className="border-y py-3">
-      <div className="-mx-4 overflow-x-auto px-4 [scrollbar-width:none] sm:-mx-8 sm:px-8 [&::-webkit-scrollbar]:hidden">
+      <div className="-mx-4 overflow-x-auto px-4 scrollbar-none sm:-mx-8 sm:px-8 [&::-webkit-scrollbar]:hidden">
         <div className="flex w-max min-w-full gap-2">
           {categories.length > 0 && (
             <QuickFilter
