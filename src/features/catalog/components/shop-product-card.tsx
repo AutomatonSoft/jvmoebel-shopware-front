@@ -133,11 +133,6 @@ export const ShopProductCard = memo(function ShopProductCard({
             {product.badge}
           </span>
         )}
-        {discount && (
-          <span className="absolute top-14 right-3 rounded-full bg-primary px-2.5 py-1.5 text-[0.625rem] font-bold text-primary-foreground shadow-sm sm:top-15 sm:right-4">
-            −{discount}%
-          </span>
-        )}
       </Link>
 
       <div className="flex flex-1 flex-col p-3.5 sm:p-4">
@@ -178,9 +173,16 @@ export const ShopProductCard = memo(function ShopProductCard({
             {priceFormatter.format(product.unitPrice)}
           </strong>
           {product.previousPrice && (
-            <del className="truncate text-xs leading-none text-muted-foreground sm:text-sm">
-              {priceFormatter.format(product.previousPrice)}
-            </del>
+            <span className="inline-flex min-w-0 max-w-full items-center gap-2">
+              <del className="truncate text-xs leading-none text-muted-foreground sm:text-sm">
+                {priceFormatter.format(product.previousPrice)}
+              </del>
+              {discount && (
+                <span className="shrink-0 rounded-full bg-primary px-2.5 py-1 text-[0.625rem] font-bold text-primary-foreground">
+                  −{discount}%
+                </span>
+              )}
+            </span>
           )}
         </p>
 
