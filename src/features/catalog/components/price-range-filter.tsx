@@ -30,9 +30,17 @@ export function PriceRangeFilter({
   const [maximumPriceDraft, setMaximumPriceDraft] = useState<string | null>(
     null,
   );
-  const [priceRangeDraft, setPriceRangeDraft] = useState<
-    readonly [number, number] | null
-  >(null);
+  const [priceRangeDraft, setPriceRangeDraft] = useState<{
+    initialMaximumPrice: number;
+    initialMinimumPrice: number;
+    value: readonly [number, number];
+  } | null>(null);
+  const displayedPriceRange =
+    priceRangeDraft?.initialMinimumPrice === minimumPrice &&
+    priceRangeDraft.initialMaximumPrice === maximumPrice
+      ? priceRangeDraft.value
+      : ([minimumPrice, maximumPrice] as const);
+  const [displayedMinimumPrice, displayedMaximumPrice] = displayedPriceRange;
 
   function commitMinimumPrice() {
     if (minimumPriceDraft === null) {
@@ -91,19 +99,22 @@ export function PriceRangeFilter({
 
             setMinimumPriceDraft(null);
             setMaximumPriceDraft(null);
-            setPriceRangeDraft([value[0], value[1]]);
+            setPriceRangeDraft({
+              initialMaximumPrice: maximumPrice,
+              initialMinimumPrice: minimumPrice,
+              value: [value[0], value[1]],
+            });
           }}
           onValueCommitted={(value) => {
             if (!Array.isArray(value) || value.length < 2) {
               return;
             }
 
-            setPriceRangeDraft(null);
             onPriceRangeChange([value[0], value[1]]);
           }}
           step={10}
           thumbCollisionBehavior="none"
-          value={priceRangeDraft ?? [minimumPrice, maximumPrice]}
+          value={displayedPriceRange}
         />
       )}
 
@@ -112,7 +123,7 @@ export function PriceRangeFilter({
           <span className="mb-2 block text-xs text-muted-foreground">Von</span>
           <Input
             className="h-10 bg-background text-sm"
-            max={maximumPrice}
+            max={displayedMaximumPrice}
             min={minimumPriceBound}
             onBlur={commitMinimumPrice}
             onChange={(event) => setMinimumPriceDraft(event.target.value)}
@@ -121,7 +132,7 @@ export function PriceRangeFilter({
             }
             step="10"
             type="number"
-            value={minimumPriceDraft ?? String(minimumPrice)}
+            value={minimumPriceDraft ?? String(displayedMinimumPrice)}
           />
         </label>
         <label>
@@ -129,7 +140,7 @@ export function PriceRangeFilter({
           <Input
             className="h-10 bg-background text-sm"
             max={maximumPriceBound}
-            min={minimumPrice}
+            min={displayedMinimumPrice}
             onBlur={commitMaximumPrice}
             onChange={(event) => setMaximumPriceDraft(event.target.value)}
             onKeyDown={(event) =>
@@ -137,7 +148,7 @@ export function PriceRangeFilter({
             }
             step="10"
             type="number"
-            value={maximumPriceDraft ?? String(maximumPrice)}
+            value={maximumPriceDraft ?? String(displayedMaximumPrice)}
           />
         </label>
       </div>
