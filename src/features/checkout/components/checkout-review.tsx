@@ -189,7 +189,7 @@ export function CheckoutReview({
             />
           </span>
           <div>
-            <h2 className="text-lg font-semibold tracking-[-0.025em]">
+            <h2 className="text-lg font-semibold tracking-tight">
               Bestellung prüfen
             </h2>
             <p className="mt-0.5 text-xs leading-5 text-muted-foreground sm:text-sm">

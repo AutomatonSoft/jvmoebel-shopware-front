@@ -179,7 +179,7 @@ export function CategoryMenu({ navigation }: CategoryMenuProps) {
           <Dialog.Popup className="relative flex h-[min(44rem,calc(100dvh-1rem))] w-full max-w-4xl flex-col overflow-hidden rounded-[1.5rem] border border-foreground/10 bg-background shadow-[0_32px_100px_-32px_rgba(21,21,19,0.45)] transition-[transform,opacity] duration-200 ease-out data-ending-style:translate-y-2 data-ending-style:scale-[.99] data-ending-style:opacity-0 data-starting-style:translate-y-2 data-starting-style:scale-[.99] data-starting-style:opacity-0 sm:h-[min(42rem,calc(100dvh-3rem))] sm:rounded-[1.75rem]">
             <div className="flex min-h-16 shrink-0 items-center justify-between gap-4 border-b border-foreground/10 px-4 py-2 sm:min-h-18 sm:px-6 sm:py-3">
               <div className="min-w-0">
-                <Dialog.Title className="text-lg font-semibold tracking-[-0.025em]">
+                <Dialog.Title className="text-lg font-semibold tracking-tight">
                   Kategorien
                 </Dialog.Title>
                 <Dialog.Description className="sr-only">

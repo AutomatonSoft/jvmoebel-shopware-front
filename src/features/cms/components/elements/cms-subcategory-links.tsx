@@ -29,7 +29,7 @@ export function CmsSubcategoryLinks({
         <ul className="grid overflow-hidden rounded-2xl border bg-card sm:grid-cols-2 lg:grid-cols-3">
           {links.map((link) => (
             <li
-              className="border-b last:border-b-0 sm:border-r sm:[&:nth-last-child(-n+2)]:border-b-0 sm:[&:nth-child(2n)]:border-r-0 lg:[&:nth-child(2n)]:border-r lg:[&:nth-child(3n)]:border-r-0 lg:[&:nth-last-child(-n+3)]:border-b-0"
+              className="border-b last:border-b-0 sm:border-r sm:nth-last-[-n+2]:border-b-0 sm:nth-[2n]:border-r-0 lg:nth-[2n]:border-r lg:nth-[3n]:border-r-0 lg:nth-last-[-n+3]:border-b-0"
               key={link.id}
             >
               <CmsLink

@@ -91,10 +91,10 @@ export function ProductGallery({ badge, images }: ProductGalleryProps) {
 
   return (
     <div
-      className={`grid min-w-0 gap-3 ${hasMultipleImages ? "sm:relative sm:block sm:pl-[5.75rem]" : ""}`}
+      className={`grid min-w-0 gap-3 ${hasMultipleImages ? "sm:relative sm:block sm:pl-23" : ""}`}
     >
       {hasMultipleImages && (
-        <div className="order-2 flex gap-2 overflow-x-auto pb-1 sm:absolute sm:inset-y-0 sm:left-0 sm:w-20 sm:flex-col sm:overflow-x-visible sm:overflow-y-auto sm:pb-0 sm:[scrollbar-width:none] sm:[&::-webkit-scrollbar]:hidden">
+        <div className="order-2 flex gap-2 overflow-x-auto pb-1 sm:absolute sm:inset-y-0 sm:left-0 sm:w-20 sm:flex-col sm:overflow-x-visible sm:overflow-y-auto sm:pb-0 sm:scrollbar-none sm:[&::-webkit-scrollbar]:hidden">
           {images.map((image, index) => {
             const isActive = index === activeImageIndex;
 

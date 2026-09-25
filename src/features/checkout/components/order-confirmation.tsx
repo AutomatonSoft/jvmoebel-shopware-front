@@ -51,7 +51,7 @@ export function OrderConfirmation({
                 />
                 Bestellnummer
               </span>
-              <strong className="mt-3 block text-lg tracking-[-0.025em]">
+              <strong className="mt-3 block text-lg tracking-tight">
                 {receipt.orderNumber}
               </strong>
             </div>
@@ -60,7 +60,7 @@ export function OrderConfirmation({
                 <MailCheck aria-hidden="true" className="size-4 text-primary" />
                 Gesamtbetrag
               </span>
-              <strong className="mt-3 block text-lg tracking-[-0.025em]">
+              <strong className="mt-3 block text-lg tracking-tight">
                 {total}
               </strong>
             </div>

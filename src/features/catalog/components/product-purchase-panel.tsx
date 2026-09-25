@@ -154,7 +154,7 @@ export function ProductPurchasePanel({
   });
 
   return (
-    <aside className="min-w-0 lg:sticky lg:top-24 lg:max-h-[calc(100dvh-7rem)] lg:overflow-y-auto lg:pr-4 lg:[scrollbar-gutter:stable] lg:[scrollbar-width:thin]">
+    <aside className="min-w-0 lg:sticky lg:top-24 lg:max-h-[calc(100dvh-7rem)] lg:overflow-y-auto lg:pr-4 lg:scrollbar-gutter-stable lg:scrollbar-thin">
       <ProductPurchaseSummary
         discount={getProductDiscount(product)}
         priceFormatter={priceFormatter}

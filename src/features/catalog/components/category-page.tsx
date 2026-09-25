@@ -58,7 +58,7 @@ export function CategoryPage({ page }: { page: ShopCategoryPage }) {
             <h2 className="sr-only" id="subcategories">
               Unterkategorien
             </h2>
-            <div className="-mx-4 overflow-x-auto overscroll-x-contain px-4 [scrollbar-width:none] sm:-mx-8 sm:px-8 [&::-webkit-scrollbar]:hidden">
+            <div className="-mx-4 overflow-x-auto overscroll-x-contain px-4 scrollbar-none sm:-mx-8 sm:px-8 [&::-webkit-scrollbar]:hidden">
               <div className="flex w-max min-w-full gap-2">
                 <span className="flex h-11 shrink-0 items-center gap-2 rounded-md border bg-background px-3.5 text-sm font-semibold">
                   <ListFilter className="size-4 text-muted-foreground" />
