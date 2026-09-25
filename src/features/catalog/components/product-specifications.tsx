@@ -92,7 +92,7 @@ export function ProductSpecifications({ product }: ProductSpecificationsProps) {
           <dl className="mt-6 grid gap-x-8 sm:grid-cols-2 lg:grid-cols-4">
             {product.specifications.map((specification) => (
               <div
-                className="border-t py-3 first:border-t-0 sm:[&:nth-child(2)]:border-t-0 lg:[&:nth-child(3)]:border-t-0 lg:[&:nth-child(4)]:border-t-0"
+                className="border-t py-3 first:border-t-0 sm:nth-2:border-t-0 lg:nth-3:border-t-0 lg:nth-4:border-t-0"
                 key={specification.id}
               >
                 <dt className="text-xs text-muted-foreground">

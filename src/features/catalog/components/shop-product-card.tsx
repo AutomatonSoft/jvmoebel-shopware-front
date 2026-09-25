@@ -110,7 +110,7 @@ export const ShopProductCard = memo(function ShopProductCard({
       <WishlistToggleButton productId={product.id} productName={product.name} />
       <Link
         aria-label={product.name}
-        className="relative isolate block aspect-square overflow-hidden bg-gradient-to-br from-muted/80 via-muted/40 to-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        className="relative isolate block aspect-square overflow-hidden bg-linear-to-br from-muted/80 via-muted/40 to-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         href={product.url as Route}
         target="_blank"
       >

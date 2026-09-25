@@ -36,7 +36,7 @@ export function ErrorExperience({
         <div className="absolute right-[10%] top-[20%] size-16 rotate-12 rounded-2xl bg-accent shadow-xl motion-safe:animate-[bounce_6s_ease-in-out_infinite]" />
         <div className="absolute bottom-[13%] left-[15%] h-14 w-14 rotate-45 rounded-2xl bg-primary/90 shadow-xl motion-safe:animate-pulse" />
 
-        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-px bg-linear-to-r from-transparent via-foreground/10 to-transparent" />
       </div>
 
       <Container className="relative grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
@@ -48,7 +48,7 @@ export function ErrorExperience({
 
           <p
             aria-hidden="true"
-            className="mb-1 bg-gradient-to-br from-foreground via-foreground to-foreground/25 bg-clip-text text-[clamp(5rem,18vw,11rem)] font-black leading-[0.78] tracking-[-0.08em] text-transparent"
+            className="mb-1 bg-linear-to-br from-foreground via-foreground to-foreground/25 bg-clip-text text-[clamp(5rem,18vw,11rem)] font-black leading-[0.78] tracking-[-0.08em] text-transparent"
           >
             {code}
           </p>

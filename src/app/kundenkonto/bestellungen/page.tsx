@@ -24,7 +24,7 @@ export default async function CustomerOrdersRoute() {
     <main className="flex-1">
       <Container className="max-w-4xl py-10 sm:py-14">
         <AccountBackButton alwaysUseFallback />
-        <h1 className="text-3xl font-semibold tracking-[-0.05em] sm:text-4xl">
+        <h1 className="text-3xl font-semibold tracking-tighter sm:text-4xl">
           Meine Bestellungen
         </h1>
         <p className="mt-3 text-sm leading-6 text-muted-foreground">

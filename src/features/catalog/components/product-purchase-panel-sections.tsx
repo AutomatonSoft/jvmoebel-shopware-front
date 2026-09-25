@@ -159,7 +159,7 @@ export function ProductPurchaseSummary({
   return (
     <>
       <header className="border-b pb-6">
-        <h1 className="text-3xl leading-[1.08] font-semibold tracking-[-0.04em] text-pretty [overflow-wrap:anywhere] sm:text-4xl">
+        <h1 className="text-3xl leading-[1.08] font-semibold tracking-[-0.04em] text-pretty wrap-anywhere sm:text-4xl">
           {product.name}
         </h1>
 
