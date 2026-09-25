@@ -51,13 +51,16 @@ describe("getShopwareProductListing", () => {
       body: {
         associations: {
           categories: {},
-          cover: { associations: { media: {} } },
+          cover: {
+            associations: { media: { associations: { thumbnails: {} } } },
+          },
           manufacturer: {},
           properties: { associations: { group: {} } },
         },
         includes: {
           category: ["id", "name", "path", "translated"],
-          media: ["alt", "translated", "url"],
+          media: ["alt", "thumbnails", "translated", "url"],
+          media_thumbnail: ["height", "url", "width"],
           product: expect.arrayContaining([
             "calculatedPrice",
             "categories",
@@ -261,7 +264,9 @@ describe("getShopwareProductListing", () => {
     expect(requests[1]?.request).toMatchObject({
       body: {
         associations: {
-          cover: { associations: { media: {} } },
+          cover: {
+            associations: { media: { associations: { thumbnails: {} } } },
+          },
           manufacturer: {},
           properties: {},
           seoUrls: {

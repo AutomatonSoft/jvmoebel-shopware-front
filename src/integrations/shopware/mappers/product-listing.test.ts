@@ -29,6 +29,18 @@ describe("mapShopwareProductListing", () => {
       cover: {
         media: {
           alt: "Beiges Sofa",
+          thumbnails: [
+            {
+              height: 400,
+              url: "https://shop.example.com/media/sofa-400.webp",
+              width: 400,
+            },
+            {
+              height: 800,
+              url: "https://shop.example.com/media/sofa-800.webp",
+              width: 800,
+            },
+          ],
           translated: { alt: "Beiges Sofa" },
           url: "https://shop.example.com/media/sofa.webp",
         },
@@ -126,7 +138,7 @@ describe("mapShopwareProductListing", () => {
       description: "Ein bequemes Sofa.",
       image: {
         alt: "Beiges Sofa",
-        url: "https://shop.example.com/media/sofa.webp",
+        url: "https://shop.example.com/media/sofa-800.webp",
       },
       material: "Samt",
       name: "Sofa Alba",
