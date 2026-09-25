@@ -20,9 +20,12 @@ type ProductGalleryProps = Readonly<{
 
 export function ProductGallery({ badge, images }: ProductGalleryProps) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
   const [isFullscreenImageLoading, setIsFullscreenImageLoading] =
     useState(false);
   const [isImageLoading, setIsImageLoading] = useState(false);
+  const loadedFullscreenImageUrls = useRef(new Set<string>());
+  const loadedImageUrls = useRef(new Set<string>());
   const zoomImageRef = useRef<HTMLImageElement>(null);
   const activeImage = images[activeImageIndex] ?? images[0];
   const hasMultipleImages = images.length > 1;
@@ -52,9 +55,26 @@ export function ProductGallery({ badge, images }: ProductGalleryProps) {
       return;
     }
 
-    setIsImageLoading(true);
-    setIsFullscreenImageLoading(true);
+    const image = images[index];
+
+    if (!image) {
+      return;
+    }
+
+    setIsImageLoading(!loadedImageUrls.current.has(image.url));
+    if (isFullscreenOpen) {
+      setIsFullscreenImageLoading(
+        !loadedFullscreenImageUrls.current.has(image.url),
+      );
+    }
     setActiveImageIndex(index);
+  }
+
+  function handleFullscreenOpenChange(open: boolean) {
+    setIsFullscreenOpen(open);
+    setIsFullscreenImageLoading(
+      open && !loadedFullscreenImageUrls.current.has(activeImage.url),
+    );
   }
 
   function showPreviousImage() {
@@ -100,7 +120,7 @@ export function ProductGallery({ badge, images }: ProductGalleryProps) {
         </div>
       )}
 
-      <Dialog.Root onOpenChange={(open) => setIsFullscreenImageLoading(open)}>
+      <Dialog.Root onOpenChange={handleFullscreenOpenChange}>
         <div className="relative order-1 aspect-[0.92] min-w-0 overflow-hidden rounded-2xl bg-muted shadow-[0_0_0_1px_rgba(21,21,19,0.04)] sm:order-2 lg:aspect-[1.25]">
           <Dialog.Trigger
             aria-label={`Produktbild vergr\u00f6\u00dfern: ${activeImage.alt}`}
@@ -114,7 +134,10 @@ export function ProductGallery({ badge, images }: ProductGalleryProps) {
               fill
               loading="eager"
               onError={() => setIsImageLoading(false)}
-              onLoad={() => setIsImageLoading(false)}
+              onLoad={() => {
+                loadedImageUrls.current.add(activeImage.url);
+                setIsImageLoading(false);
+              }}
               ref={zoomImageRef}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) calc(100vw - 8rem), 58vw"
               src={activeImage.url}
@@ -183,7 +206,10 @@ export function ProductGallery({ badge, images }: ProductGalleryProps) {
                 className="object-contain"
                 fill
                 onError={() => setIsFullscreenImageLoading(false)}
-                onLoad={() => setIsFullscreenImageLoading(false)}
+                onLoad={() => {
+                  loadedFullscreenImageUrls.current.add(activeImage.url);
+                  setIsFullscreenImageLoading(false);
+                }}
                 sizes="100vw"
                 src={activeImage.url}
               />
