@@ -1,4 +1,20 @@
 services:
+  sitemap-storage-init:
+    image: busybox:1.36.1
+    profiles: [sitemap-maintenance]
+    restart: "no"
+    user: "0:0"
+    network_mode: none
+    command:
+      - sh
+      - -ec
+      - |
+        chown 1001:1001 /sitemap-storage
+        chmod 0750 /sitemap-storage
+        test "$$(stat -c '%u:%g:%a' /sitemap-storage)" = "1001:1001:750"
+    volumes:
+      - "${SITEMAP_ARTIFACT_STORAGE_PATH:?SITEMAP_ARTIFACT_STORAGE_PATH is required}:/sitemap-storage"
+
   frontend:
     build:
       context: .
@@ -14,6 +30,12 @@ services:
       SHOPWARE_ENDPOINT: "${SHOPWARE_ENDPOINT:?SHOPWARE_ENDPOINT is required}"
       SHOPWARE_ACCESS_TOKEN: "${SHOPWARE_ACCESS_TOKEN:?SHOPWARE_ACCESS_TOKEN is required}"
       SHOPWARE_USE_MOCKS: "${SHOPWARE_USE_MOCKS:-false}"
+      SITEMAP_ARTIFACT_STORAGE_ROOT: /var/lib/jvmoebel/sitemap-artifacts
+      SITEMAP_ARTIFACT_ENVIRONMENT: "${SITEMAP_ARTIFACT_ENVIRONMENT:?SITEMAP_ARTIFACT_ENVIRONMENT is required}"
+      SITEMAP_ARTIFACT_MAX_BYTES: "${SITEMAP_ARTIFACT_MAX_BYTES:-52428800}"
+      SITEMAP_INGESTION_SECRET: "${SITEMAP_INGESTION_SECRET:?SITEMAP_INGESTION_SECRET is required}"
+    volumes:
+      - "${SITEMAP_ARTIFACT_STORAGE_PATH:?SITEMAP_ARTIFACT_STORAGE_PATH is required}:/var/lib/jvmoebel/sitemap-artifacts"
     ports:
       - "127.0.0.1:${FRONT_PORT:?FRONT_PORT is required}:3000"
     networks:
@@ -32,4 +54,4 @@ services:
 networks:
   application:
     external: true
-    name: ${APP_NETWORK:?APP_NETWORK is required}
+    name: ${APP_NETWORK:-backend_default}
