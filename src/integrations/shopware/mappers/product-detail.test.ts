@@ -21,6 +21,13 @@ describe("mapShopwareProductDetail", () => {
       cover: {
         media: {
           alt: "Sofa Vorderansicht",
+          thumbnails: [
+            {
+              height: 800,
+              url: "https://shop.example.com/media/front-800.webp",
+              width: 800,
+            },
+          ],
           translated: { alt: "Sofa Vorderansicht" },
           url: "https://shop.example.com/media/front.webp",
         },

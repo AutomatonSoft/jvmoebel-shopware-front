@@ -10,17 +10,17 @@ import { mapShopwareProductCard } from "@/integrations/shopware/mappers/product-
 
 const productDetailAssociations = {
   categories: {},
-  cover: { associations: { media: {} } },
+  cover: { associations: { media: { associations: { thumbnails: {} } } } },
   deliveryTime: {},
   manufacturer: {},
-  media: { associations: { media: {} } },
+  media: { associations: { media: { associations: { thumbnails: {} } } } },
   properties: { associations: { group: {} } },
   seoUrls: {},
   unit: {},
 } satisfies components["schemas"]["Associations"];
 
 const productCardAssociations = {
-  cover: { associations: { media: {} } },
+  cover: { associations: { media: { associations: { thumbnails: {} } } } },
   manufacturer: {},
   seoUrls: {},
 } satisfies components["schemas"]["Associations"];

@@ -11,7 +11,7 @@ import {
 } from "@/integrations/shopware/mappers/product-listing";
 
 const wishlistProductAssociations = {
-  cover: { associations: { media: {} } },
+  cover: { associations: { media: { associations: { thumbnails: {} } } } },
   manufacturer: {},
   properties: { associations: { group: {} } },
   seoUrls: {
@@ -24,7 +24,8 @@ const wishlistProductAssociations = {
 } satisfies components["schemas"]["Associations"];
 
 const wishlistProductIncludes = {
-  media: ["alt", "translated", "url"],
+  media: ["alt", "thumbnails", "translated", "url"],
+  media_thumbnail: ["height", "url", "width"],
   product: [
     "calculatedPrice",
     "cover",
