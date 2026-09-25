@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cacheLife } from "next/cache";
 
 import { LoginForm } from "@/features/customer-account/components/login-form";
 
@@ -11,6 +12,15 @@ type CustomerLoginPageProps = Readonly<{
   searchParams: Promise<{ weiter?: string | string[] }>;
 }>;
 
+async function CachedLoginForm({
+  redirectTo,
+}: Readonly<{ redirectTo?: string }>) {
+  "use cache";
+  cacheLife({ revalidate: 3600, expire: 86400 });
+
+  return <LoginForm redirectTo={redirectTo} />;
+}
+
 export default async function CustomerLoginPage({
   searchParams,
 }: CustomerLoginPageProps) {
@@ -21,7 +31,7 @@ export default async function CustomerLoginPage({
 
   return (
     <section>
-      <LoginForm redirectTo={redirectTo} />
+      <CachedLoginForm redirectTo={redirectTo} />
     </section>
   );
 }

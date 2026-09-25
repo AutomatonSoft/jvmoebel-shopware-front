@@ -67,8 +67,17 @@ function getGallery(
   listingProduct: ShopProduct,
 ): ShopProductDetail["gallery"] {
   const images = new Map<string, ShopProduct["image"]>();
+  const coverMedia = product.cover?.media;
+  const coverUrl = coverMedia?.url?.trim() || listingProduct.image.url;
+  const coverAlt =
+    coverMedia?.translated?.alt?.trim() ||
+    coverMedia?.alt?.trim() ||
+    listingProduct.name;
 
-  images.set(listingProduct.image.url, listingProduct.image);
+  images.set(coverUrl, {
+    alt: getShopwarePlainText(coverAlt),
+    url: coverUrl,
+  });
 
   for (const productMedia of (product.media ?? []).toSorted(
     (first, second) => (first.position ?? 0) - (second.position ?? 0),

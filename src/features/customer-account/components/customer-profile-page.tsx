@@ -188,7 +188,7 @@ export function CustomerProfilePage({
               <span className="grid size-11 place-items-center rounded-full border border-border/60 bg-secondary text-primary transition-colors group-hover:border-primary group-hover:bg-primary group-hover:text-primary-foreground">
                 <Icon
                   aria-hidden="true"
-                  className="size-[1.125rem]"
+                  className="size-4.5"
                   strokeWidth={1.5}
                 />
               </span>

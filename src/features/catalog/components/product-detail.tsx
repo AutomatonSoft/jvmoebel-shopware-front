@@ -23,7 +23,7 @@ export function ProductDetail({
 }: ProductDetailProps) {
   return (
     <main className="flex-1">
-      <RecentlyViewedProduct product={product} />
+      <RecentlyViewedProduct productId={product.id} />
       <Container className="py-6">
         <nav
           aria-label="Breadcrumb"

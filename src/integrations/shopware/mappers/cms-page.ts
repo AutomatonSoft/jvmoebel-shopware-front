@@ -8,6 +8,58 @@ import type {
 
 type ShopwareCmsPage = components["schemas"]["CmsPage"];
 
+function getRecord(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : null;
+}
+
+function mapSlotData(type: string, value: unknown): unknown {
+  if (type === "product-listing") {
+    return undefined;
+  }
+
+  if (type !== "jv-product-grid") {
+    return value;
+  }
+
+  const data = getRecord(value);
+  if (!data) {
+    return undefined;
+  }
+
+  const products = Array.isArray(data.products)
+    ? data.products.map((product, index) => [String(index), product] as const)
+    : Object.entries(getRecord(data.products) ?? {});
+  const productReferences = products.map(([, value], index) => {
+    const product = getRecord(value);
+    const id = product?.id;
+    return {
+      id: typeof id === "string" ? id : undefined,
+      position:
+        typeof product?.position === "number" &&
+        Number.isFinite(product.position)
+          ? product.position
+          : index,
+    };
+  });
+  const viewAll = getRecord(data.viewAll);
+
+  return {
+    anchorId: typeof data.anchorId === "string" ? data.anchorId : undefined,
+    eyebrow: typeof data.eyebrow === "string" ? data.eyebrow : undefined,
+    layout: typeof data.layout === "string" ? data.layout : undefined,
+    productReferences,
+    title: typeof data.title === "string" ? data.title : undefined,
+    viewAll: viewAll
+      ? {
+          label: typeof viewAll.label === "string" ? viewAll.label : undefined,
+          url: typeof viewAll.url === "string" ? viewAll.url : undefined,
+        }
+      : undefined,
+  };
+}
+
 function mapBackgroundMediaMode(
   mode?: string,
 ): CmsBackgroundMediaMode | undefined {
@@ -52,7 +104,7 @@ export function mapShopwareCmsPage(page: ShopwareCmsPage): CmsPage {
         sectionPosition: block.sectionPosition,
         slots: block.slots.map((slot) => ({
           config: slot.config,
-          data: slot.data,
+          data: mapSlotData(slot.type, slot.data),
           id: slot.id,
           slot: slot.slot,
           type: slot.type,

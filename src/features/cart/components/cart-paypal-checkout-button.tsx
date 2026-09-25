@@ -21,7 +21,7 @@ export function CartPayPalCheckoutButton({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             alt=""
-            className="absolute -top-9 -left-12 h-auto w-[8.5rem] max-w-none"
+            className="absolute -top-9 -left-12 h-auto w-34 max-w-none"
             height={342}
             src="/images/icons/paypal.webp"
             width={512}

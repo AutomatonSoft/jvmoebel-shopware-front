@@ -12,6 +12,7 @@ import type {
 
 type ShopwareProduct = components["schemas"]["Product"];
 type ShopwareProperty = components["schemas"]["PropertyGroupOption"];
+type ShopwareMedia = components["schemas"]["Media"];
 
 type ShopwareProductListingInput = Readonly<{
   currency: string;
@@ -101,13 +102,23 @@ function getDescription(product: ShopwareProduct) {
     : description;
 }
 
+export function getShopwareCardImageUrl(media?: ShopwareMedia) {
+  const thumbnails = (media?.thumbnails ?? [])
+    .filter((thumbnail) => thumbnail.url?.trim())
+    .toSorted((first, second) => first.width - second.width);
+  const thumbnail =
+    thumbnails.find((candidate) => candidate.width >= 768) ?? thumbnails.at(-1);
+
+  return thumbnail?.url.trim() || media?.url?.trim() || fallbackProductImage;
+}
+
 function getImage(product: ShopwareProduct, name: string) {
   const media = product.cover?.media;
   const alt = media?.translated?.alt?.trim() || media?.alt?.trim() || name;
 
   return {
     alt: getShopwarePlainText(alt),
-    url: media?.url?.trim() || fallbackProductImage,
+    url: getShopwareCardImageUrl(media),
   };
 }
 

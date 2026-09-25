@@ -13,11 +13,29 @@ import {
   shopwareCacheLife,
   shopwareCacheTtlSeconds,
 } from "@/integrations/shopware/cache-policy";
-import { getShopwareCategoryPageContent } from "@/integrations/shopware/category-page";
+import {
+  getShopwareCategoryPageContentFromCore,
+  getShopwareCategoryPageCore,
+  type ShopwareCategoryPageCore,
+} from "@/integrations/shopware/category-page";
 import type { ShopwareCategoryRoute } from "@/integrations/shopware/category-route";
 import { getShopwareRequestSession } from "@/integrations/shopware/session";
 
-async function getCachedShopwareCategoryPageContent(categoryId: string) {
+async function getCachedShopwareCategoryPageCore(categoryId: string) {
+  "use cache";
+  cacheLife(shopwareCacheLife(shopwareCacheTtlSeconds.categoryPage));
+  cacheTag("shopware:categories", "shopware:cms");
+
+  return getShopwareCategoryPageCore(
+    getShopwareRequestSession().client,
+    categoryId,
+  );
+}
+
+async function getCachedShopwareCategoryPageContent(
+  categoryId: string,
+  core: ShopwareCategoryPageCore,
+) {
   "use cache";
   cacheLife(shopwareCacheLife(shopwareCacheTtlSeconds.categoryPage));
   cacheTag("shopware:categories", "shopware:cms");
@@ -26,25 +44,40 @@ async function getCachedShopwareCategoryPageContent(categoryId: string) {
     (storefront) => storefront.navigation,
   );
 
-  return getShopwareCategoryPageContent(
+  return getShopwareCategoryPageContentFromCore(
     getShopwareRequestSession().client,
     categoryId,
+    core,
     navigation,
   );
+}
+
+export async function getShopCategoryMetadata(categoryId: string) {
+  const core = await getCachedShopwareCategoryPageCore(categoryId);
+
+  return core.category;
 }
 
 export async function getShopCategoryPage(
   categoryId: string,
   productRequest: ShopProductPageRequest = defaultShopProductPageRequest,
 ) {
-  const content = await getCachedShopwareCategoryPageContent(categoryId);
-  const { hasProductListing, ...page } = content;
+  const core = await getCachedShopwareCategoryPageCore(categoryId);
+  const contentPromise = getCachedShopwareCategoryPageContent(categoryId, core);
+  const listingPromise = core.hasProductListing
+    ? getShopProductListingPage(productRequest, categoryId)
+    : Promise.resolve(null);
+  const [content, listing] = await Promise.all([
+    contentPromise,
+    listingPromise,
+  ]);
 
   return {
-    ...page,
-    listing: hasProductListing
-      ? await getShopProductListingPage(productRequest, categoryId)
-      : null,
+    breadcrumbs: content.breadcrumbs,
+    category: content.category,
+    children: content.children,
+    cmsPage: content.cmsPage,
+    listing,
   };
 }
 

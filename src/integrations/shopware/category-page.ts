@@ -15,6 +15,15 @@ import { getShopwareCategoryChildren } from "@/integrations/shopware/navigation"
 
 type ShopwareCategory = components["schemas"]["Category"];
 
+export type ShopwareCategoryPageCore = Readonly<
+  Pick<
+    ShopCategoryPageContent,
+    "category" | "cmsPage" | "hasProductListing"
+  > & {
+    path: string;
+  }
+>;
+
 async function getCategory(client: ShopwareClient, categoryId: string) {
   const response = await client.invoke(
     "readCategory post /category/{navigationId}",
@@ -94,12 +103,12 @@ function findNavigationItem(
 
 async function getBreadcrumbs(
   client: ShopwareClient,
-  category: ShopwareCategory,
+  path: string,
   navigation:
     | readonly StoreNavigationItem[]
     | PromiseLike<readonly StoreNavigationItem[]>,
 ): Promise<CategoryBreadcrumb[]> {
-  const ancestorIds = (category.path ?? "").split("|").filter(Boolean);
+  const ancestorIds = path.split("|").filter(Boolean);
   const visibleAncestorIds = ancestorIds.slice(1);
   const [topLevelAncestorId, ...nestedAncestorIds] = visibleAncestorIds;
   const nestedAncestorsPromise = Promise.all(
@@ -146,25 +155,14 @@ async function getBreadcrumbs(
   });
 }
 
-export async function getShopwareCategoryPageContent(
+export async function getShopwareCategoryPageCore(
   client: ShopwareClient,
   categoryId: string,
-  navigation:
-    | readonly StoreNavigationItem[]
-    | PromiseLike<readonly StoreNavigationItem[]> = [],
-): Promise<ShopCategoryPageContent> {
-  const categoryPromise = getCategory(client, categoryId);
-  const childrenPromise = getShopwareCategoryChildren(client, categoryId);
-  const navigationPromise = Promise.resolve(navigation);
-  const category = await categoryPromise;
-  const [breadcrumbs, children] = await Promise.all([
-    getBreadcrumbs(client, category, navigationPromise),
-    childrenPromise,
-  ]);
+): Promise<ShopwareCategoryPageCore> {
+  const category = await getCategory(client, categoryId);
   const translated = category.translated;
 
   return {
-    breadcrumbs,
     category: {
       canonicalPath: getCanonicalPath(category),
       description: getCategoryDescription(category),
@@ -173,8 +171,64 @@ export async function getShopwareCategoryPageContent(
       metaTitle: translated.metaTitle || category.metaTitle,
       name: getCategoryName(category),
     },
-    children,
     cmsPage: category.cmsPage ? mapShopwareCmsPage(category.cmsPage) : null,
     hasProductListing: category.type !== "folder",
+    path: category.path ?? "",
   };
+}
+
+async function composeShopwareCategoryPageContent(
+  client: ShopwareClient,
+  core: ShopwareCategoryPageCore,
+  navigation:
+    | readonly StoreNavigationItem[]
+    | PromiseLike<readonly StoreNavigationItem[]>,
+  childrenPromise: ReturnType<typeof getShopwareCategoryChildren>,
+): Promise<ShopCategoryPageContent> {
+  const [breadcrumbs, children] = await Promise.all([
+    getBreadcrumbs(client, core.path, navigation),
+    childrenPromise,
+  ]);
+
+  return {
+    breadcrumbs,
+    category: core.category,
+    children,
+    cmsPage: core.cmsPage,
+    hasProductListing: core.hasProductListing,
+  };
+}
+
+export function getShopwareCategoryPageContentFromCore(
+  client: ShopwareClient,
+  categoryId: string,
+  core: ShopwareCategoryPageCore,
+  navigation:
+    | readonly StoreNavigationItem[]
+    | PromiseLike<readonly StoreNavigationItem[]> = [],
+): Promise<ShopCategoryPageContent> {
+  return composeShopwareCategoryPageContent(
+    client,
+    core,
+    navigation,
+    getShopwareCategoryChildren(client, categoryId),
+  );
+}
+
+export async function getShopwareCategoryPageContent(
+  client: ShopwareClient,
+  categoryId: string,
+  navigation:
+    | readonly StoreNavigationItem[]
+    | PromiseLike<readonly StoreNavigationItem[]> = [],
+): Promise<ShopCategoryPageContent> {
+  const corePromise = getShopwareCategoryPageCore(client, categoryId);
+  const childrenPromise = getShopwareCategoryChildren(client, categoryId);
+  const core = await corePromise;
+  return composeShopwareCategoryPageContent(
+    client,
+    core,
+    navigation,
+    childrenPromise,
+  );
 }

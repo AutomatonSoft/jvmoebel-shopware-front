@@ -45,6 +45,15 @@ export type CmsProductGridData = Readonly<{
   viewAll?: CmsProductGridLink;
 }>;
 
+export type CmsProductGridReferenceData = Readonly<{
+  anchorId?: string;
+  eyebrow?: string;
+  layout: CmsProductGridLayout;
+  productReferences: readonly Readonly<{ id: string; position: number }>[];
+  title: string;
+  viewAll?: CmsProductGridLink;
+}>;
+
 const anchorIdPattern = /^[A-Za-z][A-Za-z0-9:._-]*$/;
 
 function parseProducts(value: unknown): Readonly<{
@@ -237,6 +246,66 @@ export function parseCmsProductGridData(
       title,
       viewAll: viewAll.data,
     },
+    issues,
+  };
+}
+
+export function parseCmsProductGridSlotData(
+  value: unknown,
+): CmsContractResult<CmsProductGridData | CmsProductGridReferenceData> {
+  const data = getCmsRecord(value);
+
+  if (!data || !Array.isArray(data.productReferences)) {
+    return parseCmsProductGridData(value);
+  }
+
+  const anchorIdValue = data.anchorId;
+  const configuredAnchorId = getCmsString(data, "anchorId");
+  const anchorId =
+    configuredAnchorId && anchorIdPattern.test(configuredAnchorId)
+      ? configuredAnchorId
+      : undefined;
+  const title = getCmsString(data, "title");
+  const viewAll = parseLink(data.viewAll);
+  const issues: CmsContractIssue[] = [...viewAll.issues];
+  const productReferences = data.productReferences.flatMap((value, index) => {
+    const product = getCmsRecord(value);
+    const id = getCmsString(product, "id");
+    if (!id) {
+      issues.push({
+        message: "Product reference is missing an ID.",
+        path: `productReferences.${index}`,
+      });
+      return [];
+    }
+
+    const position = getCmsNumber(product, "position");
+    return [{ id, position: position ?? index }];
+  });
+
+  if (anchorIdValue !== undefined && !anchorId) {
+    issues.push({
+      message: "Anchor ID must be a valid HTML identifier.",
+      path: "anchorId",
+    });
+  }
+  if (!title) {
+    issues.push({ message: "Title is missing or empty.", path: "title" });
+  }
+
+  return {
+    data: title
+      ? {
+          anchorId,
+          eyebrow: getCmsString(data, "eyebrow"),
+          layout: data.layout === "rail" ? "rail" : "grid",
+          productReferences: productReferences.sort(
+            (first, second) => first.position - second.position,
+          ),
+          title,
+          viewAll: viewAll.data,
+        }
+      : null,
     issues,
   };
 }

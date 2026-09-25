@@ -110,7 +110,7 @@ export const ShopProductCard = memo(function ShopProductCard({
       <WishlistToggleButton productId={product.id} productName={product.name} />
       <Link
         aria-label={product.name}
-        className="relative isolate block aspect-square overflow-hidden bg-gradient-to-br from-muted/80 via-muted/40 to-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        className="relative isolate block aspect-square overflow-hidden bg-linear-to-br from-muted/80 via-muted/40 to-background focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         href={product.url as Route}
         target="_blank"
       >
@@ -131,11 +131,6 @@ export const ShopProductCard = memo(function ShopProductCard({
         {product.badge && (
           <span className="absolute top-3 left-3 max-w-[calc(100%-1.5rem)] truncate rounded-full border border-white/60 bg-background/90 px-2.5 py-1.5 text-[0.625rem] font-semibold tracking-[0.08em] text-foreground uppercase shadow-sm backdrop-blur-md sm:top-4 sm:left-4">
             {product.badge}
-          </span>
-        )}
-        {discount && (
-          <span className="absolute top-14 right-3 rounded-full bg-primary px-2.5 py-1.5 text-[0.625rem] font-bold text-primary-foreground shadow-sm sm:top-15 sm:right-4">
-            −{discount}%
           </span>
         )}
       </Link>
@@ -178,9 +173,16 @@ export const ShopProductCard = memo(function ShopProductCard({
             {priceFormatter.format(product.unitPrice)}
           </strong>
           {product.previousPrice && (
-            <del className="truncate text-xs leading-none text-muted-foreground sm:text-sm">
-              {priceFormatter.format(product.previousPrice)}
-            </del>
+            <span className="inline-flex min-w-0 max-w-full items-center gap-2">
+              <del className="truncate text-xs leading-none text-muted-foreground sm:text-sm">
+                {priceFormatter.format(product.previousPrice)}
+              </del>
+              {discount && (
+                <span className="shrink-0 rounded-full bg-primary px-2.5 py-1 text-[0.625rem] font-bold text-primary-foreground">
+                  −{discount}%
+                </span>
+              )}
+            </span>
           )}
         </p>
 

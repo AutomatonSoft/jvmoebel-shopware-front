@@ -1,22 +1,18 @@
 "use client";
 
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { useSyncExternalStore } from "react";
-
 import { ShopProductCard } from "@/features/catalog/components/shop-product-card";
-import {
-  getRecentlyViewedProducts,
-  getServerRecentlyViewedProducts,
-  subscribeToRecentlyViewedProducts,
-  type RecentlyViewedProduct,
-} from "@/features/catalog/hooks/recently-viewed-products";
-import type { ShopProductListing } from "@/features/catalog/model/product-listing";
 import { useProductRail } from "@/features/catalog/hooks/use-product-rail";
+import { useRecentlyViewedProducts } from "@/features/catalog/hooks/use-recently-viewed-products";
+import type {
+  ShopProduct,
+  ShopProductListing,
+} from "@/features/catalog/model/product-listing";
 
 type ProductRailProps = Readonly<{
   currency: string;
   locale: string;
-  products: readonly RecentlyViewedProduct[];
+  products: readonly ShopProduct[];
   title: string;
 }>;
 
@@ -79,18 +75,14 @@ function ProductRail({ currency, locale, products, title }: ProductRailProps) {
 export function CartProductRails({
   recommendations,
 }: Readonly<{ recommendations: ShopProductListing }>) {
-  const recentlyViewedProducts = useSyncExternalStore(
-    subscribeToRecentlyViewedProducts,
-    getRecentlyViewedProducts,
-    getServerRecentlyViewedProducts,
-  );
+  const recentlyViewedListing = useRecentlyViewedProducts();
 
   return (
     <div className="border-t border-border/80 pt-1">
       <ProductRail
-        currency={recommendations.currency}
-        locale={recommendations.locale}
-        products={recentlyViewedProducts}
+        currency={recentlyViewedListing?.currency ?? recommendations.currency}
+        locale={recentlyViewedListing?.locale ?? recommendations.locale}
+        products={recentlyViewedListing?.products ?? []}
         title="Zuletzt angesehene Produkte"
       />
       <ProductRail

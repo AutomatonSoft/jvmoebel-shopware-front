@@ -2,70 +2,93 @@ import "server-only";
 
 import { connection } from "next/server";
 
-import type { CmsProductGridData } from "@/features/cms/contracts/product-grid";
+import type {
+  CmsProductGridData,
+  CmsProductGridReferenceData,
+} from "@/features/cms/contracts/product-grid";
+import { getShopwareCmsGridProducts } from "@/integrations/shopware/cms-product-grid";
 import { shouldUseShopwareMocks } from "@/integrations/shopware/mock-mode";
-import { getShopwareProductCardData } from "@/integrations/shopware/product-detail";
 import { getShopwareRequestSession } from "@/integrations/shopware/session";
 
+type GridInput = CmsProductGridData | CmsProductGridReferenceData;
+
+function getReferences(data: GridInput) {
+  return "productReferences" in data ? data.productReferences : data.products;
+}
+
+function withoutProducts(data: GridInput): CmsProductGridData {
+  return {
+    anchorId: data.anchorId,
+    currency: "currency" in data ? data.currency : "",
+    eyebrow: data.eyebrow,
+    layout: data.layout,
+    locale: "locale" in data ? data.locale : "",
+    products: [],
+    title: data.title,
+    viewAll: data.viewAll,
+  };
+}
+
 export async function getLiveCmsProductGrid(
-  data: CmsProductGridData,
+  data: GridInput,
 ): Promise<CmsProductGridData> {
-  if (shouldUseShopwareMocks()) {
+  if (shouldUseShopwareMocks() && "products" in data) {
     return data;
   }
 
+  const references = getReferences(data);
+  if (references.length === 0) {
+    return withoutProducts(data);
+  }
+
   await connection();
-  const client = getShopwareRequestSession().client;
-  const results = await Promise.allSettled(
-    data.products.map((product) =>
-      getShopwareProductCardData(client, product.id),
-    ),
-  );
-  const products = results.flatMap((result, index) => {
-    const source = data.products[index];
 
-    if (result.status === "rejected" || !result.value) {
-      console.error("Could not load live CMS product.", {
-        productId: source.id,
-        cause:
-          result.status === "rejected" && result.reason instanceof Error
-            ? result.reason.message
-            : "Product unavailable",
-      });
+  try {
+    const ids = [...new Set(references.map((product) => product.id))];
+    const listing = await getShopwareCmsGridProducts(
+      getShopwareRequestSession().client,
+      ids,
+    );
+    const productsById = new Map(
+      listing.products.map((product) => [product.id, product]),
+    );
+    const products = references.flatMap((reference) => {
+      const product = productsById.get(reference.id);
+      if (!product) {
+        console.error("Could not load live CMS product.", {
+          productId: reference.id,
+          cause: "Product unavailable",
+        });
+        return [];
+      }
 
-      return [];
-    }
+      return [
+        {
+          badge: product.badge,
+          description: product.description,
+          id: product.id,
+          image: product.image,
+          name: product.name,
+          position: reference.position,
+          previousPrice: product.previousPrice,
+          rating: product.rating,
+          reviewCount: product.reviewCount,
+          unitPrice: product.unitPrice,
+          url: product.url,
+        },
+      ];
+    });
 
-    const { product } = result.value;
-
-    return [
-      {
-        ...source,
-        badge: product.badge,
-        image: product.image,
-        name: product.name,
-        previousPrice: product.previousPrice,
-        rating: product.rating,
-        reviewCount: product.reviewCount,
-        unitPrice: product.unitPrice,
-        url: product.url,
-      },
-    ];
-  });
-  const firstLoadedPage = results.find(
-    (result) => result.status === "fulfilled" && result.value,
-  );
-
-  return {
-    ...data,
-    currency:
-      firstLoadedPage?.status === "fulfilled" && firstLoadedPage.value
-        ? firstLoadedPage.value.currency
-        : data.currency,
-    locale:
-      firstLoadedPage?.status === "fulfilled" && firstLoadedPage.value
-        ? firstLoadedPage.value.locale
-        : data.locale,
-    products,
-  };
+    return {
+      ...withoutProducts(data),
+      currency: listing.currency,
+      locale: listing.locale,
+      products,
+    };
+  } catch (error) {
+    console.error("Could not load live CMS product grid.", {
+      cause: error instanceof Error ? error.message : "Unknown error",
+    });
+    return withoutProducts(data);
+  }
 }

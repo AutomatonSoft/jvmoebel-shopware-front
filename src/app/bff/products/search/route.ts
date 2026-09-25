@@ -1,6 +1,5 @@
 import type { NextRequest } from "next/server";
 
-import { productSearchCacheTtlSeconds } from "@/features/search/model/product-search";
 import { searchProducts } from "@/features/search/server/product-search";
 
 export async function GET(request: NextRequest) {
@@ -17,9 +16,7 @@ export async function GET(request: NextRequest) {
     const response = await searchProducts(query);
 
     return Response.json(response, {
-      headers: {
-        "Cache-Control": `private, max-age=${productSearchCacheTtlSeconds}`,
-      },
+      headers: { "Cache-Control": "no-store" },
     });
   } catch (error) {
     console.error("Product search failed", error);
