@@ -1,7 +1,13 @@
 "use client";
 
 import { Dialog } from "@base-ui/react/dialog";
-import { ChevronLeft, ChevronRight, Maximize2, X } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  LoaderCircle,
+  Maximize2,
+  X,
+} from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
 
@@ -14,6 +20,9 @@ type ProductGalleryProps = Readonly<{
 
 export function ProductGallery({ badge, images }: ProductGalleryProps) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isFullscreenImageLoading, setIsFullscreenImageLoading] =
+    useState(false);
+  const [isImageLoading, setIsImageLoading] = useState(false);
   const zoomImageRef = useRef<HTMLImageElement>(null);
   const activeImage = images[activeImageIndex] ?? images[0];
   const hasMultipleImages = images.length > 1;
@@ -38,16 +47,27 @@ export function ProductGallery({ badge, images }: ProductGalleryProps) {
   function resetZoomOrigin() {
     zoomImageRef.current?.style.removeProperty("transform-origin");
   }
-  const showPreviousImage = () => {
-    setActiveImageIndex((currentIndex) =>
-      currentIndex === 0 ? images.length - 1 : currentIndex - 1,
+  function showImage(index: number) {
+    if (index === activeImageIndex) {
+      return;
+    }
+
+    setIsImageLoading(true);
+    setIsFullscreenImageLoading(true);
+    setActiveImageIndex(index);
+  }
+
+  function showPreviousImage() {
+    showImage(
+      activeImageIndex === 0 ? images.length - 1 : activeImageIndex - 1,
     );
-  };
-  const showNextImage = () => {
-    setActiveImageIndex((currentIndex) =>
-      currentIndex === images.length - 1 ? 0 : currentIndex + 1,
+  }
+
+  function showNextImage() {
+    showImage(
+      activeImageIndex === images.length - 1 ? 0 : activeImageIndex + 1,
     );
-  };
+  }
 
   return (
     <div
@@ -64,7 +84,7 @@ export function ProductGallery({ badge, images }: ProductGalleryProps) {
                 aria-pressed={isActive}
                 className={`relative aspect-square w-18 shrink-0 cursor-pointer overflow-hidden rounded-xl border-2 bg-muted transition-[border-color,opacity,transform] hover:opacity-90 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:w-full ${isActive ? "border-primary" : "border-transparent"}`}
                 key={image.url}
-                onClick={() => setActiveImageIndex(index)}
+                onClick={() => showImage(index)}
                 type="button"
               >
                 <Image
@@ -80,7 +100,7 @@ export function ProductGallery({ badge, images }: ProductGalleryProps) {
         </div>
       )}
 
-      <Dialog.Root>
+      <Dialog.Root onOpenChange={(open) => setIsFullscreenImageLoading(open)}>
         <div className="relative order-1 aspect-[0.92] min-w-0 overflow-hidden rounded-2xl bg-muted shadow-[0_0_0_1px_rgba(21,21,19,0.04)] sm:order-2 lg:aspect-[1.25]">
           <Dialog.Trigger
             aria-label={`Produktbild vergr\u00f6\u00dfern: ${activeImage.alt}`}
@@ -93,10 +113,27 @@ export function ProductGallery({ badge, images }: ProductGalleryProps) {
               className="object-contain transition-transform duration-150 ease-out group-hover:scale-[2]"
               fill
               loading="eager"
+              onError={() => setIsImageLoading(false)}
+              onLoad={() => setIsImageLoading(false)}
               ref={zoomImageRef}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) calc(100vw - 8rem), 58vw"
               src={activeImage.url}
             />
+            {isImageLoading && (
+              <span
+                aria-live="polite"
+                className="absolute inset-0 grid place-items-center bg-muted/80 text-muted-foreground"
+                role="status"
+              >
+                <span className="grid size-14 place-items-center rounded-full border border-white/80 bg-background/95 text-primary shadow-[0_12px_30px_-16px_rgba(21,21,19,0.55)]">
+                  <LoaderCircle
+                    aria-hidden="true"
+                    className="size-6 animate-spin"
+                  />
+                </span>
+                <span className="sr-only">Produktbild wird geladen</span>
+              </span>
+            )}
             <span className="absolute top-4 right-4 grid size-10 place-items-center rounded-full bg-background/90 text-foreground opacity-0 shadow-sm transition-opacity group-hover:opacity-100">
               <Maximize2 aria-hidden="true" className="size-4" />
             </span>
@@ -145,9 +182,24 @@ export function ProductGallery({ badge, images }: ProductGalleryProps) {
                 alt={activeImage.alt}
                 className="object-contain"
                 fill
+                onError={() => setIsFullscreenImageLoading(false)}
+                onLoad={() => setIsFullscreenImageLoading(false)}
                 sizes="100vw"
                 src={activeImage.url}
               />
+              {isFullscreenImageLoading && (
+                <span
+                  aria-live="polite"
+                  className="pointer-events-none absolute inset-0 grid place-items-center text-primary"
+                  role="status"
+                >
+                  <LoaderCircle
+                    aria-hidden="true"
+                    className="size-9 animate-spin drop-shadow-sm"
+                  />
+                  <span className="sr-only">Produktbild wird geladen</span>
+                </span>
+              )}
               {hasMultipleImages && (
                 <>
                   <button
