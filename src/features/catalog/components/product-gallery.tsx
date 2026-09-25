@@ -130,8 +130,9 @@ export function ProductGallery({ badge, images }: ProductGalleryProps) {
           >
             <Image
               alt={activeImage.alt}
-              className="object-contain transition-transform duration-150 ease-out group-hover:scale-[2]"
+              className="object-contain transition-transform duration-150 ease-out motion-safe:animate-in motion-safe:fade-in motion-safe:duration-300 group-hover:scale-[2]"
               fill
+              key={activeImage.url}
               loading="eager"
               onError={() => setIsImageLoading(false)}
               onLoad={() => {
@@ -203,8 +204,9 @@ export function ProductGallery({ badge, images }: ProductGalleryProps) {
               </Dialog.Description>
               <Image
                 alt={activeImage.alt}
-                className="object-contain"
+                className="object-contain motion-safe:animate-in motion-safe:fade-in motion-safe:duration-300"
                 fill
+                key={activeImage.url}
                 onError={() => setIsFullscreenImageLoading(false)}
                 onLoad={() => {
                   loadedFullscreenImageUrls.current.add(activeImage.url);
